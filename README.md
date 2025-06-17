@@ -30,4 +30,14 @@ Cream: F8F4CE => rgb(248, 244, 206)
 
 ## Deploy
 
+```bash
+sudo wg-quick up nikau91
+ssh sitedev@10.89.22.91
+cd /var/www/public/criticalsignals.nz
 
+```
+Install site, then when down 
+
+```bash
+sudo wg-quick down nikau91
+```
