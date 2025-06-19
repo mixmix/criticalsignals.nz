@@ -1,6 +1,6 @@
 colorScheme = "crit-sigs"
-defaultAppearance = "light"
-autoSwitchAppearance = true
+defaultAppearance = "dark"
+autoSwitchAppearance = false
 enableSearch = true
 enableCodeCopy = false
 replyByEmail = false
