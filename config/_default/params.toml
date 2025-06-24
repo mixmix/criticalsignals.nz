@@ -36,6 +36,7 @@ cardView = false
 cardViewScreenWidth = false
 layoutBackgroundBlur = false
 homepageImage = "images/hero/1.webp"
+# HACK: had to leave this image in place to keep build working... other files are in static/images/hero
 
 [article]
 showDate = true

@@ -19,7 +19,7 @@ Part artist lab, part civil defence rethink, part neighbourhood commons — Crit
 
 
 
-<script>
+<script defer>
 const NUMBER_IMAGES = 5
 
 const options = [
@@ -33,15 +33,15 @@ const options = [
   "WHAT IF YOU COULD HOLD YOUR DATA?"
 ]
 
-const heroTextEl = document.getElementById('target-question')
-const heroImageEl = document.getElementById('target-hero')
 
 function setHeroText () {
   const text = options[random(options.length)]
+  const heroTextEl = document.getElementById('target-question')
   heroTextEl.innerText = text
 }
 function setHeroImage () {
   const url = `/images/hero/${random(NUMBER_IMAGES) + 1}.webp`
+  const heroImageEl = document.getElementById('target-hero')
   heroImageEl.setAttribute('src', url)
 }
 
@@ -103,13 +103,3 @@ article {
   }
 </style>
 
-<div style="display: none">
-<!-- HACK: needed the hugo to compile the assets, so hid them in the page! -->
-
-<img src="images/hero/1.webp" >
-<img src="images/hero/2.webp" >
-<img src="images/hero/3.webp" >
-<img src="images/hero/4.webp" >
-<img src="images/hero/5.webp" >
-
-</div>
