@@ -106,10 +106,10 @@ article {
 <div style="display: none">
 <!-- HACK: needed the hugo to compile the assets, so hid them in the page! -->
 
-![](images/hero/1.webp)
-![](images/hero/2.webp)
-![](images/hero/3.webp)
-![](images/hero/4.webp)
-![](images/hero/5.webp)
+<img src="images/hero/1.webp" >
+<img src="images/hero/2.webp" >
+<img src="images/hero/3.webp" >
+<img src="images/hero/4.webp" >
+<img src="images/hero/5.webp" >
 
 </div>
