@@ -1,0 +1,64 @@
+<!--modified hero layout-->
+
+{{ $disableImageOptimization := .Site.Params.disableImageOptimization | default false }}
+{{ $disableHeroImageFilter := .Site.Params.homepage.disableHeroImageFilter | default false }}
+<article class="max-w-full prose dark:prose-invert">
+  <div class="relative">
+    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gray-100"></div>
+    <div class="mx-auto max-w-7xl p-0">
+      <!-- <div class="relative shadow-xl sm:overflow-hidden rounded-md"> -->
+      <div class="relative shadow-xl sm:overflow-hidden">
+        <div class="absolute inset-0">
+          {{ $homepageImage := "" }}
+          {{ with .Site.Params.defaultBackgroundImage }}
+            {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+              {{ $homepageImage = resources.GetRemote . }}
+            {{ else }}
+              {{ $homepageImage = resources.Get . }}
+            {{ end }}
+          {{ end }}
+          {{ with .Site.Params.homepage.homepageImage }}
+            {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+              {{ $homepageImage = resources.GetRemote . }}
+            {{ else }}
+              {{ $homepageImage = resources.Get . }}
+            {{ end }}
+          {{ end }}
+          {{ if $homepageImage }}
+          <!-- <img class="h-full w-full object-cover m-0 nozoom" src="{{ $homepageImage.RelPermalink }}" style="margin: 0"> -->
+          <img id="target-hero" class="h-full w-full object-cover m-0 nozoom" src="{{ $homepageImage.RelPermalink }}" style="margin: 0">
+          {{ if not $disableHeroImageFilter }}
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-600 dark:from-primary-600 dark:to-secondary-800 mix-blend-multiply">
+            </div>
+          {{ else }}
+            <div
+              class="absolute inset-0 from-primary-500 to-secondary-600 dark:from-primary-600 dark:to-secondary-800 mix-blend-multiply">
+            </div>
+          {{ end }}
+          {{ end }}
+        </div>
+        <!-- <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8 flex flex-col items-center justify-center text-center"> -->
+        <div class="relative px-4 py-16 sm:px-6 sm:py-16 lg:py-16 lg:px-8 flex flex-col items-center justify-center text-center">
+
+          <div class='homepage-hero'>
+            <div id="target-question" class='question'>
+              HOW MANY<br />
+              DEVICES IS A<br />
+              LIFETIME<br />
+            </div>
+
+            <img class='logo' src="/symbol.svg" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<section class="prose prose-invert">
+  {{ .Content }}
+</section>
+<section>
+  {{ partial "recent-articles/main.html" . }}
+</section>

@@ -1,0 +1,16 @@
+@font-face {
+  font-family: regular_font;
+  src: url('/fonts/Helvetica.ttf');
+}
+@font-face {
+  font-family: bold_font;
+  src: url('/fonts/Helvetica-Bold.ttf');
+}
+
+html {
+  font-family: regular_font;
+}
+
+.main-menu {
+  display: none;
+}

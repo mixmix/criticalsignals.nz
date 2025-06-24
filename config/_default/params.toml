@@ -27,7 +27,7 @@ showAppearanceSwitcher = true
 showScrollToTop = true
 
 [homepage]
-layout = "profile"
+layout = "custom"
 showRecent = false
 showRecentItems = 5
 showMoreLink = false
@@ -35,7 +35,7 @@ showMoreLinkDest = "/posts/"
 cardView = false
 cardViewScreenWidth = false
 layoutBackgroundBlur = false
-homepageImage = "logo_cream.svg"
+homepageImage = "images/hero/1.webp"
 
 [article]
 showDate = true

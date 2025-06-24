@@ -2,85 +2,112 @@
 title: Critical Signals
 ---
 
-<img class='logo' src="/symbol.svg" />
 
-<div class='info'>
-  <div class='description'>
-    Critical Signals invites you into a three-month public space for learning,
-    imagining, and practising how sovereignty, resilience and collective care
-    will shape our future.
-  </div>
+## Practising critical responses to disrupted futures.
 
-  <div class='divider' ></div>
+---
 
-  <div class='space-time'>
-    <div>Opening Friday 18th July</div>
-    <div>115 Taranaki Street</div>
-    <div>Te Whanganui-a-Tara / Wellington</div>
-  </div>
-</div>
+Critical Signals invites you into a three-month public space for learning, imagining, and practising how sovereignty, resilience and collective care will shape our futures in times of rapid change.
+
+---
+
+Opening 18 July at 115 Taranaki Street, Critical Signals invites the public into a living research space for three months of workshops, installations, and conversations exploring the critical systems we rely on — from food to data, water to power — and how we build, own, and nurture them together.
+
+Critical Signals explores practical and visionary responses to an era of collapses, with a focus on kai sovereignty, data sovereignty, collective resilience, and adaptation strategies under a rapidly changing climate. With community at the project center, it asks what changes could we make to our infrastructure, food and energy systems to ensure we not just survive, but thrive, in the years ahead.
+
+Part artist lab, part civil defence rethink, part neighbourhood commons — Critical Signals offers a space to gather, experiment, and prepare. Open daily and free to all, it asks not just how we survive disruption, but how we create infrastructures for living — with care, agency, and creativity.
+
+
+
+<script>
+const NUMBER_IMAGES = 5
+
+const options = [
+  "HOW MANY DEVICES IS A LIFETIME",
+  "DOES BAD WEATHER AFFECT CLOUD COMPUTING?",
+  "HOW MANY DEVICES IS A LIFETIME?",
+  "YOU JUST RECEIVED AND EMAIL.\nHOW?",
+  "WHERE IS YOUR DATA?",
+  "IS THERE MONEY WITHOUT THE INTERNET?",
+  "WHAT IS THE CARBON FOOTPRINT OF A MEME?",
+  "WHAT IF YOU COULD HOLD YOUR DATA?"
+]
+
+const heroTextEl = document.getElementById('target-question')
+const heroImageEl = document.getElementById('target-hero')
+
+function setHeroText () {
+  const text = options[random(options.length)]
+  heroTextEl.innerText = text
+}
+function setHeroImage () {
+  const url = `/images/hero/${random(NUMBER_IMAGES) + 1}.webp`
+  heroImageEl.setAttribute('src', url)
+}
+
+setHeroText()
+setHeroImage()
+
+setInterval(setHeroText, 5000)
+setInterval(setHeroImage, 13000)
+
+function random (n) {
+  return Math.floor(Math.random() * n)
+}
+</script>
+
 
 <style>
-/* Temp - disable menu + h1*/
-.main-menu, h1 { display: none; }
-
+/* Over-ride defaults */
+article {
+}
 .prose {
   max-width: 100%;
+  margin-bottom: 3rem;
 }
 
-/* section { */
-/*   width: 100%; */
-/* } */
+.homepage-hero {
+  height: 100%;
+  width: 100%;
+  min-height: 30rem;
 
-.logo {
-  max-width: 1000px;
-  margin: 0 auto 6rem auto;
-}
-
-.info {
   display: grid;
-  grid-template-columns: auto 2px auto;
-  grid-gap: 2rem;
+  align-content: space-between;
 
-  align-items: center;
+  .question {
+    justify-self: start;
+    max-width: 40rem;
 
-  font-family: serif;
+    font-family: bold_font;
+    font-size: 4rem;
+    line-height: 4.5rem;
+    text-align: start;
 
-  .description {
-    font-size: .9rem;
-    text-align: justify;
-    line-height: 1.3rem;
-    max-width: 420px;
+    filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
   }
 
-  .divider {
-    height: 60%;
-    background-color: rgb(var(--color-neutral));
-    border-radius: 5px;
-  }
+  .logo {
+     justify-self: end;
+     max-width: 60%;
+     max-height: 5rem;
 
-  .space-time {
-    display: grid;
-    justify-items: start;
+     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
   }
 }
 
 @media (max-width: 768px) {
-.info {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto 2px auto;
-  grid-gap: 2rem;
-
-  justify-items: center;
-
-  .description {
+  article {
+    margin-left: calc(var(--spacing) * -6);
+    margin-right: calc(var(--spacing) * -6);
+    max-width: calc(100% + calc(var(--spacing) * 12)) !important;
   }
-  .divider {
-    width: 20%;
-    border-radius: 5px;
-  }
-  .space-time {
-  }
-}
 </style>
+
+<div style="display: none">
+<!-- HACK: needed the hugo to compile the assets, so hid them in the page! -->
+![](images/hero/1.webp)
+![](images/hero/2.webp)
+![](images/hero/3.webp)
+![](images/hero/4.webp)
+![](images/hero/5.webp)
+</div>
