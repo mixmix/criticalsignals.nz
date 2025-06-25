@@ -44,28 +44,29 @@ showLikes = false
 showDateOnlyInArticle = false
 showDateUpdated = false
 showAuthor = true
-showHero = false
+showHero = true
+heroStyle = "big"
 layoutBackgroundBlur = true
-layoutBackgroundHeaderSpace = true
+layoutBackgroundHeaderSpace = false
 showBreadcrumbs = false
 showDraftLabel = true
 showEdit = true
-editURL = "https://github.com/mixmix/criticalsignals.nz/"
+editURL = "https://github.com/mixmix/criticalsignals.nz/tree/main/content"
 editAppendPath = true
 seriesOpened = false
 showHeadingAnchors = true
 showPagination = true
 invertPagination = false
-showReadingTime = true
+showReadingTime = false
 showTableOfContents = false
-showTaxonomies = false
+showTaxonomies = true
 showCategoryOnly = false
 showAuthorsBadges = false
-showWordCount = true
+showWordCount = false
 showZenMode = false
 
 [list]
-showHero = false
+showHero = true
 layoutBackgroundBlur = true
 layoutBackgroundHeaderSpace = true
 showBreadcrumbs = false
@@ -79,7 +80,6 @@ groupByYear = true
 cardView = true
 cardViewScreenWidth = false
 constrainItemsWidth = false
-# heroStyle = "basic"
 
 [sitemap]
 excludedKinds = [ "taxonomy", "term" ]

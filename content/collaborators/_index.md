@@ -1,6 +1,5 @@
 ---
+title: Collaborators
 cascade:
-  showDate: false
-  showReadingTime: false
-  showWordCount: false
+  showHero: true
 ---
