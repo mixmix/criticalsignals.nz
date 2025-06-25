@@ -63,6 +63,13 @@
   {{ partial "recent-articles/main.html" . }}
 </section>
 
+<section class='partners'>
+  <img src="/images/partners/cream_Logo_Goethe_Institut.svg">
+  <img src="/images/partners/cream_victoria_logo.svg" >
+  <img src="/images/partners/cream_Massey_University_Logo.svg" >
+  <img src="/images/partners/cream_Monash_University_logo.svg" >
+</section>
+
 <script>
 // This bit handles the randomised questions + images
 
@@ -107,15 +114,6 @@ I wanted to keep the _index.md relatively tidy for the people editing there
   margin-bottom: 3rem;
 }
 
-/* Modify the styles when the window is small */
-@media (max-width: 768px) {
-  article {
-    margin-left: calc(var(--spacing) * -6);
-    margin-right: calc(var(--spacing) * -6);
-    max-width: calc(100% + calc(var(--spacing) * 12)) !important;
-  }
-}
-
 .homepage-hero {
   height: 100%;
   width: 100%;
@@ -144,4 +142,30 @@ I wanted to keep the _index.md relatively tidy for the people editing there
      filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
   }
 }
+
+.partners {
+  margin: 6rem 0.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-gap: 3rem;
+  align-content: center;
+  align-items: center;
+
+  img {
+  }
+}
+
+/* Modify the styles when the window is small */
+@media (max-width: 768px) {
+  article {
+    margin-left: calc(var(--spacing) * -6);
+    margin-right: calc(var(--spacing) * -6);
+    max-width: calc(100% + calc(var(--spacing) * 12)) !important;
+  }
+
+  .partners {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
 </style>
