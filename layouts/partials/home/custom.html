@@ -48,7 +48,7 @@
               LIFETIME<br />
             </div>
 
-            <img class='logo' src="/symbol.svg" />
+            <img class='logo' src="/logo.svg" />
           </div>
 
         </div>
@@ -62,3 +62,86 @@
 <section>
   {{ partial "recent-articles/main.html" . }}
 </section>
+
+<script>
+// This bit handles the randomised questions + images
+
+const questions = {{ .Params.questions }}
+const images = {{ .Params.images }}
+
+// Set a random text + image immediately
+setHeroText()
+setHeroImage()
+
+// Set random text + image every N seconds
+setInterval(setHeroText, 5000)   // 5s
+setInterval(setHeroImage, 13000) // 13s
+
+
+// Functions which take care of the logic of changing the page
+function setHeroText () {
+  const text = questions[random(questions.length)]
+  const heroTextEl = document.getElementById('target-question')
+  heroTextEl.innerText = text
+}
+function setHeroImage () {
+  const url = images[random(images.length)]
+  const heroImageEl = document.getElementById('target-hero')
+  heroImageEl.setAttribute('src', url)
+}
+
+function random (n) {
+  return Math.floor(Math.random() * n)
+}
+</script>
+
+<style>
+/*
+I don't know if this is a terrible idea but it works?
+I wanted to keep the _index.md relatively tidy for the people editing there
+*/
+
+/* Over-ride defaults for homepage */
+.prose {
+  max-width: 100%;
+  margin-bottom: 3rem;
+}
+
+/* Modify the styles when the window is small */
+@media (max-width: 768px) {
+  article {
+    margin-left: calc(var(--spacing) * -6);
+    margin-right: calc(var(--spacing) * -6);
+    max-width: calc(100% + calc(var(--spacing) * 12)) !important;
+  }
+}
+
+.homepage-hero {
+  height: 100%;
+  width: 100%;
+  min-height: 30rem;
+
+  display: grid;
+  align-content: space-between;
+
+  .question {
+    justify-self: start;
+    max-width: 40rem;
+
+    font-family: bold_font;
+    font-size: 4rem;
+    line-height: 4.5rem;
+    text-align: start;
+
+    filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
+  }
+
+  .logo {
+     justify-self: end;
+     max-width: 60%;
+     max-height: 5rem;
+
+     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+  }
+}
+</style>
