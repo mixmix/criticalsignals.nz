@@ -36,10 +36,9 @@ cardView = false
 cardViewScreenWidth = false
 layoutBackgroundBlur = false
 homepageImage = "images/hero/1.webp"
-# HACK: had to leave this image in place to keep build working... other files are in static/images/hero
 
 [article]
-showDate = true
+showDate = false
 showViews = false
 showLikes = false
 showDateOnlyInArticle = false
@@ -50,7 +49,8 @@ layoutBackgroundBlur = true
 layoutBackgroundHeaderSpace = true
 showBreadcrumbs = false
 showDraftLabel = true
-showEdit = false
+showEdit = true
+editURL = "https://github.com/mixmix/criticalsignals.nz/"
 editAppendPath = true
 seriesOpened = false
 showHeadingAnchors = true
@@ -76,9 +76,10 @@ showTableOfContents = false
 showCards = false
 orderByWeight = false
 groupByYear = true
-cardView = false
+cardView = true
 cardViewScreenWidth = false
 constrainItemsWidth = false
+# heroStyle = "basic"
 
 [sitemap]
 excludedKinds = [ "taxonomy", "term" ]

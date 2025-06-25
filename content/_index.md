@@ -52,3 +52,10 @@ infrastructures for living — with care, agency, and creativity.
   contact@criticalsignals.nz
   </a>
 </p>
+
+
+
+<style>
+/* Temporary - hide the menu till we sort the site content more */
+.main-menu { display: none; }
+</style>

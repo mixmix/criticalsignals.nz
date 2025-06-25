@@ -11,10 +11,6 @@ html {
   font-family: regular_font;
 }
 
-.main-menu {
-  display: none;
-}
-
 a.contact-link {
   text-decoration: underline;
 }
