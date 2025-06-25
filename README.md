@@ -2,6 +2,13 @@
 
 ## Dev
 
+NOTE: we want to display pages with future dates so
+
+```bash
+hugo serve --buildFuture
+```
+
+For CLI tool which offers interactive configuration:
 ```bash
 npx blowfish-tools
 ```
@@ -33,8 +40,7 @@ Cream: F8F4CE => rgb(248, 244, 206)
 ```bash
 sudo wg-quick up nikau91
 ssh sitedev@10.89.22.91
-cd /var/www/public/criticalsignals.nz
-
+./update.sh
 ```
 Install site, then when down 
 
