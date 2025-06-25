@@ -46,7 +46,9 @@ Critical Signals offers a space to gather, experiment, and prepare. Open daily
 and free to all, it asks not just how we survive disruption, but how we create
 infrastructures for living — with care, agency, and creativity.
 
-For contact or to sign up for updates pls write to
-[contact@criticalsignals.nz](mailto:contact@criticalsignals.nz)
-
-
+<p>
+  For contact or to sign up for updates pls write to:
+  <a href='mailto:contact@criticalsignals.nz' class="contact-link">
+  contact@criticalsignals.nz
+  </a>
+</p>

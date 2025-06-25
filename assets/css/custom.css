@@ -14,3 +14,7 @@ html {
 .main-menu {
   display: none;
 }
+
+a.contact-link {
+  text-decoration: underline;
+}
