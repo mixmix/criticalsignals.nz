@@ -2,8 +2,8 @@
 none = "none"
 
 [[main]]
-name = "People"
-pageRef = "people"
+name = "Collaborators"
+pageRef = "collaborators"
 identifier = "tmADjJPJrg"
 weight = 9_999
 
