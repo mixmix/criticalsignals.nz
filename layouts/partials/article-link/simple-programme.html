@@ -33,51 +33,51 @@
   <a class="{{ $articleClasses }}" href="{{ .RelPermalink }}">
 {{ end }}
 
-{{- with $.Params.images -}}
-  {{- range first 6 . }}
-  <meta property="og:image" content="{{ . | absURL }}" />
-  {{ end -}}
+{{ with $.Params.images }}
+  {{ range first 6 . }}
+    <meta property="og:image" content="{{ . | absURL }}" />
+  {{ end }}
 
-{{- else -}}
-  {{- $images := $.Resources.ByType "image" -}}
-  {{- $featured := $images.GetMatch "*feature*" -}}
-  {{- if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end -}}
+{{ else }}
+  {{ $images := $.Resources.ByType "image" }}
+  {{ $featured := $images.GetMatch "*feature*" }}
+  {{ if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
 
   {{ if and .Params.featureimage (not $featured) }}
-    {{- $url:= .Params.featureimage -}}
+    {{ $url:= .Params.featureimage }}
     {{ $featured = resources.GetRemote $url }}
   {{ end }}
 
-  {{- if not $featured }}{{ with .Site.Params.defaultFeaturedImage }}{{ $featured = resources.Get . }}{{ end }}{{ end -}}
+  {{ if not $featured }}{{ with .Site.Params.defaultFeaturedImage }}{{ $featured = resources.Get . }}{{ end }}{{ end }}
   {{ if .Params.hideFeatureImage }}{{ $featured = false }}{{ end }}
+  {{ if .Params.hideFeatureImageOnList }}{{ $featured = false }}{{ end }}
 
-  {{- with $featured -}}
+  {{ with $featured }}
     {{ if or $disableImageOptimization (strings.HasSuffix $featured ".svg") }}
       {{ with . }}
         <div class="{{ $articleImageClasses }}" style="background-image:url({{ .RelPermalink }});"></div>
       {{ end }}
 
     {{ else }}
-      {{ with .Resize "600x"  }}
+      {{ with .Resize "600x" }}
         <div class="{{ $articleImageClasses }}" style="background-image:url({{ .RelPermalink }});"></div>
       {{ end }}
 
     {{ end }}
 
-  {{- else -}}
-    {{- with $.Site.Params.images }}
+  {{ else }}
+    {{ with $.Site.Params.images }}
       <meta property="og:image" content="{{ index . 0 | absURL }}" />
-    {{ end -}}
+    {{ end }}
 
-  {{- end -}}
-{{- end -}}
+  {{ end }}
+{{ end }}
 
   <div class="{{ $articleInnerClasses }}">
     <div class="items-center text-left text-xl font-semibold">
       {{ with .Params.externalUrl }}
         <div>
-          <div
-            class="font-bold text-xl text-neutral-800 decoration-primary-500 hover:underline hover:underline-offset-2 dark:text-neutral">
+          <div class="font-bold text-xl text-neutral-800 decoration-primary-500 hover:underline hover:underline-offset-2 dark:text-neutral">
             {{ $.Title | emojify }}
             <span class="text-xs align-top cursor-default text-neutral-400 dark:text-neutral-500">
               <span class="rtl:hidden">&#8599;</span>

@@ -1,6 +1,6 @@
 ---
-title: "Things Here!"
-date: 2025-07-11
+title: "Things Again!"
+date: 2025-07-13
 draft: false
 description: "An introduction to disaster resilient communication using
 Meshtastic"

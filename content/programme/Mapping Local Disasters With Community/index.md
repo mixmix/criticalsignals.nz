@@ -1,10 +1,12 @@
 ---
 title: "Sculpt the City: Explore Risk and Resilience in Clay"
-hosts: ["Mairéad"]
+hosts:
+  - Mairéad
 date: 2025-08-09
 start_time: 10am
 end_time: 1pm
-categories: ["workshop"]
+categories:
+  - workshop
 sign_up_link: https://events.humanitix.com/sculpt-the-city-explore-risk-and-resilience-in-clay
 
 ---
