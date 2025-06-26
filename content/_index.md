@@ -26,7 +26,9 @@ images:
 
 ---
 
-Critical Signals invites you into a three-month public space for learning, imagining, and practising how sovereignty, resilience and collective care will shape our futures in times of rapid change.
+Critical Signals invites you into a three-month public space for learning, imagining,
+and practising how sovereignty, resilience and collective care will shape our futures
+in times of rapid change.
 
 ---
 
