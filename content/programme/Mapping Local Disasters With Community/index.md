@@ -1,5 +1,5 @@
 ---
-title: Sculpt the City: Explore Risk and Resilience in Clay 
+title: "Sculpt the City: Explore Risk and Resilience in Clay"
 hosts: ["Mairéad"]
 date: 2025-08-09
 start_time: 10am
