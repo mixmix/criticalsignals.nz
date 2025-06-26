@@ -31,14 +31,16 @@ h2 {
 
 /* Months */
 h3 {
-  font-size: 1.2rem;
-  line-height: 1.2rem;
+  font-size: 2rem;
+  letter-spacing: 0.2rem;
+  font-weight: 1000;
   text-transform: uppercase;
-  color: rgb(25, 64, 33);
-  background: rgb(248, 244, 206);
 
-  padding: 1rem 0.5rem 0.2rem 0.2rem;
+  color: rgba(248, 244, 206, 0.9);
+  border-bottom: 1px solid rgba(248, 244, 206, 0.8);
+
+  padding-bottom: 0.2rem;
   margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 </style>
