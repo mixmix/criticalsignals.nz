@@ -10,9 +10,10 @@ questions:
   - "IS THERE MONEY WITHOUT THE INTERNET?"
   - "WHAT IS THE CARBON FOOTPRINT OF A MEME?"
   - "WHAT IF YOU COULD HOLD YOUR DATA?"
+  - "DO YOU HAVE A CUP OF FLOUR?"
 
 images:
-  - '/images/hero/1.webp'
+  - '/images/hero/1.webp'  # These files are in /static/images/hero folder
   - '/images/hero/2.webp'
   - '/images/hero/3.webp'
   - '/images/hero/4.webp'
