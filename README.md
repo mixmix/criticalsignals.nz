@@ -5,6 +5,7 @@
 NOTE: we want to display pages with future dates so
 
 ```bash
+git submodule update --init --recursive --depth 1
 hugo serve --buildFuture
 ```
 
