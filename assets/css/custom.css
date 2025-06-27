@@ -14,3 +14,101 @@ html {
 a.contact-link {
   text-decoration: underline;
 }
+
+/* Homepage hero styles */
+.homepage-hero {
+  height: 100%;
+  width: 100%;
+  min-height: 30rem;
+  max-height: 35rem; /* Fixed max height to prevent jumping */
+
+  display: grid;
+  align-content: space-between;
+}
+
+.homepage-hero .question {
+  justify-self: start;
+  max-width: 40rem;
+
+  font-family: bold_font;
+  font-size: 4rem;
+  line-height: 4.5rem;
+  text-align: start;
+
+  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
+}
+
+.homepage-hero .logo {
+  justify-self: end;
+  max-width: 60%;
+  max-height: 5rem;
+
+  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+}
+
+/* Ensure hero images maintain consistent height */
+#target-hero {
+  height: 35rem !important;
+  object-fit: cover !important;
+}
+
+.partners {
+  margin: 6rem 0.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-gap: 3rem;
+  align-content: center;
+  align-items: center;
+}
+
+/* Responsive styles for tablets and smaller screens */
+@media (max-width: 768px) {
+  .homepage-hero {
+    min-height: 25rem;
+    max-height: 30rem;
+    padding: 1rem;
+  }
+
+  .homepage-hero .question {
+    max-width: 95%;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
+  .homepage-hero .logo {
+    max-width: 80%;
+    max-height: 4rem;
+  }
+
+  #target-hero {
+    height: 30rem !important;
+  }
+
+  .partners {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
+/* Additional responsive breakpoints for very small screens */
+@media (max-width: 480px) {
+  .homepage-hero {
+    min-height: 20rem;
+    max-height: 25rem;
+    padding: 0.5rem;
+  }
+
+  .homepage-hero .question {
+    max-width: 100%;
+    font-size: 1.8rem;
+    line-height: 2.1rem;
+  }
+
+  .homepage-hero .logo {
+    max-width: 90%;
+    max-height: 3rem;
+  }
+
+  #target-hero {
+    height: 25rem !important;
+  }
+}
