@@ -59,6 +59,6 @@ infrastructures for living — with care, agency, and creativity.
 
 
 <style>
-/* Temporary - hide the menu till we sort the site content more */
-.main-menu { display: none; }
+    /* Temporary - hide the menu till we sort the site content more */
+    .main-menu { display: none; }
 </style>
