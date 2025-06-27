@@ -4,10 +4,9 @@
 {{ $disableHeroImageFilter := .Site.Params.homepage.disableHeroImageFilter | default false }}
 <article class="max-w-full prose dark:prose-invert">
   <div class="relative">
-    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gray-100"></div>
     <div class="mx-auto max-w-7xl p-0">
       <!-- <div class="relative shadow-xl sm:overflow-hidden rounded-md"> -->
-      <div class="relative shadow-xl sm:overflow-hidden">
+      <div class="relative sm:overflow-hidden">
         <div class="absolute inset-0">
           {{ $homepageImage := "" }}
           {{ with .Site.Params.defaultBackgroundImage }}
@@ -26,7 +25,7 @@
           {{ end }}
           {{ if $homepageImage }}
           <!-- <img class="h-full w-full object-cover m-0 nozoom" src="{{ $homepageImage.RelPermalink }}" style="margin: 0"> -->
-          <img id="target-hero" class="h-full w-full object-cover m-0 nozoom" src="{{ $homepageImage.RelPermalink }}" style="margin: 0">
+          <img id="target-hero" class="h-full w-full object-cover m-0 nozoom" src="{{ $homepageImage.RelPermalink }}" style="margin: 0;">
           {{ if not $disableHeroImageFilter }}
             <div
               class="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-600 dark:from-primary-600 dark:to-secondary-800 mix-blend-multiply">
@@ -39,7 +38,7 @@
           {{ end }}
         </div>
         <!-- <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8 flex flex-col items-center justify-center text-center"> -->
-        <div class="relative px-4 py-16 sm:px-6 sm:py-16 lg:py-16 lg:px-8 flex flex-col items-center justify-center text-center">
+        <div class="relative px-4 pt-16 pb-0 sm:px-6 sm:pt-16 sm:pb-0 lg:pt-16 lg:pb-0 lg:px-8 flex flex-col items-center justify-center text-center">
 
           <div class='homepage-hero'>
             <div id="target-question" class='question'>
@@ -103,46 +102,51 @@ function random (n) {
 </script>
 
 <style>
-/*
-I don't know if this is a terrible idea but it works?
-I wanted to keep the _index.md relatively tidy for the people editing there
-*/
-
-/* Over-ride defaults for homepage */
+/* Override defaults for homepage */
 .prose {
   max-width: 100%;
   margin-bottom: 3rem;
 }
 
+
+/* Homepage hero styles */
 .homepage-hero {
   height: 100%;
   width: 100%;
   min-height: 30rem;
+  max-height: 35rem; /* Fixed max height to prevent jumping */
 
   display: grid;
   align-content: space-between;
-
-  .question {
-    justify-self: start;
-    max-width: 40rem;
-
-    font-family: bold_font;
-    font-size: 4rem;
-    line-height: 4.5rem;
-    text-align: start;
-
-    filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
-  }
-
-  .logo {
-     justify-self: end;
-     max-width: 60%;
-     max-height: 5rem;
-
-     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
-  }
 }
 
+.homepage-hero .question {
+  justify-self: start;
+  max-width: 40rem;
+
+  font-family: bold_font;
+  font-size: 4rem;
+  line-height: 4.5rem;
+  text-align: start;
+
+  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
+}
+
+.homepage-hero .logo {
+  justify-self: end;
+  max-width: 60%;
+  max-height: 5rem;
+
+  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+}
+
+/* Ensure hero images maintain consistent height */
+#target-hero {
+  height: 35rem !important;
+  object-fit: cover !important;
+}
+
+/* Partners section */
 .partners {
   margin: 6rem 0.5rem 4rem;
   display: grid;
@@ -150,13 +154,31 @@ I wanted to keep the _index.md relatively tidy for the people editing there
   grid-gap: 3rem;
   align-content: center;
   align-items: center;
-
-  img {
-  }
 }
 
-/* Modify the styles when the window is small */
+/* Responsive styles for tablets and smaller screens */
 @media (max-width: 768px) {
+  .homepage-hero {
+    min-height: 25rem;
+    max-height: 30rem;
+    padding: 1rem;
+  }
+
+  .homepage-hero .question {
+    max-width: 95%;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
+  .homepage-hero .logo {
+    max-width: 80%;
+    max-height: 4rem;
+  }
+
+  #target-hero {
+    height: 30rem !important;
+  }
+
   article {
     margin-left: calc(var(--spacing) * -6);
     margin-right: calc(var(--spacing) * -6);
@@ -168,4 +190,27 @@ I wanted to keep the _index.md relatively tidy for the people editing there
   }
 }
 
+/* Additional responsive breakpoints for very small screens */
+@media (max-width: 480px) {
+  .homepage-hero {
+    min-height: 20rem;
+    max-height: 25rem;
+    padding: 0.5rem;
+  }
+
+  .homepage-hero .question {
+    max-width: 100%;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
+  .homepage-hero .logo {
+    max-width: 90%;
+    max-height: 3rem;
+  }
+
+  #target-hero {
+    height: 25rem !important;
+  }
+}
 </style>
