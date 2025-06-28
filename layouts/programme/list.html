@@ -99,7 +99,7 @@
               {{ printf "%s-01" .Key | time | time.Format "January" }}
             </h3>
 
-            {{ range .Pages }}
+            {{ range .Pages.Reverse }}
               {{ partial "article-link/simple-programme.html" . }}
             {{ end }}
           {{ end }}
