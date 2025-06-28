@@ -22,7 +22,7 @@ civilisation?
 Join us in a playful lab environment helping build the first ‘map’ of what our
 digital experience would look like if it was just us - from healthcare, to
 education, banking and the big socials. In doing so, we’ll get a sense of just
-how infrastructurally independent – and resilient — we are as a nation.
+how infrastructurally independent - and resilient - we are as a nation.
 
 Participants will learn how to use simple network probing and website analysis
 to pull websites and networks apart, looking under the hood at just how much is
