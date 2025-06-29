@@ -21,17 +21,17 @@
 
   {{/* Copied + modified from meta/date: */}}
   <time class='programme-time' datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">
+    <!-- <span class='emoji'> -->
+    <!--   {{ ":spiral_calendar:" | emojify }} -->
+    <!-- </span> -->
+
     <span class='date'>
       {{- i18n "article.date" (dict "Date" (partial "functions/date.html" .Date)) -}},
     </span>
 
-    <span class='start-time'>
-      {{ .Params.start_time }}
-    </span>
-    <span class='dash'> - </span>
-    <span class='end-time'>
-      {{ .Params.end_time }}
-    </span>
+    <span class='start-time'>{{ .Params.start_time }}</span>
+    <span class='dash'>-</span>
+    <span class='end-time'>{{ .Params.end_time }}</span>
   </time>
 
   {{ if and (.Params.showDateUpdated | default (.Site.Params.article.showDateUpdated | default false)) (ne (partial
@@ -126,15 +126,31 @@
 {{ end }}
 
 <style>
+.programme-time {
+  text-align: center;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  justify-content: start;
+  align-items: baseline;
+}
+.programme-time .emoji {
+  font-size: 1.3rem;
+  margin-right: 0.2rem;
+}
 .programme-time .date {
+  font-size: 1.2rem;
   font-weight: bold;
+
+  margin-right: 0.5rem;
 }
 .programme-time .start-time {
-
+  font-size: 0.8rem;
 }
 .programme-time .dash {
+  font-size: 0.8rem;
+  margin: 0 3px;
 }
 .programme-time .end-time {
-
+  font-size: 0.8rem;
 }
 </style>
