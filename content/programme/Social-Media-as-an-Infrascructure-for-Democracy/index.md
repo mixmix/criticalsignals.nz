@@ -16,4 +16,4 @@ passionate about building commons-based social media apps that prioritize
 equity and sustainability.  As the head of the tech team at Odeo when Twitter
 was created, rabble has unique insights into how social media platforms evolve
 and the values that shape them.   Rabble will discuss how social media should
-support democratic processes ratheer than be a business model for surveillance.
+support democratic processes rather than be a business model for surveillance.
