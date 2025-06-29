@@ -3,8 +3,8 @@ title: "Server Gardening"
 hosts:
   - "Julian Oliver"
 date: 2025-08-05
-start_time: 17.00
-end_time: 19.30
+start_time: 17:00
+end_time: 19:30
 categories:
   - Seminar
 sign_up_link: https://events.humanitix.com/server-gardening-with-julian-oliver
