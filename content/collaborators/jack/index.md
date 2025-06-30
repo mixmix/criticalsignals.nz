@@ -1,6 +1,6 @@
 ---
 title: "Jack Gittings"
-date: 2025-06-25
+date: 2025-06-18
 draft: false
 # description: "a description"
 tags: ["space organiser"]

@@ -1,6 +1,6 @@
 ---
 title: "Ira Bailey"
-date: 2025-06-25
+date: 2025-06-22
 draft: false
 # description: "a description"
 tags: ["example", "tag"]

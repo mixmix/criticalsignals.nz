@@ -1,6 +1,6 @@
 ---
 title: "Ed Stafford"
-date: 2025-06-25
+date: 2025-06-12
 draft: false
 # description: "a description"
 tags: ["space organiser"]

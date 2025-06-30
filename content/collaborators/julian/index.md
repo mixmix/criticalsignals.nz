@@ -1,6 +1,6 @@
 ---
 title: "Julian Oliver"
-date: 2025-06-25
+date: 2025-06-24
 draft: false
 # description: "a description"
 tags: ["space organiser"]
