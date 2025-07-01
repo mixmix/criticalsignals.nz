@@ -7,7 +7,7 @@ start_time: 10:00
 end_time: 18:30
 categories:
   - workshop
-sign_up_link: https://events.humanitix.com/radio-cartography
+sign_up_link: https://events.humanitix.com/radio-cartography/tickets
 
 ---
 

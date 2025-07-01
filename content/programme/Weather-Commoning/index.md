@@ -7,7 +7,7 @@ start_time: 17:00
 end_time: 19:00
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/weather-commoning-chris-berthelsen
+sign_up_link: https://events.humanitix.com/weather-commoning-chris-berthelsen/tickets
 
 ---
 

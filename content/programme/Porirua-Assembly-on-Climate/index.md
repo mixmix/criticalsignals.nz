@@ -7,7 +7,7 @@ start_time: 17:00
 end_time: 19:00
 categories:
   - workshop
-sign_up_link: https://events.humanitix.com/porirua-assembly-on-climate
+sign_up_link: https://events.humanitix.com/porirua-assembly-on-climate/tickets
 
 ---
 

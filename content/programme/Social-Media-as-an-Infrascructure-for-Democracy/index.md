@@ -7,7 +7,7 @@ start_time: 17:30
 end_time: 19:30
 categories:
   - workshop
-sign_up_link: https://events.humanitix.com/social-media-as-a-tool-for-democracy
+sign_up_link: https://events.humanitix.com/social-media-as-a-tool-for-democracy/tickets
 
 ---
 
