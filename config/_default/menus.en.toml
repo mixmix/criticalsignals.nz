@@ -7,11 +7,11 @@ pageRef = "programme"
 identifier = "smADjJPJrg"
 weight = 10
 
-# [[main]]
-# name = "Collaborators"
-# pageRef = "collaborators"
-# identifier = "tmADjJPJrg"
-# weight = 20
+[[main]]
+name = "Collaborators"
+pageRef = "collaborators"
+identifier = "tmADjJPJrg"
+weight = 20
 
 [[footer]]
 none = "none"
