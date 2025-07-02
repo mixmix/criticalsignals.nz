@@ -32,7 +32,7 @@ in times of rapid change.
 
 ---
 
-Opening 18 July at 115 Taranaki Street, Critical Signals invites the public into
+Opening 18 July at 115 Taranaki Street, Wellington, Critical Signals invites the public into
 a living research space for three months of workshops, installations, and
 conversations exploring the critical systems we rely on — from food to data,
 water to power — and how we build, own, and nurture them together.
