@@ -17,3 +17,6 @@ deliberative processes to strengthen democracy and improve outcomes for people
 and place, recently holding an Assembly on Climate for the Porirua region.
 She will talk bout thee assembly process and on a tool kit that is being rolled
 out for commcommunities to become more involved in their environmental futures.
+
+
+test
