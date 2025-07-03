@@ -50,7 +50,7 @@ and free to all, it asks not just how we survive disruption, but how we create
 infrastructures for living — with care, agency, and creativity.
 
 <!-- Newsletter Signup Form -->
-<div class="newsletter-section">
+<div class="newsletter-section" id="signup">
   <h3>Stay Updated</h3>
   <p>Get updates on workshops, events, and our 3-month exploration of critical systems:</p>
   
