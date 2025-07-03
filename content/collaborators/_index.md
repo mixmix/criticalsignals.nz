@@ -10,7 +10,16 @@ cascade:
   criticalsignals.nz/collaborators
 */
 
-section > a > div {
-  border: none;
-}
+  h2 {
+    display: none;
+  }
+
+  .w-full.thumbnail_card {
+    height: 400px;
+    /* background-size: fit; */
+  }
+
+  section > a > div {
+    border: none;
+  }
 </style>
