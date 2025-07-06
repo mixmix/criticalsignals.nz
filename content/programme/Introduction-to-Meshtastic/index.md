@@ -7,7 +7,7 @@ start_time: 17:00
 end_time: 19:30
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/introduction-to-meshtastic
+sign_up_link: https://events.humanitix.com/introduction-to-meshtastic/tickets
 ---
 
 As the Christchurch Earthquake and Cyclone Gabrielle have shown, in an

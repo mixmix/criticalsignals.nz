@@ -7,7 +7,7 @@ start_time: 10:00
 end_time: 19:30
 categories:
   - Workshop
-sign_up_link: https://events.humanitix.com/big-tech-unplug-install-party
+sign_up_link: https://events.humanitix.com/big-tech-unplug-install-party/tickets
 
 ---
 

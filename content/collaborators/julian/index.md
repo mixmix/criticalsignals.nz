@@ -3,14 +3,32 @@ title: "Julian Oliver"
 date: 2025-06-24
 draft: false
 # description: "a description"
-tags: ["space organiser"]
+# tags: ["space organiser"]
 ---
 
-Julian OliverAn award-winning electronic artist, educator and infrastructure activist, Julian is the co-author of the Critical Engineering Manifesto. He also co-directs Nīkau, a consultancy providing information and operations security support for front-line defenders of human rights and the environment. Julian has given numerous workshops and masterclasses worldwide in data forensics, creative hacking, computer networking, counter-surveillance, software art, object-oriented progamming, and radio.
+Julian Oliver is a Critical Engineer, educator, artist, and
+activist. His work has been exhibited at numerous museums, festivals
+and galleries worldwide, among them Transmediale, Ars Electronica,
+the Vienna Biennale, the Frankfurter Kunstverein, and the Japan
+Media Arts Festival. Lectures related to his work and ideas have
+been presented at many conferences and universities internationally,
+including The Chaos Communication Congress, Tate Modern, Princeton
+University, and the ZKM in Karlsruhe.
 
-https://julianoliver.com
-https://nikau.io
+Julian has received several awards, most notably the distinguished
+Golden Nica at Prix Ars Electronica 2011 for the project Newstweek
+(with Daniil Vasiliev). He is the co-author of the Critical
+Engineering Manifesto and member of the Critical Engineering Working
+Group.
 
+Julian has given numerous workshops and master classes in data
+forensics, creative hacking, computer networking,
+counter-surveillance, software art, object-oriented programming,
+radio, UNIX/Linux, (and previously) augmented reality, virtual
+architecture, video-game development and information visualisation
+worldwide. 
 
-
-Here's some **bold** text
+Alongside, Julian Oliver is co-director of
+[Nīkau](https://nikau.io), a global platform, information and
+operations security consultancy in service to NGOs, impact-driven
+organisations and grassroots movements.

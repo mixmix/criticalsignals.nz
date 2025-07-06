@@ -3,7 +3,7 @@ title: "Ira Bailey"
 date: 2025-06-22
 draft: false
 # description: "a description"
-tags: ["example", "tag"]
+# tags: ["example", "tag"]
 ---
 
 [Taranaki Whānui ki Te Upoko o Te Ika, Te Atiawa] 

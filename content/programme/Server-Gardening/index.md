@@ -7,7 +7,7 @@ start_time: 17:00
 end_time: 19:30
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/server-gardening-with-julian-oliver
+sign_up_link: https://events.humanitix.com/server-gardening-with-julian-oliver/tickets
 
 ---
 
