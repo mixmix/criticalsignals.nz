@@ -3,7 +3,7 @@ title: "Porirua Assembly on Climate"
 hosts:
   - "Cally O'Neill"
 date: 2025-07-14
-dateTBC: true
+dateTBC: true    # << this hides date, replaced with _Date to be confirmed_
 start_time: 17:00
 end_time: 19:00
 categories:
