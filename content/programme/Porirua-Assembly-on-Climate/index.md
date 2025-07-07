@@ -3,6 +3,7 @@ title: "Porirua Assembly on Climate"
 hosts:
   - "Cally O'Neill"
 date: 2025-07-14
+dateTBC: true
 start_time: 17:00
 end_time: 19:00
 categories:
@@ -11,11 +12,11 @@ sign_up_link: https://events.humanitix.com/porirua-assembly-on-climate/tickets
 
 ---
 
-*** **IMPORTANT** *** 
-
-The original date (July 16) is no longer viable. Monday 14th is proposed but not yet confirmed. 
+{{< alert cardColor=#235c2e >}}
+**IMPORTANT** -- The original date (July 16) is no longer viable.<br />
+Monday 14th is proposed but not yet confirmed.
 We will be in touch with registrants once we have a confirmed date.
-*****************
+{{< /alert >}}
 
 Cally O'Neill (pākehā) is one of the founders of Te Reo Ngā Tāngata/The People
 Speak, who have worked with Ngati Toa over several years on Te Tiriti-based
