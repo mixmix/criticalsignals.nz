@@ -4,6 +4,7 @@ date: 2025-06-08
 draft: false
 # description: "a description"
 tags: ["organisation"]
+draft: true # hide this entry for now
 ---
 
 Building a commons for the empowerment of commons everywhere, our network

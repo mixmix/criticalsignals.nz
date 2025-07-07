@@ -8,5 +8,5 @@ draft: false
 
 A content writer and researcher/evaluator. Experiences include Public Service,
 Adult Education, IT Strategy/Policy, Māori-Crown Relationships, Curriculum
-Development, Assessment Design, and Classroom Teac
+Development, Assessment Design, and Classroom Teaching.
 

@@ -2,6 +2,8 @@
 title: "BigTech Unplug Install Party"
 hosts:
   - "Julian Oliver"
+  - "Mix Irving"
+  - "Ira Bailey"
 date: 2025-09-10
 start_time: 10:00
 end_time: 19:30

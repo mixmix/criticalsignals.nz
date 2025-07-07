@@ -59,8 +59,9 @@
 <section class='partners'>
   <img src="/images/partners/cream_Logo_Goethe_Institut.svg">
   <img src="/images/partners/cream_victoria_logo.svg" >
-  <img src="/images/partners/cream_Massey_University_Logo.svg" >
   <img src="/images/partners/cream_Monash_University_logo.svg" >
+  <img src="/images/partners/cream_Massey_University_Logo.svg" >
+  <img src="/images/partners/cream_Toi_Aria_Logo.svg" >
 </section>
 
 <script>
@@ -150,12 +151,19 @@ function random (n) {
 
 /* Partners section */
 .partners {
-  margin: 6rem 0.5rem 4rem;
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  grid-gap: 3rem;
+  margin: 6rem -1rem 4rem -1rem;
+  max-width: calc(100% + 2rem);
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-content: center;
-  align-items: center;
+  gap: 3rem;
+}
+.partners img {
+  max-height: 5rem;
+  min-width: 25%;
+  max-width: calc(100% / 3 - 2rem);
 }
 
 /* Responsive styles for tablets and smaller screens */
@@ -188,7 +196,10 @@ function random (n) {
   }
 
   .partners {
-    grid-template-columns: repeat(2, auto);
+    gap: 2rem;
+  }
+  .partners img {
+    max-width: calc(100% / 2 - 2rem);
   }
 }
 

@@ -1,4 +1,3 @@
-<!-- modifiedfrom article-meta/basic.html -->
 {{/* Determine the correct context and scope */}}
 {{/* This allows for different logic depending on where the partial is called */}}
 {{ $context := . }}
@@ -13,33 +12,29 @@
   {{ $meta := newScratch }}
 
   {{/* Gather partials for this context */}}
-  {{/* {{ if .Params.showDate | default (.Site.Params.article.showDate | default true) }} */}}
-  {{/*   {{ $meta.Add "partials" (slice (partial "meta/date.html" .Date)) }} */}}
-  {{/* {{ else if and (eq $scope "single") (.Params.showDateOnlyInArticle | default (.Site.Params.article.showDateOnlyInArticle | default false)) }} */}}
-  {{/*   {{ $meta.Add "partials" (slice (partial "meta/date.html" .Date)) }} */}}
-  {{/* {{ end }} */}}
+  {{ $shouldShowDate := false }}
+  {{ if and (eq $scope "single") (.Params.showDateOnlyInArticle | default (.Site.Params.article.showDateOnlyInArticle | default false)) }}
+    {{ $shouldShowDate = true }}
+  {{ end }}
 
-  {{/* Copied + modified from meta/date: */}}
-  {{ if .Params.dateTBC }}
-    <time class='programme-time'>
-      <span class='date'>
-        <em>Date to be confirmed</em>
-      </span>
-    </time>
+  {{/* showDate has higher priority than showDateOnlyInArticle */}}
+  {{ if .Params.showDate | default (.Site.Params.article.showDate | default true) }}
+    {{ $shouldShowDate = true }}
   {{ else }}
-    <time class='programme-time' datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">
-      <span class='date'>
-        {{- i18n "article.date" (dict "Date" (partial "functions/date.html" .Date)) -}},
-      </span>
+    {{ $shouldShowDate = false }}
+  {{ end }}
 
-      <span class='start-time'>{{ .Params.start_time }}</span>
-      <span class='dash'>-</span>
-      <span class='end-time'>{{ .Params.end_time }}</span>
-    </time>
+  {{ if $shouldShowDate }}
+    {{ if .Params.dateTBC }}
+      <em>Date to be confirmed</em>
+    {{ else }}
+      {{ $meta.Add "partials" (slice (partial "meta/date.html" .Date)) }}
+    {{ end }}
   {{ end }}
 
   {{ if and (.Params.showDateUpdated | default (.Site.Params.article.showDateUpdated | default false)) (ne (partial
-  "functions/date.html" .Date) (partial "functions/date.html" .Lastmod)) (gt (.Lastmod | time.Format "2006") 1) }}
+    "functions/date.html" .Date) (partial "functions/date.html" .Lastmod)) (gt (.Lastmod | time.Format "2006") 1)
+  }}
     {{ $meta.Add "partials" (slice (partial "meta/date-updated.html" .Lastmod)) }}
   {{ end }}
 
@@ -47,8 +42,7 @@
     {{ $meta.Add "partials" (slice (partial "meta/word-count.html" .)) }}
   {{ end }}
 
-  {{ if and (.Params.showReadingTime | default (.Site.Params.article.showReadingTime | default true)) (ne .ReadingTime 0)
-  }}
+  {{ if and (.Params.showReadingTime | default (.Site.Params.article.showReadingTime | default true)) (ne .ReadingTime 0) }}
     {{ $meta.Add "partials" (slice (partial "meta/reading-time.html" .)) }}
   {{ end }}
 
@@ -88,74 +82,48 @@
   {{ if .Params.showAuthorsBadges | default (.Site.Params.article.showAuthorsBadges | default false) }}
     <div class="flex flex-row flex-wrap items-center">
       {{ range $taxonomy, $terms := .Site.Taxonomies }}
-      {{ if (eq $taxonomy "authors")}}
-      {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
-      {{ range $i, $a := $context.GetTerms $taxonomy }}
-        {{ if not (eq $i 0) }} ,&nbsp; {{ end }} <div style="cursor: pointer;" onclick="window.open({{ $a.RelPermalink }},'_self');return false;">{{ $a.LinkTitle }}</div>
-      {{ end }}
-      {{ end }}
-      {{ end }}
+        {{ if (eq $taxonomy "authors") }}
+          {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+            {{ range $i, $a := $context.GetTerms $taxonomy }}
+              {{ if not (eq $i 0) }},&nbsp;{{ end }}
+              <div class="cursor-pointer" onclick="window.open({{ $a.RelPermalink }},'_self');return false;">
+                {{ $a.LinkTitle }}
+              </div>
+            {{ end }}
+          {{ end }}
+        {{ end }}
       {{ end }}
     </div>
   {{ end }}
 
   {{/* Output taxonomies */}}
   {{ if .Params.showTaxonomies | default (.Site.Params.article.showTaxonomies | default false) }}
-  <div class="flex flex-row flex-wrap items-center">
-    {{ range $taxonomy, $terms := .Site.Taxonomies }}
-    {{ if and (not (eq $taxonomy "authors")) (not (eq $taxonomy "series"))}}
-    {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
-    {{ range $context.GetTerms $taxonomy }}
-    <span style="margin-top:0.5rem" class="mr-2" onclick="window.open({{ .RelPermalink }},'_self');return false;">
-      {{ partial "badge.html" .LinkTitle }}
-    </span>
-    {{ end }}
-    {{ end }}
-    {{ end }}
-    {{ end }}
-  </div>
+    <div class="flex flex-row flex-wrap items-center">
+      {{ range $taxonomy, $terms := .Site.Taxonomies }}
+        {{ if and (not (eq $taxonomy "authors")) (not (eq $taxonomy "series")) }}
+          {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+            {{ range $context.GetTerms $taxonomy }}
+              <span
+                class="mr-2 margin-top-[0.5rem]"
+                onclick="window.open({{ .RelPermalink }},'_self');return false;">
+                {{ partial "badge.html" .LinkTitle }}
+              </span>
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </div>
   {{ end }}
 
   {{/* Output only category */}}
   {{ if .Params.showCategoryOnly | default (.Site.Params.article.showCategoryOnly | default false) }}
     <div class="flex flex-row flex-wrap items-center">
       {{ range (.GetTerms "categories") }}
-      <span style="margin-top:0.5rem" class="mr-2" onclick="window.open({{ .RelPermalink }},'_self');return false;">
-        {{ partial "badge.html" .LinkTitle }}
-      </span>
-    {{ end }}
+        <span class="mr-2 margin-top-[0.5rem]" onclick="window.open({{ .RelPermalink }},'_self');return false;">
+          {{ partial "badge.html" .LinkTitle }}
+        </span>
+      {{ end }}
     </div>
   {{ end }}
 
 {{ end }}
-
-<style>
-.programme-time {
-  text-align: center;
-  display: grid;
-  grid-template-columns: auto auto auto auto auto;
-  justify-content: start;
-  align-items: baseline;
-}
-.programme-time .emoji {
-  font-size: 1.3rem;
-  margin-right: 0.2rem;
-}
-.programme-time .date {
-  font-size: 1.2rem;
-  font-weight: bold;
-
-  margin-right: 0.5rem;
-}
-.programme-time .start-time {
-  font-size: 0.8rem;
-}
-.programme-time .dash {
-  font-size: 0.8rem;
-  margin: 0 3px;
-}
-.programme-time .end-time {
-  font-size: 0.8rem;
-}
-
-</style>
