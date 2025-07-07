@@ -21,8 +21,8 @@
         <a href="{{ $collaboratorPage.Permalink }}" class="programme-host">
           {{ $image := $collaboratorPage.Resources.GetMatch "featured.*" }}
           {{ if $image }}
-            <!-- scale image down to 60 wide -->
-            {{ $resizedImage := $image.Resize "60x" }}
+            <!-- scale image down to 120 wide -->
+            {{ $resizedImage := $image.Resize "120x" }}
             <img
               src="{{ $resizedImage.RelPermalink }}"
               alt="{{ $collaboratorPage.Title }}"
