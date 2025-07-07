@@ -11,7 +11,8 @@ sign_up_link: https://events.humanitix.com/porirua-assembly-on-climate/tickets
 
 ---
 
-*** IMPORTANT *** 
+*** **IMPORTANT** *** 
+
 The original date (July 16) is no longer viable. Monday 14th is proposed but not yet confirmed. 
 We will be in touch with registrants once we have a confirmed date.
 *****************
