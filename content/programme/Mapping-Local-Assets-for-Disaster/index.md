@@ -17,12 +17,6 @@ Join us to create and map together our shared knowledge and assets to build coll
 
 Anna Brown is a research co-lead of the project [Ngā Ngaru Wakapuke](https://ngangaruwakapuke.nz/); a climate and disaster research project. As part of this mapping exercise she will share her work with several communities in Tairāwhiti, Wairarapa and Ōtautahi/Christchurch around mapping, disaster resilience and storytelling. She describes maps as more than locational tools; as a way to build a common understanding of shared assets.
 
- 
-
 Anna will lead us through an exercise to record Wellington CBD’s community points of interest, that will be added to over the course of Critical Signals.
 
- ---
-
-**About the host**
-
-Anna Brown is a designer, researcher and educator. She is Professor of Design and Public Good at Massey University’s College of Creative Arts. She founded and leads [Toi Āria: Design for Public Good](https://www.toiaria.org/). She uses design to create positive change by bringing together organisations, government, and communities — especially making sure the people most affected by decisions have a say in shaping them.
+ 
