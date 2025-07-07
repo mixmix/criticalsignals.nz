@@ -23,7 +23,7 @@
         {{ .Title | emojify }}
       </h1>
 
-      <div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+      <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
         <!-- {{ partial "article-meta/basic.html" (dict "context" . "scope" "single") }} -->
         {{ partial "article-meta/basic-programme.html" (dict "context" . "scope" "single") }}
       </div>
@@ -89,7 +89,7 @@
       <div class="min-w-0 min-h-0 max-w-fit">
         {{ partial "series/series.html" . }}
 
-        <div class="article-content max-w-prose mb-20">
+        <div class="article-content max-w-prose mb-0">
           {{ .Content }}
 
           {{ with .Params.sign_up_link }}
@@ -103,6 +103,9 @@
           {{ else }}
             Registration coming soon!
           {{ end }}
+
+          {{ partial "article-meta/programme-hosts" . }}
+
 
           {{ $defaultReplyByEmail := .Site.Params.replyByEmail }}
           {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}

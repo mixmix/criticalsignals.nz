@@ -1,0 +1,79 @@
+{{ $context := .}}
+
+<section class="programme-hosts-container">
+  {{ $hosts := $context.Params.hosts }} <!-- Get the 'hosts' array from the frontmatter -->
+  <h3>
+    {{ if eq (len $hosts) 1 }}
+      Host
+    {{ else }}
+      Hosts
+    {{ end }}
+  </h3>
+  <div class="programme-hosts">
+    {{ range $hosts }}
+      {{ $host := . }} <!-- Loop through each host name in the array -->
+
+      <!-- Check for a collaborator in the content/collaborators/ directory that matches the host name -->
+      {{ $collaboratorPage :=  index (where (where $context.Site.RegularPages "Section" "collaborators") "Title" $host) 0 }}
+
+      <!-- If a collaborator page is found, insert the name and image -->
+      {{ if $collaboratorPage }}
+        <a href="{{ $collaboratorPage.Permalink }}" class="programme-host">
+          {{ $image := $collaboratorPage.Resources.GetMatch "featured.*" }}
+          {{ if $image }}
+            <!-- scale image down to 60 wide -->
+            {{ $resizedImage := $image.Resize "60x" }}
+            <img
+              src="{{ $resizedImage.RelPermalink }}"
+              alt="{{ $collaboratorPage.Title }}"
+              class="nozoom"
+            />
+          {{ end }}
+          <div>{{ $collaboratorPage.Title }}</div>
+        </a>
+      {{ else }}
+        <div class="programme-host">
+          <div
+            style="background:#f8f4ce; width: 100%; height: 100%"
+          ></div>
+          <div>{{ $host }}</div>
+        </div>
+
+      {{ end }}
+
+    {{ end }}
+  </div>
+</section>
+
+<style>
+
+.programme-hosts-container {
+  margin-top: 7rem;
+}
+.programme-hosts-container h3 {
+  font-weight: 300;
+}
+.programme-hosts {
+  display: grid;
+  justify-content: start;
+  align-content: start;
+  grid-gap: 1rem 2rem;
+  {{/* grid-auto-flow: column; */}}
+}
+.programme-host {
+  --size: 60px;
+
+  display: grid;
+  grid-template-columns: var(--size) auto;
+  grid-template-rows: var(--size);
+  justify-content: start;
+  align-content: center;
+  align-items: end;
+  grid-gap: 0.5rem;
+}
+
+.programme-host > img {
+  {{/* border-radius: 50%; */}}
+  margin: 0;
+}
+</style>
