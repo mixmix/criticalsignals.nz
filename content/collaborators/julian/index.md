@@ -6,8 +6,8 @@ draft: false
 # tags: ["space organiser"]
 ---
 
-Julian Oliver is a Critical Engineer, educator, artist, and
-activist. His work has been exhibited at numerous museums, festivals
+[Julian Oliver](https://julianoliver.com) is a Critical Engineer, educator, artist, and
+infrastructure activist. His work has been exhibited at numerous museums, festivals
 and galleries worldwide, among them Transmediale, Ars Electronica,
 the Vienna Biennale, the Frankfurter Kunstverein, and the Japan
 Media Arts Festival. Lectures related to his work and ideas have
@@ -22,7 +22,7 @@ Engineering Manifesto and member of the Critical Engineering Working
 Group.
 
 Julian has given numerous workshops and master classes in data
-forensics, creative hacking, computer networking,
+forensics, creative hacking, computer networking, disaster-tolerant communications,
 counter-surveillance, software art, object-oriented programming,
 radio, UNIX/Linux, (and previously) augmented reality, virtual
 architecture, video-game development and information visualisation
