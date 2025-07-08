@@ -49,7 +49,18 @@ Critical Signals offers a space to gather, experiment, and prepare. Open daily
 and free to all, it asks not just how we survive disruption, but how we create
 infrastructures for living — with care, agency, and creativity.
 
+
+<p style="margin-top: 2rem">
+  <a href="/programme" class="homepage-programme-link" style="padding: .5rem;" >
+    Read Programme
+  </a>
+</p>
+
+
+<div style="margin-top: 6rem;"></div>
+
 <!-- Newsletter Signup Form -->
+<!-- TODO extract into a partial, make /contact page -->
 <div class="newsletter-section" id="signup">
   <h3>Stay Updated</h3>
   <p>Get updates on workshops, events, and our 3-month exploration of critical systems:</p>
