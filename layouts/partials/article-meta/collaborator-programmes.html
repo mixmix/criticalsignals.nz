@@ -1,0 +1,42 @@
+{{ $name := .Params.Title }} <!-- Get the collaborator name from the current page -->
+{{ $programmes := where .Site.Pages "Type" "programme" }} <!-- Get all pages of type 'programme' -->
+
+{{ $matchingProgrammes := slice }} <!-- Initialize an empty slice to collect matching programmes -->
+{{ range $programmes }}
+  {{ if in .Params.hosts $name }} <!-- Check if the current collaborator is in the 'hosts' array -->
+    {{ $matchingProgrammes = $matchingProgrammes | append . }} <!-- Add matching programme to the collection -->
+  {{ end }}
+{{ end }}
+
+<!-- Check how many matching programmes there are -->
+{{ $count := len $matchingProgrammes }}
+
+<!-- Render title based on the count -->
+{{ if gt $count 1 }}
+  <section class="collaborator-programmes-container">
+    <h3>Programme entries</h2>
+    <ul>
+      {{ range $matchingProgrammes }}
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+      {{ end }}
+    </ul>
+  </section>
+{{ end }}
+
+<style>
+  .collaborator-programmes-container {
+    margin-top: 10rem;
+  }
+
+  .collaborator-programmes-container > h3 {
+
+  }
+
+  .collaborator-programmes-container > ul {
+
+  }
+
+  .collaborator-programmes-container > ul > li {
+
+  }
+</style>

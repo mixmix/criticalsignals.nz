@@ -107,6 +107,9 @@
 
         <div class="article-content max-w-prose mb-20">
           {{ .Content }}
+
+          {{ partial "article-meta/collaborator-programmes" . }}
+
           {{ $defaultReplyByEmail := .Site.Params.replyByEmail }}
           {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}
           {{ if $replyByEmail }}
