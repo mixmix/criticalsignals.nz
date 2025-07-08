@@ -11,8 +11,54 @@ html {
   font-family: regular_font;
 }
 
+:root {
+  --critical-green: rgb(25, 64, 33);
+  --critical-cream: rgb(248, 244, 206);
+  --critical-highlight: #2a5b34; /* light green */
+  /* --critical-highlight: #3e3e3e; /* grey */ */
+  /* --critical-highlight: rgba(248, 244, 206, 0.2); */
+}
+
+/* < LINK_STYLING > */
+
+/* links in articles */
+p > a,
+/* links in the collaborators programme sections */
+li > a, 
+/* links on a programme "hosts" section */
+a > .programme-host > div,
+/* links on the programmes/ list page */
+div[href^="/programme/"],
+/* the nav items along the top */
+nav > a > p
+{
+  background: var(--critical-highlight);
+  padding: .1rem .2rem;
+}
+
+/* links on the programmes/ list page */
+div[href^="/programme/"] { 
+  padding: .2rem .4rem;
+}
+/* the nav items along the top */
+nav > a > p {
+  padding: .2rem .4rem;
+}
+nav > a > p[title=""] {
+  display: none;
+}
+/* the nav items in mobile */
+#menu-wrapper > ul > li > a {
+  padding: .2rem .4rem;
+}
+#menu-wrapper > ul > li > a[href=""] {
+  display: none;
+}
+
+/* <\ LINK STYLING > */
+
 a.contact-link {
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }
 
 /* Newsletter signup section styling */
