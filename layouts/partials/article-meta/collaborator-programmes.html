@@ -12,7 +12,7 @@
 {{ $count := len $matchingProgrammes }}
 
 <!-- Render title based on the count -->
-{{ if gt $count 1 }}
+{{ if gt $count 0 }}
   <section class="collaborator-programmes-container">
     <h3>Programme entries</h2>
     <ul>
@@ -25,7 +25,7 @@
 
 <style>
   .collaborator-programmes-container {
-    margin-top: 10rem;
+    margin-top: 6rem;
   }
 
   .collaborator-programmes-container > h3 {
@@ -39,5 +39,8 @@
 
   .collaborator-programmes-container > ul > li {
     padding-inline-start: 0;
+  }
+  .collaborator-programmes-container > ul > li > a {
+    padding: .3rem .4rem;
   }
 </style>
