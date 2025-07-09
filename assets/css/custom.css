@@ -29,7 +29,8 @@ p > a
 /* links in the collaborators programme sections */
 li > a
 {
-    text-decoration: underline dotted;
+  background: var(--critical-highlight);
+  padding: .1rem .2rem;
 }
 
 /* links on a programme "hosts" section */
