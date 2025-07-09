@@ -77,6 +77,10 @@ nav > a > p[title=""],
 /* end Link Styling */
 
 
+p a { 
+    text-decoration: underline dotted;
+}
+
 /* Newsletter signup section styling */
 .newsletter-section {
   background: rgba(25, 64, 33, 0.1);
