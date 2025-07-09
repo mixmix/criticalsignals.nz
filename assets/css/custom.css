@@ -22,9 +22,16 @@ html {
 /* < LINK_STYLING > */
 
 /* links in articles */
-p > a,
+p > a
+{
+    text-decoration: underline dotted;
+}
 /* links in the collaborators programme sections */
-li > a, 
+li > a
+{
+    text-decoration: underline dotted;
+}
+
 /* links on a programme "hosts" section */
 a > .programme-host > div,
 /* links on the programmes/ list page */
