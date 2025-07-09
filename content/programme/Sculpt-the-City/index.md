@@ -23,7 +23,7 @@ to work with others.
 The clay city model of the Wellington CBD you help create will be a central
 reference point throughout the Critical Signals series. 
 
-We suggest making a koha of around $5 to cover materials used in this event. 
+We suggest making a koha of around $5 to cover materials used in this event.
 
 
 ## What to bring
@@ -32,7 +32,3 @@ We suggest making a koha of around $5 to cover materials used in this event.
 - Your hands
 - Koha 
 
----
-**About the host** 
-
-Mairéad de Róiste is an Associate Professor at Te Herenga Waka Victoria University of Wellington, specialising in geospatial science. Her work uses maps, spatial data, and hands-on crafting methods to help people understand places, make decisions, and communicate complex ideas clearly. She is passionate about creative, accessible approaches to sharing and understanding geographic information. She also shares her work and that of her collaborators and students in the [SpatialThink Lab on Instagram](https://www.instagram.com/spatialthinklab/). 

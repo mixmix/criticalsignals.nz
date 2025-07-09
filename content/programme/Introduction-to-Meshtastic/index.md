@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Meshtastic"
 hosts:
-  - Mairéad
+  - "Mairéad de Róiste"
 date: 2025-07-31
 start_time: 17:00
 end_time: 19:30
