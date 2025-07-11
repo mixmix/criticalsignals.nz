@@ -1,5 +1,5 @@
 ---
-title: "Project Launch"
+title: "Project Launch Party"
 hosts:
   - "Jessica Hutchinson"
   - "Sophie Jerram"
