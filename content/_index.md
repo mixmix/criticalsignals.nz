@@ -49,7 +49,18 @@ Critical Signals offers a space to gather, experiment, and prepare. Open daily
 and free to all, it asks not just how we survive disruption, but how we create
 infrastructures for living — with care, agency, and creativity.
 
+
+<p style="margin-top: 2rem">
+  <a href="/programme" class="homepage-programme-link" style="padding: .5rem;" >
+    Read Programme
+  </a>
+</p>
+
+
+<div style="margin-top: 6rem;"></div>
+
 <!-- Newsletter Signup Form -->
+<!-- TODO extract into a partial, make /contact page -->
 <div class="newsletter-section" id="signup">
   <h3>Stay Updated</h3>
   <p>Get updates on workshops, events, and our 3-month exploration of critical systems:</p>
@@ -84,14 +95,14 @@ infrastructures for living — with care, agency, and creativity.
   
   <p style="margin-top: 2rem; margin-bottom: 0; font-size: 12px; opacity: 0.7; line-height: 1.4;">
     We use
-    <a href="https://loops.so/privacy" target="_blank" rel="noopener noreferrer" style="color: rgb(248, 244, 206); text-decoration: underline;">Loops.so</a>
+    <a href="https://loops.so/privacy" target="_blank" rel="noopener noreferrer">Loops.so</a>
     for our newsletter. View their privacy policy for details on how your email
     and associated data is handled.
   </p>
   
   <p style="margin-top: 4px; font-size: 14px; opacity: 0.8;">
     Or contact us directly: 
-    <a href='mailto:contact@criticalsignals.nz' class="contact-link" style="color: rgb(248, 244, 206); text-decoration: underline;">
+    <a href='mailto:contact@criticalsignals.nz' class="contact-link" style="">
     contact@criticalsignals.nz
     </a>
   </p>

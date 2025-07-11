@@ -1,7 +1,7 @@
 ---
 title: "Seeding Hope - Rebuilding our Broken Food System"
 hosts:
-  - "Jessica Hutchings"
+  - "Dr. Jessica Hutchings"
 date: 2025-07-19
 start_time: 10:00
 end_time: 12:00

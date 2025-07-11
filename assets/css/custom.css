@@ -11,8 +11,74 @@ html {
   font-family: regular_font;
 }
 
-a.contact-link {
-  text-decoration: underline;
+:root {
+  --critical-green: rgb(25, 64, 33);
+  --critical-cream: rgb(248, 244, 206);
+  --critical-highlight: #2a5b34; /* light green */
+  /* --critical-highlight: #3e3e3e; /* grey */ */
+  /* --critical-highlight: rgba(248, 244, 206, 0.2); */
+}
+
+/*
+  Link Styling
+  ============
+
+  Nav bar
+  -------
+  nav > a > p                 = in desktop
+  #menu-wrapper > ul > li > a = in mobile
+
+
+  List pages
+  ----------
+  div[href^="/programme/"]    = in programme list page
+
+
+  Single pages
+  ------------
+  p > a                       = in general article body
+  li > a                      = in a collaborator's "programme" section
+  a.programme-host > div      = in a programme event's "hosts" section
+
+*/
+
+p > a {
+  text-decoration: underline dotted;
+}
+li > a {
+  background: var(--critical-highlight);
+  padding: .1rem .2rem;
+}
+
+nav > a > p,
+.homepage-programme-link,
+div[href^="/programme"],
+a.programme-host > div
+{
+  background: var(--critical-highlight);
+  text-decoration: none;
+  padding: .1rem .3rem;
+}
+
+
+nav > a > p,
+div[href^="/programme"],
+#menu-wrapper > ul > li > a {
+  padding: .2rem .4rem;
+}
+
+/* misc empty links */
+nav > a > p[title=""],
+#menu-wrapper > ul > li > a[href=""]
+{
+  display: none;
+}
+
+/* end Link Styling */
+
+
+p a { 
+    text-decoration: underline dotted;
 }
 
 /* Newsletter signup section styling */

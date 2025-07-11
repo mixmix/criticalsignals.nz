@@ -93,15 +93,20 @@
           {{ .Content }}
 
           {{ with .Params.sign_up_link }}
-            <a
-              href="{{ . }}"
-              class="programme-register-link !rounded-md px-4 py-2 !no-underline"
-            >
-              Register
-            </a>
+            <p class="programme-register-link">
+              <a
+                href="{{ . }}"
+                {{/* class="programme-register-link !rounded-md px-4 py-2 !no-underline" */}}
+                class=" px-4 py-2 !no-underline"
+              >
+                Register
+              </a>
+            </p>
 
           {{ else }}
-            Registration coming soon!
+            <div style="font-weight: bold; text-decoration: underline;">
+              Registration coming soon!
+            </div>
           {{ end }}
 
           {{ partial "article-meta/programme-hosts" . }}
@@ -189,11 +194,14 @@
   </article>
 
   <style>
-  .programme-register-link {
-    background: rgb(248, 244, 206);
-    color: rgb(25, 64, 33) !important; 
-    text-transform: uppercase;
-  }
+    .programme-register-link {
+      margin-top: 2rem;
+    }
+    .programme-register-link a {
+      background: rgb(248, 244, 206);
+      color: rgb(25, 64, 33) !important; 
+      text-transform: uppercase;
+    }
   </style>
 {{ end }}
 
