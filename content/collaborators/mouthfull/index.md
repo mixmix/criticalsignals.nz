@@ -7,7 +7,7 @@ tags: ["organisation"]
 ---
 
 __
-MouthfullMouthfull is an arts organisation and online radio station
+Mouthfull is an arts organisation and online radio station
 experimenting with sound, space, and connectivity. 
 
 https://Mouthfull.live
