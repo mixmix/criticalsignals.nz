@@ -1,5 +1,5 @@
 ---
-title: "Ed Stafford"
+title: "Ed Strafford"
 date: 2025-06-12
 draft: false
 # description: "a description"
