@@ -1,7 +1,7 @@
 ---
 title: "Project Launch Party"
 hosts:
-  - "Jessica Hutchinson"
+  - "Dr. Jessica Hutchings"
   - "Sophie Jerram"
   - "Julian Oliver"
   - "Ira Bailey"
