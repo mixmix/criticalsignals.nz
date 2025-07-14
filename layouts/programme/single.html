@@ -92,6 +92,8 @@
         <div class="article-content max-w-prose mb-0">
           {{ .Content }}
 
+          {{ with .Params.no_link }}
+            
           {{ with .Params.sign_up_link }}
             <p class="programme-register-link">
               <a
