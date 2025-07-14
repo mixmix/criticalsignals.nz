@@ -92,10 +92,6 @@
         <div class="article-content max-w-prose mb-0">
           {{ .Content }}
 
-          {{ with .Params.no_link }}
-             <hr style="height:2px;border-width:0;color:gray;background-color:gray"> 
-          {{ end }}
-            
           {{ with .Params.sign_up_link }}
             <p class="programme-register-link">
               <a
@@ -108,7 +104,7 @@
             </p>
 
           {{ else }}
-              {{ if not .Params.sign_up_link }}
+              {{ if not .Params.no_link }}
                 <div style="font-weight: bold; text-decoration: underline;">
                   Registration coming soon!
                 </div>
