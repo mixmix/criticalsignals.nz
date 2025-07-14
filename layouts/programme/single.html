@@ -93,6 +93,8 @@
           {{ .Content }}
 
           {{ with .Params.no_link }}
+             <hr style="height:2px;border-width:0;color:gray;background-color:gray"> 
+          {{ end }}
             
           {{ with .Params.sign_up_link }}
             <p class="programme-register-link">
