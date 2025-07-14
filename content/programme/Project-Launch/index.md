@@ -13,6 +13,8 @@ start_time: 17:30
 end_time: 19:30
 categories:
   - Event
+no_link:
+  - "off"
 ---
 
 You are invited to join us for the launch of Critical Signals, a three-month public space for learning, imagining, and practising how sovereignty, resilience and collective care will shape our futures in times of rapid change.
