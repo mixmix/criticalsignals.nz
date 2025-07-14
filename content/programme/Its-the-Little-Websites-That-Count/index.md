@@ -7,7 +7,7 @@ start_time: 17:15
 end_time: 18:00
 categories:
   - Seminar
-sign_up_link: 
+sign_up_link: https://events.humanitix.com/its-the-little-websites-that-count/tickets
 
 ---
 
