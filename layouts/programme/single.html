@@ -108,9 +108,11 @@
             </p>
 
           {{ else }}
-            <div style="font-weight: bold; text-decoration: underline;">
-              Registration coming soon!
-            </div>
+              {{ if not with .Params.sign_up_link }}
+                <div style="font-weight: bold; text-decoration: underline;">
+                  Registration coming soon!
+                </div>
+              {{ end }}
           {{ end }}
 
           {{ partial "article-meta/programme-hosts" . }}
