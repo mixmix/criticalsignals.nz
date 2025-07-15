@@ -1,0 +1,125 @@
+{{ define "main" }}
+  <article>
+    <header class="mt-5 max-w-prose">
+      <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+        {{ .Title | emojify }}
+      </h1>
+    </header>
+
+    <section class="mt-8 prose max-w-none dark:prose-invert">
+      {{ .Content }}
+    </section>
+    
+    <!-- Calendar Controls -->
+    <div class="mt-8 mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:justify-between">
+      <!-- Left: Spacer -->
+      <div style="flex: 1 1 auto;"></div>
+      
+      <!-- Center: Navigation cluster -->
+      <div class="flex items-center justify-center space-x-4" style="flex: 0 0 auto; min-width: 400px;">
+        <button id="prevMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
+          <span class="text-base font-medium">← Previous</span>
+        </button>
+        <h2 id="currentMonth" class="text-2xl font-bold text-neutral-800 dark:text-neutral text-center" style="min-width: 180px; padding: 8px 10px;"></h2>
+        <button id="nextMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
+          <span class="text-base font-medium">Next →</span>
+        </button>
+      </div>
+      
+      <!-- Right: View Controls -->
+      <div class="flex items-center justify-end" style="flex: 1 1 auto;">
+        <button id="listViewBtn" style="background-color: #2a5b34; color: rgb(248, 244, 206); text-decoration: none; padding: 0.2rem 0.4rem; font-size: 16px; font-weight: 500; border: none; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+          List View
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+      <div class="calendar-header border-b border-neutral-200 dark:border-neutral-700" style="background-color: rgb(249, 246, 216);">
+        <div class="calendar-header-day">Sunday</div>
+        <div class="calendar-header-day">Monday</div>
+        <div class="calendar-header-day">Tuesday</div>
+        <div class="calendar-header-day">Wednesday</div>
+        <div class="calendar-header-day">Thursday</div>
+        <div class="calendar-header-day">Friday</div>
+        <div class="calendar-header-day">Saturday</div>
+      </div>
+      <div id="calendarGrid" class="calendar-grid" style="background-color: rgb(252, 251, 235);">
+        <!-- Calendar days will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="cs-modal-overlay" style="display: none;">
+      <div class="cs-modal-content">
+        <div class="cs-modal-inner">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h3 id="modalTitle" style="font-size: 20px; font-weight: bold; color: rgb(248, 244, 206); margin: 0; line-height: 1.4;"></h3>
+            <button id="closeModal" style="color: rgb(248, 244, 206); background: none; border: none; font-size: 28px; cursor: pointer; padding: 0; line-height: 1; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">×</button>
+          </div>
+          <div id="modalContent">
+            <!-- Event details will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div id="listView" class="hidden mt-8">
+      <h3 style="font-size: 20px; font-weight: bold; color: rgb(248, 244, 206); margin-bottom: 16px;">Upcoming Events</h3>
+      <div id="eventList" style="display: flex; flex-direction: column; gap: 0;">
+        <!-- Event list will be populated by JavaScript -->
+      </div>
+    </div>
+  </article>
+
+  <!-- Generate Events Data for JavaScript -->
+  {{ $events := slice }}
+  
+  <!-- Get all programme events (excluding the section page itself) -->
+  {{ range .Site.AllPages }}
+    {{ if and (in .RelPermalink "/programme/") (ne .Kind "section") }}
+      {{ $eventData := dict 
+        "title" .Title 
+        "date" .Params.date 
+        "startTime" .Params.start_time 
+        "endTime" .Params.end_time 
+        "hosts" .Params.hosts 
+        "categories" .Params.categories 
+        "signUpLink" .Params.sign_up_link 
+        "dateTBC" .Params.dateTBC 
+        "url" .RelPermalink 
+        "summary" .Summary 
+        "content" .Content 
+      }}
+      {{ $events = $events | append $eventData }}
+    {{ end }}
+  {{ end }}
+
+  <!-- Generate Collaborators Data for JavaScript -->
+  {{ $collaborators := dict }}
+  {{ range where .Site.RegularPages "Section" "collaborators" }}
+    {{ $image := .Resources.GetMatch "featured.*" }}
+    {{ $imageURL := "" }}
+    {{ if $image }}
+      {{ $resizedImage := $image.Resize "120x" }}
+      {{ $imageURL = $resizedImage.RelPermalink }}
+    {{ end }}
+    {{ $collaborators = merge $collaborators (dict .Title (dict "name" .Title "image" $imageURL "url" .RelPermalink)) }}
+  {{ end }}
+
+  <!-- Data for JavaScript -->
+  <script type="application/json" id="events-data">{{ $events | jsonify | safeJS }}</script>
+  <script type="application/json" id="collaborators-data">{{ $collaborators | jsonify | safeJS }}</script>
+
+  <!-- Include Calendar JavaScript -->
+  {{ $calendar := resources.Get "js/calendar.js" }}
+  {{ if $calendar }}
+    {{ $calendarJS := $calendar | minify }}
+    <script src="{{ $calendarJS.RelPermalink }}" defer></script>
+  {{ else }}
+    <!-- Fallback for development -->
+    <script src="/js/calendar.js" defer></script>
+  {{ end }}
+{{ end }} 

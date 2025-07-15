@@ -8,6 +8,12 @@ identifier = "smADjJPJrg"
 weight = 10
 
 [[main]]
+name = "Calendar"
+pageRef = "calendar"
+identifier = "calendar"
+weight = 15
+
+[[main]]
 name = "Collaborators"
 pageRef = "collaborators"
 identifier = "tmADjJPJrg"
