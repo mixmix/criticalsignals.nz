@@ -67,28 +67,45 @@
     {{ $groupByYear := and (not $orderByWeight) $groupByYear }}
 
     {{ if not $cardView }}
-      <section class="space-y-10 w-full">
-        {{ if not $orderByWeight }}
-          {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
-            {{ if $groupByYear }}
-              <h2 class="mt-12 text-2xl font-bold text-neutral-700 first:mt-8 dark:text-neutral-300">
-                {{ .Key }}
-              </h2>
-            {{ end }}
+      <!-- <section class="space-y-10 w-full"> -->
+      <!--   {{ if not $orderByWeight }} -->
+      <!--     {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }} -->
+      <!--       {{ if $groupByYear }} -->
+      <!--         <h2 class="mt-12 text-2xl font-bold text-neutral-700 first:mt-8 dark:text-neutral-300"> -->
+      <!--           {{ .Key }} -->
+      <!--         </h2> -->
+      <!--       {{ end }} -->
 
-            {{ range .Pages }}
+      <!--       {{ range .Pages }} -->
+      <!--         {{ partial "article-link/simple-programme.html" . }} -->
+      <!--       {{ end }} -->
+      <!--     {{ end }} -->
+
+      <!--   {{ else }} -->
+      <!--     {{ range (.Paginate (.Pages.ByWeight)).Pages }} -->
+      <!--       {{ partial "article-link/simple-programme.html" . }} -->
+      <!--     {{ end }} -->
+
+      <!--   {{ end }} -->
+      <!-- </section> -->
+      <section class="space-y-10 w-full">
+        {{ range (.Pages.GroupByDate "2006").Reverse }} <!-- Group by year -->
+          <h2 class="mt-12 text-2xl font-bold text-neutral-700 first:mt-8 dark:text-neutral-300">
+            {{ .Key }} <!-- Year -->
+          </h2>
+
+          {{ range (.Pages.GroupByDate "2006-01").Reverse }} <!-- Group by month within the year -->
+            <h3 class="mt-6 text-xl font-semibold text-neutral-600 dark:text-neutral-400">
+              {{ printf "%s-01" .Key | time | time.Format "January" }}
+            </h3>
+
+            {{ range .Pages.Reverse }}
               {{ partial "article-link/simple-programme.html" . }}
             {{ end }}
           {{ end }}
-
-        {{ else }}
-          {{ range (.Paginate (.Pages.ByWeight)).Pages }}
-            {{ partial "article-link/simple-programme.html" . }}
-          {{ end }}
-
         {{ end }}
-      </section>
 
+      </section>
 
     {{ else }}
       <!-- {{ if $groupByYear }} -->
@@ -142,11 +159,11 @@
     {{ end }}
 
   {{ else }}
-    <section class="mt-10 prose dark:prose-invert">
-      <p class="py-8 border-t">
-        <em>{{ i18n "list.no_articles" | emojify }}</em>
-      </p>
-    </section>
+  <section class="mt-10 prose dark:prose-invert">
+    <p class="py-8 border-t">
+      <em>{{ i18n "list.no_articles" | emojify }}</em>
+    </p>
+  </section>
   {{ end }}
 
   {{ partial "pagination.html" . }}
