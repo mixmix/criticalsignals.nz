@@ -2,6 +2,7 @@
   font-family: regular_font;
   src: url('/fonts/Helvetica.ttf');
 }
+
 @font-face {
   font-family: bold_font;
   src: url('/fonts/Helvetica-Bold.ttf');
@@ -14,9 +15,29 @@ html {
 :root {
   --critical-green: rgb(25, 64, 33);
   --critical-cream: rgb(248, 244, 206);
-  --critical-highlight: #2a5b34; /* light green */
-  /* --critical-highlight: #3e3e3e; /* grey */ */
-  /* --critical-highlight: rgba(248, 244, 206, 0.2); */
+  --critical-highlight: #2a5b34;
+  /* the following vars makes the theme body's spacing settings available to our
+    custom css. so it can be applied or removed for individual elements */
+
+  /* the point at which content stops expanding and margin-auto kicks in (.max-w-7xl) */
+  --content-max-width: 80rem;
+
+  --content-max-width-plus-gutters: calc(2 * var(--page-gutter) + var(--content-max-width));
+
+  /* based on the theme body's .px-6 class, */
+  --page-gutter: 1.5rem;
+
+  @media (min-width: 640px) {
+    --page-gutter: 3.5rem;
+  }
+
+  @media (min-width: 768px) {
+    --page-gutter: 6rem;
+  }
+
+  @media (min-width: 1024px) {
+    --page-gutter: 8rem;
+  }
 }
 
 /*
@@ -45,6 +66,7 @@ html {
 p > a {
   text-decoration: underline dotted;
 }
+
 li > a {
   background: var(--critical-highlight);
   padding: .1rem .2rem;
@@ -53,8 +75,7 @@ li > a {
 nav > a > p,
 .homepage-programme-link,
 div[href^="/programme"],
-a.programme-host > div
-{
+a.programme-host > div {
   background: var(--critical-highlight);
   text-decoration: none;
   padding: .1rem .3rem;
@@ -69,16 +90,15 @@ div[href^="/programme"],
 
 /* misc empty links */
 nav > a > p[title=""],
-#menu-wrapper > ul > li > a[href=""]
-{
+#menu-wrapper > ul > li > a[href=""] {
   display: none;
 }
 
 /* end Link Styling */
 
 
-p a { 
-    text-decoration: underline dotted;
+p a {
+  text-decoration: underline dotted;
 }
 
 /* Newsletter signup section styling */
@@ -91,9 +111,7 @@ p a {
   border-radius: 12px;
 }
 
-.newsletter-form {
-
-}
+.newsletter-form {}
 
 .newsletter-section h3 {
   font-family: bold_font;
@@ -146,16 +164,16 @@ p a {
     margin: 1.5rem -1rem;
     padding: 1rem;
   }
-  
+
   .newsletter-section h3 {
     font-size: 1.4rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .newsletter-section p {
     margin-bottom: 0.8rem;
   }
-  
+
   .newsletter-form-input,
   .newsletter-form-button,
   .newsletter-loading-button {
@@ -163,4 +181,3 @@ p a {
     font-size: 14px !important;
   }
 }
-

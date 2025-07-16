@@ -8,48 +8,44 @@
 {{ $imageBreakpointLarge := "750px" }}
 {{ partial "home/hero-image-rendition.html" . }}
 
-<article class="max-w-full prose dark:prose-invert">
-  <div class="relative">
-    <div class="mx-auto max-w-7xl p-0">
-      <div class="relative">
-        <div class="absolute inset-0">
-          {{ if .Params.images }}
-            {{ $firstImagePath := index .Params.images 0 }}
-            {{ $image := resources.Get (strings.TrimPrefix "/" $firstImagePath) }}
-            {{ if $image }}
-              {{ $base := $image.Resize "900x webp q85" }}
-              {{ $small := $image.Resize "1200x webp q85" }}
-              {{ $medium := $image.Resize "1500x webp q85" }}
-              {{ $large := $image.Resize "1920x webp q85" }}
-              <picture>
-                <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="{{ $large.RelPermalink }}">
-                <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="{{ $medium.RelPermalink }}">
-                <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="{{ $small.RelPermalink }}">
-                <img id="target-hero" 
-                     class="image h-full w-full object-cover m-0 nozoom" 
-                     src="{{ $base.RelPermalink }}">
-              </picture>
-            {{ end }}
-          {{ end }}
-          <div class="absolute inset-0 from-primary-500 to-secondary-600 dark:from-primary-600 dark:to-secondary-800 mix-blend-multiply"></div>
-        </div>
-        <div class="relative px-4 pt-16 pb-0 sm:px-6 sm:pt-16 sm:pb-0 lg:pt-16 lg:pb-0 lg:px-8 flex flex-col items-center justify-center text-center">
-          <div class='homepage-hero'>
-            <div id="target-question" class='question'>
-              How many<br />
-              devices is a<br />
-              lifetime
-            </div>
-            <img class='logo' src="/logo.svg" />
-          </div>
-        </div>
-      </div>
+<div class="homepage-hero">
+  {{ if .Params.images }}
+    {{ $firstImagePath := index .Params.images 0 }}
+    {{ $image := resources.Get (strings.TrimPrefix "/" $firstImagePath) }}
+    {{ if $image }}
+      {{ $base := $image.Resize "900x webp q85" }}
+      {{ $small := $image.Resize "1200x webp q85" }}
+      {{ $medium := $image.Resize "1500x webp q85" }}
+      {{ $large := $image.Resize "1920x webp q85" }}
+
+      <picture class="homepage-hero__picture">
+        <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="{{ $large.RelPermalink }}">
+        <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="{{ $medium.RelPermalink }}">
+        <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="{{ $small.RelPermalink }}">
+        <img id="target-hero" 
+            class="nozoom" 
+            src="{{ $base.RelPermalink }}">
+      </picture>
+
+    {{ end }}
+  {{ end }}
+
+  <div class="homepage-hero__content">
+    <div id="target-question" class="question">
+      How many<br />
+      devices is a<br />
+      lifetime
     </div>
+
+    <img class='logo' src="/logo.svg" />
   </div>
-</article>
+
+</div>
+
 <section class="prose prose-invert">
   {{ .Content }}
 </section>
+
 <section>
   {{ partial "recent-articles/main.html" . }}
 </section>
@@ -67,7 +63,6 @@ const questions = {{ .Params.questions }}
 const processedImages = window.heroImages || []
 
 setHeroText()
-// the server-rendered image will display initially
 
 setInterval(setHeroText, 5000)
 if (processedImages.length > 0) {
@@ -124,51 +119,101 @@ function random (n) {
 </script>
 
 <style>
-/* Override defaults for homepage */
-.prose {
-  max-width: 100%;
-  margin-bottom: 3rem;
+:where(body):has(.homepage-hero) {
+  // this page's components will handle their own inline spacing
+  margin: unset;
+  padding-inline: unset;
+  max-inline-size: unset;
+
+  :where(main) > *, :where(footer) {
+    // the same content inline container styles are applied to each component, so 
+    // they can be individually overridden as needed (e.g. for full-bleed layouts)
+    width: 100%;
+    max-width: var(--content-max-width-plus-gutters);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
 }
 
-/* Homepage hero styles */
 .homepage-hero {
-  height: 100%;
-  width: 100%;
-  min-height: 30rem;
-  max-height: 35rem;
+  // allow children (specifically the image) to be full-bleed
+  max-width: unset;
+  margin-inline: unset;
+  padding-inline: unset;
+
+  height: clamp(25rem, 62.5vw, 30rem); 
+  display: grid;
+  grid-template-rows: minmax(0, 1fr); // https://css-tricks.com/preventing-a-grid-blowout/
+  grid-template-areas: "a"; 
+  place-items: center;
+  margin-bottom: 2rem;
+
+  & > * {
+    // picture + content will be overlaid in the same area
+    grid-area: a;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.homepage-hero__picture {
+  overflow: hidden;
+  
+  :where(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    
+  }
+}
+
+.homepage-hero__content {
+  // standard content container settings
+  max-width: var(--content-max-width-plus-gutters);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+
+  padding-block: 4.5rem 3.5rem;
   display: grid;
   align-content: space-between;
   
+  @media (min-width: 768px) {
+    padding-block: 5rem 4rem;
+   }
+  @media (min-width: 1024px) {
+    padding-block: 4rem 3rem;
+   }
+
   :where(.question) {
     justify-self: start;
     max-width: 40rem;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
     font-family: bold_font;
-    font-size: 4rem;
-    line-height: 4.5rem;
-    text-align: start;
     text-transform: uppercase;
     text-wrap: balance;
     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
+
+    @media (min-width: 768px) {
+      font-size: 4rem;
+      line-height: 4.5rem;
+    }
   }
 
   :where(.logo) {
+    height: 3rem;
     justify-self: end;
-    max-width: 60%;
-    max-height: 5rem;
     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+
+    @media (min-width: 768px) {
+      height: 4rem;
+    }
   }
 }
 
-#target-hero {
-  position: absolute;
-  top: -2rem;
-  left: 0;
-  right: 0;
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  height: 35rem !important;
-  object-fit: cover !important;
+
+.prose {
+  margin-bottom: 3rem;
 }
 
 /* Partners section */
@@ -179,74 +224,20 @@ function random (n) {
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
-  gap: 3rem;
-}
+  gap: 2rem;
 
-.partners img {
-  max-height: 5rem;
-  min-width: 25%;
-  max-width: calc(100% / 3 - 2rem);
-}
-
-/* Responsive styles for tablets and smaller screens */
-@media (max-width: 768px) {
-  .homepage-hero {
-    min-height: 25rem;
-    max-height: 30rem;
-    padding: 1rem;
+  @media (min-width: 768px) {
+    gap: 3rem;
   }
 
-  .homepage-hero .question {
-    max-width: 95%;
-    font-size: 2.5rem;
-    line-height: 2.8rem;
-  }
-
-  .homepage-hero .logo {
-    max-width: 80%;
-    max-height: 4rem;
-  }
-
-  #target-hero {
-    height: 30rem !important;
-  }
-
-  article {
-    margin-left: calc(var(--spacing) * -6);
-    margin-right: calc(var(--spacing) * -6);
-    max-width: calc(100% + calc(var(--spacing) * 12)) !important;
-  }
-
-  .partners {
-    gap: 2rem;
-  }
-  
-  .partners img {
+  :where(img) {
+    max-height: 5rem;
+    min-width: 25%;
     max-width: calc(100% / 2 - 2rem);
-  }
-}
-
-/* Additional responsive breakpoints for very small screens */
-@media (max-width: 480px) {
-  .homepage-hero {
-    min-height: 20rem;
-    max-height: 25rem;
-    padding: 0.5rem;
-  }
-
-  .homepage-hero .question {
-    max-width: 100%;
-    font-size: 2.5rem;
-    line-height: 2.8rem;
-  }
-
-  .homepage-hero .logo {
-    max-width: 90%;
-    max-height: 3rem;
-  }
-
-  #target-hero {
-    height: 25rem !important;
+    
+    @media (min-width: 768px) {
+      max-width: calc(100% / 3 - 2rem);
+    }
   }
 }
 </style>
