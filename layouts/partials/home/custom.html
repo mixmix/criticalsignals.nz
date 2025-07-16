@@ -75,8 +75,9 @@ function setHeroText () {
   heroTextEl.innerText = text
 }
 
-let currentImageIndex = -1 // server-rendered image shows initially
+let currentImageIndex = 0 // the server-rendered image shown initially is 1.webp
 
+// don't cycle to the current image, always choose a different one
 const getNextImageIndex = (currentIndex, maxIndex) => {
   const allIndices = Array.from({ length: maxIndex }, (_, i) => i)
   const availableIndices = allIndices.filter(i => i !== currentIndex)
@@ -126,7 +127,7 @@ function random (n) {
   max-inline-size: unset;
 
   :where(main) > *, :where(footer) {
-    // the same content inline container styles are applied to each component, so 
+    // the same content container styles are applied to each component, so 
     // they can be individually overridden as needed (e.g. for full-bleed layouts)
     width: 100%;
     max-width: var(--content-max-width-plus-gutters);
@@ -188,7 +189,7 @@ function random (n) {
     justify-self: start;
     max-width: 40rem;
     font-size: 2.5rem;
-    line-height: 2.8rem;
+    line-height: 1.125;
     font-family: bold_font;
     text-transform: uppercase;
     text-wrap: balance;
@@ -196,7 +197,6 @@ function random (n) {
 
     @media (min-width: 768px) {
       font-size: 4rem;
-      line-height: 4.5rem;
     }
   }
 

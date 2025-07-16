@@ -16,8 +16,8 @@ html {
   --critical-green: rgb(25, 64, 33);
   --critical-cream: rgb(248, 244, 206);
   --critical-highlight: #2a5b34;
-  /* the following vars makes the theme body's spacing settings available to our
-    custom css. so it can be applied or removed for individual elements */
+  /* the following vars make the theme body's spacing settings available to our
+    custom css, so it can be easily applied or omitted for individual elements */
 
   /* the point at which content stops expanding and margin-auto kicks in (.max-w-7xl) */
   --content-max-width: 80rem;
