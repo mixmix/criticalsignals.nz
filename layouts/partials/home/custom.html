@@ -36,9 +36,9 @@
         <div class="relative px-4 pt-16 pb-0 sm:px-6 sm:pt-16 sm:pb-0 lg:pt-16 lg:pb-0 lg:px-8 flex flex-col items-center justify-center text-center">
           <div class='homepage-hero'>
             <div id="target-question" class='question'>
-              HOW MANY<br />
-              DEVICES IS A<br />
-              LIFETIME<br />
+              How many<br />
+              devices is a<br />
+              lifetime
             </div>
             <img class='logo' src="/logo.svg" />
           </div>
@@ -138,23 +138,25 @@ function random (n) {
   max-height: 35rem;
   display: grid;
   align-content: space-between;
-}
+  
+  :where(.question) {
+    justify-self: start;
+    max-width: 40rem;
+    font-family: bold_font;
+    font-size: 4rem;
+    line-height: 4.5rem;
+    text-align: start;
+    text-transform: uppercase;
+    text-wrap: balance;
+    filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
+  }
 
-.homepage-hero .question {
-  justify-self: start;
-  max-width: 40rem;
-  font-family: bold_font;
-  font-size: 4rem;
-  line-height: 4.5rem;
-  text-align: start;
-  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
-}
-
-.homepage-hero .logo {
-  justify-self: end;
-  max-width: 60%;
-  max-height: 5rem;
-  filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+  :where(.logo) {
+    justify-self: end;
+    max-width: 60%;
+    max-height: 5rem;
+    filter: drop-shadow(0 0 5px rgba(0,0,0, 0.6));
+  }
 }
 
 #target-hero {

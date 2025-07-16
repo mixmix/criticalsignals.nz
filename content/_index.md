@@ -2,15 +2,14 @@
 title: Critical Signals
 
 questions:
-  - "HOW MANY DEVICES IS A LIFETIME?"
-  - "DOES BAD WEATHER AFFECT CLOUD COMPUTING?"
-  - "HOW MANY DEVICES IS A LIFETIME?"
-  - "YOU JUST RECEIVED AN EMAIL.\nHOW?" # \n means "new line"
-  - "WHERE IS YOUR DATA?"
-  - "IS THERE MONEY WITHOUT THE INTERNET?"
-  - "WHAT IS THE CARBON FOOTPRINT OF A MEME?"
-  - "WHAT IF YOU COULD HOLD YOUR DATA?"
-  - "DO YOU HAVE A CUP OF FLOUR?"
+  - "Does bad weather affect cloud computing?"
+  - "How many devices is a lifetime?"
+  - "You just received an email.\nHow?" # \n means "new line"
+  - "Where is your data?"
+  - "Is there money without the internet?"
+  - "What is the carbon footprint of a meme?"
+  - "What if you could hold your data?"
+  - "Do you have a cup of flour?"
 
 images:
   - '/images/hero/1.webp'  # These files are in /static/images/hero folder
@@ -213,4 +212,3 @@ for (var i = 0; i < formContainers.length; i++) {
   formContainer.classList.add("newsletter-handlers-added");
 }
 </script>
-
