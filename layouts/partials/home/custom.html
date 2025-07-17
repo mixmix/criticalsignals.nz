@@ -10,24 +10,14 @@
 
 <div class="homepage-hero">
   {{ if .Params.images }}
-    {{ $firstImagePath := index .Params.images 0 }}
-    {{ $image := resources.Get (strings.TrimPrefix "/" $firstImagePath) }}
-    {{ if $image }}
-      {{ $base := $image.Resize "900x webp q85" }}
-      {{ $small := $image.Resize "1200x webp q85" }}
-      {{ $medium := $image.Resize "1500x webp q85" }}
-      {{ $large := $image.Resize "1920x webp q85" }}
-
       <picture class="homepage-hero__picture">
-        <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="{{ $large.RelPermalink }}">
-        <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="{{ $medium.RelPermalink }}">
-        <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="{{ $small.RelPermalink }}">
+        <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="">
+        <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="">
+        <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="">
         <img id="target-hero" 
             class="nozoom" 
-            src="{{ $base.RelPermalink }}">
+            src="">
       </picture>
-
-    {{ end }}
   {{ end }}
 
   <div class="homepage-hero__content">
@@ -62,10 +52,13 @@
 const questions = {{ .Params.questions }}
 const processedImages = window.heroImages || []
 
+let currentImageIndex = 0
+setHeroImage()
 setHeroText()
 
-setInterval(setHeroText, 5000)
-setInterval(setHeroImage, 13000)
+const PERIOD = 7000
+setInterval(setHeroText, PERIOD)
+setInterval(setHeroImage, PERIOD)
 
 function setHeroText () {
   const text = questions[random(questions.length)]
@@ -73,18 +66,16 @@ function setHeroText () {
   heroTextEl.innerText = text
 }
 
-let currentImageIndex = 0 // the server-rendered image shown initially is 1.webp
-
 // don't cycle to the current image, always choose a different one
-const getNextImageIndex = (currentIndex, maxIndex) => {
+function getNextImageIndex (currentIndex, maxIndex) {
   const allIndices = Array.from({ length: maxIndex }, (_, i) => i)
   const availableIndices = allIndices.filter(i => i !== currentIndex)
   return availableIndices[random(availableIndices.length)]
 }
 
-const updatePictureSources = (pictureEl, imageSet) => {
+function updatePictureSources (pictureEl, imageSet) {
   const sources = pictureEl.querySelectorAll('source')
-  
+
   sources.forEach(source => {
     const media = source.getAttribute('media')
     if (media?.includes("{{ $imageBreakpointLarge }}")) {
@@ -99,14 +90,14 @@ const updatePictureSources = (pictureEl, imageSet) => {
 
 function setHeroImage() {
   if (processedImages.length <= 1) return
-  
+
   const heroImageEl = document.getElementById('target-hero')
   const pictureEl = heroImageEl.parentElement
-  
+
   if (pictureEl?.tagName === 'PICTURE') {
     currentImageIndex = getNextImageIndex(currentImageIndex, processedImages.length)
     const imageSet = processedImages[currentImageIndex]
-    
+
     updatePictureSources(pictureEl, imageSet)
     heroImageEl.src = imageSet.base
   }
