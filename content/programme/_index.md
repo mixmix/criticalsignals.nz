@@ -44,3 +44,6 @@ h3 {
   margin-bottom: 2rem;
 }
 </style>
+
+Please note we are still growing this programme. Be sure to check back in for
+updates, or sign up on [the home page](https://criticalsignals.nz).
