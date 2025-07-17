@@ -37,8 +37,7 @@ class Calendar {
     // Navigation controls
     document.getElementById('prevMonth').addEventListener('click', () => this.previousMonth());
     document.getElementById('nextMonth').addEventListener('click', () => this.nextMonth());
-    document.getElementById('listViewBtn').addEventListener('click', () => this.toggleListView());
-    
+
     // Modal controls
     document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
     document.getElementById('eventModal').addEventListener('click', (e) => {
@@ -56,35 +55,6 @@ class Calendar {
   nextMonth() {
     this.currentDate.setMonth(this.currentDate.getMonth() + 1);
     this.render();
-  }
-
-  /** Toggle between calendar grid and list view */
-  toggleListView() {
-    console.log('Toggle List View clicked!');
-    this.isListView = !this.isListView;
-    console.log('isListView now:', this.isListView);
-    
-    const calendarContainer = document.querySelector('.border.border-neutral-200');
-    const listView = document.getElementById('listView');
-    const listViewBtn = document.getElementById('listViewBtn');
-    const navigationCluster = document.querySelector('.flex.items-center.justify-center.space-x-4');
-    
-    console.log('Elements found:', { calendarContainer, listView, listViewBtn, navigationCluster });
-    
-    if (this.isListView) {
-      console.log('Switching to list view...');
-      calendarContainer.classList.add('hidden');
-      listView.classList.remove('hidden');
-      if (navigationCluster) navigationCluster.classList.add('hidden');
-      listViewBtn.textContent = 'Calendar View';
-      this.renderListView();
-    } else {
-      console.log('Switching to calendar view...');
-      calendarContainer.classList.remove('hidden');
-      listView.classList.add('hidden');
-      if (navigationCluster) navigationCluster.classList.remove('hidden');
-      listViewBtn.textContent = 'List View';
-    }
   }
 
   render() {
@@ -325,88 +295,6 @@ class Calendar {
     document.getElementById('eventModal').style.display = 'none';
   }
 
-  renderListView() {
-    console.log('=== RENDER LIST VIEW CALLED ===');
-    const listEl = document.getElementById('eventList');
-    console.log('eventList element found:', listEl);
-    listEl.innerHTML = '';
-    
-    // Separate past and upcoming events
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
-    
-    // Debug: Check if we have events data
-    console.log('Events data for list view:', this.eventsData);
-    console.log('Today is:', today);
-    
-    // Sort events by date (using NZST) - handle events without dates
-    const sortedEvents = [...this.eventsData].sort((a, b) => {
-      if (!a.date && !b.date) return 0;
-      if (!a.date) return 1; // Put events without dates at the end
-      if (!b.date) return -1;
-      if (a.dateTBC && !b.dateTBC) return 1; // Put TBC events at the end
-      if (!a.dateTBC && b.dateTBC) return -1;
-      if (a.dateTBC && b.dateTBC) return 0; // Keep TBC events in original order
-      return parseEventDate(a.date) - parseEventDate(b.date);
-    });
-    
-    console.log('Sorted events for list view:', sortedEvents.length, sortedEvents);
-    
-    if (sortedEvents.length === 0) {
-      listEl.innerHTML = '<p class="no-events">No events found</p>';
-      return;
-    }
-    
-    const upcomingEvents = [];
-    const pastEvents = [];
-    
-    sortedEvents.forEach(event => {
-      if (event.dateTBC || !event.date) {
-        upcomingEvents.push(event); // TBC and undated events go to upcoming
-      } else {
-        const eventDate = parseEventDate(event.date);
-        console.log('Event:', event.title, 'Date:', event.date, 'Parsed Date:', eventDate, 'Today:', today, 'Is Future:', eventDate >= today);
-        if (eventDate >= today) {
-          upcomingEvents.push(event);
-        } else {
-          pastEvents.push(event);
-        }
-      }
-    });
-    
-    console.log('Upcoming events:', upcomingEvents.length, upcomingEvents.map(e => e.title));
-    console.log('Past events:', pastEvents.length, pastEvents.map(e => e.title));
-    
-    // Render past events in collapsible section at the top
-    if (pastEvents.length > 0) {
-      const pastSection = this.createPastEventsSection(pastEvents);
-      listEl.appendChild(pastSection);
-    }
-    
-    // Add section header for upcoming events if there are past events
-    if (pastEvents.length > 0 && upcomingEvents.length > 0) {
-      const upcomingHeader = document.createElement('h3');
-      upcomingHeader.className = 'upcoming-events-title';
-      upcomingHeader.textContent = 'Upcoming Events';
-      listEl.appendChild(upcomingHeader);
-    }
-    
-    // Render upcoming events
-    if (upcomingEvents.length > 0) {
-      upcomingEvents.forEach(event => {
-        listEl.appendChild(this.createEventListItem(event));
-      });
-    }
-    
-    // Show message if no upcoming events
-    if (upcomingEvents.length === 0) {
-      const noEventsMsg = document.createElement('p');
-      noEventsMsg.className = 'no-upcoming-events';
-      noEventsMsg.textContent = 'No upcoming events';
-      listEl.appendChild(noEventsMsg);
-    }
-  }
-
   createPastEventsSection(pastEvents) {
     const pastSection = document.createElement('div');
     pastSection.className = 'past-events-section';
@@ -440,60 +328,6 @@ class Calendar {
     pastSection.appendChild(pastHeader);
     pastSection.appendChild(pastContainer);
     return pastSection;
-  }
-  
-  createEventListItem(event) {
-    const eventEl = document.createElement('div');
-    eventEl.className = 'event-list-item';
-    
-    let eventHTML = `
-      <div class="event-list-content">
-        <div class="event-list-main">
-          <h4 class="event-list-title">${event.title}</h4>
-    `;
-    
-    if (event.dateTBC) {
-      eventHTML += '<p class="event-list-date-tbc"><em>Date to be confirmed</em></p>';
-    } else {
-      const eventDate = parseEventDate(event.date);
-      eventHTML += `<p class="event-list-date">
-        ${eventDate.toLocaleDateString('en-NZ', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric',
-          timeZone: 'Pacific/Auckland'
-        })}
-      </p>`;
-    }
-    
-    if (event.startTime) {
-      eventHTML += `<p class="event-list-time">
-        ${event.startTime}${event.endTime ? ' - ' + event.endTime : ''}
-      </p>`;
-    }
-    
-    if (event.hosts && event.hosts.length > 0) {
-      const hostLabel = event.hosts.length === 1 ? 'Host:' : 'Hosts:';
-      eventHTML += `<p class="event-list-hosts">
-        <span class="hosts-label">${hostLabel}</span> ${event.hosts.join(', ')}
-      </p>`;
-    }
-    
-    eventHTML += `
-        </div>
-        <div class="event-list-actions">
-          <a href="${event.url}" class="btn-list-details" onclick="event.stopPropagation()">
-            Details
-          </a>
-          ${event.signUpLink ? `<a href="${event.signUpLink}" target="_blank" class="btn-list-register" onclick="event.stopPropagation()">Register</a>` : ''}
-        </div>
-      </div>
-    `;
-    
-    eventEl.innerHTML = eventHTML;
-    eventEl.addEventListener('click', () => this.showEventDetails(event));
-    return eventEl;
   }
 }
 
