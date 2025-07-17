@@ -22,7 +22,10 @@ html {
   /* the point at which content stops expanding and margin-auto kicks in (.max-w-7xl) */
   --content-max-width: 80rem;
 
-  --content-max-width-plus-gutters: calc(2 * var(--page-gutter) + var(--content-max-width));
+  --content-max-width-plus-gutters: min(
+    calc(2 * var(--page-gutter) + var(--content-max-width)),
+    80rem
+  );
 
   /* based on the theme body's .px-6 class, */
   --page-gutter: 1.5rem;
