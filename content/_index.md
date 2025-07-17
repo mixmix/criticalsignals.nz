@@ -11,6 +11,14 @@ questions:
   - "WHAT IS THE CARBON FOOTPRINT OF A MEME?"
   - "WHAT IF YOU COULD HOLD YOUR DATA?"
   - "DO YOU HAVE A CUP OF FLOUR?"
+  - "WHOSE SOCIAL MEDIA?"
+  - "HOW MANY COUNTRIES ARE IN YOUR FRIDGE?"
+  - "IS AI A MACHINE CULT?"
+  - "HOW HUNGRY IS YOUR STREET?"
+  - "GLUTEN-FREE AFTER A DISASTER?"
+  - "HOW MANY TABS DOES YOUR BRAIN HAVE OPEN?"
+  - "HOW LONG HAVE YOU WORKED FOR BIG TECH?"
+  - "DO THE BIRDS NEED US?"
 
 images:
   - '/images/hero/1.webp'  # These files are in /static/images/hero folder
@@ -213,4 +221,3 @@ for (var i = 0; i < formContainers.length; i++) {
   formContainer.classList.add("newsletter-handlers-added");
 }
 </script>
-

@@ -35,7 +35,6 @@ showMoreLinkDest = "/posts/"
 cardView = false
 cardViewScreenWidth = false
 layoutBackgroundBlur = false
-homepageImage = "images/hero/1.webp"
 
 [article]
 showDate = false

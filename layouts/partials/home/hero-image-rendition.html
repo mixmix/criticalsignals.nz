@@ -1,0 +1,20 @@
+{{- $heroData := slice -}}
+{{- range .Params.images -}}
+  {{- $image := resources.Get (strings.TrimPrefix "/" .) -}}
+  {{- if $image -}}
+    {{- $base := $image.Resize "900x webp q85" -}}
+    {{- $small := $image.Resize "1200x webp q85" -}}
+    {{- $medium := $image.Resize "1500x webp q85" -}}
+    {{- $large := $image.Resize "1920x webp q85" -}}
+    {{- $heroData = $heroData | append (dict 
+         "base" $base.RelPermalink 
+         "small" $small.RelPermalink 
+         "medium" $medium.RelPermalink 
+         "large" $large.RelPermalink
+    ) -}}
+  {{- end -}}
+{{- end -}}
+
+<script>
+window.heroImages = {{ $heroData | jsonify | safeJS }};
+</script>
