@@ -33,18 +33,7 @@
 </div>
 
 <div class="homepage-hero">
-  {{ if .Params.images }}
-      <picture class="homepage-hero__picture">
-        <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="">
-        <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="">
-        <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="">
-        <img id="target-hero" 
-            class="nozoom" 
-            src=""
-            alt="">
-      </picture>
-  {{ end }}
-
+  <!-- .homepage-hero__picture will be inserted here -->
   <div class="homepage-hero__content" aria-hidden="true">
     <div id="target-question" class="question">
       How many<br />
@@ -54,7 +43,6 @@
 
     <img class='logo' alt="" src="/logo.svg" />
   </div>
-
 </div>
 
 <section class="prose prose-invert">
@@ -78,59 +66,120 @@ const questions = {{ .Params.questions }}
 const processedImages = window.heroImages || []
 
 let currentImageIndex = 0
-setHeroImage()
-setHeroText()
+let isTransitioning = false
 
-const PERIOD = 7000
-setInterval(setHeroText, PERIOD)
-setInterval(setHeroImage, PERIOD)
+const heroContainer = document.querySelector('.homepage-hero')
+const imageBreakpointSmall = "{{ $imageBreakpointSmall }}"
+const imageBreakpointMedium = "{{ $imageBreakpointMedium }}"
+const imageBreakpointLarge = "{{ $imageBreakpointLarge }}"
 
-function setHeroText () {
-  const text = questions[random(questions.length)]
+const createPictureElement = (imageSet) => {
+  const picture = document.createElement('picture')
+  picture.className = 'homepage-hero__picture'
+  
+  const sourceMap = [
+    { media: `(min-width: ${imageBreakpointLarge})`, srcset: imageSet.large },
+    { media: `(min-width: ${imageBreakpointMedium})`, srcset: imageSet.medium },
+    { media: `(min-width: ${imageBreakpointSmall})`, srcset: imageSet.small }
+  ]
+
+  sourceMap.forEach(({ media, srcset }) => {
+    const source = document.createElement('source')
+    source.media = media
+    source.srcset = srcset
+    picture.appendChild(source)
+  })
+
+  const img = document.createElement('img')
+  img.src = imageSet.base
+  img.alt = ''
+  img.className = 'nozoom'
+  img.id = 'target-hero'
+  picture.appendChild(img)
+
+  return picture
+}
+
+const prefetchImage = (imageSet) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve(imageSet)
+    img.onerror = () => resolve(imageSet)
+    img.src = imageSet.base
+  })
+}
+
+const getNextImageIndex = (currentIndex, maxIndex) => {
+  const allIndices = Array.from({ length: maxIndex }, (_, i) => i)
+  const availableIndices = allIndices.filter(i => i !== currentIndex)
+  return availableIndices[Math.floor(Math.random() * availableIndices.length)]
+}
+
+const setHeroImage = async () => {
+  if (processedImages.length <= 1 || isTransitioning) return
+  
+  isTransitioning = true
+  
+  const nextImageIndex = getNextImageIndex(currentImageIndex, processedImages.length)
+  const nextImageSet = processedImages[nextImageIndex]
+  
+  // Pre-fetch the next image
+  await prefetchImage(nextImageSet)
+  
+  // Create new picture element
+  const newPicture = createPictureElement(nextImageSet)
+  
+  // Insert new picture behind current one
+  const content = heroContainer.querySelector('.homepage-hero__content')
+  heroContainer.insertBefore(newPicture, content)
+  
+  // Force a reflow to ensure the new picture is rendered
+  newPicture.offsetHeight
+  
+  // Find and fade out current active picture
+  const currentPicture = heroContainer.querySelector('.homepage-hero__picture.active')
+  
+  // Fade in new picture
+  newPicture.classList.add('active')
+  
+  // After transition, remove old picture
+  setTimeout(() => {
+    if (currentPicture) {
+      currentPicture.remove()
+    }
+    currentImageIndex = nextImageIndex
+    isTransitioning = false
+  }, 100)
+}
+
+const setHeroText = () => {
+  const text = questions[Math.floor(Math.random() * questions.length)]
   const heroTextEl = document.getElementById('target-question')
   heroTextEl.innerText = text
 }
 
-// don't cycle to the current image, always choose a different one
-function getNextImageIndex (currentIndex, maxIndex) {
-  const allIndices = Array.from({ length: maxIndex }, (_, i) => i)
-  const availableIndices = allIndices.filter(i => i !== currentIndex)
-  return availableIndices[random(availableIndices.length)]
-}
-
-function updatePictureSources (pictureEl, imageSet) {
-  const sources = pictureEl.querySelectorAll('source')
-
-  sources.forEach(source => {
-    const media = source.getAttribute('media')
-    if (media?.includes("{{ $imageBreakpointLarge }}")) {
-      source.srcset = imageSet.large
-    } else if (media?.includes("{{ $imageBreakpointMedium }}")) {
-      source.srcset = imageSet.medium
-    } else if (media?.includes("{{ $imageBreakpointSmall }}")) {
-      source.srcset = imageSet.small
-    }
-  })
-}
-
-function setHeroImage() {
-  if (processedImages.length <= 1) return
-
-  const heroImageEl = document.getElementById('target-hero')
-  const pictureEl = heroImageEl.parentElement
-
-  if (pictureEl?.tagName === 'PICTURE') {
-    currentImageIndex = getNextImageIndex(currentImageIndex, processedImages.length)
-    const imageSet = processedImages[currentImageIndex]
-
-    updatePictureSources(pictureEl, imageSet)
-    heroImageEl.src = imageSet.base
+// Initialize with first image
+const initializeHero = async () => {
+  if (processedImages.length > 0) {
+    const initialImageSet = processedImages[0]
+    await prefetchImage(initialImageSet)
+    const initialPicture = createPictureElement(initialImageSet)
+    initialPicture.classList.add('active')
+    
+    const content = heroContainer.querySelector('.homepage-hero__content')
+    heroContainer.insertBefore(initialPicture, content)
   }
+  
+  setHeroText()
+  
+  // Start intervals
+  const PERIOD = 7000
+  setInterval(setHeroText, PERIOD)
+  setInterval(setHeroImage, PERIOD)
 }
 
-function random (n) {
-  return Math.floor(Math.random() * n)
-}
+// Start the hero
+initializeHero()
 </script>
 
 <style>
@@ -178,12 +227,17 @@ function random (n) {
 
 .homepage-hero__picture {
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 100ms ease-in-out;
   
+  &.active { 
+    opacity: 1;
+  }
+
   :where(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    
   }
 }
 
