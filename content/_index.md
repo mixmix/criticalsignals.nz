@@ -2,23 +2,22 @@
 title: Critical Signals
 
 questions:
-  - "HOW MANY DEVICES IS A LIFETIME?"
-  - "DOES BAD WEATHER AFFECT CLOUD COMPUTING?"
-  - "HOW MANY DEVICES IS A LIFETIME?"
-  - "YOU JUST RECEIVED AN EMAIL.\nHOW?" # \n means "new line"
-  - "WHERE IS YOUR DATA?"
-  - "IS THERE MONEY WITHOUT THE INTERNET?"
-  - "WHAT IS THE CARBON FOOTPRINT OF A MEME?"
-  - "WHAT IF YOU COULD HOLD YOUR DATA?"
-  - "DO YOU HAVE A CUP OF FLOUR?"
-  - "WHOSE SOCIAL MEDIA?"
-  - "HOW MANY COUNTRIES ARE IN YOUR FRIDGE?"
-  - "IS AI A MACHINE CULT?"
-  - "HOW HUNGRY IS YOUR STREET?"
-  - "GLUTEN-FREE AFTER A DISASTER?"
-  - "HOW MANY TABS DOES YOUR BRAIN HAVE OPEN?"
-  - "HOW LONG HAVE YOU WORKED FOR BIG TECH?"
-  - "DO THE BIRDS NEED US?"
+  - "How many devices is a lifetime?"
+  - "Does bad weather affect cloud computing?"
+  - "You just received an email.\nHow?" # \n means "New line"
+  - "Where is your data?"
+  - "Is there money without the internet?"
+  - "What is the carbon footprint of a meme?"
+  - "What if you could hold your data?"
+  - "Do you have a cup of flour?"
+  - "Whose social media?"
+  - "How many countries are in your fridge?"
+  - "Is AI a machine cult?"
+  - "How hungry is your street?"
+  - "Gluten-free after a disaster?"
+  - "How many tabs does your brain have open?"
+  - "How long have you worked for big tech?"
+  - "Do the birds need us?"
 
 images:
   - '/images/hero/1.webp'  # These files are in /static/images/hero folder
@@ -27,6 +26,12 @@ images:
   - '/images/hero/4.webp'
   - '/images/hero/5.webp'
 
+imageAltTexts:
+  - "A cleared agricultural plot with wooden posts and wire fencing in the foreground. The area appears to be prepared for planting. Trees and natural vegetation form the background."
+  - "An aerial satellite image showing flooding damage around Napier, New Zealand from Cyclone Gabrielle in 2023. Urban areas are partially submerged in floodwater, with the city's grid pattern visible among the inundated landscape."
+  - "A large container ship that has run aground on a beach. The vessel is listing, overwhelmed by surf, with shipping containers teetering on its deck."
+  - "People in white protective suits work with long-handled tools, conducting cleanup of hazardous material or environmental remediation after a spill."
+  - "Damaged infrastructure, likely from a landslide or erosion event. A metal railing or barrier has been bent and twisted, with debris scattered around."
 ---
 
 
