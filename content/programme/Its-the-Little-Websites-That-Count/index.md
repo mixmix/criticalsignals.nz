@@ -1,7 +1,7 @@
 ---
 title: "It's the Little Websites that Count"
 hosts:
-  - "Vic"
+  - "Vic Roberts"
 date: 2025-08-15
 start_time: 17:15
 end_time: 18:00
