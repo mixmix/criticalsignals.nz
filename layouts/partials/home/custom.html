@@ -32,13 +32,21 @@
   </ul>
 </div>
 
-<div class="homepage-hero">
-  <!-- .homepage-hero__picture will be inserted here -->
-  <div class="homepage-hero__content" aria-hidden="true">
-    <div id="target-question" class="question">
-      How many<br />
-      devices is a<br />
-      lifetime
+<div class="homepage-hero" data-element="hero">
+  {{ range $index, $imageSet := .Params.images }}
+  <picture class="homepage-hero__picture" data-image-index="{{ $index }}">
+    <source media="(min-width: {{ $imageBreakpointLarge }})" srcset="">
+    <source media="(min-width: {{ $imageBreakpointMedium }})" srcset="">
+    <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="">
+    <img class="nozoom" src="" alt="">
+  </picture>
+  {{ end }}
+
+  <div class="homepage-hero__content" data-element="hero-content" aria-hidden="true">
+    <div data-element="question" class="question">
+      {{ range $index, $question := .Params.questions }}
+      <span data-question-index="{{ $index }}">{{ $question }}</span>
+      {{ end }}
     </div>
 
     <img class='logo' alt="" src="/logo.svg" />
@@ -62,123 +70,127 @@
 </section>
 
 <script>
-const questions = {{ .Params.questions }}
 const processedImages = window.heroImages || []
 
 let currentImageIndex = 0
+let currentTextIndex = 0
 let isTransitioning = false
+let activeTextSpan = null
+let activePicture = null
 
-const heroContainer = document.querySelector('.homepage-hero')
-const imageBreakpointSmall = "{{ $imageBreakpointSmall }}"
-const imageBreakpointMedium = "{{ $imageBreakpointMedium }}"
-const imageBreakpointLarge = "{{ $imageBreakpointLarge }}"
-
-const createPictureElement = (imageSet) => {
-  const picture = document.createElement('picture')
-  picture.className = 'homepage-hero__picture'
-  
-  const sourceMap = [
-    { media: `(min-width: ${imageBreakpointLarge})`, srcset: imageSet.large },
-    { media: `(min-width: ${imageBreakpointMedium})`, srcset: imageSet.medium },
-    { media: `(min-width: ${imageBreakpointSmall})`, srcset: imageSet.small }
-  ]
-
-  sourceMap.forEach(({ media, srcset }) => {
-    const source = document.createElement('source')
-    source.media = media
-    source.srcset = srcset
-    picture.appendChild(source)
-  })
-
-  const img = document.createElement('img')
-  img.src = imageSet.base
-  img.alt = ''
-  img.className = 'nozoom'
-  img.id = 'target-hero'
-  picture.appendChild(img)
-
-  return picture
+const fadeInKeyframes = [{ opacity: 0 }, { opacity: 1 }]
+const fadeOutKeyframes = [{ opacity: 1 }, { opacity: 0 }]
+const fadeOptions = {
+  duration: 100,
+  easing: 'ease-in-out',
+  fill: 'forwards'
 }
 
-const prefetchImage = (imageSet) => {
+const loadImageIntoPicture = (picture, imageSet) => {
   return new Promise((resolve) => {
-    const img = new Image()
-    img.onload = () => resolve(imageSet)
-    img.onerror = () => resolve(imageSet)
+    const img = picture.querySelector('img')
+    const sources = picture.querySelectorAll('source')
+
+    sources[0].srcset = imageSet.large
+    sources[1].srcset = imageSet.medium
+    sources[2].srcset = imageSet.small
     img.src = imageSet.base
+    
+    // If image is already loaded, resolve immediately
+    if (img.complete && img.naturalHeight !== 0) {
+      resolve()
+      return
+    }
+    
+    const handleLoad = () => {
+      img.removeEventListener('load', handleLoad)
+      img.removeEventListener('error', handleLoad)
+      resolve()
+    }
+    
+    img.addEventListener('load', handleLoad)
+    img.addEventListener('error', handleLoad)
   })
 }
 
-const getNextImageIndex = (currentIndex, maxIndex) => {
+const getNextIndex = (currentIndex, maxIndex) => {
   const allIndices = Array.from({ length: maxIndex }, (_, i) => i)
   const availableIndices = allIndices.filter(i => i !== currentIndex)
   return availableIndices[Math.floor(Math.random() * availableIndices.length)]
 }
 
-const setHeroImage = async () => {
+let allPictures = []
+let allTextSpans = []
+
+const performTransition = async () => {
   if (processedImages.length <= 1 || isTransitioning) return
   
   isTransitioning = true
   
-  const nextImageIndex = getNextImageIndex(currentImageIndex, processedImages.length)
+  const nextImageIndex = getNextIndex(currentImageIndex, processedImages.length)
   const nextImageSet = processedImages[nextImageIndex]
+  const nextPicture = allPictures[nextImageIndex]
   
-  // Pre-fetch the next image
-  await prefetchImage(nextImageSet)
+  const nextTextIndex = getNextIndex(currentTextIndex, allTextSpans.length)
+  const nextSpan = allTextSpans[nextTextIndex]
   
-  // Create new picture element
-  const newPicture = createPictureElement(nextImageSet)
+  await loadImageIntoPicture(nextPicture, nextImageSet)
   
-  // Insert new picture behind current one
-  const content = heroContainer.querySelector('.homepage-hero__content')
-  heroContainer.insertBefore(newPicture, content)
+  const isNextImageBehind = nextImageIndex < currentImageIndex
   
-  // Force a reflow to ensure the new picture is rendered
-  newPicture.offsetHeight
-  
-  // Find and fade out current active picture
-  const currentPicture = heroContainer.querySelector('.homepage-hero__picture.active')
-  
-  // Fade in new picture
-  newPicture.classList.add('active')
-  
-  // After transition, remove old picture
-  setTimeout(() => {
-    if (currentPicture) {
-      currentPicture.remove()
-    }
-    currentImageIndex = nextImageIndex
-    isTransitioning = false
-  }, 100)
-}
-
-const setHeroText = () => {
-  const text = questions[Math.floor(Math.random() * questions.length)]
-  const heroTextEl = document.getElementById('target-question')
-  heroTextEl.innerText = text
-}
-
-// Initialize with first image
-const initializeHero = async () => {
-  if (processedImages.length > 0) {
-    const initialImageSet = processedImages[0]
-    await prefetchImage(initialImageSet)
-    const initialPicture = createPictureElement(initialImageSet)
-    initialPicture.classList.add('active')
-    
-    const content = heroContainer.querySelector('.homepage-hero__content')
-    heroContainer.insertBefore(initialPicture, content)
+  let imageTransitionPromise
+  if (isNextImageBehind) {
+    // fade out the front image to reveal the back one
+    nextPicture.style.opacity = '1' // Set back image to opaque immediately
+    imageTransitionPromise = activePicture.animate(fadeOutKeyframes, fadeOptions).finished
+  } else {
+    // Next image is in front - fade it in over the back image
+    imageTransitionPromise = nextPicture.animate(fadeInKeyframes, fadeOptions).finished
   }
   
-  setHeroText()
+  // Start text transition simultaneously
+  const textFadeInPromise = nextSpan.animate(fadeInKeyframes, fadeOptions).finished
+  const textFadeOutPromise = activeTextSpan ? activeTextSpan.animate(fadeOutKeyframes, fadeOptions).finished : Promise.resolve()
   
-  // Start intervals
-  const PERIOD = 7000
-  setInterval(setHeroText, PERIOD)
-  setInterval(setHeroImage, PERIOD)
+  await Promise.all([imageTransitionPromise, textFadeInPromise, textFadeOutPromise])
+  
+  // Clean up after transitions
+  if (!isNextImageBehind && activePicture) {
+    activePicture.style.opacity = '0'
+  }
+  
+  activePicture = nextPicture
+  currentImageIndex = nextImageIndex
+  activeTextSpan = nextSpan
+  currentTextIndex = nextTextIndex
+  isTransitioning = false
 }
 
-// Start the hero
+const initializeHero = async () => {
+  allPictures = Array.from(document.querySelectorAll('[data-image-index]'))
+  allTextSpans = Array.from(document.querySelectorAll('[data-question-index]'))
+  
+  allPictures.forEach(picture => picture.style.opacity = '0')
+  allTextSpans.forEach(span => span.style.opacity = '0')
+  
+  if (processedImages.length > 0 && allPictures.length > 0) {
+    await loadImageIntoPicture(allPictures[0], processedImages[0])
+    allPictures[0].style.opacity = '1'
+    activePicture = allPictures[0]
+    currentImageIndex = 0
+  }
+  
+  if (allTextSpans.length > 0) {
+    const firstTextIndex = Math.floor(Math.random() * allTextSpans.length)
+    allTextSpans[firstTextIndex].style.opacity = '1'
+    activeTextSpan = allTextSpans[firstTextIndex]
+    currentTextIndex = firstTextIndex
+  }
+  
+  const PERIOD = 7000
+  setInterval(performTransition, PERIOD)
+}
+
 initializeHero()
 </script>
 
@@ -227,12 +239,6 @@ initializeHero()
 
 .homepage-hero__picture {
   overflow: hidden;
-  opacity: 0;
-  transition: opacity 100ms ease-in-out;
-  
-  &.active { 
-    opacity: 1;
-  }
 
   :where(img) {
     width: 100%;
@@ -267,9 +273,15 @@ initializeHero()
     text-transform: uppercase;
     text-wrap: balance;
     filter: drop-shadow(0 0 5px rgba(0,0,0, 0.2));
-
+    display: grid;
+    grid-template-area:"text";
+    
     @media (min-width: 768px) {
       font-size: 4rem;
+    }
+    
+    & > * {
+      grid-area: text;
     }
   }
 
