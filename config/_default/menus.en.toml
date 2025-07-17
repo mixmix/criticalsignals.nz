@@ -2,16 +2,16 @@
 none = "none"
 
 [[main]]
+name = "Calendar"
+pageRef = "calendar"
+identifier = "calendar"
+weight = 5
+
+[[main]]
 name = "Programme"
 pageRef = "programme"
 identifier = "smADjJPJrg"
 weight = 10
-
-[[main]]
-name = "Calendar"
-pageRef = "calendar"
-identifier = "calendar"
-weight = 15
 
 [[main]]
 name = "Collaborators"

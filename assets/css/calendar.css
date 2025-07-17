@@ -15,7 +15,7 @@
   min-height: 120px;
   border-bottom: 1px solid rgb(229, 231, 235);
   border-right: 1px solid rgb(229, 231, 235);
-  padding: 8px;
+  padding: 1px;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
@@ -50,8 +50,8 @@
 
 .calendar-day.today {
   background-color: var(--critical-cream);
-  border: 2px solid var(--critical-green);
-  box-shadow: inset 0 0 0 1px var(--critical-green);
+  /* border: 2px solid var(--critical-green); */
+  /* box-shadow: inset 0 0 0 1px var(--critical-green); */
 }
 
 .calendar-header {
@@ -102,15 +102,18 @@
 }
 
 .event-item {
+  display: block;
+  width: 100%;
+  min-height: 40%;
+
   font-size: 12px;
-  padding: 4px 6px;
+  padding: 4px 2px;
   margin-bottom: 2px;
+
   cursor: pointer;
   white-space: normal;
   overflow: hidden;
-  width: 100%;
   box-sizing: border-box;
-  display: block;
   line-height: 1.3;
   word-wrap: break-word;
   hyphens: auto;
@@ -121,19 +124,19 @@
 .event-item-medium {
   font-size: 11px;
   line-height: 1.2;
-  padding: 3px 5px;
+  padding: 3px 2px;
 }
 
 .event-item-small {
   font-size: 10px;
   line-height: 1.2;
-  padding: 3px 4px;
+  padding: 3px 1px;
 }
 
 .event-item-tiny {
   font-size: 9px;
   line-height: 1.1;
-  padding: 2px 4px;
+  padding: 2px 1px;
 }
 
 /* Event category styles */
@@ -151,7 +154,7 @@
 
 .event-seminar {
   background-color: white;
-  color: rgb(55, 65, 81);
+  color: var(--critical-green);
   border: 1px solid rgb(55, 65, 81);
   border-left: 3px solid rgb(55, 65, 81);
 }
@@ -357,4 +360,25 @@
   color: var(--critical-cream);
   opacity: 0.7;
   font-style: italic;
+}
+
+
+@media (max-width: 640px) {
+  .calendar-navigation {
+    margin-left: calc(-1 * var(--page-gutter));
+    margin-right: calc(-1 * var(--page-gutter));
+  }
+
+  .calendar-container {
+    margin-left: calc(-1 * var(--page-gutter));
+    margin-right: calc(-1 * var(--page-gutter));
+  }
+
+  .calendar-header-day {
+    padding: 0;
+  }
+  .calendar-header-day > span {
+    font-size: 5px;
+    display: none;
+  }
 }

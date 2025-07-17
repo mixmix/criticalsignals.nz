@@ -1,7 +1,7 @@
 {{ define "main" }}
   <article>
-    <header class="mt-5 max-w-prose">
-      <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+    <header class="mt-2 mb-0 max-w-prose">
+      <h1 class="mt-0 mb-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
         {{ .Title | emojify }}
       </h1>
     </header>
@@ -16,9 +16,9 @@
       <div style="flex: 1 1 auto;"></div>
       
       <!-- Center: Navigation cluster -->
-      <div class="flex items-center justify-center space-x-4" style="flex: 0 0 auto; min-width: 400px;">
+      <div class="calendar-navigation flex items-center justify-center space-x-4" style="flex: 0 0 auto; min-width: 400px;">
         <button id="prevMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
-          <span class="text-base font-medium">← Previous</span>
+          <span class="text-base font-medium">← Prev</span>
         </button>
         <h2 id="currentMonth" class="text-2xl font-bold text-neutral-800 dark:text-neutral text-center" style="min-width: 180px; padding: 8px 10px;"></h2>
         <button id="nextMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
@@ -29,15 +29,15 @@
     </div>
 
     <!-- Calendar Grid -->
-    <div class="border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+    <div class="calendar-container border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
       <div class="calendar-header border-b border-neutral-200 dark:border-neutral-700" style="background-color: rgb(249, 246, 216);">
-        <div class="calendar-header-day">Sunday</div>
-        <div class="calendar-header-day">Monday</div>
-        <div class="calendar-header-day">Tuesday</div>
-        <div class="calendar-header-day">Wednesday</div>
-        <div class="calendar-header-day">Thursday</div>
-        <div class="calendar-header-day">Friday</div>
-        <div class="calendar-header-day">Saturday</div>
+        <div class="calendar-header-day">Sun<span>day</span></div>
+        <div class="calendar-header-day">Mon<span>day</span></div>
+        <div class="calendar-header-day">Tue<span>sday</span></div>
+        <div class="calendar-header-day">Wed<span>nesday</span></div>
+        <div class="calendar-header-day">Thu<span>rsday</span></div>
+        <div class="calendar-header-day">Fri<span>day</span></div>
+        <div class="calendar-header-day">Sat<span>urday</span></div>
       </div>
       <div id="calendarGrid" class="calendar-grid" style="background-color: rgb(252, 251, 235);">
         <!-- Calendar days will be populated by JavaScript -->

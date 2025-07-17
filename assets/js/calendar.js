@@ -141,20 +141,35 @@ class Calendar {
     eventEl.classList.add(`event-${category}`);
     
     // Add responsive font sizing based on title length
-    const titleLength = event.title.length;
-    if (titleLength > 60) {
-      eventEl.classList.add('event-item-tiny');
-    } else if (titleLength > 40) {
-      eventEl.classList.add('event-item-small');
-    } else if (titleLength > 25) {
-      eventEl.classList.add('event-item-medium');
-    }
+    // const titleLength = event.title.length;
+    // if (titleLength > 60) {
+    //   eventEl.classList.add('event-item-tiny');
+    // } else if (titleLength > 40) {
+    //   eventEl.classList.add('event-item-small');
+    // } else if (titleLength > 25) {
+    //   eventEl.classList.add('event-item-medium');
+    // }
     
-    eventEl.textContent = event.title;
+    const doSqueeze = window.innerWidth < 640 
+
+    const trimLength = doSqueeze ? 22 : 50
+    let title = []
+    let lengthSoFar = 0
+    const words = event.title.split(' ')
+    while (lengthSoFar < trimLength && words.length) {
+      const word = words.shift()
+      title.push(word)
+      lengthSoFar += word.length
+    }
+    if (lengthSoFar + title.length - 1 != event.title.length) title.push('...')
+    
+    eventEl.textContent = title.join(' ');
     eventEl.addEventListener('click', () => this.showEventDetails(event));
     
     // Fine-tune font size after adding to DOM (for very long titles)
-    setTimeout(() => this.adjustEventFontSize(eventEl), 0);
+    if (doSqueeze) {
+      setTimeout(() => this.adjustEventFontSize(eventEl), 0);
+    }
     
     return eventEl;
   }
@@ -169,7 +184,8 @@ class Calendar {
     // If the content height exceeds available space, reduce font size
     if (eventEl.scrollHeight > availableHeight) {
       const currentFontSize = parseInt(window.getComputedStyle(eventEl).fontSize);
-      if (currentFontSize > 8) { // Don't go below 8px
+      const minSize = 11 // Don't go below this size
+      if (currentFontSize > minSize) { 
         eventEl.style.fontSize = (currentFontSize - 1) + 'px';
         eventEl.style.lineHeight = '1.0';
         // Recursively adjust if still overflowing
