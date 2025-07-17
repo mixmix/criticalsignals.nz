@@ -122,4 +122,14 @@
     <!-- Fallback for development -->
     <script src="/js/calendar.js" defer></script>
   {{ end }}
+
+  <!-- Include Calendar CSS -->
+  {{ $calendar := resources.Get "css/calendar.css" }}
+  {{ if $calendar }}
+    {{ $calendarCSS := $calendar | minify }}
+    <link rel="stylesheet" href="{{ $calendarCSS.RelPermalink }}" >
+  {{ else }}
+    <!-- Fallback for development -->
+    <link rel="stylesheet" href="/css/calendar.css">
+  {{ end }}
 {{ end }} 
