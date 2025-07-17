@@ -12,6 +12,7 @@
 <div class="sr-only">
   <h1>Critical Signals</h1>
   <ul>
+    <!-- interleave the images with the questions, as evenly spaced as possible -->
     {{ $questionCount := len .Params.questions }}
     {{ $imageCount := len .Params.imageAltTexts }}
     {{ $questionsPerGroup := div $questionCount $imageCount }}
