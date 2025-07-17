@@ -126,13 +126,17 @@ function random (n) {
   padding-inline: unset;
   max-inline-size: unset;
 
-  :where(main) > *, :where(footer) {
+  :where(.main-menu, main > *, footer) {
     // the same content container styles are applied to each component, so 
     // they can be individually overridden as needed (e.g. for full-bleed layouts)
     width: 100%;
     max-width: var(--content-max-width-plus-gutters);
     margin-inline: auto;
     padding-inline: var(--page-gutter);
+  }
+  // main-menu's padding is set inline though, so higher specificity is needed
+  .main-menu {
+    padding-inline: var(--page-gutter) !important;
   }
 }
 
