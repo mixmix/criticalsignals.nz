@@ -65,9 +65,7 @@ const processedImages = window.heroImages || []
 setHeroText()
 
 setInterval(setHeroText, 5000)
-if (processedImages.length > 0) {
-  setInterval(setHeroImage, 13000)
-}
+setInterval(setHeroImage, 13000)
 
 function setHeroText () {
   const text = questions[random(questions.length)]
@@ -121,40 +119,40 @@ function random (n) {
 
 <style>
 :where(body):has(.homepage-hero) {
-  // this page's components will handle their own inline spacing
+  /* this page's components will handle their own inline spacing */
   margin: unset;
   padding-inline: unset;
   max-inline-size: unset;
 
   :where(.main-menu, main > *, footer) {
-    // the same content container styles are applied to each component, so 
-    // they can be individually overridden as needed (e.g. for full-bleed layouts)
+    /* the same content container styles are applied to each component, so they 
+    can be individually overridden as needed (e.g. for full-bleed layouts) */
     width: 100%;
     max-width: var(--content-max-width-plus-gutters);
     margin-inline: auto;
     padding-inline: var(--page-gutter);
   }
-  // main-menu's padding is set inline though, so higher specificity is needed
+  /* main-menu's padding is set inline though, so higher specificity is needed */
   .main-menu {
     padding-inline: var(--page-gutter) !important;
   }
 }
 
 .homepage-hero {
-  // allow children (specifically the image) to be full-bleed
+  /* allow children (specifically the image) to be full-bleed */
   max-width: unset;
   margin-inline: unset;
   padding-inline: unset;
 
   height: clamp(25rem, 62.5vw, 30rem); 
   display: grid;
-  grid-template-rows: minmax(0, 1fr); // https://css-tricks.com/preventing-a-grid-blowout/
+  grid-template-rows: minmax(0, 1fr); /* https://css-tricks.com/preventing-a-grid-blowout/ */
   grid-template-areas: "a"; 
   place-items: center;
   margin-bottom: 2rem;
 
   & > * {
-    // picture + content will be overlaid in the same area
+    /* picture + content will be overlaid in the same area */
     grid-area: a;
     width: 100%;
     height: 100%;
@@ -173,7 +171,7 @@ function random (n) {
 }
 
 .homepage-hero__content {
-  // standard content container settings
+  /*  standard content container settings */
   max-width: var(--content-max-width-plus-gutters);
   margin-inline: auto;
   padding-inline: var(--page-gutter);
