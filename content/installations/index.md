@@ -7,9 +7,9 @@ Curated by Sophie Jerram
 
 Where we are // 18 July - 2 August
  
-## Whakahokia (2025), Mark Harvey, <span>13:55</span>
+## _Whakahokia_ (2025), Mark Harvey, <span>13:55</span>
 
-Whakahokia was a beachside restoration and performance event at Kuku beach, on
+_Whakahokia_ was a beachside restoration and performance event at Kuku beach, on
 Sat 8th March, 2025.  Participants removed invasive maram grass off a beach
 dune and returned it to State Highway 1, 7km away.
 
@@ -25,7 +25,7 @@ festival of the Arts, the Venice Biennale, and the Pain in the Class video art
 festival in Estonia.
  
 
-## Thronging in Three Parts (2025), Trudy Lane, <span>8:33</span>
+## _Thronging in Three Parts_ (2025), Trudy Lane, <span>8:33</span>
 
 Filmed at the Robert Findlay Wildlife Reserve, Pūkorokoro, North Waikato Each
 year, thousands of migratory shorebirds arrive at Pūkorokoro Miranda from as
@@ -33,8 +33,8 @@ far away as Alaska and Siberia to feed on the rich intertidal mudflats. Living
 by the rhythm of the tides, they move closer as the water rises and retreat
 across the flats as it recedes. Joining them in this tidal cycle is the
 dedicated team at the Pūkorokoro Shorebird Centre, who care for these birds in
-their southern habitat and advocate for them across the globe. Thronging in
-Three Parts is a meditation on these cyclical timeframes, composed from found
+their southern habitat and advocate for them across the globe. _Thronging in
+Three Parts_ is a meditation on these cyclical timeframes, composed from found
 footage captured by staff and volunteers while working at the Reserve — Chelsea
 Ralls, Trudy Lane, and 賴怡蒨 Emilia Lai.
 
@@ -51,12 +51,12 @@ ecologies — deepening our relationships with place, with each other, and acros
 the complex social and historical layers we inhabit.
  
 
-## Ghosts (2018), Misagh Azimi, <span>13:33</span>
+## _Ghosts_ (2018), Misagh Azimi, <span>13:33</span>
 
-**Ghosts** explores the sonic response of a space to the composer’s music in the
+**_Ghosts_** explores the sonic response of a space to the composer’s music in the
 immediacy of the present. Originally composed in 2018 for the die digitale
 festival at Kunstraum Düsseldorf, the piece was composed to accompany
-contemporary dance and visual art. Through a slow, morphing development, Ghosts
+contemporary dance and visual art. Through a slow, morphing development, _Ghosts_
 meditates on themes of time – bridging past and future. At moments it demands
 the listener’s full attention; at others, it invites introspection, drifting,
 and a heightened awareness of the surrounding space. In this shifting dynamic,
