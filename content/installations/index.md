@@ -77,6 +77,10 @@ questions of labor, authorship, and technofeudalism.
 
 <style>
 
+header :not(h1) {
+  display: none;
+}
+
 h2 {
   background: var(--critical-cream);
   color: var(--critical-green);
