@@ -2,16 +2,16 @@
 title: Installations
 ---
 
+_Where we are_ // 18 July - 2 August<br/>
+Curated by Sophie Jerram 
 
-Curated by Sophie Jerram
-
-Where we are // 18 July - 2 August
- 
 ## _Whakahokia_ (2025), Mark Harvey, <span>13:55</span>
 
 _Whakahokia_ was a beachside restoration and performance event at Kuku beach, on
 Sat 8th March, 2025.  Participants removed invasive maram grass off a beach
 dune and returned it to State Highway 1, 7km away.
+
+![](maram_grass.jpeg)
 
 Curated by Huhana Smith, as part of Te Waituhi ā Nuku: Drawing Ecologies.With
 thanks to Ngāti Tukorehe iwi. Camera: Maija Stephens; Editing: Mark Harvey.
@@ -38,11 +38,13 @@ Three Parts_ is a meditation on these cyclical timeframes, composed from found
 footage captured by staff and volunteers while working at the Reserve — Chelsea
 Ralls, Trudy Lane, and 賴怡蒨 Emilia Lai.
 
-**Shorebirds visible in the work**: Kuaka / Bar-tailed Godwit, Huahou / Red Knot,
+Shorebirds visible in the work: Kuaka / Bar-tailed Godwit, Huahou / Red Knot,
 Poaka / Pied Stilt, Ngutu Parore / Wrybill, Tōrea / South Island Pied
 Oystercatcher, Tarāpuka / Black-billed Gull, Kōtuku Ngutupapa / Royal
 Spoonbill, Matuku Moana / White-faced Heron, Turnstone, White-fronted Tern,
 Taranu / Caspian Tern, Tōrea Pango / Variable Oystercatcher.
+
+![](birds.jpeg)
 
 **Trudy Lane** is a cultural producer and creator working at the intersection of
 science, art, and community. She co-chairs Intercreate.org and is interested in
@@ -50,6 +52,7 @@ poetic-pragmatic approaches through which creativity can directly support local
 ecologies — deepening our relationships with place, with each other, and across
 the complex social and historical layers we inhabit.
  
+
 
 ## _Ghosts_ (2018), Misagh Azimi, <span>13:33</span>
 
@@ -73,6 +76,16 @@ questions of labor, authorship, and technofeudalism.
 
 
 <style>
+
+h2 {
+  background: var(--critical-cream);
+  color: var(--critical-green);
+
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-bottom: 3px;
+}
+
 h2 span {
   font-size: 1rem;
   font-weight: 400;
@@ -80,6 +93,10 @@ h2 span {
 
 p strong {
   font-size: 1.2rem;
+}
+
+img {
+  border-radius: 0;
 }
 </style>
 
