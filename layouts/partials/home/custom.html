@@ -8,6 +8,30 @@
 {{ $imageBreakpointLarge := "750px" }}
 {{ partial "home/hero-image-rendition.html" . }}
 
+<!-- an approximation of the homepage hero content for people using screen readers -->
+<div class="sr-only">
+  <h1>Critical Signals</h1>
+  <ul>
+    <!-- interleave the images with the questions, as evenly spaced as possible -->
+    {{ $questionCount := len .Params.questions }}
+    {{ $imageCount := len .Params.imageAltTexts }}
+    {{ $questionsPerGroup := div $questionCount $imageCount }}
+    
+    {{ range $index, $question := .Params.questions }}
+    <li>{{ $question }}</li>
+    
+    {{ $currentGroup := div $index $questionsPerGroup }}
+    {{ $isEndOfGroup := eq (mod $index $questionsPerGroup) (sub $questionsPerGroup 1) }}
+    {{ $isLastQuestion := eq $index (sub $questionCount 1) }}
+    {{ $canInsertImage := lt $currentGroup $imageCount }}
+    
+    {{ if and (or $isEndOfGroup $isLastQuestion) $canInsertImage }}
+    <li><img src="" alt="{{ index $.Params.imageAltTexts $currentGroup }}"></li>
+    {{ end }}
+    {{ end }}
+  </ul>
+</div>
+
 <div class="homepage-hero">
   {{ if .Params.images }}
       <picture class="homepage-hero__picture">
@@ -16,18 +40,19 @@
         <source media="(min-width: {{ $imageBreakpointSmall }})" srcset="">
         <img id="target-hero" 
             class="nozoom" 
-            src="">
+            src=""
+            alt="">
       </picture>
   {{ end }}
 
-  <div class="homepage-hero__content">
+  <div class="homepage-hero__content" aria-hidden="true">
     <div id="target-question" class="question">
       How many<br />
       devices is a<br />
       lifetime
     </div>
 
-    <img class='logo' src="/logo.svg" />
+    <img class='logo' alt="" src="/logo.svg" />
   </div>
 
 </div>
@@ -41,11 +66,11 @@
 </section>
 
 <section class='partners'>
-  <img src="/images/partners/cream_Logo_Goethe_Institut.svg">
-  <img src="/images/partners/cream_victoria_logo.svg" >
-  <img src="/images/partners/cream_Monash_University_logo.svg" >
-  <img src="/images/partners/cream_Massey_University_Logo.svg" >
-  <img src="/images/partners/cream_Toi_Aria_Logo.svg" >
+  <img alt="Goethe Institut" src="/images/partners/cream_Logo_Goethe_Institut.svg">
+  <img alt="Victoria University of Wellington" src="/images/partners/cream_victoria_logo.svg" >
+  <img alt="Monash University" src="/images/partners/cream_Monash_University_logo.svg" >
+  <img alt="Massey University" src="/images/partners/cream_Massey_University_Logo.svg" >
+  <img alt="Toi Aria" src="/images/partners/cream_Toi_Aria_Logo.svg" >
 </section>
 
 <script>
