@@ -4,7 +4,7 @@ hosts:
   - "Julian Oliver"
 date: 2025-07-26
 start_time: 10:00
-end_time: 18:30
+end_time: 15:30
 categories:
   - workshop
 sign_up_link: https://events.humanitix.com/offline-aotearoa/tickets
