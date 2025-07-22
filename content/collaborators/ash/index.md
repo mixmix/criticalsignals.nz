@@ -1,8 +1,8 @@
 ---
 title: "Ash Holwell"
-date: 2025-07-09
+date: 2025-06-01
 # description: "a description"
-# tags: ["space organiser"]
+tags: ["core-team"]
 ---
 
 Ash is a design activist creating places through community ownership and
@@ -11,4 +11,3 @@ boundaries of sustainable design through the simple and complex social
 technology of sharing. Ash works under spacelamp and has co-founded
 two/fiftyseven, oneonethree, oneonesix, and Whare Bike. He also chairs Whakaora
 Kai and works collaboratively with CoLiberate.
-

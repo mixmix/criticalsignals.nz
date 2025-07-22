@@ -1,0 +1,151 @@
+{{ define "main" }}
+
+{{ .Scratch.Set "scope" "list" }}
+{{ if .Site.Params.list.showHero | default false }}
+  {{ $heroStyle := print "hero/" .Site.Params.list.heroStyle ".html" }}
+  {{ if templates.Exists ( printf "partials/%s" $heroStyle ) }}
+    {{ partial $heroStyle . }}
+  {{ else }}
+    {{ partial "hero/basic.html" . }}
+  {{ end }}
+{{- end -}}
+
+{{ $toc := and (.Params.showTableOfContents | default (.Site.Params.list.showTableOfContents | default false)) (in
+.TableOfContents "<ul") }} <header>
+  {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
+  {{ partial "breadcrumbs.html" . }}
+  {{ end }}
+  <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+    {{ partial "article-meta/list.html" (dict "context" . "scope" "single") }}
+  </div>
+  {{ $translations := .AllTranslations }}
+  {{ with .File }}
+    {{ $path := .Path }}
+    {{range $translations}}
+      {{ $lang := print "."  .Lang  ".md" }}
+      {{ $path = replace $path $lang ".md" }}
+    {{end}}
+  {{ $jsPage := resources.Get "js/page.js" }}
+  {{ $jsPage = $jsPage | resources.Minify | resources.Fingerprint ($.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script type="text/javascript" src="{{ $jsPage.RelPermalink }}" integrity="{{ $jsPage.Data.Integrity }}" data-oid="views_{{ $path }}" data-oid-likes="likes_{{ $path }}"></script>
+  {{ end }}
+  </header>
+  <section class="{{ if $toc -}}
+      mt-12
+    {{- else -}}
+      mt-0
+    {{- end }} prose flex max-w-full flex-col dark:prose-invert lg:flex-row">
+    {{ if $toc }}
+    <div class="order-first px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8">
+      <div class="toc ltr:pl-5 rtl:pr-5 lg:sticky {{ if hasPrefix .Site.Params.header.layout "fixed" -}}
+      lg:top-[140px]{{ else }}lg:top-10{{ end }}">
+        {{ partial "toc.html" . }}
+      </div>
+    </div>
+    {{ end }}
+    <div class="min-w-0 min-h-0 max-w-prose">
+      {{ .Content }}
+    </div>
+
+
+
+
+  </section>
+  {{ if gt .Pages 0 }}
+
+    {{ $cardViewScreenWidth := .Params.cardViewScreenWidth | default (.Site.Params.list.cardViewScreenWidth | default false) }}
+    {{ $orderByWeight := .Params.orderByWeight | default ($.Site.Params.list.orderByWeight | default false) }}
+
+    {{ $coreTeamPages := where .Pages ".Params.tags" "intersect" (slice "core-team") }}
+    {{ $friendsPages := slice }}
+    {{ range .Pages }}
+      {{ $tags := .Params.tags | default (slice) }}
+      {{ if not (in $tags "core-team") }}
+        {{ $friendsPages = $friendsPages | append . }}
+      {{ end }}
+    {{ end }}
+
+    <h2>Core Team</h2>
+    <section class="core-team-container">
+      {{ if $coreTeamPages }}
+        {{ if $orderByWeight }}
+          {{ $sortedPages := sort $coreTeamPages "Weight" }}
+          {{ range $sortedPages }}
+            {{ partial "article-link/card-collaborator.html" . }}
+          {{ end }}
+        {{ else }}
+          {{ range $coreTeamPages.Reverse }}
+            {{ partial "article-link/card-collaborator.html" . }}
+          {{ end }}
+        {{ end }}
+      {{ else }}
+        <p>No core team members found.</p>
+      {{ end }}
+    </section>
+
+    <h2>Friends</h2>
+    <section class="friends-container">
+      {{ if $friendsPages }}
+        {{ if $orderByWeight }}
+          {{ $sortedPages := sort $friendsPages "Weight" }}
+          {{ range $sortedPages }}
+            {{ partial "article-link/card-collaborator.html" . }}
+          {{ end }}
+        {{ else }}
+          {{ range $friendsPages.Reverse }}
+            {{ partial "article-link/card-collaborator.html" . }}
+          {{ end }}
+        {{ end }}
+      {{ else }}
+        <p>No core team members found.</p>
+      {{ end }}
+    </section>
+
+  {{ else }}
+    <section class="mt-10 prose dark:prose-invert">
+      <p class="py-8 border-t">
+        <em>{{ i18n "list.no_articles" | emojify }}</em>
+      </p>
+    </section>
+  {{ end }}
+
+  {{ partial "pagination.html" . }}
+
+<style>
+  h2 {
+    color: var(--critical-green);
+    background: var(--critical-cream);
+    padding: 0.2rem 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .core-team-container,
+  .friends-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+
+    margin-bottom: 3rem;
+  }
+  .core-team-container .collaborator-card,
+  .friends-container .collaborator-card {
+    --collaborator-square-size: min(
+      calc(50vw - var(--page-gutter) - 0.5rem),
+      180px
+    );
+
+    display: block;
+    flex: 0 0 300px;
+    max-width: var(--collaborator-square-size);
+    box-sizing: border-box;
+  }
+
+  .core-team-container .collaborator-card .thumbnail_card {
+  .friends-container .collaborator-card .thumbnail_card {
+    height: var(--collaborator-square-size);
+  }
+</style>
+{{ end }}
+

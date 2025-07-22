@@ -1,9 +1,9 @@
 ---
 title: "Julian Oliver"
-date: 2025-06-24
+date: 2025-06-01
 draft: false
 # description: "a description"
-# tags: ["space organiser"]
+tags: ["core-team"]
 ---
 
 [Julian Oliver](https://julianoliver.com) is a Critical Engineer, educator, artist, and

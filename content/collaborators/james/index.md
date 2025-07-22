@@ -1,3 +1,8 @@
+---
+title: "James Renwick"
+date: 2025-07-20
+---
+
 James is a climate researcher who studies Southern Hemisphere climate
 variability, and the impacts of climate change on the Pacific, New Zealand and
 the Antarctic. He was a lead author for the Intergovernmental Panel on Climate

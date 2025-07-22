@@ -1,6 +1,7 @@
 ---
 title: "Cathrine Dyer"
-date: 2025-07-22
+date: 2025-06-16
+tags: ["core-team"]
 ---
 
 Cathrine Dyer is a Lecturer in Climate Change at Te Herenga Waka Victoria
@@ -9,4 +10,4 @@ climate change policy. Her PhD research examined government underreactions to
 climate change, leading to an interest in commons expansion and collective
 responses. Cathrine is a regular guest on The Hoon podcast, covering current
 climate change issues with journalists Bernard Hickey (The Kākā) and Peter
-Bale. 
+Bale.

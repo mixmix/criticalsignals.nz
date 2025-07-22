@@ -1,0 +1,49 @@
+{{ $disableImageOptimization := .Page.Site.Params.disableImageOptimization | default false }}
+{{ with .Params.externalUrl }}
+  <a href="{{ . }}" target="_blank" rel="external" class="collaborator-card">
+{{ else }}
+  <a href="{{ .RelPermalink }}" class="collaborator-card">
+{{ end }}
+    <div class="min-h-full overflow-hidden shadow-2xl relative">
+
+      {{- with $.Params.images -}}
+      {{- range first 6 . }}
+      <meta property="og:image" content="{{ . | absURL }}" />{{ end -}}
+      {{- else -}}
+      {{- $images := $.Resources.ByType "image" -}}
+      {{- $featured := $images.GetMatch "*feature*" -}}
+      {{- if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end -}}
+      {{ if and .Params.featureimage (not $featured) }}
+      {{- $url:= .Params.featureimage -}}
+      {{ $featured = resources.GetRemote $url }}
+      {{ end }}
+      {{- if not $featured }}{{ with .Site.Params.defaultFeaturedImage }}{{ $featured = resources.Get . }}{{ end }}{{ end -}}
+      {{ if .Params.hideFeatureImage }}{{ $featured = false }}{{ end }}
+      {{- with $featured -}}
+
+      {{ if or $disableImageOptimization (strings.HasSuffix $featured ".svg")}}
+        {{ with . }}
+        <div class="w-full thumbnail_card nozoom" style="background-image:url({{ .RelPermalink }});"></div>
+        {{ end }}
+      {{ else }}
+        {{ with .Resize "600x" }}
+        <div class="w-full thumbnail_card nozoom" style="background-image:url({{ .RelPermalink }});"></div>
+        {{ end }}
+      {{ end }}
+
+      {{- else -}}
+      {{- with $.Site.Params.images }}
+      <meta property="og:image" content="{{ index . 0 | absURL }}" />{{ end -}}
+      {{- end -}}
+      {{- end -}}
+
+      <div class="px-3 py-2">
+        <div class="font-bold text-sm text-neutral-800 decoration-primary-500 hover:underline hover:underline-offset-2 dark:text-neutral"
+          href="{{ .RelPermalink }}">{{ .Title | emojify }}</div>
+
+        {{/* <div class="text-sm text-neutral-500 dark:text-neutral-400"> */}}
+        {{/*   {{ partial "article-meta/basic.html" . }} */}}
+        {{/* </div> */}}
+      </div>
+    </div>
+  </a>

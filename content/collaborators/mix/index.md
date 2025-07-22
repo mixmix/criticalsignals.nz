@@ -1,9 +1,9 @@
 ---
 title: "Mix Irving"
-date: 2025-06-16
+date: 2025-06-10
 draft: false
 # description: "a description"
-# tags: ["example", "tag"]
+tags: ["core-team"]
 ---
 
 Mix Irving is a programmer, former teacher, and gardener of community. Has been
