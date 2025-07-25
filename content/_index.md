@@ -120,7 +120,6 @@ infrastructures for living — with care, agency, and creativity.
     </a>
   </p>
 </div>
-
 <script>
 function submitHandler(event) {
   event.preventDefault();
@@ -226,3 +225,11 @@ for (var i = 0; i < formContainers.length; i++) {
   formContainer.classList.add("newsletter-handlers-added");
 }
 </script>
+<div class="pledgeme-section">
+<h3>Help us to persist and grow!</h3>
+    <form class="pledgeme-form" action="https://pledgeme.co.nz/projects/8444-critical-signals" method="POST" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+      <button type="submit" class="pledgeme-form-button" style="background: rgb(25, 64, 33); font-size: 16px; color: rgb(248, 244, 206); font-family: bold_font, Helvetica-Bold, sans-serif; display: flex; width: 100%; max-width: 400px; white-space: normal; height: 42px; align-items: center; justify-content: center; flex-direction: row; padding: 10px 20px; border-radius: 8px; text-align: center; font-style: normal; font-weight: bold; line-height: 20px; border: 3px solid rgb(248, 244, 206); cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+        Donate to Critical Signals
+      </button>
+    </form>
+</div>

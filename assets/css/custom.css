@@ -104,6 +104,16 @@ p a {
   text-decoration: underline dotted;
 }
 
+/* Pledgme  section styling */
+.pledgeme-section {
+  background: rgba(25, 64, 33, 0.1);
+  text-align: center;
+  padding: 0rem 1.5rem 3rem 1.5rem;
+  margin: 4rem 0;
+  border: 2px solid rgba(248, 244, 206, 0.3);
+  border-radius: 12px;
+}
+
 /* Newsletter signup section styling */
 .newsletter-section {
   background: rgba(25, 64, 33, 0.1);
@@ -113,6 +123,8 @@ p a {
   border: 2px solid rgba(248, 244, 206, 0.3);
   border-radius: 12px;
 }
+
+.button-form {}
 
 .newsletter-form {}
 
@@ -153,6 +165,18 @@ p a {
 .newsletter-form-button:active {
   transform: translateY(0px) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.pledgeme-form-button:active {
+  transform: translateY(0px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+.pledgeme-form-button:hover {
+  background: rgb(248, 244, 206) !important;
+  color: rgb(25, 64, 33) !important;
+  border-color: rgb(25, 64, 33) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 .newsletter-loading-button:hover {
