@@ -98,17 +98,13 @@ infrastructures for living — with care, agency, and creativity.
         Oops! Something went wrong, please try again
       </p>
     </div>
-    <button class='newsletter-back-button' type='button' 
-      style='color: rgb(248, 244, 206); font-family: regular_font, Helvetica, sans-serif; font-size: 14px; margin: 8px auto; text-align: center; display: none; background: transparent; border: none; cursor: pointer; text-decoration: underline;'
-      onmouseout='this.style.opacity="0.8"' 
-      onmouseover='this.style.opacity="1"'>
+    <button class='newsletter-back-button' type='button' style='color: rgb(248, 244, 206); font-family: regular_font, Helvetica, sans-serif; font-size: 14px; margin: 8px auto; text-align: center; display: none; background: transparent; border: none; cursor: pointer; text-decoration: underline;' onmouseout='this.style.opacity="0.8"'onmouseover='this.style.opacity="1"'>
       ← Back
     </button>
   </div>
   
   <p style="margin-top: 2rem; margin-bottom: 0; font-size: 12px; opacity: 0.7; line-height: 1.4;">
-    We use
-    <a href="https://loops.so/privacy" target="_blank" rel="noopener noreferrer">Loops.so</a>
+    We use <a href="https://loops.so/privacy" target="_blank" rel="noopener noreferrer">Loops.so</a>
     for our newsletter. View their privacy policy for details on how your email
     and associated data is handled.
   </p>
