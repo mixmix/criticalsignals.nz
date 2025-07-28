@@ -99,6 +99,9 @@ nav > a > p[title=""],
 
 /* end Link Styling */
 
+p {
+  text-align: justify;
+}
 
 p a {
   text-decoration: underline dotted;
