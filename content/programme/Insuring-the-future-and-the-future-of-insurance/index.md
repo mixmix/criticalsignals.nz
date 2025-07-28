@@ -5,6 +5,7 @@ start_time: 17:30
 end_time: 19:00
 hosts:
   - "Jonathon Boston"
+sign_up_link: https://events.humanitix.com/insuring-the-future/tickets
 ---
 
 Aotearoa faces multiple natural hazard risks, both seismic and weather-related.
