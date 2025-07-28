@@ -124,6 +124,7 @@ infrastructures for living — with care, agency, and creativity.
       </button>
     </form>
 </div>
+
 <script>
 function submitHandler(event) {
   event.preventDefault();
