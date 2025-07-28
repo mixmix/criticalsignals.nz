@@ -93,6 +93,7 @@ class Calendar {
     
     const isCurrentMonth = date.getMonth() === currentMonth;
     const isToday = this.isToday(date);
+    const isPast = this.isPast(date);
     
     if (!isCurrentMonth) {
       dayEl.classList.add('other-month');
@@ -100,6 +101,10 @@ class Calendar {
     
     if (isToday) {
       dayEl.classList.add('today');
+    }
+
+    if (isPast) {
+      dayEl.classList.add('past');
     }
 
     // Day number
@@ -207,6 +212,11 @@ class Calendar {
   isToday(date) {
     const today = new Date();
     return date.toDateString() === today.toDateString();
+  }
+
+  isPast(date) {
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    return toYearMonthDay(date) < toYearMonthDay(yesterday)
   }
 
   showEventDetails(event) {
@@ -363,3 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error initializing calendar:', error);
   }
 }); 
+
+function toYearMonthDay (date) {
+  return date.toISOString().split('T')[0]
+}

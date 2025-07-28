@@ -5,10 +5,12 @@
 
 /* Calendar Grid */
 .calendar-grid {
+  width: 100%;
+
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0;
-  width: 100%;
+  /* background-color: rgb(252, 251, 235); */
 }
 
 .calendar-day {
@@ -40,12 +42,16 @@
 }
 
 .calendar-day.other-month {
-  background-color: rgb(252, 251, 235);
+  /* background-color: rgb(252, 251, 235); */
   color: rgb(156, 163, 175);
 }
 
 .calendar-day.other-month:hover {
   background-color: rgb(251, 249, 225);
+}
+
+.calendar-day.past {
+  opacity: 0.8
 }
 
 .calendar-day.today {
@@ -57,14 +63,18 @@
 .calendar-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  /* background-color: rgb(249, 246, 216); */
+  /* grid-gap: 1px; */
 }
 
 .calendar-header-day {
   padding: 12px 16px;
   text-align: center;
   font-size: 14px;
-  font-weight: 600;
-  color: var(--critical-green);
+  /* font-weight: 600; */
+  letter-spacing: 1px;
+  color: var(--critical-cream);
+  opacity: 0.8;
 }
 
 .calendar-day-number {
