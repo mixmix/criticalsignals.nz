@@ -4,7 +4,7 @@ hosts:
   - "Alexandra Bonham"
   - "Finn Ilsey-Kemp"
   - "Sophie Jerram"
-date: 2025-08-07
+date: 2025-08-08
 start_time: 10:00
 end_time: 16:00
 categories:
