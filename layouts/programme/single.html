@@ -113,7 +113,6 @@
 
           {{ partial "article-meta/programme-hosts" . }}
 
-
           {{ $defaultReplyByEmail := .Site.Params.replyByEmail }}
           {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}
           {{ if $replyByEmail }}
@@ -203,6 +202,10 @@
       background: rgb(248, 244, 206);
       color: rgb(25, 64, 33) !important; 
       text-transform: uppercase;
+    }
+
+    .rounded-lg {
+      border-radius: 0;
     }
   </style>
 {{ end }}

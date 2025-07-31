@@ -66,7 +66,7 @@ and a heightened awareness of the surrounding space. In this shifting dynamic,
 the work summons the “ghosts” that linger – memories, anticipations, and echoes
 of what was and what might be.
 
-**Misagh Azimi** is a composer, researcher, and interdisciplinary artist based in
+[**Misagh Azimi**](/collaborators/misagh) is a composer, researcher, and interdisciplinary artist based in
 Aotearoa New Zealand. His compositional work centers on music for the stage and
 visual media. In his research, he explores the creative potential of artificial
 intelligence, the development of new technologies for music-making, and a

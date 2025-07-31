@@ -73,15 +73,21 @@ class Calendar {
 
     const year = this.currentDate.getFullYear();
     const month = this.currentDate.getMonth();
+
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+    // start date we rendering:
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+    const lastDay = new Date(year, month + 1, 0);
+    const endDate = new Date(lastDay)
+    endDate.setDate(lastDay.getDate() + 7 - lastDay.getDay())
 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
-      
+      if (date >= endDate) continue
+
       const dayElement = this.createDayElement(date, month);
       grid.appendChild(dayElement);
     }
@@ -93,6 +99,7 @@ class Calendar {
     
     const isCurrentMonth = date.getMonth() === currentMonth;
     const isToday = this.isToday(date);
+    const isPast = this.isPast(date);
     
     if (!isCurrentMonth) {
       dayEl.classList.add('other-month');
@@ -100,6 +107,10 @@ class Calendar {
     
     if (isToday) {
       dayEl.classList.add('today');
+    }
+
+    if (isPast) {
+      dayEl.classList.add('past');
     }
 
     // Day number
@@ -209,6 +220,11 @@ class Calendar {
     return date.toDateString() === today.toDateString();
   }
 
+  isPast(date) {
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    return toYearMonthDay(date) < toYearMonthDay(yesterday)
+  }
+
   showEventDetails(event) {
     const modal = document.getElementById('eventModal');
     const title = document.getElementById('modalTitle');
@@ -310,41 +326,6 @@ class Calendar {
   closeModal() {
     document.getElementById('eventModal').style.display = 'none';
   }
-
-  createPastEventsSection(pastEvents) {
-    const pastSection = document.createElement('div');
-    pastSection.className = 'past-events-section';
-    
-    const pastHeader = document.createElement('button');
-    pastHeader.className = 'past-events-toggle';
-    
-    const chevron = document.createElement('span');
-    chevron.className = 'past-events-chevron';
-    chevron.textContent = '▶';
-    pastHeader.appendChild(chevron);
-    
-    const headerText = document.createElement('span');
-    headerText.textContent = `Past Events (${pastEvents.length})`;
-    pastHeader.appendChild(headerText);
-    
-    const pastContainer = document.createElement('div');
-    pastContainer.className = 'past-events-container';
-    pastContainer.style.display = 'none';
-    
-    pastEvents.forEach(event => {
-      pastContainer.appendChild(this.createEventListItem(event));
-    });
-    
-    pastHeader.addEventListener('click', () => {
-      const isHidden = pastContainer.style.display === 'none';
-      pastContainer.style.display = isHidden ? 'block' : 'none';
-      chevron.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
-    });
-    
-    pastSection.appendChild(pastHeader);
-    pastSection.appendChild(pastContainer);
-    return pastSection;
-  }
 }
 
 // Initialize calendar when DOM is ready
@@ -363,3 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error initializing calendar:', error);
   }
 }); 
+
+function toYearMonthDay (date) {
+  return date.toISOString().split('T')[0]
+}

@@ -12,11 +12,9 @@
     
     <!-- Calendar Controls -->
     <div class="mt-8 mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:justify-between">
-      <!-- Left: Spacer -->
-      <div style="flex: 1 1 auto;"></div>
       
       <!-- Center: Navigation cluster -->
-      <div class="calendar-navigation flex items-center justify-center space-x-4" style="flex: 0 0 auto; min-width: 400px;">
+      <div class="calendar-navigation flex items-center justify-center space-x-4" style="flex: 1 1 auto;">
         <button id="prevMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
           <span class="text-base font-medium">← Prev</span>
         </button>
@@ -29,8 +27,8 @@
     </div>
 
     <!-- Calendar Grid -->
-    <div class="calendar-container border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
-      <div class="calendar-header border-b border-neutral-200 dark:border-neutral-700" style="background-color: rgb(249, 246, 216);">
+    <div class="calendar-container overflow-hidden shadow-sm">
+      <div class="calendar-header ">
         <div class="calendar-header-day">Sun<span>day</span></div>
         <div class="calendar-header-day">Mon<span>day</span></div>
         <div class="calendar-header-day">Tue<span>sday</span></div>
@@ -39,7 +37,7 @@
         <div class="calendar-header-day">Fri<span>day</span></div>
         <div class="calendar-header-day">Sat<span>urday</span></div>
       </div>
-      <div id="calendarGrid" class="calendar-grid" style="background-color: rgb(252, 251, 235);">
+      <div id="calendarGrid" class="calendar-grid">
         <!-- Calendar days will be populated by JavaScript -->
       </div>
     </div>
