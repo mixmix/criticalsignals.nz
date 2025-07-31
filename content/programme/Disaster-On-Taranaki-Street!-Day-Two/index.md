@@ -1,5 +1,5 @@
 ---
-title: "Disaster On Taranaki Street! [Day 1]"
+title: "Disaster On Taranaki Street! [Day 2]"
 hosts:
   - "Alexandra Bonham"
   - "Finn Ilsey-Kemp"
