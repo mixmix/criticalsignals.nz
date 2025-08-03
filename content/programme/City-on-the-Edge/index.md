@@ -5,6 +5,8 @@ start_time: 17:30
 end_time: 19:00
 hosts:
   - "Finn Illsey-Kemp"
+tags:
+  - "seminar"
 sign_up_link: https://events.humanitix.com/city-on-the-edge-of-techtonic-plates-finn-illsey-kemp/tickets
 ---
 
