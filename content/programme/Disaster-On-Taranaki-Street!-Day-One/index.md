@@ -2,26 +2,38 @@
 title: "Disaster On Taranaki Street! [Day 1]"
 hosts:
   - "Alexandra Bonham"
-  - "Finn Ilsey-Kemp"
+  - "Finn Illsey-Kemp"
   - "Sophie Jerram"
 date: 2025-08-08
 start_time: 10:00
 end_time: 16:00
 categories:
   - Workshop
-sign_up_link: https://events.humanitix.com/disaster-on-taranaki-street
-
+no_link: ["off"]
 ---
 
-Your community needs you!
+The Playful Revolution is seeking up to 10 collaborative, open-minded creators
+who will explore, the potential impact of a major natural hazard event in the
+heart of Wellington’s Central City and work together to create an educational
+video to help others prepare.
 
-The Playful Revolution is seeking up to 25 collaborative, open-minded creators who will explore, with the guidance of geologists and Emergency Response professionals, the potential impact of a major natural hazard event in the heart of Wellington’s Central City and work together to create an educational video to help others prepare.  
+This 2-day workshop will be led by Alex Bonham and Sophie Jerram, with
+experience in community generation, music, social practice, performance, and
+local government.  This comes from a piece created a year ago with Vogelmorn
+Community - see https://vimeo.com/1068659998
 
-This 2-day workshop will be led by Alex Bonham, Sophie Jerram and Finn Ilsey-Kemp, with experience in community generation, music, social practice, performance, and local government.
+We are looking for willing community actors, those with a specific interest and
+knowledge of emergency preparedness and Wellington apartment residents.
+Preference will be given to people who can come both days.
 
-They are looking for actors, those with a specific interest and knowledge of emergency preparedness and Wellington apartment residents. Preference will be given to people who can come both days.
+Natural Hazards specialist Finn Ilsey-Kemp from Victoria University will speak
+to the group about what we face geologically - on Friday 12.30-2:00pm - as part
+of the workshop programme.
 
-Natural Hazards specialist Finn Ilsey-Kemp from Victoria University will speak to the group about what we face geologically - on Friday 12.30-2:00pm - as part of the workshop programme.
+<p class="programme-register-link">
+  <a href="https://pad.nikau.io/form/#/2/form/view/pfm7Imbz-8gSW0+fT4o3vwH+9alDWwZQMxCDSSqaqbQ/" class=" px-4 py-2 !no-underline">
+    Register
+  </a>
+</p>
 
-Friday 8 August 10:00am-4:00pm + 
-Saturday 9 August 2:00pm-5:30pm
+See also [Day 2](/programme/disaster-on-taranaki-street-day-two/)
