@@ -153,11 +153,26 @@ See [Programme](/calendar/)
   padding: 0.5rem 1rem;
 }
 
+/* over-rides: */
+
+header div {
+  display: none;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  margin-top: 1rem;
+}
+
 hr {
   color: var(--critical-highlight);
 }
 
-img.rounded-md {
+img.rounded-md,
+img.rounded-lg {
   border-radius: 0;
 }
 </style>
