@@ -9,7 +9,7 @@ start_time: 10:00
 end_time: 16:00
 categories:
   - Workshop
-no_link: ["off"]
+sign_up_link: https://pad.nikau.io/form/#/2/form/view/pfm7Imbz-8gSW0+fT4o3vwH+9alDWwZQMxCDSSqaqbQ/
 ---
 
 The Playful Revolution is seeking up to 10 collaborative, open-minded creators
@@ -29,11 +29,5 @@ Preference will be given to people who can come both days.
 Natural Hazards specialist Finn Ilsey-Kemp from Victoria University will speak
 to the group about what we face geologically - on Friday 12.30-2:00pm - as part
 of the workshop programme.
-
-<p class="programme-register-link">
-  <a href="https://pad.nikau.io/form/#/2/form/view/pfm7Imbz-8gSW0+fT4o3vwH+9alDWwZQMxCDSSqaqbQ/" class=" px-4 py-2 !no-underline">
-    Register
-  </a>
-</p>
 
 See also [Day 2](/programme/disaster-on-taranaki-street-day-two/)
