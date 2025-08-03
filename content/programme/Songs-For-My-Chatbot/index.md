@@ -5,6 +5,8 @@ hosts:
 date: 2025-08-27
 start_time: 17:00
 end_time: 19:00
+tags:
+  - seminar
 sign_up_link: https://events.humanitix.com/songs-for-my-chatbot/tickets
 ---
 
