@@ -11,14 +11,21 @@ sign_up_link: https://events.humanitix.com/server-gardening-with-julian-oliver/t
 
 ---
 
-This lecture, delivered by Julian Oliver, will introduce participants to the
-potentials and pitfalls of self-hosted server infrastructure, whether that be a
-PC-turned-server hosted at home, studio or office, or on a server rented at a
-datacenter. Starting points for self-hosting will be covered, with an
-introduction to system administration in the context of digital caretaker,
-guardian and gardener. The lecture will position self-hosting as an act of
-infrastructural resistance and reclamation in an era of pervasive digital
-imperialism and extractivism.
+This lecture by Julian Oliver positions the deployment of self-hosted,
+community-owned sovereign server infrastructure as a radical act of
+infrastructural resistance in an age of polluting and pervasive digital
+imperialism.
+
+In doing so, Julian will look closely as to what it really means to run one's
+own server, from potentials to pitfalls, whether that be an old PC
+turned-server hosted at home, studio or office, or on a machine rented at a
+datacenter.
+
+Starting points for self-hosting will be covered, with an introduction to
+system administration in the context of digital caretaker, guardian and
+gardener. 
 
 The talk will also assess free and open source platform alternatives to Big
-Tech, from cloud, to webmail, forum, team chat, and more.
+Tech platforms, from sovereign cloud, webmail, forum, team chat, and more.
+Each will be discussed such that participants can better get a sense of the
+what awaits them on their self-hosting journey.
