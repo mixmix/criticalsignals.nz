@@ -7,7 +7,7 @@ start_time: 17:30
 end_time: 19:30
 categories:
   - Seminar 
-sign_up_link: https://events.humanitix.com/climate-change-impacts-now-and-over-coming-decades/tickets 
+sign_up_link: https://events.humanitix.com/climate-change-impacts-now-and-over-coming-decades/tickets
 
 ---
 
