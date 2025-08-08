@@ -1,7 +1,7 @@
 ---
-title: "Climate Change Impacts, Now and Over the Coming Decades"
+title: "Economic Modeling of Climate Change"
 hosts:
-  - "James Renwick"
+  - "Dr. Cathrine Dyer"
 date: 2025-08-13
 start_time: 17:30
 end_time: 19:30
@@ -11,13 +11,7 @@ sign_up_link: https://events.humanitix.com/climate-change-impacts-now-and-over-c
 
 ---
 
-The warming climate is delivering increasingly extreme floods, droughts, heat
-waves, and fires around the world and in New Zealand. The globe is also
-approaching a range of tipping points that could be very challenging to adapt
-to. This talk will review where we’re at with climate change, the context for
-recent extremes in Aotearoa and internationally, and what we might expect over
-the coming few decades. It will end with a review of the actions we need to
-take to lead us to a brighter future.
+This talk, "Economic Modeling of Climate Change" is in place of the one by James Renwick that has had to be postponed. We want to express our heartfelt appreciation to Dr. Cathrine Dyer for bringing her talk forward. We will have an outline of the talk for you soon.
 
 
 
