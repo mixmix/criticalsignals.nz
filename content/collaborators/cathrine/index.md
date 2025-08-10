@@ -4,7 +4,7 @@ date: 2025-06-16
 tags: ["core-team"]
 ---
 
-Cathrine Dyer is a Lecturer in Climate Change at Te Herenga Waka Victoria
+Dr. Cathrine Dyer is a Lecturer in Climate Change at Te Herenga Waka Victoria
 University of Wellington. She teaches  environmental poltiics and international
 climate change policy. Her PhD research examined government underreactions to
 climate change, leading to an interest in commons expansion and collective
