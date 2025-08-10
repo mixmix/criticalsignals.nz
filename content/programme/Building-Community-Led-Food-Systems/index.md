@@ -2,12 +2,12 @@
 title: "Coshop: Supporting Community-led Food Systems"
 hosts:
   - "Ira Bailey"
-date: 2025-08-20
+date: 2025-08-26
 start_time: 17:30
-end_time: 18:30
+end_time: 19:00
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/coshop-supporting-community-led-food-systems
+sign_up_link: https://events.humanitix.com/coshop-supporting-community-led-food-systems/tickets
 
 ---
 

@@ -11,7 +11,7 @@ start_time: 12:00
 end_time: 13:30
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/eating-through-disaster-building-food-economies
+sign_up_link: https://events.humanitix.com/eating-through-disaster-building-food-economies/tickets
 
 ---
 
