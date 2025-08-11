@@ -7,6 +7,12 @@ cascade:
   hideFeatureImageOnList: true
 ---
 
+<p class='programme-type-picker'>
+  <a href="/calendar">Calendar View</a> &nbsp; | &nbsp; List View
+</p>
+
+Please note we are still growing this programme. Be sure to check back in for
+updates, or sign up on [the home page](https://criticalsignals.nz).
 
 <style>
 /*
@@ -21,12 +27,26 @@ cascade:
 
 */
 
+h1 {
+  margin-top: 0;
+}
 
+.programme-type-picker {
+  margin-top: 0 !important;
+  font-size: 14px;
+  line-height: 28px;
+  letter-spacing: 1px;
+}
+
+header div {
+  display: none;
+}
 
 /* Years */
 h2 {
   font-size: 1rem;
   margin-bottom: 1rem;
+  display: none;
 }
 
 /* Months */
@@ -45,5 +65,3 @@ h3 {
 }
 </style>
 
-Please note we are still growing this programme. Be sure to check back in for
-updates, or sign up on [the home page](https://criticalsignals.nz).

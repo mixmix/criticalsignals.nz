@@ -1,17 +1,21 @@
 {{ define "main" }}
   <article>
-    <header class="mt-2 mb-0 max-w-prose">
+    <header class="mb-0 max-w-prose">
       <h1 class="mt-0 mb-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
         {{ .Title | emojify }}
       </h1>
     </header>
 
-    <section class="mt-8 prose max-w-none dark:prose-invert">
-      {{ .Content }}
-    </section>
+    {{/* <section class="mt-2 prose max-w-none dark:prose-invert"> */}}
+    {{/* {{ .Content }} */}}
+    {{/* </section> */}}
+
+    <p class='programme-type-picker'>
+      Calendar View &nbsp; | &nbsp; <a href="/programme">List View</a>
+    </p>
     
     <!-- Calendar Controls -->
-    <div class="mt-8 mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:justify-between">
+    <div class="mt-8 mb-4 flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:justify-between">
       
       <!-- Center: Navigation cluster -->
       <div class="calendar-navigation flex items-center justify-center space-x-4" style="flex: 1 1 auto;">
