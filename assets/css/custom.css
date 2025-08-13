@@ -99,6 +99,25 @@ nav > a > p[title=""],
 
 /* end Link Styling */
 
+/* Programme Calendar/List view picker */
+.programme-type-picker {
+  margin-top: 0 !important;
+  font-size: 14px;
+  line-height: 28px;
+  letter-spacing: 1px;
+}
+
+/* Table of Contents link styling */
+#TableOfContents ul li {
+  margin-bottom: 16px;
+}
+#TableOfContents ul li a {
+  padding: 4px 8px;
+  box-decoration-break: clone;
+}
+
+
+
 p {
   text-align: justify;
 }
@@ -211,4 +230,3 @@ p a {
     font-size: 14px !important;
   }
 }
-

@@ -50,6 +50,8 @@ _Julian Oliver on TVNZ's Q+A discussing his work in infrastructure activism and 
 
 ---
 
+## Location Identification
+
 ![](./street.jpg)
 
 Our new low tech highly responsive location identification system created by
@@ -61,6 +63,8 @@ _**Apologies to Ed Strafford who we erroneously referred to as Ed Burn in last
 weeks signal!**_
 
 ---
+
+## Support
 
 ![](./pledgeme.png)
 
@@ -86,10 +90,12 @@ _Please give generously here to support the collaborators of the project to look
 
 ![](./mouthful.png)
 
+## Open Call For Recipes
+
 Recipes for Disaster is an open exhibition and publication in progress as part
 of the Critical Signals programme. 
  
-## _Collaboratively cooking up ceremonies of creativity in times of collapse and repair_ - Open Call for recipes!
+_Collaboratively cooking up ceremonies of creativity in times of collapse and repair_ - Open Call for recipes!
  
 We are calling for recipes of any nature; whether they are card games to play
 when the power is out, a bread recipe for an open fire, or leaving the tap on
@@ -110,6 +116,8 @@ Exhibition runs Aug 19th - Sep 5th 2025. Publication printed thereafter.
 
 
 ---
+
+![](./coshop.png)
 
 ## Critical Signals is a hub for Coshop! 
 
