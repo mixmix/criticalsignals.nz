@@ -1,7 +1,7 @@
 ---
 title: "Rest and Restore"
 hosts:
-date: 2025-08-0616
+date: 2025-08-016
 start_time: 12:00
 end_time: 19:00
 categories:
