@@ -2,7 +2,7 @@
 title: "Parihaka's Maara Kai - Food Sovereignty and Growing for Communities"
 date: 2025-08-23
 hosts:
-    - "Us"
+    - "Tuhi-ao Bailey"
 start_time: 14:00
 end_time: 16:00
 categories:
