@@ -1,12 +1,13 @@
 ---
-title: "Rest and Restore"
+title: "Parihaka's Maara Kai - Food Sovereignty and Growing for Communities"
 hosts:
-date: 2025-08-016
-start_time: 12:00
-end_time: 19:00
+date: 2025-08-23
+start_time: 14:00
+end_time: 16:00
 categories:
-sign_up_link: 
+ - seminar
+sign_up_link: https://events.humanitix.com/parihaka-s-maara-kai-food-sovereignty-and-growing-for-communities/tickets
 ---
 
-On this day Critical Signals will close for one day as we rest, restore and reflect on the nearly month that we have been open. We will be back next week.
+
 
