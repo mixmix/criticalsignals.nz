@@ -9,5 +9,11 @@ categories:
 sign_up_link: https://events.humanitix.com/parihaka-s-maara-kai-food-sovereignty-and-growing-for-communities/tickets
 ---
 
-Details coming shortly!
+Climate and Community Activist Tuhi-ao Bailey will talk about Parihaka’s steps towards kai sovereignty, their award winning māra kai and planning a papakāinga to be resilient in the face of Climate Change.
+
+This will be followed by an action-focused discussion led by chef and grower Mara Masarotti on how to connect urban growers with spaces to grow kai at scale.
+
+Tamariki friendly.
+
+Followed by an action-focused discussion led by chef and grower Mara Masarotti on how to connect urban growers with spaces to grow kai at scale.
 
