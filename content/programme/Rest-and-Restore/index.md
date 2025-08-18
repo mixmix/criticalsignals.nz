@@ -9,5 +9,5 @@ categories:
 sign_up_link: https://events.humanitix.com/parihaka-s-maara-kai-food-sovereignty-and-growing-for-communities/tickets
 ---
 
-
+Details coming shortly!
 
