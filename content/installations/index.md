@@ -3,7 +3,7 @@ title: Installations
 ---
 
 _Te Wāhi o Te Papa Whakāta_ // 8 August - 25 August 2025<br/>
-Curated by Ollie Hutton
+Curated by **Ollie Hutton**
 
 
 ––––––––––––––––––––––––––––––––––––––
@@ -29,7 +29,7 @@ Hamilton's practice today operates more like an ecology than a discipline. A mes
 ––––––––––––––––––––––––––––––––––––
 
 _Where we are_ // 18 July - 2 August<br/>
-Curated by Sophie Jerram 
+Curated by **Sophie Jerram** 
 
 ## _Whakahokia_ (2025), Mark Harvey, <span>13:55</span>
 
