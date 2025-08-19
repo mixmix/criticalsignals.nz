@@ -2,6 +2,32 @@
 title: Installations
 ---
 
+_Te Wāhi o Te Papa Whakāta_ // 8 August - 25 August 2025<br/>
+Curated by Ollie Hutton
+
+
+––––––––––––––––––––––––––––––––––––––
+## _Neuralis_ / Rorohiko (2025), Tanya Ruka, <span>4:27</span>
+Emerging from both mātauranga Māori and neural systems thinking, this digital form evokes the rorohiko: the electric brain that holds, senses, and remembers through connection. But more than a machine, Neuralis gestures toward the unseen architecture of consciousness, the dream realms, the spaces between thought and knowing. In this view, the rorohiko becomes a relational interface, a vessel of potential, not to replace human wairua, but to extend and honour it. It invites us to imagine new pathways of remembering, where Indigenous knowledge, spiritual intelligence, and computational patterning weave together across dimensions
+
+**Tanya Te Miringa Te Rorarangi Ruka** is a Māori artist of Ngā Puhi, Ngati Pakau and Waitaha descent. The focus of Ruka’s arts-based research practice is the development of possible net positive futures from an indigenous perspective. Exploring the inherent need to connect to nature on a deeper level living in an urban environment, Ruka examines this innate relationship to nature as a Māori artist.
+
+–––––––––––––––––––––––––––––––––––––
+## _Aotearoa Now_ (2015), Ryan Fielding, <span>10:30</span> 
+Aotearoa Now is a meditative journey into the New Zealand landscape. An experimental mosaic of image and sound on it’s tenth year anniversary. Filming took place over a two month period in 2014, with locations spanning all over the country. A majority of the footage came from driving aimlessly down unknown roads, hoping for something perfectly mundane to reveal itself. Keen to discover "the real essence" of his country, filmmaker Ryan Fielding spent two months travelling around New Zealand with camera in hand.
+
+**Ryan Fielding** is a film director and visual artist based with his family in Whakatū Nelson. 
+
+––––––––––––––––––––––––––––––––––––
+## _This is a choir_ (2019), Sam Hamilton, <span>10:44</span>
+Performance work filmed at the Portland Art Museum, Oregon, so-called US.
+‘This is a choir’ is a performance piece developed by Sam Hamilton in collaboration with the Camas High School Choir. The piece was developed through a series of acoustic ecology field workshops where the students were taken to various parts of their local watershed ecology to listen to the environment (rivers, wetlands, forests, etc), and then, once back in the classroom studio, creatively develop choral methods for replicating or interpreting what they had heard.
+
+**Sam Hamilton/Sam Tam Ham**, is an independent interdisciplinary artist from Aotearoa New Zealand of Pākehā (English settler colonial) descent based in Portland, Oregon. 
+Hamilton's practice today operates more like an ecology than a discipline. A messy but verdant garden buttressed by deep subterranean continuities that, each season, support and give rise to new growth. It is a place where form - be that manifest as opera, painting, sound-works, photography, cinema, installation, writing, or social practice - is ultimately just a means to meaning. A year long song. A pregnant pause. An entrance and an exit.
+
+––––––––––––––––––––––––––––––––––––
+
 _Where we are_ // 18 July - 2 August<br/>
 Curated by Sophie Jerram 
 
