@@ -11,16 +11,30 @@ sign_up_link: https://events.humanitix.com/inner-infrastructure-for-outer-resili
 
 ---
 
-In times of polycrisis and uncertainty, more people are coming around to the need not for more information, but for integration and presence.
+In a time of ecological crisis and accelerating uncertainty, how we show up - internally - matters more than ever. 
+This 90-minute session invites you into a deeper inquiry: what if the most critical signals aren't just out there, but within us?
 
-This 90-minute session offers a safe, grounded space to slow down, reconnect with ourselves, and explore the inner terrain of change-making, and of our relational space.
+Blending insights from yoga, nervous system science, and psychology, this workshop explores how cultivating somatic awareness, emotional integration, and nervous system literacy can help us meet this moment with resilience and relational wisdom.
+
+We'll look at:
+
+
+
+- How (& why it matters) to expand our bandwidth of intelligence beyond the mind—into the body, breath, and felt experience
+
+
+- Simple practices to regulate our nervous systems and stay connected in the face of discomfort, conflict or overwhelm
+
+
+- The power of transmuting difficult emotions (like fear, grief or anger) into clarity and compassionate action
+
+
+- How mindset, perception and bias shape the stories we tell ourselves, and how those stories shape the world we build
+
+- Why the relational field we create may matter more than the facts we present or the causes we champion
+
+This is an invitation to slow down, tune in, and build inner infrastructure for a more resilient, connected, and intentional future. 
+
+Come as you are - this session will be gentle, experiential, and open to all levels of awareness or practice.
 
 As Rumi reminds us: “Yesterday I was clever and tried to change the world; today I am wise and am changing myself.”
-
-Building our inner infrastructure - our relationship with self, with our feelings, with others and with nature - is foundational to how we show up in the world.
-
-We will begin by discussing research into how distraction or numbing our discomfort is an intelligent and common short-term survival strategy, but in fact is one which limits our long-term capacity to connect, lead and evolve. We will then guide participants in somatic practices to offer accessible ways to reconnect with your agency.
-
-During this session, you will gain tools to increase your inner awareness, expand your bandwidth of awareness, and integrate emotion, sensation, and story. Together we’ll explore the role of perception in our orientation to life and the choices we make, how our narratives can connect us with our agency, the power of curiosity, and dive into how our relational presence can often have more impact than our opinions.
-
-This session is an invitation to restore connection, calm, and courage, to become more whole, more fully human, and more ready for what this moment is asking of us.
