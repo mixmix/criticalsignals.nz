@@ -1,5 +1,5 @@
 ---
-title: "The Inevitabalism Panel"
+title: "The Inevitabilism Panel"
 hosts:
   - "Julian Oliver"
 date: 2025-09-19
@@ -7,7 +7,7 @@ start_time: 17:30
 end_time: 19:30
 categories:
   - Seminar
-sign_up_link: https://events.humanitix.com/the-inevitabalism-panel
+sign_up_link: https://events.humanitix.com/the-inevitabilism-panel
 ---
 
 
