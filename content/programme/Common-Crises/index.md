@@ -2,7 +2,7 @@
 Title: "Common Crises: On Housing and Climate Justice in the Age of Extraction"
 Hosts: 
   - "Jacqui Alexander"
-Date: 2025-10-15
+Date: 2025-09-10
 start_time: 17:30
 end_time: 19:00
 sign_up_link: https://events.humanitix.com/common-crises-on-housing-and-climate-justice-in-the-age-of-extraction/tickets
