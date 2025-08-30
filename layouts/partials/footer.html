@@ -41,6 +41,7 @@
     {{/* Theme attribution */}}
     {{ if .Site.Params.footer.showThemeAttribution | default true }}
       <p class="text-xs text-neutral-500 dark:text-neutral-400">
+        This site is served from e-waste in a cupboard at 115 Taranaki Street<br>
         {{ $hugo := printf `<a class="hover:underline hover:decoration-primary-400 hover:text-primary-500"
           href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a>`
         }}
@@ -48,7 +49,6 @@
           href="https://blowfish.page/" target="_blank" rel="noopener noreferrer">Blowfish</a>`
         }}
         {{ i18n "footer.powered_by" (dict "Hugo" $hugo "Theme" $blowfish) | safeHTML }}
-        &nbsp;&nbsp;This site is served from a computer in a cupboard at 115 Taranaki Street
       </p>
     {{ end }}
 
