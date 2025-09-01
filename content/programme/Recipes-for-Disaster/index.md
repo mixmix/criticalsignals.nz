@@ -17,7 +17,7 @@ Please feel free to join us for a drop-in writing workshop. Stay as long or as 
 We will have coffee, edible treats and we will have four writing spaces.
 
 1) Spring: share a table, share ideas, be excited, be convivial, be bold, be rambunctious.
-2) Summer: feel the warmth - even the heat of creativity. Go new places, take a holiday from the day-to-day, imagine new sights. Attend one of our 15 minute ''writing summer schools'.
+2) Summer: feel the warmth - even the heat of creativity. Go new places, take a holiday from the day-to-day, imagine new sights. Attend - or even offer - a 15 minute 'writing summer school'.
 3) Autumn - relax in the ideas you harvested in the other season spaces. Or, hangout and get in the writing mood before launching into your preferred writing space. First rest, and chat outside with a coffee, biscuits, chocolate and among other writers in the space. Let the leaves fall gently.
 
 4) Winter - hunker down in the quietest of the spaces with your thoughts, your words and your softly emerging ideas. Just sit and write. Enjoy a space for making words into sentences, sentences into paragraphs and metaphors into tools to build a better Aotearoa.
