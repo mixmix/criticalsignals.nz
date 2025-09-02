@@ -1,5 +1,5 @@
 ---
-Title: "Recipes for Repair, Reslience and Restoration: a four-spaces writing workshop"
+Title: "Recipes for Repair, Resilience and Restoration: a four-spaces writing workshop"
 Hosts:
   - "Ed Strafford"
 Date: 2025-09-06
@@ -14,8 +14,9 @@ We have many Recipes, but maybe not yours ... yet. Some are Recipes that tell ho
  
 Please feel free to join us for a drop-in writing workshop. Stay as long or as little as you want. Write as much, or as little as your heart desires.
 
-We will have coffee, edible treats and we will have four writing spaces.
+We will have coffee, edible treats and we will have four writing spaces. Feel free to bring your preferred writing device - we will have paper and pens, if you are travelling light :)
 
+The Spaces:
 1) Spring: share a table, share ideas, be excited, be convivial, be bold, be rambunctious.
 2) Summer: feel the warmth - even the heat of creativity. Go new places, take a holiday from the day-to-day, imagine new sights. Attend - or even offer - a 15 minute 'writing summer school'.
 3) Autumn - relax in the ideas you harvested in the other season spaces. Or, hangout and get in the writing mood before launching into your preferred writing space. First rest, and chat outside with a coffee, biscuits, chocolate and among other writers in the space. Let the leaves fall gently.
