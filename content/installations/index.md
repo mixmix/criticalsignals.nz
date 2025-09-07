@@ -1,9 +1,49 @@
 ---
 title: Installations
+showTableOfContents: true
 ---
 
 _Te Wāhi o Te Papa Whakāta_ // 8 August - 25 August 2025<br/>
 Curated by **Ollie Hutton**
+
+
+## _Sensing the Quary_ (2025), <span>Sept 9-20</span>
+
+Audio and video, 20mins
+
+Jacqui Alexander<br />
+Paul Mylecharane<br />
+Polly Stanton
+
+**_Sensing the Quarry_** is a sound and video work exploring intersections
+between posthuman methods and Indigenous knowledges, developed as part of a
+research program led by philosopher Professor Rosi Braidotti (Utrecht) and
+Boonwurrung Elder N’arweet Professor Carolyn Briggs AM.
+
+![](./sensing-the-quary.jpg)
+
+This work emerged from an eight-day [laboratory situating posthuman
+methods](https://www.posthuman.au/) at the Cape Otway Quarry on Gadubanad
+Country.  The laboratory was based on transforming critical thought into
+collective action, in response to discussions about the urgent crises of
+climate and capital discussions. It concerned the interdependence of human,
+non-human, and more-than-human entities, and the profound ethical and
+technological shifts needed to remediate the planet. Building on the creators’
+collaborative research into listening as a critical interdisciplinary method
+– the work melds future possibilities, present realities, and deep time through
+an embodied and augmented experience. This site-specific soundscape attuned
+participants to a conversation between hidden lifeworlds— both past  and
+imagined. Using AI-generated voice and an interactive score, it guided
+listeners through a speculative sonic story set at the Quarry three thousand
+years into the future. Originally delivered via headphones and mobile devices,
+it prompted participants to develop new relationships through deep listening,
+resisting the extractive frameworks that reformulate “life worlds into future
+assets.”[1] In doing so, storied matter became both an ethical provocation and
+a sensory tool —decentering the human in the greater order of things, and
+reminding us of the possibility—and probability—of alternative planetary
+futures. The work exhibited as part of Critical Signals has been adapted to
+include a new generative visual component, simulating the environmental
+conditions of the Quarry.
 
 
 ## _Neuralis_ / Rorohiko (2025), Tanya Ruka, <span>4:27</span>
@@ -140,45 +180,6 @@ intelligence, the development of new technologies for music-making, and a
 critical engagement with the role of technology in musical practice – examining
 questions of labor, authorship, and technofeudalism. 
 
-
-## _Sensing the Quary_ (2025), <span>Sept 9-20</span>
-
-<!-- Sept 9-20<br /> -->
-Audio and video, 20mins
-
-Jacqui Alexander<br />
-Paul Mylecharane<br />
-Polly Stanton
-
-**_Sensing the Quarry_** is a sound and video work exploring intersections
-between posthuman methods and Indigenous knowledges, developed as part of a
-research program led by philosopher Professor Rosi Braidotti (Utrecht) and
-Boonwurrung Elder N’arweet Professor Carolyn Briggs AM.
-
-![](./sensing-the-quary.jpg)
-
-This work emerged from an eight-day [laboratory situating posthuman
-methods](https://www.posthuman.au/) at the Cape Otway Quarry on Gadubanad
-Country.  The laboratory was based on transforming critical thought into
-collective action, in response to discussions about the urgent crises of
-climate and capital discussions. It concerned the interdependence of human,
-non-human, and more-than-human entities, and the profound ethical and
-technological shifts needed to remediate the planet. Building on the creators’
-collaborative research into listening as a critical interdisciplinary method
-– the work melds future possibilities, present realities, and deep time through
-an embodied and augmented experience. This site-specific soundscape attuned
-participants to a conversation between hidden lifeworlds— both past  and
-imagined. Using AI-generated voice and an interactive score, it guided
-listeners through a speculative sonic story set at the Quarry three thousand
-years into the future. Originally delivered via headphones and mobile devices,
-it prompted participants to develop new relationships through deep listening,
-resisting the extractive frameworks that reformulate “life worlds into future
-assets.”[1] In doing so, storied matter became both an ethical provocation and
-a sensory tool —decentering the human in the greater order of things, and
-reminding us of the possibility—and probability—of alternative planetary
-futures. The work exhibited as part of Critical Signals has been adapted to
-include a new generative visual component, simulating the environmental
-conditions of the Quarry.
 
 
 <style>
