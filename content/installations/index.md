@@ -3,9 +3,6 @@ title: Installations
 showTableOfContents: true
 ---
 
-_Te Wāhi o Te Papa Whakāta_ // 8 August - 25 August 2025<br/>
-Curated by **Ollie Hutton**
-
 
 ## _Sensing the Quary_ (2025), <span>Sept 9-20</span>
 
@@ -47,6 +44,9 @@ conditions of the Quarry.
 
 
 ## _Neuralis_ / Rorohiko (2025), Tanya Ruka, <span>4:27</span>
+
+_Te Wāhi o Te Papa Whakāta_ // 8 August - 25 August 2025<br/>
+Curated by **Ollie Hutton**
 
 Emerging from both mātauranga Māori and neural systems thinking, this digital
 form evokes the rorohiko: the electric brain that holds, senses, and remembers

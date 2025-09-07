@@ -230,3 +230,23 @@ p a {
     font-size: 14px !important;
   }
 }
+
+/* Responsive Table of Contents */
+
+@media (max-width: 1024px) {
+  #TableOfContents {
+    max-width: 100%;
+  }
+  .toc-inside {
+    margin-top: 1rem;
+    border: 2px solid var(--critical-highlight);
+    border-radius: 0;
+  } 
+  .toc-inside > summary {
+    background: var(--critical-highlight);
+    border-radius: 0;
+  }
+  .toc-inside > div {
+    border-left: none;
+  }
+}
