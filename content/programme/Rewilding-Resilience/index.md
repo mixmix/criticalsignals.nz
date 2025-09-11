@@ -3,6 +3,8 @@ title: "Rewilding the Internet for Resilience  (in conjunction with Internet In
 hosts:
   - "Maria Farrell"
   - "Ellen Strickland"
+  - "Paul Seiler"
+  - "Julian Oliver"
 date: 2025-09-11
 start_time: 19:00
 end_time: 20:30
