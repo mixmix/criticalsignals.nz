@@ -9,16 +9,38 @@ hosts:
   # - "Clay Joy Smith"
 ---
 
-Short presentations (less than 15min) from the wider community on disaster
-preparedness, food / tech sovereignty.
+Come along to hear four community members share 15 minute talks on things that light them up and activate our capacity for creative response to change! \
+\
 
-This is an opportunity to care/ be curious, role model learning, invite
-connections, start conversations (and maybe collaborations).
+This Monday night, we'll be hearing from: \
+* Ollie Hutton
+* Paige Koedijk 
+* Jayn Verkerk
+* Eleanor Pollard
+\
+\
+...and exploring the following themes (more information below): 
+\
+\
+* How to be a Tree with Oliver Thomas 
+* The Peninsula
+* the rest are currently held in suspense, excitement and mystery... 🤫
+\
+\
+---
+**How to be a Tree **\
+\
+“It’s simple,” they say, “and you too have come into the world to do this, to go easy, to be filled with light, and to shine.”  \
+- When I am among the Trees by Mary Oliver   \
+\
+How do we nourish our wairuatanga, listening deeply to our own inner critical signals, when we're seeing the natural world collapse and repair around us? \
+\
+Through Qi Gong, Zen Buddhism and Deep Listening, how can this aliveness continue to be taken care of as the winds blow stronger? \
+\
+---
 
-
-## What makes a good lightning talk?
-
-- Talk on a topic you have passion for
-- Tell people why you care
-- Who’s in the room? _(what context they might need to connect with what you’re
-  sharing?)_
+**The Peninsula**\
+\
+Paige's research contributes to the field of disaster risk reduction by utilising visual storytelling to emphasise the critical role of resilient communities in mitigating the impacts of climate-accelerated disasters, which disproportionately affect vulnerable populations. \
+\
+The Peninsula, a fictional pānui designed by Paige, explores the mātauranga Māori principle of whakawhanaungatanga through the depiction of ordinary members from the Miramar Peninsula community in tongue-in-cheek survival situations during an ongoing zombie catastrophe. Leveraging Wellingtonians' appreciation for b-horror/humour storytelling seen in productions such as What We Do in the Shadows and Wellington Paranormal, the use of humour and the spectacle of a zombie context is an engaging narrative experience for readers to consider their contributions within their community in an emergency.
