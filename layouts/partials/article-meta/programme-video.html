@@ -1,0 +1,47 @@
+{{ $context := .}}
+
+<section class="programme-video-container">
+  {{ with $context.Params.video_magnet }}
+    <div id='video-target'></div>
+
+    {{ $js := resources.Get "js/webtorrent.min.js" }}
+    <script type="text/javascript" src="{{ $js.RelPermalink }}"></script>
+    {{/* <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script> */}}
+    <script type='module'>
+      {{/* import WebTorrent from 'https://esm.sh/webtorrent' */}}
+
+      async function main () {
+        const torrentId = {{ . }}
+        console.log('Torrent:', torrentId)
+        const client = new WebTorrent()
+
+        {{/* navigator.serviceWorker.register('sw.min.js') */}}
+        {{/* const controller = await navigator.serviceWorker.ready */}}
+        {{/* client.createServer({ controller }) */}}
+
+        client.add(torrentId, function (torrent) {
+          console.log('files', torrent.files.map(f => f.name))
+
+          // Torrents can contain many files. Let's use the .mp4 file
+          const file = torrent.files.find(function (file) {
+            return file.name.endsWith('.mp4')
+          })
+
+          // Display the file by adding it to the DOM.
+          // Supports video, audio, image files, and more!
+          const rootEl = document.getElementById('video-target')
+          const opts = { autoplay: true, muted: true }
+          file.appendTo(rootEl, (err, el) => {
+            if (err) console.log('woops', err)
+          })
+          {{/* file.streamTo(rootEl, (err, el) => { */}}
+          {{/*   if (err) console.log('woops', err) */}}
+          {{/* }) */}}
+        })
+      }
+      setTimeout(main, 500)
+    </script>
+
+  {{ end }}
+</section>
+
