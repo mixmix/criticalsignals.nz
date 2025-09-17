@@ -1,0 +1,109 @@
+{{ $context := .}}
+
+{{ with $context.Params.magnet_link }}
+<section class="programme-video-container">
+    <script src="/webtorrent.min.js"></script>
+    <script>
+      const client = new WebTorrent({
+        // needed for Chrome
+        tracker: {
+          rtcConfig: {
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' },
+              { urls: 'stun:global.stun.twilio.com:3478' }
+            ]
+          }
+        }
+      })
+
+      const torrentId = '{{ . }}'
+
+      function download () {
+        console.log('Starting download...')
+        console.log('Torrent ID:', torrentId)
+
+        // Add comprehensive error handling
+        client.on('error', (err) => {
+          console.error('WebTorrent client error:', err)
+          console.error('Error stack:', err.stack)
+        })
+
+        try {
+          // Add torrent with timeout and error handling
+          const torrent = client.add(torrentId, {
+            announce: [
+              'wss://tracker.btorrent.xyz',
+              'wss://tracker.openwebtorrent.com',
+              'wss://tracker.fastcast.nz'
+            ]
+          }, (torrent) => {
+            console.log('Torrent added successfully:', torrent.infoHash)
+            console.log('Number of peers:', torrent.numPeers)
+
+            // Find video file
+            const file = torrent.files.find(file => file.name.endsWith('.mp4'))
+            if (!file) {
+              console.error('No MP4 file found in torrent')
+              console.log('Available files:', torrent.files.map(f => f.name))
+              return
+            }
+            console.log('Found file:', file.name, 'Size:', (file.length / 1024 / 1024).toFixed(2), 'MB')
+
+            // Stream to video element
+            file.appendTo(document.querySelector('.programme-video-container'))
+            console.log('Video element created and streaming started!')
+
+            // Monitor connection status
+            // torrent.on('wire', (wire, addr) => {
+            //   console.log('Connected to peer:', addr)
+            // })
+
+            // torrent.on('download', (bytes) => {
+            //   const progress = (torrent.progress * 100).toFixed(1)
+            //   const downloadSpeed = (torrent.downloadSpeed / 1024 / 1024).toFixed(2)
+            //   console.log(`Progress: ${progress}% | Speed: ${downloadSpeed} MB/s | Peers: ${torrent.numPeers}`)
+            // })
+
+            // torrent.on('done', () => {
+            //   console.log('Download complete!')
+            // })
+
+            torrent.on('error', (err) => {
+              console.error('Torrent error:', err)
+              console.error('Error details:', err.message)
+            })
+
+            torrent.on('warning', (err) => {
+              console.warn('Torrent warning:', err)
+            })
+          })
+
+        } catch (err) {
+          console.error('Failed to add torrent:', err)
+          console.error('Error details:', err.stack)
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        if (typeof WebTorrent === 'undefined') {
+          console.error('WebTorrent not loaded!')
+          return
+        }
+
+        download()
+      })
+    </script>
+
+</section>
+{{ end }}
+
+<style>
+  .programme-video-container {
+    margin: 2rem 0;
+  }
+
+  .programme-video-container video {
+    background: #000;
+    border-radius: 8px;
+  }
+</style>
