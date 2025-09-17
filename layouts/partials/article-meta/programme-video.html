@@ -1,8 +1,11 @@
 {{ $context := .}}
 
-{{ with $context.Params.magnet_link }}
+{{ with $context.Params.video_magnet_link }}
 <section class="programme-video-container">
     <script src="/webtorrent.min.js"></script>
+
+    <div id="video-container-{{ $context.Title | urlize }}"></div>
+
     <script>
       const client = new WebTorrent({
         // needed for Chrome
@@ -32,9 +35,9 @@
           // Add torrent with timeout and error handling
           const torrent = client.add(torrentId, {
             announce: [
-              'wss://tracker.btorrent.xyz',
               'wss://tracker.openwebtorrent.com',
-              'wss://tracker.fastcast.nz'
+              'wss://tracker.btorrent.xyz',
+              // 'wss://tracker.fastcast.nz' // offine?
             ]
           }, (torrent) => {
             console.log('Torrent added successfully:', torrent.infoHash)
@@ -49,20 +52,109 @@
             }
             console.log('Found file:', file.name, 'Size:', (file.length / 1024 / 1024).toFixed(2), 'MB')
 
-            // Stream to video element
-            file.appendTo(document.querySelector('.programme-video-container'))
-            console.log('Video element created and streaming started!')
+            // Stream to video element and initialize video.js
+            const containerId = 'video-container-{{ $context.Title | urlize }}'
+            const container = document.getElementById(containerId)
 
-            // Monitor connection status
-            // torrent.on('wire', (wire, addr) => {
-            //   console.log('Connected to peer:', addr)
-            // })
+            file.appendTo(container, (err, elem) => {
+              if (err) {
+                console.error('Error appending video:', err)
+                return
+              }
 
-            // torrent.on('download', (bytes) => {
-            //   const progress = (torrent.progress * 100).toFixed(1)
-            //   const downloadSpeed = (torrent.downloadSpeed / 1024 / 1024).toFixed(2)
-            //   console.log(`Progress: ${progress}% | Speed: ${downloadSpeed} MB/s | Peers: ${torrent.numPeers}`)
-            // })
+              elem.setAttribute('controls', 'controls')
+              elem.setAttribute('preload', 'auto')
+              elem.setAttribute('playsinline', 'playsinline')
+              elem.style.width = '100%'
+              elem.style.height = 'auto'
+
+              console.log('Video element created and streaming started!')
+
+              // Create and add progress container below video
+              const progressContainer = document.createElement('div')
+              progressContainer.className = 'download-progress-container'
+              progressContainer.innerHTML = `
+                <div class="download-progress-content">
+                  <div class="download-progress-status">
+                    <span class="download-status-text">Connecting to peers...</span>
+                  </div>
+                  <div class="download-progress-bar-container">
+                    <div class="download-progress-bar" style="width: 0%"></div>
+                  </div>
+                  <div class="download-stats">
+                    <span class="download-percent">0%</span>
+                    <span class="download-speed">0 MB/s</span>
+                    <span class="download-peers">Finding peers...</span>
+                  </div>
+                </div>
+              `
+              container.appendChild(progressContainer)
+
+              // Update download progress
+              let isComplete = false
+
+              const updateProgress = () => {
+                const progress = (torrent.progress * 100).toFixed(1)
+                const downloadSpeed = (torrent.downloadSpeed / 1024 / 1024).toFixed(2)
+
+                // Update progress elements
+                const statusText = document.querySelector('.download-status-text')
+                const progressBar = document.querySelector('.download-progress-bar')
+                const percentText = document.querySelector('.download-percent')
+                const speedText = document.querySelector('.download-speed')
+                const peersText = document.querySelector('.download-peers')
+
+                // Update status text
+                if (statusText) {
+                  if (torrent.numPeers === 0) {
+                    statusText.textContent = 'Looking for peers...'
+                  } else if (progress < 5) {
+                    statusText.textContent = 'Starting download...'
+                  } else if (progress < 99) {
+                    statusText.textContent = 'Downloading from Peers'
+                  } else {
+                    statusText.textContent = 'Download complete!'
+                  }
+                }
+
+                if (progressBar) progressBar.style.width = progress + '%'
+                if (percentText) percentText.textContent = progress + '%'
+                if (speedText) speedText.textContent = downloadSpeed + ' MB/s'
+                if (peersText) {
+                  if (torrent.numPeers === 0) {
+                    peersText.textContent = 'Finding peers...'
+                  } else if (torrent.numPeers === 1) {
+                    peersText.textContent = '1 peer'
+                  } else {
+                    peersText.textContent = torrent.numPeers + ' peers'
+                  }
+                }
+
+                // Hide progress container when download is complete
+                if (progress >= 99 && !isComplete) {
+                  isComplete = true
+                  const progressDiv = document.querySelector('.download-progress-container')
+                  if (progressDiv) {
+                    progressDiv.classList.add('download-complete')
+                    setTimeout(() => {
+                      // progressDiv.style.display = 'none'
+                    }, 2000)
+                  }
+                }
+              }
+
+              // Update immediately and then on download events
+              updateProgress()
+
+              torrent.on('download', (bytes) => {
+                updateProgress()
+              })
+
+              // Also update when peers connect/disconnect
+              torrent.on('wire', () => updateProgress())
+              torrent.on('noPeers', () => updateProgress())
+            })
+
 
             // torrent.on('done', () => {
             //   console.log('Download complete!')
@@ -104,6 +196,77 @@
 
   .programme-video-container video {
     background: #000;
-    border-radius: 8px;
+  }
+
+  /* Video container styling */
+  .programme-video-container > div[id^="video-container-"] {
+    max-width: 100%;
+    position: relative;
+  }
+
+  /* Download progress container below video */
+  .download-progress-container {
+    margin-top: 12px;
+    background: var(--critical-highlight);
+    padding: 12px;
+    transition: opacity 0.5s ease-out;
+  }
+
+  .download-progress-container.download-complete {
+    /* opacity: 0; */
+  }
+
+  .download-progress-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .download-progress-status {
+    margin-bottom: 4px;
+  }
+
+  .download-status-text {
+    font-size: 13px;
+    color: var(--critical-cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .download-progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .download-progress-bar {
+    height: 100%;
+    background: var(--critical-green);
+    border-radius: 4px;
+    transition: width 0.3s ease-out;
+  }
+
+  .download-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--critical-cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .download-percent {
+    font-weight: bold;
+    color: var(--critical-cream);
+  }
+
+  .download-speed {
+    color: var(--critical-cream);
+    opacity: 0.9;
+  }
+
+  .download-peers {
+    color: var(--critical-cream);
+    opacity: 0.9;
   }
 </style>
