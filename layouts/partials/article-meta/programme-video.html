@@ -2,46 +2,50 @@
 
 <section class="programme-video-container">
   {{ with $context.Params.video_magnet }}
-    <div id='video-target'></div>
+    {{ $webTorrentJS := resources.Get "js/webtorrent.min.js" }}
+    {{ $swJS := resources.Get "js/sw.min.js" }}
 
-    {{ $js := resources.Get "js/webtorrent.min.js" }}
-    <script type="text/javascript" src="{{ $js.RelPermalink }}"></script>
-    {{/* <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script> */}}
-    <script type='module'>
-      {{/* import WebTorrent from 'https://esm.sh/webtorrent' */}}
+    <video></video>
 
-      async function main () {
-        const torrentId = {{ . }}
-        console.log('Torrent:', torrentId)
-        const client = new WebTorrent()
+    <script type="module">
+      import WebTorrent from 'https://esm.sh/webtorrent'
 
-        {{/* navigator.serviceWorker.register('sw.min.js') */}}
-        {{/* const controller = await navigator.serviceWorker.ready */}}
-        {{/* client.createServer({ controller }) */}}
+      const client = new WebTorrent()
+      const torrentId = '{{ . }}'
+      const player = document.querySelector('video')
+      console.log('Torrent:', torrentId.slice(0, 40) + '...')
 
-        client.add(torrentId, function (torrent) {
-          console.log('files', torrent.files.map(f => f.name))
+      function download () {
+        client.add(torrentId, torrent => {
+          const file = torrent.files.find(file => file.name.endsWith('.mp4'))
 
-          // Torrents can contain many files. Let's use the .mp4 file
-          const file = torrent.files.find(function (file) {
-            return file.name.endsWith('.mp4')
+          file.on('stream', ({ stream, file, req }) => {
+            if (req.destination === 'video') {
+              console.log(`Video player requested data from ${file.name}! Ranges: ${req.headers.range}`)
+            }
           })
 
-          // Display the file by adding it to the DOM.
-          // Supports video, audio, image files, and more!
-          const rootEl = document.getElementById('video-target')
-          const opts = { autoplay: true, muted: true }
-          file.appendTo(rootEl, (err, el) => {
-            if (err) console.log('woops', err)
-          })
-          {{/* file.streamTo(rootEl, (err, el) => { */}}
-          {{/*   if (err) console.log('woops', err) */}}
-          {{/* }) */}}
+          // Stream to a <video> element by providing an the DOM element
+          file.streamTo(player)
+          console.log('Ready to play!')
         })
       }
-      setTimeout(main, 500)
+
+      navigator.serviceWorker.register('{{ $swJS.RelPermalink }}', { scope: './' })
+        .then(reg => {
+          function checkState (worker) {
+            return (
+              worker.state === 'activated' &&
+              client.createServer({ controller: reg }) &&
+              download()
+            )
+          }
+          const worker = reg.active || reg.waiting || reg.installing
+          if (!checkState(worker)) {
+            worker.addEventListener('statechange', ({ target }) => checkState(target))
+          }
+        })
     </script>
 
   {{ end }}
 </section>
-
