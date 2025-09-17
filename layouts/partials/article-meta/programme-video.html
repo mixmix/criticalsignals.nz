@@ -22,6 +22,11 @@
       const torrentId = '{{ . }}'
 
       function download () {
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('torrent') !== 'true') {
+          return
+        }
+      
         console.log('Starting download...')
         console.log('Torrent ID:', torrentId)
 
@@ -34,11 +39,11 @@
         try {
           // Add torrent with timeout and error handling
           const torrent = client.add(torrentId, {
-            announce: [
-              'wss://tracker.openwebtorrent.com',
-              'wss://tracker.btorrent.xyz',
-              // 'wss://tracker.fastcast.nz' // offine?
-            ]
+            // announce: [
+            //   'wss://tracker.openwebtorrent.com',
+            //   'wss://tracker.btorrent.xyz',
+            //   'wss://tracker.fastcast.nz' // offine?
+            // ]
           }, (torrent) => {
             console.log('Torrent added successfully:', torrent.infoHash)
             console.log('Number of peers:', torrent.numPeers)
@@ -136,9 +141,9 @@
                   const progressDiv = document.querySelector('.download-progress-container')
                   if (progressDiv) {
                     progressDiv.classList.add('download-complete')
-                    setTimeout(() => {
-                      // progressDiv.style.display = 'none'
-                    }, 2000)
+                    // setTimeout(() => {
+                    //   progressDiv.style.display = 'none'
+                    // }, 2000)
                   }
                 }
               }
@@ -213,7 +218,7 @@
   }
 
   .download-progress-container.download-complete {
-    /* opacity: 0; */
+    opacity: 0;
   }
 
   .download-progress-content {
