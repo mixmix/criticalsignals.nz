@@ -3,7 +3,8 @@ Title: Refreshing Collectivism
 Date: 2025-09-23
 start_time: 17:30
 end_time: 18:30
-sign_up_link: https://events.humanitix.com/refreshing-collectivism/tickets
+# sign_up_link: https://events.humanitix.com/refreshing-collectivism/tickets
+sign_up_link: https://events.humanitix.com/copy-of-refreshing-collectivism/tickets
 hosts:
   - "Mix Irving"
   - "Sophie Jerram"
