@@ -370,6 +370,26 @@
   font-style: italic;
 }
 
+/* Disabled register button for past events */
+.btn-register.event-passed {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-register.event-passed:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* "Event has passed" text */
+.event-passed-text {
+  font-size: 12px;
+  color: var(--critical-cream);
+  opacity: 0.5;
+  font-style: italic;
+}
+
 
 @media (max-width: 640px) {
   .calendar-navigation {

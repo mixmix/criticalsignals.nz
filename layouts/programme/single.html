@@ -93,21 +93,43 @@
           {{ .Content }}
 
           {{ with .Params.sign_up_link }}
-            <p class="programme-register-link">
+            {{/* Calculate if event has passed (more than 2 days ago) */}}
+            {{ $eventDate := $.Date }}
+            {{ $currentDate := now }}
+            {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
+            {{ $eventHasPassed := $eventDate.Before $twoDaysAgo }}
+            {{ $eventIsInFuture := $eventDate.After $currentDate }}
+            
+            <p class="programme-register-link {{ if $eventHasPassed }}has-passed{{ end }}">
               <a
-                href="{{ . }}"
-                {{/* class="programme-register-link !rounded-md px-4 py-2 !no-underline" */}}
-                class=" px-4 py-2 !no-underline"
+                {{ if not $eventHasPassed }}href="{{ . }}"{{ end }}
+                class="px-4 py-2 !no-underline {{ if $eventHasPassed }}event-passed{{ end }}"
+                {{ if $eventHasPassed }}style="cursor: not-allowed;"{{ end }}
               >
                 Register
               </a>
+              {{ if $eventHasPassed }}
+                <span class="event-passed-text">this event has passed</span>
+              {{ end }}
             </p>
 
           {{ else }}
               {{ if not .Params.no_link }}
-                <div style="font-weight: bold; text-decoration: underline;">
-                  Registration coming soon!
-                </div>
+                {{/* Check if event is in the future for "Registration coming soon" message */}}
+                {{ $eventDate := .Date }}
+                {{ $currentDate := now }}
+                {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
+                {{ $eventHasPassed := $eventDate.Before $twoDaysAgo }}
+                
+                {{ if $eventHasPassed }}
+                  <p class="programme-register-link has-passed">
+                    <span class="event-passed-text">this event has passed</span>
+                  </p>
+                {{ else }}
+                  <div style="font-weight: bold; text-decoration: underline;">
+                    Registration coming soon!
+                  </div>
+                {{ end }}
               {{ end }}
           {{ end }}
 
@@ -200,10 +222,25 @@
     .programme-register-link {
       margin-top: 2rem;
     }
+    .programme-register-link.has-passed {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
     .programme-register-link a {
       background: rgb(248, 244, 206);
       color: rgb(25, 64, 33) !important; 
       text-transform: uppercase;
+    }
+    .programme-register-link a.event-passed {
+      opacity: 0.5;
+      background: rgb(248, 244, 206);
+      color: rgb(25, 64, 33) !important;
+    }
+    .event-passed-text {
+      font-size: 0.875rem;
+      opacity: 0.5;
+      font-style: italic;
     }
 
     .rounded-lg {

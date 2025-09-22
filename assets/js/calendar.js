@@ -310,12 +310,40 @@ class Calendar {
       </div>`;
     }
     
+    // Check if event has passed (more than 2 days ago)
+    let eventHasPassed = false;
+    if (!event.dateTBC && event.date) {
+      const eventDate = parseEventDate(event.date);
+      const currentDate = new Date();
+      const twoDaysAgo = new Date(currentDate);
+      twoDaysAgo.setDate(currentDate.getDate() - 2);
+      eventHasPassed = eventDate < twoDaysAgo;
+    }
+
+    // Generate registration button based on event status
+    let registerButton = '';
+    if (event.signUpLink) {
+      if (eventHasPassed) {
+        registerButton = `
+          <a class="btn-register event-passed" style="cursor: not-allowed; opacity: 0.5;">Register</a>
+          <span class="event-passed-text">this event has passed</span>`;
+      } else {
+        registerButton = `<a href="${event.signUpLink}" target="_blank" class="btn-register">Register</a>`;
+      }
+    } else {
+      if (eventHasPassed) {
+        registerButton = '<span class="event-passed-text">this event has passed</span>';
+      } else {
+        registerButton = '<span class="registration-note">Registration coming soon</span>';
+      }
+    }
+
     const buttonsHTML = `
       <div class="event-actions">
         <a href="${event.url}" class="btn-details">
           View Full Details
         </a>
-        ${event.signUpLink ? `<a href="${event.signUpLink}" target="_blank" class="btn-register">Register</a>` : '<span class="registration-note">Registration coming soon</span>'}
+        ${registerButton}
       </div>
     `;
     
