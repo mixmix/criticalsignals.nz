@@ -6,6 +6,16 @@ end_time: 21:00
 sign_up_link: https://events.humanitix.com/closing-critical-signals-2025/tickets
 hosts:
   - "Sophie Jerram"
+  - "Ira Bailey"
+  - "Clay Joy Smith"
+  - "Mix Irving"
+  - "Ed Strafford"
+  - "Ash Holwell"
+  - "Ollie Hutton"
+  - "Susan Basterfield"
+  - "Cathrine Dyer"
+  - "Jack Gittings"
+
 ---
 
 We are wrapping up Critical Signals for 2025 with a party - you are all warmly
