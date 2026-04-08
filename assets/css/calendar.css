@@ -15,8 +15,8 @@
 
 .calendar-day {
   min-height: 120px;
-  border-bottom: 1px solid #2a5b344f;
-  border-right: 1px solid #2a5b344f;
+  border-bottom: 1px solid #9b23414f;
+  border-right: 1px solid #9b23414f;
   padding: 1px;
   position: relative;
   overflow: hidden;

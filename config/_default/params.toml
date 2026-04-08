@@ -1,7 +1,7 @@
 colorScheme = "crit-sigs"
 defaultAppearance = "dark"
 autoSwitchAppearance = false
-enableSearch = true
+enableSearch = false
 enableCodeCopy = false
 replyByEmail = false
 disableImageOptimization = false

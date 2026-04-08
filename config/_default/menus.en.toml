@@ -1,29 +1,5 @@
 [[main]]
 none = "none"
 
-[[main]]
-name = "Programme"
-pageRef = "calendar"
-identifier = "smADjJPJrh"
-weight = 10
-
-[[main]]
-name = "Newsletters"
-pageRef = "newsletters"
-identifier = "tuADjJPJrg"
-weight = 12
-
-[[main]]
-name = "Installations"
-pageRef = "installations"
-identifier = "iiiiiiiii"
-weight = 15
-
-[[main]]
-name = "Collaborators"
-pageRef = "collaborators"
-identifier = "tmADjJPJrg"
-weight = 20
-
 [[footer]]
 none = "none"

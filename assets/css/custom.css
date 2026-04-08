@@ -13,9 +13,9 @@ html {
 }
 
 :root {
-  --critical-green: rgb(25, 64, 33);
-  --critical-cream: rgb(248, 244, 206);
-  --critical-highlight: #2a5b34;
+  --critical-green: rgb(128, 20, 50);
+  --critical-cream: rgb(247, 233, 218);
+  --critical-highlight: #9b2341;
   /* the following vars make the theme body's spacing settings available to our
     custom css, so it can be easily applied or omitted for individual elements */
 
@@ -128,21 +128,21 @@ p a {
 
 /* Pledgme  section styling */
 .pledgeme-section {
-  background: rgba(25, 64, 33, 0.1);
+  background: rgba(128, 20, 50, 0.1);
   text-align: center;
   padding: 0rem 1.5rem 3rem 1.5rem;
   margin: 4rem 0;
-  border: 2px solid rgba(248, 244, 206, 0.3);
+  border: 2px solid rgba(247, 233, 218, 0.3);
   border-radius: 12px;
 }
 
 /* Newsletter signup section styling */
 .newsletter-section {
-  background: rgba(25, 64, 33, 0.1);
+  background: rgba(128, 20, 50, 0.1);
   text-align: center;
   padding: 0rem 1.5rem 3rem 1.5rem;
   margin: 4rem 0;
-  border: 2px solid rgba(248, 244, 206, 0.3);
+  border: 2px solid rgba(247, 233, 218, 0.3);
   border-radius: 12px;
 }
 
@@ -154,32 +154,32 @@ p a {
   font-family: bold_font;
   font-size: 1.6rem;
   margin-bottom: 0.5rem;
-  color: rgb(248, 244, 206);
+  color: rgb(247, 233, 218);
 }
 
 .newsletter-section p {
   font-family: regular_font;
-  color: rgb(248, 244, 206);
+  color: rgb(247, 233, 218);
   margin-bottom: 1rem;
 }
 
 /* Form input hover effects */
 .newsletter-form-input:hover {
-  border-color: rgb(248, 244, 206) !important;
-  box-shadow: 0 0 0 3px rgba(248, 244, 206, 0.1) !important;
+  border-color: rgb(247, 233, 218) !important;
+  box-shadow: 0 0 0 3px rgba(247, 233, 218, 0.1) !important;
 }
 
 .newsletter-form-input:focus {
   outline: none !important;
-  border-color: rgb(248, 244, 206) !important;
-  box-shadow: 0 0 0 3px rgba(248, 244, 206, 0.2) !important;
+  border-color: rgb(247, 233, 218) !important;
+  box-shadow: 0 0 0 3px rgba(247, 233, 218, 0.2) !important;
 }
 
 /* Button hover effects */
 .newsletter-form-button:hover {
-  background: rgb(248, 244, 206) !important;
-  color: rgb(25, 64, 33) !important;
-  border-color: rgb(25, 64, 33) !important;
+  background: rgb(247, 233, 218) !important;
+  color: rgb(128, 20, 50) !important;
+  border-color: rgb(128, 20, 50) !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
 }
@@ -194,17 +194,17 @@ p a {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 .pledgeme-form-button:hover {
-  background: rgb(248, 244, 206) !important;
-  color: rgb(25, 64, 33) !important;
-  border-color: rgb(25, 64, 33) !important;
+  background: rgb(247, 233, 218) !important;
+  color: rgb(128, 20, 50) !important;
+  border-color: rgb(128, 20, 50) !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 .newsletter-loading-button:hover {
-  background: rgb(248, 244, 206) !important;
-  color: rgb(25, 64, 33) !important;
-  border-color: rgb(25, 64, 33) !important;
+  background: rgb(247, 233, 218) !important;
+  color: rgb(128, 20, 50) !important;
+  border-color: rgb(128, 20, 50) !important;
 }
 
 /* Responsive design for newsletter section */

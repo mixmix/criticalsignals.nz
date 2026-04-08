@@ -56,8 +56,8 @@ h3 {
   font-weight: 1000;
   text-transform: uppercase;
 
-  color: rgba(248, 244, 206, 0.9);
-  border-bottom: 1px solid rgba(248, 244, 206, 0.8);
+  color: rgba(247, 233, 218, 0.9);
+  border-bottom: 1px solid rgba(247, 233, 218, 0.8);
 
   padding-bottom: 0.2rem;
   margin-top: 2rem;
