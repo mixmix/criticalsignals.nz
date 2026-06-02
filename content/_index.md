@@ -18,6 +18,7 @@ questions:
   - "How many tabs does your brain have open?"
   - "How long have you worked for big tech?"
   - "Do the birds need us?"
+  - "What does community mean to you?"
 
 images:
   - '/images/hero/1.webp'  # These files are in /static/images/hero folder
