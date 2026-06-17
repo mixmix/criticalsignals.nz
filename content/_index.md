@@ -70,11 +70,47 @@ infrastructures for living — with care, agency, and creativity.
 </p>
 -->
 
-## Critical Signals is coming again in 2026
+## What is Critical Signals? {#what-is}
 
-Stay tuned for more details coming soon!
+In our second year as we continue to evolve and discover collectively what this project is and wants to be, we have created an intentions statement so we can be clear with ourselves and our community on what we are working on and how we are working together.
 
-<div style="margin-top: 6rem;"></div>
+<div class="mission-statement" id="mission-statement">
+
+### Our Mission Statement
+
+Critical Signals is a collective endeavour for creative resilience - a gathering place for people who believe communities can shape their own futures.
+
+A bridge between the practical and the visionary: This space brings together artists, researchers, technologists, and communities to ask what changes we could make to our societies, infrastructure, food, and energy systems to ensure we survive disruption and potentially thrive through it.
+
+Together we gather, learn, and act in community: We come together in person, combining arts, tech, politics, and shared meals in public-facing spaces where hopes and fears can be spoken honestly and turned into action. Resources are sought and stewarded to create opportunities for people to connect, learn, wonder, and respond. With community at the centre, this work grows a resilient, self-supporting Aotearoa and contributes meaningfully to possible futures of the wider world.
+
+</div>
+
+## When {#when}
+
+Critical Signals 2026, August 1st-October 31st 2026.
+
+This includes an ongoing relationship with Goethe-Institut New Zealand, alongside whom we have secured some funding for the 2026 programme through the EUNIC fund.
+
+## 2026 Themes {#themes}
+
+Throughout 2026 we'll be focusing on:
+
+- Stuff that Sustains
+- Community Energy
+- Unfolding Futures
+- Next Step Democracy
+- Politics of Space
+
+We are working with an expanding group of people, organisations and communities to bring these topics together in meaningful and practical ways throughout our programme.
+
+<p style="margin-top: 2rem">
+  <a href="/call-for-contributions/" class="homepage-programme-link" style="padding: .5rem;">
+    Call for Contributions
+  </a>
+</p>
+
+<div style="margin-top: 4rem;"></div>
 
 <!-- Newsletter Signup Form -->
 <!-- TODO extract into a partial, make /contact page -->
@@ -119,14 +155,6 @@ Stay tuned for more details coming soon!
     contact@criticalsignals.nz
     </a>
   </p>
-</div>
-<div class="pledgeme-section">
-<h3>Help us to persist and grow!</h3>
-    <form class="pledgeme-form" action="https://pledgeme.co.nz/projects/8444-critical-signals" method="GET" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-      <button type="submit" class="pledgeme-form-button" style="background: rgb(128, 20, 50); font-size: 16px; color: rgb(247, 233, 218); font-family: bold_font, Helvetica-Bold, sans-serif; display: flex; width: 100%; max-width: 400px; white-space: normal; height: 42px; align-items: center; justify-content: center; flex-direction: row; padding: 10px 20px; border-radius: 8px; text-align: center; font-style: normal; font-weight: bold; line-height: 20px; border: 3px solid rgb(247, 233, 218); cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
-        Make a donation
-      </button>
-    </form>
 </div>
 
 <script>

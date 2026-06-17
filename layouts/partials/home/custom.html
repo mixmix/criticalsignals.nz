@@ -8,6 +8,8 @@
 {{ $imageBreakpointLarge := "750px" }}
 {{ partial "home/hero-image-rendition.html" . }}
 
+{{ partial "home/nav.html" . }}
+
 <!-- an approximation of the homepage hero content for people using screen readers -->
 <div class="sr-only">
   <h1>Critical Signals</h1>
@@ -207,6 +209,13 @@ initializeHero()
   .main-menu {
     padding-inline: var(--page-gutter) !important;
     max-width: var(--container-7xl);
+  }
+
+  .homepage-nav {
+    max-width: var(--content-max-width-plus-gutters);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+    margin-bottom: 1rem;
   }
 }
 
