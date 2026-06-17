@@ -6,7 +6,7 @@ See our [mission statement](/#mission-statement) and [2026 themes](/#themes) on 
 
 If this mission and 2026's themes above excites you, please get in touch to offer or create as part of Critical Signals 2026.
 Call for proposals are now open, and we are accepting additions to the core works until the end of May.
-Please send a brief outline (&lt;300words) of your concept and a brief biography of the protagonists to contact@criticalsignals.nz by May 30th.
+Please send a brief outline (&lt;300words) of your concept and a brief biography of the protagonists to [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz) by May 30th.
 
 You can contribute to the programme through any of the following formats:
 
@@ -22,6 +22,12 @@ We will favour evidence-based original material, and if there are repetitions, w
 We are excited by the possibility of working with many of you throughout this year's Critical Signals, August 1st-October 31st 2026.
 
 <p style="margin-top: 2rem">
+  <a href="mailto:contact@criticalsignals.nz?subject=Critical%20Signals%202026%20proposal" class="homepage-programme-link" style="padding: .5rem;">
+    Send your proposal
+  </a>
+</p>
+
+<p style="margin-top: 1rem">
   <a href="/" class="homepage-programme-link" style="padding: .5rem;">
     Back to home
   </a>
