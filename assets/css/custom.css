@@ -93,11 +93,9 @@ a.programme-host > div {
   text-decoration: underline dotted;
 }
 
-/* Header: keep nav visible; logo shrinks on medium widths */
+/* Header */
 .main-menu {
-  flex-wrap: wrap;
   overflow: visible;
-  gap: 0.75rem;
 }
 
 .main-menu .logo {

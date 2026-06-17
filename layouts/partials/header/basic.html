@@ -1,9 +1,9 @@
 <div style="padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px"
-  class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 gap-x-3">
+  class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 gap-x-3 w-full">
   {{ if .Site.Params.Logo }}
     {{ $logo := resources.Get .Site.Params.Logo }}
     {{ if $logo }}
-      <div>
+      <div class="shrink-0">
         <a href="{{ "" | relLangURL }}" class="flex">
           <span class="sr-only">{{ .Site.Title | markdownify }}</span>
 
@@ -21,64 +21,70 @@
     {{ end }}
   {{- end }}
 
-  <div class="flex flex-1 items-center justify-end gap-x-5 h-12 shrink-0">
+  <nav class="site-header-nav hidden lg:flex items-center gap-x-5 ml-auto h-12 shrink-0">
+    {{ if .Site.Menus.main }}
+      {{ range .Site.Menus.main }}
+        {{ partial "header/header-option.html" . }}
+      {{ end }}
+    {{ end }}
+
     {{ partial "translations.html" . }}
 
     {{ if .Site.Params.enableSearch | default false }}
-      <button id="search-button-mobile" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
+      <button id="search-button" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
         title="{{ i18n " search.open_button_title" }}">
         {{ partial "icon.html" "search" }}
       </button>
     {{ end }}
+  </nav>
 
-    <div class="-my-2 shrink-0">
-      <label id="menu-button" class="block">
-        {{ if .Site.Menus.main }}
-          <div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
-            {{ partial "icon.html" "bars" }}
-          </div>
-          <div id="menu-wrapper" style="padding-top:5px;"
-            class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50">
+  <div class="lg:hidden shrink-0 ml-auto">
+    <label id="menu-button" class="block">
+      {{ if .Site.Menus.main }}
+        <div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
+          {{ partial "icon.html" "bars" }}
+        </div>
+        <div id="menu-wrapper" style="padding-top:5px;"
+          class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50">
 
-            <ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl">
-              <li id="menu-close-button">
-                <span
-                  class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400">{{
-                  partial
-                  "icon.html"
-                  "xmark" }}</span>
-              </li>
+          <ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl">
+            <li id="menu-close-button">
+              <span
+                class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400">{{
+                partial
+                "icon.html"
+                "xmark" }}</span>
+            </li>
 
-              {{ range .Site.Menus.main }}
-                {{ partial "header/header-mobile-option.html" . }}
+            {{ range .Site.Menus.main }}
+              {{ partial "header/header-mobile-option.html" . }}
+            {{ end }}
+          </ul>
+
+          {{ if .Site.Menus.subnavigation }}
+            <hr>
+            <ul class="flex mt-4 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl">
+              {{ range .Site.Menus.subnavigation }}
+                <li class="mb-1">
+                  <a href="{{ .URL }}" {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:"
+                    ) }} target="_blank" {{ end }} class="flex items-center">
+                    {{ if .Pre }}
+                    <span {{ if and .Pre .Name}} class="mr-3" {{ end }}>
+                      {{ partial "icon.html" .Pre }}
+                    </span>
+                    {{ end }}
+                    <p class="text-sm font-sm text-gray-500 hover:text-gray-900" title="{{ .Title }}">
+                      {{ .Name | markdownify }}
+                    </p>
+                  </a>
+                </li>
               {{ end }}
             </ul>
+          {{ end }}
 
-            {{ if .Site.Menus.subnavigation }}
-              <hr>
-              <ul class="flex mt-4 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl">
-                {{ range .Site.Menus.subnavigation }}
-                  <li class="mb-1">
-                    <a href="{{ .URL }}" {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:"
-                      ) }} target="_blank" {{ end }} class="flex items-center">
-                      {{ if .Pre }}
-                      <span {{ if and .Pre .Name}} class="mr-3" {{ end }}>
-                        {{ partial "icon.html" .Pre }}
-                      </span>
-                      {{ end }}
-                      <p class="text-sm font-sm text-gray-500 hover:text-gray-900" title="{{ .Title }}">
-                        {{ .Name | markdownify }}
-                      </p>
-                    </a>
-                  </li>
-                {{ end }}
-              </ul>
-            {{ end }}
-
-          </div>
-        {{ end }}
-      </label>
-    </div>
+        </div>
+      {{ end }}
+    </label>
   </div>
 </div>
 
