@@ -84,62 +84,21 @@ a.programme-host > div {
   padding: .1rem .3rem;
 }
 
-.homepage-nav {
-  margin-bottom: 1rem;
-  line-height: 2;
-}
-
-.homepage-nav a:not(.homepage-programme-link) {
-  text-decoration: underline dotted;
-}
-
 /* Header */
 .main-menu {
   overflow: visible;
 }
 
-.main-menu .logo {
-  max-width: min(18rem, 55vw);
-}
-
+/* nav logo: 50% larger than the theme default (5rem) */
 .main-menu .logo svg {
-  width: 100%;
-  height: auto;
-}
-
-.site-header-nav {
-  flex-shrink: 0;
+  width: 7.5rem;
+  height: 7.5rem;
 }
 
 #menu-wrapper ul li a p {
   background: var(--critical-highlight);
   color: rgb(247, 233, 218);
   padding: 0.2rem 0.4rem;
-}
-
-/* Mission statement callout */
-.mission-statement {
-  background: rgba(128, 20, 50, 0.15);
-  border: 2px solid rgba(247, 233, 218, 0.35);
-  border-left: 5px solid var(--critical-highlight);
-  border-radius: 12px;
-  padding: 1.5rem 2rem;
-  margin: 1.5rem 0 2rem;
-}
-
-.mission-statement h3 {
-  font-family: bold_font;
-  font-size: 1.25rem;
-  margin-top: 0;
-  margin-bottom: 1.25rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.mission-statement p:first-of-type {
-  font-family: bold_font;
-  font-size: 1.15rem;
-  line-height: 1.5;
 }
 
 

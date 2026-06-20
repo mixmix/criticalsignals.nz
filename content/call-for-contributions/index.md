@@ -2,11 +2,13 @@
 title: Call for Contributions
 ---
 
-See our [mission statement](/#mission-statement) and [2026 themes](/#themes) on the home page.
+See our [mission statement](/mission-statement/) and [2026 themes](/#themes) on the home page.
 
 If this mission and 2026's themes above excites you, please get in touch to offer or create as part of Critical Signals 2026.
-Call for proposals are now open, and we are accepting additions to the core works until the end of May.
-Please send a brief outline (&lt;300words) of your concept and a brief biography of the protagonists to [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz) by May 30th.
+
+**Proposals for our August events are now closed.** We are still welcoming proposals for our September and October programme, so there's plenty of time to get involved.
+
+Please send a brief outline (&lt;300words) of your concept and a brief biography of the protagonists to [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz).
 
 You can contribute to the programme through any of the following formats:
 
@@ -17,7 +19,7 @@ You can contribute to the programme through any of the following formats:
 - Practical Making Events
 - Artworks + Experiences
 
-We will favour evidence-based original material, and if there are repetitions, workshops that engage in more ways than with words. We will endeavour to respond by June 20th.
+We will favour evidence-based original material, and if there are repetitions, workshops that engage in more ways than with words. We will endeavour to respond promptly.
 
 We are excited by the possibility of working with many of you throughout this year's Critical Signals, August 1st-October 31st 2026.
 

@@ -1,9 +1,9 @@
 <div style="padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px"
-  class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 gap-x-3 w-full">
+  class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start gap-x-3">
   {{ if .Site.Params.Logo }}
     {{ $logo := resources.Get .Site.Params.Logo }}
     {{ if $logo }}
-      <div class="shrink-0">
+      <div>
         <a href="{{ "" | relLangURL }}" class="flex">
           <span class="sr-only">{{ .Site.Title | markdownify }}</span>
 
@@ -21,24 +21,77 @@
     {{ end }}
   {{- end }}
 
-  <nav class="site-header-nav hidden lg:flex items-center gap-x-5 ml-auto h-12 shrink-0">
-    {{ if .Site.Menus.main }}
-      {{ range .Site.Menus.main }}
-        {{ partial "header/header-option.html" . }}
+  <div class="flex flex-1 items-center justify-between">
+    <nav class="flex space-x-3">
+      {{ if not .Site.Params.disableTextInHeader | default true }}
+        <a href="{{ "" | relLangURL }}" class="text-base font-medium text-gray-500 hover:text-gray-900">
+          {{ .Site.Title | markdownify }}
+        </a>
       {{ end }}
-    {{ end }}
+    </nav>
 
-    {{ partial "translations.html" . }}
+    <nav class="hidden md:flex items-center gap-x-5 md:ml-12 h-12">
+      {{ if .Site.Menus.main }}
+        {{ range .Site.Menus.main }}
+          {{ partial "header/header-option.html" . }}
+        {{ end }}
+      {{ end }}
 
-    {{ if .Site.Params.enableSearch | default false }}
-      <button id="search-button" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
-        title="{{ i18n " search.open_button_title" }}">
-        {{ partial "icon.html" "search" }}
-      </button>
-    {{ end }}
-  </nav>
+      {{ partial "translations.html" . }}
 
-  <div class="lg:hidden shrink-0 ml-auto">
+      {{ if .Site.Params.enableSearch | default false }}
+        <button id="search-button" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
+          title="{{ i18n " search.open_button_title" }}">
+          {{ partial "icon.html" "search" }}
+        </button>
+      {{ end }}
+
+
+      {{/* Appearance switch */}}
+      <!-- {{ if .Site.Params.footer.showAppearanceSwitcher | default false }} -->
+      <!--   <div -->
+      <!--     class="{{ if .Site.Params.footer.showScrollToTop | default true -}} {{- end }} flex items-center"> -->
+      <!--     <button id="appearance-switcher" aria-label="Dark mode switcher" type="button" class="text-base hover:text-primary-600 dark:hover:text-primary-400"> -->
+      <!--       <div class="flex items-center justify-center dark:hidden"> -->
+      <!--         {{ partial "icon.html" "moon" }} -->
+      <!--       </div> -->
+      <!--       <div class="items-center justify-center hidden dark:flex"> -->
+      <!--         {{ partial "icon.html" "sun" }} -->
+      <!--       </div> -->
+      <!--     </button> -->
+      <!--   </div> -->
+      <!-- {{ end }} -->
+    </nav>
+
+    <div class="flex md:hidden items-center gap-x-5 md:ml-12 h-12">
+
+      <span></span>
+
+      {{ partial "translations.html" . }}
+
+      {{ if .Site.Params.enableSearch | default false }}
+        <button id="search-button-mobile" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
+          title="{{ i18n " search.open_button_title" }}">
+          {{ partial "icon.html" "search" }}
+        </button>
+      {{ end }}
+
+      {{/* Appearance switch */}}
+      <!-- {{ if .Site.Params.footer.showAppearanceSwitcher | default false }} -->
+      <!--   <button id="appearance-switcher-mobile" aria-label="Dark mode switcher" type="button" class="text-base hover:text-primary-600 dark:hover:text-primary-400 ltr:mr-1 rtl:ml-1"> -->
+      <!--     <div class="flex items-center justify-center dark:hidden"> -->
+      <!--       {{ partial "icon.html" "moon" }} -->
+      <!--     </div> -->
+      <!--     <div class="items-center justify-center hidden dark:flex"> -->
+      <!--       {{ partial "icon.html" "sun" }} -->
+      <!--     </div> -->
+      <!--   </button> -->
+      <!-- {{ end }} -->
+
+    </div>
+  </div>
+
+  <div class="-my-2 md:hidden">
     <label id="menu-button" class="block">
       {{ if .Site.Menus.main }}
         <div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
@@ -87,6 +140,27 @@
     </label>
   </div>
 </div>
+
+{{ if .Site.Menus.subnavigation }}
+  <div class="main-menu flex pb-3 flex-col items-end justify-between md:justify-start space-x-3" {{ if .Site.Params.Logo
+    }} style="margin-top:-15px" {{ end }}>
+    <div class="hidden md:flex items-center space-x-5">
+      {{ range .Site.Menus.subnavigation }}
+        <a href="{{ .URL }}" {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:" ) }}
+          target="_blank" {{ end }} class="flex items-center">
+          {{ if .Pre }}
+          <span {{ if and .Pre .Name}} class="mr-1" {{ end }}>
+            {{ partial "icon.html" .Pre }}
+          </span>
+          {{ end }}
+          <p class="text-xs font-light text-gray-500 hover:text-gray-900" title="{{ .Title }}">
+            {{ .Name | markdownify }}
+          </p>
+        </a>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}
 
 {{ if .Site.Params.highlightCurrentMenuArea }}
   <script>

@@ -1,12 +1,14 @@
 [[main]]
 name = "Call for Contributions"
+title = "Call for Contributions"
 url = "/call-for-contributions/"
 weight = 10
 
-[[main]]
-name = "Programme"
-url = "/programme/"
-weight = 20
+# [[main]]
+# name = "Programme"
+# title = "Programme"
+# url = "/programme/"
+# weight = 20
 
 [[footer]]
 none = "none"

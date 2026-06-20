@@ -8,8 +8,6 @@
 {{ $imageBreakpointLarge := "750px" }}
 {{ partial "home/hero-image-rendition.html" . }}
 
-{{ partial "home/nav.html" . }}
-
 <!-- an approximation of the homepage hero content for people using screen readers -->
 <div class="sr-only">
   <h1>Critical Signals</h1>
@@ -63,7 +61,17 @@
   {{ partial "recent-articles/main.html" . }}
 </section>
 
-{{/* partners section hidden */}}
+<section class='partners'>
+  <img alt="EUNIC"                             class="nozoom" src="/images/partners/cream_EUNIC.svg">
+  <img alt="Goethe Institut"                   class="nozoom" src="/images/partners/cream_Logo_Goethe_Institut.svg">
+  <img alt="Victoria University of Wellington" class="nozoom" src="/images/partners/cream_victoria_logo.svg">
+  {{/* other partners temporarily disabled
+  <img alt="Monash University"                 class="nozoom" src="/images/partners/cream_Monash_University_logo.svg" >
+  <img alt="Massey University"                 class="nozoom" src="/images/partners/cream_Massey_University_Logo.svg" >
+  <img alt="Toi Āria"                          class="nozoom" src="/images/partners/cream_Toi_Aria_Logo.svg" >
+  <img alt="Te Pūnaha Matatini"                class="nozoom" src="/images/partners/cream_Te_Punaha_Matatini.svg" >
+  */}}
+</section>
 
 <script>
 const processedImages = window.heroImages || []
@@ -209,13 +217,6 @@ initializeHero()
   .main-menu {
     padding-inline: var(--page-gutter) !important;
     max-width: var(--container-7xl);
-  }
-
-  .homepage-nav {
-    max-width: var(--content-max-width-plus-gutters);
-    margin-inline: auto;
-    padding-inline: var(--page-gutter);
-    margin-bottom: 1rem;
   }
 }
 

@@ -72,27 +72,33 @@ infrastructures for living — with care, agency, and creativity.
 
 ## What is Critical Signals? {#what-is}
 
-In our second year as we continue to evolve and discover collectively what this project is and wants to be, we have created an intentions statement so we can be clear with ourselves and our community on what we are working on and how we are working together.
+Critical Signals is a community project that brings people in Wellington
+together to explore specific themes. Each year we choose different themes (see
+our [2025 programme](https://2025.criticalsignals.nz), or see this years themes
+below). We convene workshops with artists, academics, activists, scientists,
+technologists, and the general public to explore these themes, and stimulate
+critical discourse and action in our region. 
 
-<div class="mission-statement" id="mission-statement">
+_Critical Signals is a project with an ongoing relationship with Goethe-Institut New Zealand,
+EUNIC, and other partners._
 
-### Our Mission Statement
+<p style="margin-top: 1rem">
+  <a href="/mission-statement/" class="homepage-programme-link" style="padding: .5rem;">
+    Read our mission statement
+  </a>
+</p>
 
-Critical Signals is a collective endeavour for creative resilience - a gathering place for people who believe communities can shape their own futures.
-
-A bridge between the practical and the visionary: This space brings together artists, researchers, technologists, and communities to ask what changes we could make to our societies, infrastructure, food, and energy systems to ensure we survive disruption and potentially thrive through it.
-
-Together we gather, learn, and act in community: We come together in person, combining arts, tech, politics, and shared meals in public-facing spaces where hopes and fears can be spoken honestly and turned into action. Resources are sought and stewarded to create opportunities for people to connect, learn, wonder, and respond. With community at the centre, this work grows a resilient, self-supporting Aotearoa and contributes meaningfully to possible futures of the wider world.
-
-</div>
 
 ## When {#when}
 
-Critical Signals 2026, August 1st-October 31st 2026.
+<span style="font-size: 1.2rem">
+August 1st - October 31st 2026
+</span>
 
-This includes an ongoing relationship with Goethe-Institut New Zealand, alongside whom we have secured some funding for the 2026 programme through the EUNIC fund.
+Our [Call for Contributions](/call-for-contributions) is now open!
 
-## 2026 Themes {#themes}
+
+## Themes {#themes}
 
 Throughout 2026 we'll be focusing on:
 
@@ -112,7 +118,6 @@ We are working with an expanding group of people, organisations and communities 
 
 <div style="margin-top: 4rem;"></div>
 
-<!-- Newsletter Signup Form -->
 <!-- TODO extract into a partial, make /contact page -->
 <div class="newsletter-section" id="signup">
   <h3>Stay Updated</h3>
