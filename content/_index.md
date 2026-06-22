@@ -72,15 +72,20 @@ infrastructures for living — with care, agency, and creativity.
 
 ## What is Critical Signals? {#what-is}
 
-Critical Signals is a community project that brings people in Wellington
-together to explore specific themes. Each year we choose different themes (see
-our [2025 programme](https://2025.criticalsignals.nz), or see this years themes
-below). We convene workshops with artists, academics, activists, scientists,
-technologists, and the general public to explore these themes, and stimulate
-critical discourse and action in our region. 
+Critical Signals is a 3 month gathering, practicing community resiliance in
+person based in Wellington New Zealand. We work with artists, academics,
+activists, scientists, techologists, and the general public to explore crises,
+and stimulate critical discourse and action through trusted networks.
 
-_Critical Signals is a project with an ongoing relationship with Goethe-Institut New Zealand,
-EUNIC, and other partners._
+Each year we choose different themes (see our [2025
+programme](https://2025.criticalsignals.nz), or see this years themes below). 
+
+_Critical Signals is supported by EUNIC New Zealand, Goethe Institut,
+Wellington Independant Arts Trust, and Victoria University._
+
+EUNIC - European Uninion National Institutes for Culture - is Europe's network
+of national cultural institutes and organisations, with 39 members from all EU
+member states and associated countries.
 
 <p style="margin-top: 1rem">
   <a href="/mission-statement/" class="homepage-programme-link" style="padding: .5rem;">
@@ -100,7 +105,7 @@ Our [Call for Contributions](/call-for-contributions) is now open!
 
 ## Themes {#themes}
 
-Throughout 2026 we'll be focusing on:
+In 2025 we explored the themes of **data sovereignty** and **food sovereignty**. In 2026, under the broad themes of **democracy** and **energy** we will explore:
 
 - Stuff that Sustains
 - Community Energy
