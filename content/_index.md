@@ -72,16 +72,16 @@ infrastructures for living — with care, agency, and creativity.
 
 ## What is Critical Signals? {#what-is}
 
-Critical Signals is a 3 month gathering, practicing community resiliance in
+Critical Signals is a 3 month gathering, practicing community resilience in
 person based in Wellington New Zealand. We work with artists, academics,
 activists, scientists, techologists, and the general public to explore crises,
 and stimulate critical discourse and action through trusted networks.
 
 Each year we choose different themes (see our [2025
-programme](https://2025.criticalsignals.nz), or see this years themes below). 
+programme](https://2025.criticalsignals.nz), or see this year's themes below). 
 
 _Critical Signals is supported by EUNIC New Zealand, Goethe Institut,
-Wellington Independant Arts Trust, and Victoria University._
+Wellington Independent Arts Trust, and Victoria University._
 
 EUNIC - European Uninion National Institutes for Culture - is Europe's network
 of national cultural institutes and organisations, with 39 members from all EU
