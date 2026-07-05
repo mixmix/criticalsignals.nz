@@ -327,15 +327,19 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
      over its upper half — rather than the photo hiding behind the wordmark. */
   .hero--inner .col{margin-top:clamp(60px,23vw,120px);}
   .hero--home .grid{margin-top:clamp(60px,23vw,120px);}
-  .hero--inner .rail{padding-top:24px;}
-  .hero--home .rail{margin-top:18px;}
+  /* No empty height between the text and the spore/dates → sign-up: the rail
+     sits directly under the content (no leading padding/gap). */
+  .hero--inner .rail{padding-top:0;}
+  .hero--home .rail{margin-top:0;}
   /* all readable body copy sits on a full-bleed white background on mobile
-     (breaks out of the hero's side padding, then insets the text again) */
+     (breaks out of the hero's side padding, then insets the text again).
+     Trim the bottom so the box hugs the spore/dates that follow it. */
   .col{
     background:var(--white);
     margin-inline:calc(-1 * var(--pad));
-    padding:clamp(18px,5vw,28px) var(--pad);
+    padding:clamp(18px,5vw,28px) var(--pad) clamp(8px,2vw,12px);
   }
+  .col > :last-child{margin-bottom:0;}
   /* don't let the middle image ride up over the dates on mobile */
   main>section.imgband{margin-top:0;}
   .rail .spore{width:96%;margin:0 0 10px;}

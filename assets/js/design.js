@@ -48,11 +48,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let ticking = false;
     const apply = function () {
+      // Parallax is for the desktop layout, where the spore + dates live in a tall
+      // right-hand rail. On mobile everything is a single column, so drifting the
+      // spore/dates would slide them over the sign-up section — keep them static so
+      // the date + location stay as clean foreground content above the sign-up.
+      const mobile = window.innerWidth <= 880;
       const y = window.pageYOffset;
       const vh = window.innerHeight;
-      drifters.forEach(function (d) { d.el.style.transform = "translate3d(0," + (y * d.rate).toFixed(1) + "px,0)"; });
-      heroes.forEach(function (h) { h.style.backgroundPositionY = (y * 0.18).toFixed(1) + "px"; });
+      drifters.forEach(function (d) { d.el.style.transform = mobile ? "" : "translate3d(0," + (y * d.rate).toFixed(1) + "px,0)"; });
+      heroes.forEach(function (h) { h.style.backgroundPositionY = mobile ? "" : (y * 0.18).toFixed(1) + "px"; });
       photos.forEach(function (img) {
+        if (mobile) { img.style.transform = ""; return; }
         const r = img.getBoundingClientRect();
         const slack = (r.height * (PHOTO_SCALE - 1)) / 2;
         let t = -((r.top + r.height / 2) - vh / 2) * 0.09;

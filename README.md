@@ -23,7 +23,7 @@ cd fugu
 npm i
 ```
 
-Inputs are <neutral> <primary> <secondary>
+Inputs are `<neutral>` `<primary>` `<secondary>`
 ```bash
 ./index.js generate F8F4CE 194021 FF00FF > ../criticalsignals.nz/assets/css/schemes/crit-sigs.css 
 # NOTE: you may have to go in and comment out the first line

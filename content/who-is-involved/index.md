@@ -12,4 +12,4 @@ menu:
     title: "Who is involved"
 ---
 
-<p class="intro">The people gathering, learning and acting together as part of Critical Signals.</p>
+<p class="intro">The people gathering, learning and acting together as part of Critical Signals. _More bios to come_</p>
