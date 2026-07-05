@@ -6,7 +6,7 @@
        above the people. */ -}}
 {{ define "main" }}
   {{ $core := where (.Site.GetPage "/collaborators").Pages ".Params.tags" "intersect" (slice "core-team") }}
-  <header class="hero hero--inner cs-hero" style="background-image:url('/images/design/img/7.jpeg')" data-img-spot>
+  <section class="hero hero--inner cs-hero" style="background-image:url('/images/backgrounds/07.jpeg')" data-img-spot>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">
@@ -32,11 +32,11 @@
       </div>
       {{ partial "design/rail.html" . }}
     </div>
-  </header>
+  </section>
 
   {{ if .Params.middleImage }}
     <section class="imgband">
-      <img class="imgband__photo" src="/images/design/img/9.jpeg" alt="" data-img-spot>
+      <img class="imgband__photo" src="/images/backgrounds/09.jpeg" alt="" data-img-spot>
     </section>
   {{ end }}
 {{ end }}

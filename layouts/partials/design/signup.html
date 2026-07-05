@@ -2,7 +2,7 @@
        The form posts to Loops.so; design.js intercepts it (fetch + inline
        success/error) and falls back to a normal POST without JS. */ -}}
 {{- $loops := .Site.Params.design.loopsFormUrl | default "https://app.loops.so/api/newsletter-form/cmci5j23a3ywvul0juqembgag" -}}
-<div class="signup">
+<div class="signup" id="signup">
   <h2 class="caps">Sign up for news</h2>
   <p>Hear updates from the community creating the project, and don't miss our launch and programme announcements.</p>
   <form class="signup-form" action="{{ $loops }}" method="POST" novalidate>

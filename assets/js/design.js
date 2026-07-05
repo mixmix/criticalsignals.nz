@@ -5,15 +5,31 @@
 (function randomiseImages() {
   const spots = document.querySelectorAll("[data-img-spot]");
   if (!spots.length) return;
-  const pool = Array.from({ length: 10 }, (_, i) => "/images/design/img/" + (i + 1) + ".jpeg");
+  // Low-poly placeholders are inlined as base64 data-URIs (window.CS_LOWPOLY,
+  // see design/lowpoly-data.html) so previewing any photo needs no request;
+  // fall back to the on-disk SVG if the inline array is somehow absent.
+  const inline = window.CS_LOWPOLY || [];
+  const pool = Array.from({ length: 10 }, function (_, i) {
+    const nn = String(i + 1).padStart(2, "0");
+    return {
+      jpeg: "/images/backgrounds/" + nn + ".jpeg",
+      svg: inline[i] || "/images/backgrounds/lowpoly/" + nn + ".svg",
+    };
+  });
   for (let i = pool.length - 1; i > 0; i--) {            // Fisher–Yates shuffle
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   spots.forEach(function (el, i) {
-    const url = pool[i % pool.length];
-    if (el.tagName === "IMG") el.src = url;
-    else el.style.backgroundImage = "url('" + url + "')";
+    const pick = pool[i % pool.length];
+    if (el.tagName === "IMG") {
+      // SVG behind (via CSS background); JPEG src paints over it once loaded.
+      el.style.backgroundImage = "url('" + pick.svg + "')";
+      el.src = pick.jpeg;
+    } else {
+      // Layered background: JPEG on top, SVG beneath — SVG shows until JPEG loads.
+      el.style.backgroundImage = "url('" + pick.jpeg + "'),url('" + pick.svg + "')";
+    }
   });
 })();
 
@@ -75,21 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", shut); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") shut(); });
   }
-
-  // 4. Hero inline outline CTA acting as an email field (home page).
-  document.querySelectorAll(".cta--outline").forEach(function (form) {
-    const input = form.querySelector("input");
-    if (!input) return;
-    input.addEventListener("focus", function () { form.classList.add("is-active"); });
-    input.addEventListener("blur", function () { if (!input.value) form.classList.remove("is-active"); });
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (!input.value) { input.focus(); return; }
-      submitLoops(form.getAttribute("action"), input.value)
-        .then(function () { form.innerHTML = "Thanks — you're subscribed"; })
-        .catch(function () { form.innerHTML = "Something went wrong — email contact@criticalsignals.nz"; });
-    });
-  });
 
   // 5. Footer sign-up forms → Loops.so.
   document.querySelectorAll("form.signup-form").forEach(function (form) {

@@ -33,7 +33,9 @@
   --cs-sans:"D-DIN","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-html{font-family:var(--cs-sans);}
+html{font-family:var(--cs-sans);scroll-behavior:smooth;}
+/* the "Sign up for news" CTA links here; keep the target clear of the sticky nav */
+#signup{scroll-margin-top:calc(var(--navh) + 20px);}
 
 /* ---- DARK = a full photographic negative of the light site ----
    A single invert filter flips everything: surfaces, text, photos, logos, and
@@ -133,11 +135,12 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
   line-height:0;margin-bottom:clamp(28px,8vw,56px);
 }
 .menu-overlay__close svg{display:block;width:clamp(26px,7vw,34px);height:auto;}
-.menu-overlay ul{list-style:none;margin:0;padding:0;text-align:right;}
+.menu-overlay ul{list-style:none;margin:0;padding:0;width:100%;text-align:right;}
 .menu-overlay li{margin:0 0 clamp(20px,5vw,32px);}
 .menu-overlay a{
   text-transform:uppercase;text-decoration:none;color:var(--ink);
   font-size:clamp(1.4rem,7vw,2rem);line-height:1.1;font-weight:400;display:block;
+  overflow-wrap:break-word;
 }
 .menu-overlay a:hover,.menu-overlay a.is-active{text-decoration:underline;text-underline-offset:5px;}
 
@@ -175,7 +178,10 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 
 /* inner pages: pull the white column UP so it overlaps the lower wordmark */
 .hero--inner .col{margin-top:-7vw;}
-.hero--inner .rail{padding-top:30vw;}
+/* Keep the spore/dates rail from sitting so low that short text pages leave a
+   huge white gap before the footer. The rail's top space is filled by the hero
+   photo, so a smaller value just lets the spore overlap the photo. */
+.hero--inner .rail{padding-top:8vw;}
 
 /* homepage: single continuous column starts low over the photo */
 .hero--home .grid{margin-top:calc(17vw - 80px);}
@@ -197,13 +203,8 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
 }
 .cta--solid{background:var(--ink);color:var(--white);text-decoration:none;}
 .cta--solid:hover{filter:brightness(0.9);}
-.cta--outline{background:transparent;color:#8a8a8a;}
-.cta--outline:hover{border-color:var(--ink);}
-.cta--outline input{
-  width:100%;border:none;background:transparent;font:inherit;font-size:.86rem;font-weight:700;
-  text-transform:uppercase;text-align:center;color:var(--ink);outline:none;padding:0;
-}
-.cta--outline input::placeholder{color:#9a9a9a;text-transform:uppercase;}
+.cta--outline{background:transparent;color:var(--ink);}
+.cta--outline:hover{background:var(--ink);color:var(--white);}
 
 /* hand-drawn dividers */
 .divider{width:100%;max-width:none;height:auto;opacity:.85;margin:34px 0;display:block;}
@@ -232,7 +233,9 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
 
 /* middle image band (home / who): full-width natural height, clipped for parallax */
 .imgband{position:relative;overflow:hidden;}
-.imgband__photo{display:block;width:100%;height:auto;}
+/* aspect-ratio reserves height so the low-poly SVG placeholder (set as the
+   img's background) shows while the JPEG src loads over it — no layout shift. */
+.imgband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;background-size:cover;background-position:center;background-repeat:no-repeat;}
 
 /* ============================================================================
    FOOTER — single component (identical on every marketing page)
@@ -260,7 +263,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 
 /* footer image: pulled UP so the box overlaps its TOP; wordmark + spore drop off the bottom */
 .endband{position:relative;overflow:hidden;z-index:0;margin-top:calc(-1 * clamp(110px,12vw,240px));}
-.endband__photo{display:block;width:100%;height:auto;}
+.endband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;background-size:cover;background-position:center;background-repeat:no-repeat;}
 
 /* sign-up + support typography */
 .signup h2{margin:0 0 clamp(22px,2.2vw,38px);}
@@ -297,7 +300,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 .person__photo{width:100%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 14px;}
 .person__photo--empty{width:100%;aspect-ratio:1/1;background:#3a3a3a;margin:0 0 14px;}
 .person__role{font-weight:700;margin:0 0 14px;}
-.person__body p{margin:0 0 11px;white-space:pre-line;}
+.person__body p{margin:0 0 11px;}
 .person__body h4{margin:16px 0 1px;font-weight:700;}
 
 /* ============================================================================
@@ -314,7 +317,16 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 
   .grid{grid-template-columns:1fr;}
   .mark{width:88%;}
-  .hero--inner .col{margin-top:-16vw;}
+  /* the mobile wordmark is short, so the fixed nav strip would otherwise cover
+     almost all of its first line. Drop it so "CRITICAL" straddles the nav/photo
+     boundary (~half over the white nav bar, half over the background) — matching
+     the desktop overlap. Offset only (no layout shift to the column below). */
+  .hero .mark{position:relative;top:clamp(26px,7vw,44px);}
+  /* mobile: single column. Start the white box below the FULL 16:9 photo band
+     (~56vw tall) so the hero image reads as a clear banner, with the wordmark
+     over its upper half — rather than the photo hiding behind the wordmark. */
+  .hero--inner .col{margin-top:clamp(60px,23vw,120px);}
+  .hero--home .grid{margin-top:clamp(60px,23vw,120px);}
   .hero--inner .rail{padding-top:24px;}
   .hero--home .rail{margin-top:18px;}
   /* all readable body copy sits on a full-bleed white background on mobile

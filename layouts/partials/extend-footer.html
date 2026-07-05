@@ -1,4 +1,7 @@
 {{- /* Load the Critical Signals design behaviours (randomiser, parallax,
        burger, theme toggle, sign-up). */ -}}
+{{- /* Inline the low-poly SVG placeholders (marketing pages only) so the
+       randomiser can preview any photo without a request. */ -}}
+{{ if .Params.csDesign }}{{ partial "design/lowpoly-data.html" . }}{{ end }}
 {{ $js := resources.Get "js/design.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script type="text/javascript" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

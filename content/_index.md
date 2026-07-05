@@ -7,9 +7,7 @@ csDesign: true
 
 <div class="cta-row">
   <a class="cta cta--solid" href="/call-for-contributions/">Call for proposals</a>
-  <form class="cta cta--outline" action="https://app.loops.so/api/newsletter-form/cmci5j23a3ywvul0juqembgag" method="POST" novalidate>
-    <input type="email" name="email" placeholder="newsletter@signup.org" aria-label="Sign up to the newsletter">
-  </form>
+  <a class="cta cta--outline" href="#signup">Sign up for news</a>
 </div>
 
 <p>Critical Signals is a three month gathering, practicing community resilience in person based in Wellington, Aotearoa New Zealand.</p>
