@@ -241,8 +241,11 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
   position:relative;z-index:2;
   margin-left:var(--pad);margin-right:var(--pad);
 }
-/* on 3-image pages the box is pulled UP to overlap the bottom of the middle image */
-main + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320px));}
+/* on 3-image pages the box is pulled UP to overlap the bottom of the middle image.
+   Scoped to pages that actually have a middle image band — Blowfish always wraps
+   content in <main>, so an unscoped `main + footer` would wrongly fire on the
+   2-image pages (About / Call) too. */
+main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320px));}
 .footerbox .signup,
 .footerbox .support{
   background:var(--white);width:var(--boxw);
@@ -314,7 +317,15 @@ main + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320px));}
   .hero--inner .col{margin-top:-16vw;}
   .hero--inner .rail{padding-top:24px;}
   .hero--home .rail{margin-top:18px;}
-  .col{padding-left:0;padding-right:0;background:transparent;}
+  /* all readable body copy sits on a full-bleed white background on mobile
+     (breaks out of the hero's side padding, then insets the text again) */
+  .col{
+    background:var(--white);
+    margin-inline:calc(-1 * var(--pad));
+    padding:clamp(18px,5vw,28px) var(--pad);
+  }
+  /* don't let the middle image ride up over the dates on mobile */
+  main>section.imgband{margin-top:0;}
   .rail .spore{width:96%;margin:0 0 10px;}
   .bigdates{margin-top:0;font-size:clamp(38px,9vw,64px);}
   .footerbox{margin-left:0;}
