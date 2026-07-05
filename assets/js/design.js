@@ -23,8 +23,25 @@
   spots.forEach(function (el, i) {
     const pick = pool[i % pool.length];
     if (el.tagName === "IMG") {
-      // SVG behind (via CSS background); JPEG src paints over it once loaded.
-      el.style.backgroundImage = "url('" + pick.svg + "')";
+      // Two real <img>s stacked in the same box: the low-poly SVG placeholder
+      // sits directly UNDER the JPEG, so it's guaranteed present in the DOM
+      // (no reliance on CSS background painting). Wrap the JPEG in a relative
+      // holder sized by the JPEG itself, and absolutely overlay the SVG behind
+      // it — exact alignment regardless of the outer container's size. The
+      // progressive JPEG then resolves (coarse → sharp) over the SVG: that's
+      // the "merge in as it loads". object-fit:cover keeps both cropped alike.
+      const wrap = document.createElement("span");
+      wrap.style.cssText = "position:relative;display:block;";
+      el.parentNode.insertBefore(wrap, el);
+      const ph = document.createElement("img");
+      ph.alt = "";
+      ph.setAttribute("aria-hidden", "true");
+      ph.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;";
+      ph.src = pick.svg;
+      wrap.appendChild(ph);      // placeholder first (underneath)
+      wrap.appendChild(el);      // JPEG moves into the wrap, painting on top
+      el.style.position = "relative";
+      el.style.zIndex = "1";
       el.src = pick.jpeg;
     } else {
       // Layered background: JPEG on top, SVG beneath — SVG shows until JPEG loads.
@@ -34,6 +51,15 @@
 })();
 
 document.addEventListener("DOMContentLoaded", function () {
+  // 1b. Sticky-nav state: once the page is scrolled, flag <html> so the white
+  //     nav strip rises to cover content passing beneath it (see
+  //     `html.is-scrolled .menu-bg` in custom.css). At rest (top of page) the
+  //     flag is off, so the wordmark still straddles over the nav bar.
+  var docEl = document.documentElement;
+  var syncScrolled = function () { docEl.classList.toggle("is-scrolled", window.pageYOffset > 140); };
+  window.addEventListener("scroll", syncScrolled, { passive: true });
+  syncScrolled();
+
   // 2. Parallax: the spore + dates drift slower than the page; hero and middle
   //    photos drift gently "behind". Transforms / background-position only.
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -41,9 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".rail .spore").forEach(function (el) { drifters.push({ el: el, rate: 0.34 }); });
     document.querySelectorAll(".bigdates").forEach(function (el) { drifters.push({ el: el, rate: 0.20 }); });
 
-    const heroes = Array.prototype.slice.call(document.querySelectorAll(".hero"));
     const PHOTO_SCALE = 1.14;
-    const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo"));
+    const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo, .hero__photo"));
     photos.forEach(function (el) { el.style.willChange = "transform"; });
 
     let ticking = false;
@@ -56,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const y = window.pageYOffset;
       const vh = window.innerHeight;
       drifters.forEach(function (d) { d.el.style.transform = mobile ? "" : "translate3d(0," + (y * d.rate).toFixed(1) + "px,0)"; });
-      heroes.forEach(function (h) { h.style.backgroundPositionY = mobile ? "" : (y * 0.18).toFixed(1) + "px"; });
       photos.forEach(function (img) {
         if (mobile) { img.style.transform = ""; return; }
         const r = img.getBoundingClientRect();

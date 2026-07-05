@@ -6,7 +6,8 @@
        above the people. */ -}}
 {{ define "main" }}
   {{ $core := where (.Site.GetPage "/collaborators").Pages ".Params.tags" "intersect" (slice "core-team") }}
-  <section class="hero hero--inner cs-hero" style="background-image:url('/images/backgrounds/07.jpeg')" data-img-spot>
+  <section class="hero hero--inner cs-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/07.jpeg" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">

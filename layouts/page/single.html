@@ -2,7 +2,8 @@
        universal white text column (page body) and the spore/dates rail.
        Set `middleImage: true` in front matter for the 3-image pages. */ -}}
 {{ define "main" }}
-  <section class="hero hero--inner cs-hero" style="background-image:url('/images/backgrounds/05.jpeg')" data-img-spot>
+  <section class="hero hero--inner cs-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">

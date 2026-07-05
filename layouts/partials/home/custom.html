@@ -1,7 +1,8 @@
 {{- /* Home — full-bleed hero (wordmark over photo) + universal text column +
        spore/dates rail, then a middle image band the column ends over.
        The column's copy lives in content/_index.md. */ -}}
-<section class="hero hero--home cs-hero" style="background-image:url('/images/backgrounds/04.jpeg')" data-img-spot>
+<section class="hero hero--home cs-hero">
+  <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/04.jpeg" alt="" data-img-spot></div>
   {{ partial "design/wordmark.html" . }}
   <div class="grid">
     <div class="col">

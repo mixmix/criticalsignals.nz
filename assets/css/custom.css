@@ -149,8 +149,21 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
    ============================================================================ */
 .hero{
   position:relative;padding:0 var(--pad);margin-top:calc(var(--navh) * -1);
-  background-repeat:no-repeat;background-position:top center;
-  background-size:100% auto;background-color:var(--white);
+  background-color:var(--white);
+}
+/* Hero photo lives in an <img> (not a CSS background) so progressive JPEGs
+   resolve in place. design.js wraps it and slots a low-poly SVG <img> directly
+   beneath as an instant placeholder. The wrapper clips the photo to the hero —
+   only the photo, so the spore's sideways bleed is untouched. It sits at
+   z-index:0: behind the
+   hero's foreground (rail z2, wordmark z54, column z55) but — crucially — the
+   hero itself is NOT a stacking context, so the wordmark still competes in the
+   root context and rises over the nav's white strip (z50) yet under the nav
+   links (z70). (Don't add isolation/z-index to .hero: it would trap the
+   wordmark and bury it under the nav bar.) */
+.hero__bg{position:absolute;inset:0;overflow:hidden;z-index:0;}
+.hero__photo{
+  display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
 }
 /* wordmark: over the white strip (z54), under the text boxes (z55) */
 .mark{display:block;width:var(--markw);position:relative;z-index:54;margin-top:clamp(22px,1.6vw,32px);}
@@ -233,9 +246,9 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
 
 /* middle image band (home / who): full-width natural height, clipped for parallax */
 .imgband{position:relative;overflow:hidden;}
-/* aspect-ratio reserves height so the low-poly SVG placeholder (set as the
-   img's background) shows while the JPEG src loads over it — no layout shift. */
-.imgband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;background-size:cover;background-position:center;background-repeat:no-repeat;}
+/* aspect-ratio reserves height so the low-poly SVG placeholder <img> (stacked
+   beneath by design.js) shows while the JPEG loads over it — no layout shift. */
+.imgband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;}
 
 /* ============================================================================
    FOOTER — single component (identical on every marketing page)
@@ -263,7 +276,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 
 /* footer image: pulled UP so the box overlaps its TOP; wordmark + spore drop off the bottom */
 .endband{position:relative;overflow:hidden;z-index:0;margin-top:calc(-1 * clamp(110px,12vw,240px));}
-.endband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;background-size:cover;background-position:center;background-repeat:no-repeat;}
+.endband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;}
 
 /* sign-up + support typography */
 .signup h2{margin:0 0 clamp(22px,2.2vw,38px);}
@@ -314,6 +327,13 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
   .menu-burger{display:flex;}
   .theme-toggle{position:static;transform:none;margin-right:clamp(14px,3vw,22px);}
   .menu-home-li{gap:0;}
+  /* nudge the whole nav bar's contents 6px toward the right edge on mobile */
+  .menubar{padding-right:calc(var(--pad) - 6px);}
+  /* Once scrolled, lift the white nav strip above the wordmark (z54) and text
+     column (z55) so content scrolls cleanly UNDER it — the burger/toggle/spore
+     (.menubar z70) stay on top. At rest (not scrolled) it stays z50 so the
+     wordmark keeps straddling over the nav bar. Flag set by design.js. */
+  html.is-scrolled .menu-bg{z-index:60;}
 
   .grid{grid-template-columns:1fr;}
   .mark{width:88%;}
@@ -322,11 +342,17 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
      boundary (~half over the white nav bar, half over the background) — matching
      the desktop overlap. Offset only (no layout shift to the column below). */
   .hero .mark{position:relative;top:clamp(26px,7vw,44px);}
-  /* mobile: single column. Start the white box below the FULL 16:9 photo band
-     (~56vw tall) so the hero image reads as a clear banner, with the wordmark
-     over its upper half — rather than the photo hiding behind the wordmark. */
-  .hero--inner .col{margin-top:clamp(60px,23vw,120px);}
-  .hero--home .grid{margin-top:clamp(60px,23vw,120px);}
+  /* mobile: single column. The hero photo is partly tucked under the fixed nav,
+     so a 16:9 band reads as a thin sliver. Give it a tall FIXED height
+     (object-fit:cover crops instead of stretching, and reserves the space so
+     nothing jumps as the JPEG loads) and push the white column further down so
+     a taller slice of the banner shows above it. The photo is deliberately
+     taller than the reveal — extra height is just cropped, never a white gap.
+     Tune the pair together: `--hero-h` = photo height, the col/grid margin =
+     how far down the white starts (i.e. how much banner is visible). */
+  .hero__photo{height:clamp(360px,92vw,560px);}
+  .hero--inner .col{margin-top:clamp(150px,50vw,300px);}
+  .hero--home .grid{margin-top:clamp(150px,50vw,300px);}
   /* No empty height between the text and the spore/dates → sign-up: the rail
      sits directly under the content (no leading padding/gap). */
   .hero--inner .rail{padding-top:0;}
@@ -342,8 +368,11 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
   .col > :last-child{margin-bottom:0;}
   /* don't let the middle image ride up over the dates on mobile */
   main>section.imgband{margin-top:0;}
-  .rail .spore{width:96%;margin:0 0 10px;}
-  .bigdates{margin-top:0;font-size:clamp(38px,9vw,64px);}
+  /* spore sits BEHIND the date/location and overlaps up under the text (like the
+     desktop rail), rather than sitting above it. Keep ~1rem of white breathing
+     room above and below the date/location text. */
+  .rail .spore{width:96%;margin:1rem auto 0;display:block;position:relative;z-index:0;}
+  .bigdates{position:relative;z-index:1;margin:-28% 0 2rem;padding-left:0;font-size:clamp(28px,7vw,44px);}
   .footerbox{margin-left:0;}
   .footerbox .signup,.footerbox .support{width:auto;}
   .footerbox .logos{justify-content:flex-start;gap:24px;}
