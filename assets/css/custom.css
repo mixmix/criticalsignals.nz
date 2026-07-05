@@ -51,6 +51,10 @@ html[data-theme="dark"] .person__photo--empty{filter:invert(1);}
    sticky bar and footer can run edge to edge.
    ============================================================================ */
 body:has(.cs-hero){
+  /* Blowfish's <body> is a flex column with a fixed screen height; that shrinks
+     the sticky white nav strip to 0 and breaks the hero/wordmark overlap.
+     Marketing pages need plain block flow (as the original design assumed). */
+  display:block;height:auto;min-height:100vh;
   max-width:none;padding:0;margin:0;
   background:var(--white);color:var(--ink);
   font-size:clamp(20px,1.45vw,26px);line-height:1.42;letter-spacing:0;
