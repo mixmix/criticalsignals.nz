@@ -1,14 +1,6 @@
-[[main]]
-name = "Call for Contributions"
-title = "Call for Contributions"
-url = "/call-for-contributions/"
-weight = 10
-
-# [[main]]
-# name = "Programme"
-# title = "Programme"
-# url = "/programme/"
-# weight = 20
+# The primary navigation (What the project does / Who is involved / Call for
+# contributions) is defined in each page's front matter so the label, order and
+# URL live with the page. Home is reached via the spore mark in the nav.
 
 [[footer]]
 none = "none"

@@ -1,25 +1,41 @@
-/* Burgundy: 801432 => rgb(128, 20, 50) */
-/* Champagne: F7E9DA => rgb(247, 233, 218) */
+/* Critical Signals — light scheme (2026 redesign)
+   White surface, near-black ink, teal brand accent (#94EEE5 family).
+   The marketing pages drive their own colours in custom.css; this scheme keeps
+   the Blowfish-rendered pages (programme, collaborators, newsletters) legible
+   as black-on-white to match. */
 :root {
-  --color-neutral:       247, 233, 218;
-  /* --color-neutral-50:    255,255,255; */
-  /* --color-neutral-100:   255,255,255; */
-  /* --color-neutral-200:   255,255,255; */
-  /* --color-neutral-300:   255,255,255; */
-  /* --color-neutral-400:   255,255,255; */
-  /* --color-neutral-500:   247,233,218; */
-  /* --color-neutral-600:   238,210,188; */
-  /* --color-neutral-700:   229,187,158; */
-  --color-neutral-800:   128,20,50;
-  --color-neutral-900:   128,20,50;
-  /* --color-primary-50:    255,230,235; */
-  /* --color-primary-100:   230,150,170; */
-  /* --color-primary-200:   200,90,120; */
-  /* --color-primary-300:   170,50,80; */
-  /* --color-primary-400:   145,30,60; */
-  /* --color-primary-500:   128,20,50; */
-  /* --color-primary-600:   100,10,35; */
-  /* --color-primary-700:   70,5,20; */
-  /* --color-primary-800:   40,0,10; */
-  /* --color-primary-900:   0,0,0; */
+  --color-neutral: 255, 255, 255;
+  /* Warm greyscale */
+  --color-neutral-50:  250, 250, 249;
+  --color-neutral-100: 245, 245, 244;
+  --color-neutral-200: 231, 229, 228;
+  --color-neutral-300: 214, 211, 209;
+  --color-neutral-400: 168, 162, 158;
+  --color-neutral-500: 120, 113, 108;
+  --color-neutral-600: 87, 83, 78;
+  --color-neutral-700: 51, 51, 51;
+  --color-neutral-800: 30, 30, 30;
+  --color-neutral-900: 17, 17, 17;
+  /* Teal brand ramp */
+  --color-primary-50:  240, 253, 250;
+  --color-primary-100: 204, 251, 241;
+  --color-primary-200: 148, 238, 229;
+  --color-primary-300: 94, 234, 212;
+  --color-primary-400: 45, 212, 191;
+  --color-primary-500: 20, 184, 166;
+  --color-primary-600: 13, 148, 136;
+  --color-primary-700: 15, 118, 110;
+  --color-primary-800: 17, 94, 89;
+  --color-primary-900: 19, 78, 74;
+  /* Secondary (kept teal-ish for any theme components that use it) */
+  --color-secondary-50:  236, 254, 255;
+  --color-secondary-100: 207, 250, 254;
+  --color-secondary-200: 165, 243, 252;
+  --color-secondary-300: 103, 232, 249;
+  --color-secondary-400: 34, 211, 238;
+  --color-secondary-500: 6, 182, 212;
+  --color-secondary-600: 8, 145, 178;
+  --color-secondary-700: 14, 116, 144;
+  --color-secondary-800: 21, 94, 117;
+  --color-secondary-900: 22, 78, 99;
 }

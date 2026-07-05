@@ -1,36 +1,50 @@
 ---
 title: Call for Contributions
+description: We are now welcoming contributions for the 2026 Critical Signals programme in Wellington, Aotearoa New Zealand.
+type: page
+layout: single
+csDesign: true
+middleImage: false
+menu:
+  main:
+    weight: 30
+    name: "Call for<br>contributions"
+    title: "Call for contributions"
 ---
 
-See our [mission statement](/mission-statement/) and [2026 themes](/#themes) on the home page.
+<p class="intro">Critical Signals is an Aotearoa New Zealand programme of practical and visionary responses to an era of collapses.</p>
 
-If this mission and 2026's themes above excites you, please get in touch to offer or create as part of Critical Signals 2026.
+<p>Launched as a pilot in 2025, it returns in 2026 with an expanded edition and a dedicated European strand, drawing connections between Aotearoa and Europe across shared challenges around energy, democracy, and collective resilience.</p>
 
-**Proposals for our August events are now closed.** We are still welcoming proposals for our September and October programme, so there's plenty of time to get involved.
+<p>We are now welcoming contributions for the 2026 programme, which runs in Wellington, Aotearoa New Zealand, from 1 August to 31 October 2026.</p>
 
-Please send a brief outline (&lt;300words) of your concept and a brief biography of the protagonists to [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz).
+<img class="divider" src="/images/design/divider1.png" alt="">
 
-You can contribute to the programme through any of the following formats:
+<h3>Contributing</h3>
 
-- Workshops
-- Talks
-- Skills Sharing
-- Community Connections (regular or one off)
-- Practical Making Events
-- Artworks + Experiences
+<p>If our project and themes resonate with you, we would be glad to hear from you, whether to offer an existing piece of work or to create something new as part of Critical Signals 2026.</p>
 
-We will favour evidence-based original material, and if there are repetitions, workshops that engage in more ways than with words. We will endeavour to respond promptly.
+<p>Please send a brief outline of your concept, together with a short biography of those involved, to <a href="mailto:contact@criticalsignals.nz">contact@criticalsignals.nz</a></p>
 
-We are excited by the possibility of working with many of you throughout this year's Critical Signals, August 1st-October 31st 2026.
+<h3>We welcome contributions in any of the following formats:</h3>
 
-<p style="margin-top: 2rem">
-  <a href="mailto:contact@criticalsignals.nz?subject=Critical%20Signals%202026%20proposal" class="homepage-programme-link" style="padding: .5rem;">
-    Send your proposal
-  </a>
-</p>
+<div class="focus">
+  <ul>
+    <li>Workshops</li>
+    <li>Talks</li>
+    <li>Skills sharing</li>
+    <li>Community connections (one-off or recurring)</li>
+    <li>Practical making events</li>
+    <li>Artworks and experiences</li>
+  </ul>
+</div>
 
-<p style="margin-top: 1rem">
-  <a href="/" class="homepage-programme-link" style="padding: .5rem;">
-    Back to home
-  </a>
-</p>
+<p class="note">We particularly value evidence-based, original material. Where ideas overlap, we will favour workshops that engage participants in more ways than words alone. We endeavour to respond to all proposals promptly.</p>
+
+<img class="divider" src="/images/design/divider2.png" alt="">
+
+<h3>Contributing from outside Aotearoa NZ</h3>
+
+<p>Our events take place in person in Wellington, and we warmly welcome international contributors. If you are based in Europe or further afield, we can support remote and online participation: talks, workshops, and conversations delivered across time zones, as well as artworks and experiences presented on your behalf. Please tell us in your proposal how you would like to take part, and we will work with you to make it possible.</p>
+
+<p>We look forward to the possibility of working with many of you across Critical Signals 2026, from 1 August to 31 October.</p>

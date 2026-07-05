@@ -1,5 +1,5 @@
 colorScheme = "crit-sigs"
-defaultAppearance = "dark"
+defaultAppearance = "light"
 autoSwitchAppearance = false
 enableSearch = false
 enableCodeCopy = false
@@ -101,3 +101,11 @@ showTableOfContents = true
 groupByYear = false
 cardView = false
 cardViewScreenWidth = false
+
+# Critical Signals 2026 design — values surfaced in the nav rail + sign-up form.
+[design]
+year = "2026"
+season = "August – October"
+addressLine1 = "113 + 115"
+addressLine2 = "Taranaki Street"
+loopsFormUrl = "https://app.loops.so/api/newsletter-form/cmci5j23a3ywvul0juqembgag"

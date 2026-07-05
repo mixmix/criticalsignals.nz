@@ -1,0 +1,14 @@
+{{- /* Footer sign-up block — heading, blurb, email form, direct contact.
+       The form posts to Loops.so; design.js intercepts it (fetch + inline
+       success/error) and falls back to a normal POST without JS. */ -}}
+{{- $loops := .Site.Params.design.loopsFormUrl | default "https://app.loops.so/api/newsletter-form/cmci5j23a3ywvul0juqembgag" -}}
+<div class="signup">
+  <h2 class="caps">Sign up for news</h2>
+  <p>Hear updates from the community creating the project, and don't miss our launch and programme announcements.</p>
+  <form class="signup-form" action="{{ $loops }}" method="POST" novalidate>
+    <input type="email" name="email" placeholder="your.example@email.org" aria-label="Email address" required>
+    <button type="submit">Sign up</button>
+  </form>
+  <p class="signup-msg" role="status" hidden></p>
+  <p class="direct">Or contact us directly with your interest: <a href="mailto:contact@criticalsignals.nz">contact@criticalsignals.nz</a></p>
+</div>

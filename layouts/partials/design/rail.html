@@ -1,0 +1,20 @@
+{{- /* Right-hand rail: big teal spore (drifts on scroll) + the dates/address.
+       Identical on every marketing page. Values are overridable via site
+       params (params.toml [design]) but default to the 2026 season. */ -}}
+{{- $d := .Site.Params.design | default dict -}}
+<aside class="rail">
+  <img class="spore" src="/images/design/spore.svg" alt="">
+  <div class="bigdates">
+    <span>{{ $d.year | default "2026" }}</span>
+    <span>{{ $d.season | default "August – October" }}</span>
+    <span class="gap"></span>
+    <span>{{ $d.addressLine1 | default "113 + 115" }}</span>
+    <span>{{ $d.addressLine2 | default "Taranaki Street" }}</span>
+    <span class="gap"></span>
+    <span>Pōneke</span>
+    <span>Wellington</span>
+    <span class="gap"></span>
+    <span>Aotearoa</span>
+    <span>New Zealand</span>
+  </div>
+</aside>
