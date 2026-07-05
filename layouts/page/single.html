@@ -1,0 +1,22 @@
+{{- /* Inner marketing pages (About, Who, Call): hero photo + wordmark, a
+       universal white text column (page body) and the spore/dates rail.
+       Set `middleImage: true` in front matter for the 3-image pages. */ -}}
+{{ define "main" }}
+  <section class="hero hero--inner cs-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    {{ partial "design/wordmark.html" . }}
+    <div class="grid">
+      <div class="col">
+        <h1 class="sr-only">{{ .Title }}</h1>
+        {{ .Content }}
+      </div>
+      {{ partial "design/rail.html" . }}
+    </div>
+  </section>
+
+  {{ if .Params.middleImage }}
+    <section class="imgband">
+      <img class="imgband__photo" src="/images/backgrounds/09.jpeg" alt="" data-img-spot>
+    </section>
+  {{ end }}
+{{ end }}

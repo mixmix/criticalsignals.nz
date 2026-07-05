@@ -1,0 +1,12 @@
+{{- /* Inline every background's low-poly SVG as a base64 data-URI so the
+       randomiser (design.js) can show an instant faceted placeholder for
+       whichever photo it picks — with no extra network request. Emitted only
+       on marketing pages (see extend-footer.html), before the deferred design.js
+       runs, so window.CS_LOWPOLY is set by the time the randomiser executes. */ -}}
+{{- $uris := slice -}}
+{{- range $i := (seq 1 10) -}}
+  {{- $n := printf "%02d" $i -}}
+  {{- $b64 := os.ReadFile (printf "static/images/backgrounds/lowpoly/%s.svg" $n) | base64Encode -}}
+  {{- $uris = $uris | append (printf "data:image/svg+xml;base64,%s" $b64) -}}
+{{- end -}}
+<script>window.CS_LOWPOLY={{ $uris | jsonify | safeJS }};</script>

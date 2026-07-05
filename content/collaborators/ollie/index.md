@@ -3,7 +3,7 @@ title: "Ollie Hutton"
 date: 2025-06-16
 draft: false
 # description: "a description"
-tags: ["core-team"]
+# tags: ["core-team"]
 ---
 
 A multidisciplinary myth-making artist, a self described 'polymath peace

@@ -1,14 +1,23 @@
-[[main]]
-name = "Call for Contributions"
-title = "Call for Contributions"
-url = "/call-for-contributions/"
-weight = 10
-
-# [[main]]
-# name = "Programme"
-# title = "Programme"
-# url = "/programme/"
-# weight = 20
+# NOTE: This file does NOT populate the top navigation bar. Editing it will not
+# change the top bar — don't be surprised if adding [[main]] entries here seems
+# to do nothing.
+#
+# The primary nav (`main` menu) is instead defined per-page in front matter, so
+# each page owns its label, order and URL:
+#
+#   # content/what-the-project-does/index.md
+#   menu:
+#     main:
+#       weight: 10
+#       name: "What the<br>project does"   # <br> → two-line label, rendered via
+#       title: "What the project does"     # {{ .Name | safeHTML }} in the nav
+#
+# Pages contributing to the top bar: what-the-project-does (10), who-is-involved
+# (20), call-for-contributions (30). The bar itself is rendered in
+# layouts/partials/design/nav.html by ranging over `.Site.Menus.main`. Home is
+# reached via the spore mark, not a menu entry.
+#
+# This file remains only to define the (currently unused) `footer` menu below.
 
 [[footer]]
 none = "none"

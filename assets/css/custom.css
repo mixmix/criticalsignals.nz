@@ -1,269 +1,414 @@
-@font-face {
-  font-family: regular_font;
-  src: url('/fonts/Helvetica.ttf');
+/* ============================================================================
+   Critical Signals — 2026 design system
+   Ported from the static draft (criticalsignalsdraft) into Hugo/Blowfish.
+
+   Layout is component-driven: partials render the nav, hero, right rail,
+   footer, sign-up and people cards; this file styles them. Marketing pages
+   (home / about / who / call) carry a `.cs-hero` header and go full-bleed;
+   Blowfish-rendered pages (programme, collaborators, newsletters) keep the
+   theme's constrained column but inherit the light palette and D-DIN type.
+   ============================================================================ */
+
+@font-face{
+  font-family:"D-DIN";
+  src:url("/fonts/D-DIN.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:"D-DIN";
+  src:url("/fonts/D-DIN-Bold.woff2") format("woff2");
+  font-weight:700;font-style:normal;font-display:swap;
 }
 
-@font-face {
-  font-family: bold_font;
-  src: url('/fonts/Helvetica-Bold.ttf');
+:root{
+  --ink:#111111;                      /* text, borders, solid-button fill */
+  --white:#ffffff;                    /* page + every text-box surface */
+  --field-bg:#faf9f5;                 /* email input fill */
+  --field-border:#d3cfc4;             /* email input border */
+  --pad:clamp(26px,2.6vw,50px);       /* OUTER line: every white-box LEFT edge sits here */
+  --tpad:clamp(24px,3.3vw,64px);      /* inner text padding; text line = pad + tpad */
+  --boxw:min(988px,calc(54vw - var(--pad)));  /* UNIVERSAL text-box width: left=pad, right~54% */
+  --markw:min(calc(67vw - 1.34 * var(--pad)),1300px);  /* wordmark width — identical in header & footer */
+  --navh:clamp(82px,6.4vw,122px);     /* white menu-bar height */
+  --cs-sans:"D-DIN","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-html {
-  font-family: regular_font;
+html{font-family:var(--cs-sans);scroll-behavior:smooth;}
+/* the "Sign up for news" CTA links here; keep the target clear of the sticky nav */
+#signup{scroll-margin-top:calc(var(--navh) + 20px);}
+
+/* ---- DARK = a full photographic negative of the light site ----
+   A single invert filter flips everything: surfaces, text, photos, logos, and
+   the teal (which becomes its true negative). data-theme lives on <html>. */
+html[data-theme="dark"]{background:#000;}
+html[data-theme="dark"] body{filter:invert(1);background:#fff;}
+/* keep the people portraits reading correctly through the page invert */
+html[data-theme="dark"] .person__photo{filter:grayscale(1) invert(1);}
+html[data-theme="dark"] .person__photo--empty{filter:invert(1);}
+
+/* ============================================================================
+   MARKETING PAGES — full bleed
+   The Blowfish <body> is normally a centred, padded max-w-7xl column. Any page
+   whose main content includes a `.cs-hero` opts out of that so the hero photo,
+   sticky bar and footer can run edge to edge.
+   ============================================================================ */
+body:has(.cs-hero){
+  /* Blowfish's <body> is a flex column with a fixed screen height; that shrinks
+     the sticky white nav strip to 0 and breaks the hero/wordmark overlap.
+     Marketing pages need plain block flow (as the original design assumed). */
+  display:block;height:auto;min-height:100vh;
+  max-width:none;padding:0;margin:0;
+  background:var(--white);color:var(--ink);
+  font-size:clamp(20px,1.45vw,26px);line-height:1.42;letter-spacing:0;
 }
+body:has(.cs-hero) *{box-sizing:border-box;}
+body:has(.cs-hero) img{max-width:100%;}
+/* base link colour at zero-ish specificity so component classes (.cta, .menubar a…) win */
+:where(body:has(.cs-hero)) a{color:var(--ink);}
+/* uniform type on marketing pages: everything body size; only bold + caps differ */
+body:has(.cs-hero) :where(h1,h2,h3,h4,p,li,figcaption){font-size:1rem;font-weight:400;margin:0;line-height:1.42;}
+body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
+.caps{text-transform:uppercase;}
 
-:root {
-  --critical-green: rgb(128, 20, 50);
-  --critical-cream: rgb(247, 233, 218);
-  --critical-highlight: #9b2341;
-  /* the following vars make the theme body's spacing settings available to our
-    custom css, so it can be easily applied or omitted for individual elements */
+/* ============================================================================
+   STICKY MENU BAR
+   z-stack at the menu line, low to high:
+   photos / spores / footer-wordmark (<50) < white strip (50) < header wordmark
+   (54) < white text boxes + text (55) < nav text (70).
+   ============================================================================ */
+.menu-bg{position:sticky;top:0;height:var(--navh);background:var(--white);z-index:50;}
+.menubar{
+  position:sticky;top:0;margin-top:calc(var(--navh) * -1);z-index:70;background:transparent;
+  min-height:var(--navh);
+  display:flex;align-items:center;justify-content:flex-end;
+  padding:0 var(--pad);
+}
+.menubar ul{
+  display:flex;justify-content:space-between;align-items:center;
+  width:min(50%,1010px);list-style:none;margin:0;padding:0;gap:14px;
+}
+.menubar li{list-style:none;}
+.menubar a{
+  text-decoration:none;text-transform:uppercase;font-weight:400;
+  font-size:1.02rem;line-height:1.12;display:block;color:var(--ink);
+}
+.menubar .menu-link a:hover,.menubar .menu-link a.is-active{text-decoration:underline;text-underline-offset:4px;}
 
-  /* the point at which content stops expanding and margin-auto kicks in (.max-w-7xl) */
-  --content-max-width: 80rem;
+/* dark-mode toggle — floated out of flex flow on desktop, centred in the gap
+   just left of the home spore */
+.menu-home-li{position:relative;flex:0 0 auto;display:flex;align-items:center;}
+.theme-toggle{
+  position:absolute;top:50%;right:100%;transform:translate(50%,-50%);
+  margin-right:calc(clamp(40px,4vw,82px) - 30px);
+  display:flex;align-items:center;justify-content:center;line-height:0;
+  background:none;border:none;padding:0;cursor:pointer;color:var(--ink);
+}
+/* vertical stacked pair: filled square over an outlined square (lo-fi pixels) */
+.theme-toggle__px{display:flex;flex-direction:column;gap:clamp(2.5px,0.28vw,3.5px);}
+.theme-toggle__px span{display:block;width:clamp(5px,0.48vw,6.5px);height:clamp(5px,0.48vw,6.5px);}
+.theme-toggle__px .f{background:currentColor;}
+.theme-toggle__px .e{box-shadow:inset 0 0 0 1px currentColor;}
+.theme-toggle:hover{opacity:.65;}
 
-  --content-max-width-plus-gutters: min(
-    calc(2 * var(--page-gutter) + var(--content-max-width)),
-    80rem
-  );
+/* burger — hidden on desktop, shown on mobile (see responsive block) */
+.menu-burger{
+  display:none;background:none;border:none;padding:0;cursor:pointer;color:var(--ink);
+  align-items:center;justify-content:center;line-height:0;margin-right:clamp(18px,3vw,28px);
+}
+.menu-burger svg{display:block;width:clamp(26px,3vw,34px);height:auto;}
+.menu-burger:hover{opacity:.65;}
 
-  /* based on the theme body's .px-6 class, */
-  --page-gutter: 1.5rem;
+/* persistent small black spore at the far right — links home */
+.menu-home{flex:0 0 auto;display:flex;align-items:center;line-height:0;}
+.menu-home img{height:clamp(44px,3.6vw,64px);width:auto;filter:brightness(0);display:block;}
 
-  @media (min-width: 640px) {
-    --page-gutter: 3.5rem;
+/* mobile overlay menu (burger target) */
+.menu-overlay{
+  position:fixed;inset:0;z-index:80;background:var(--white);
+  display:flex;flex-direction:column;align-items:flex-end;
+  padding:clamp(20px,6vw,40px) var(--pad);
+  opacity:0;visibility:hidden;transition:opacity .18s ease;
+}
+.menu-overlay.is-open{opacity:1;visibility:visible;}
+.menu-overlay__close{
+  background:none;border:none;padding:0;cursor:pointer;color:var(--ink);
+  line-height:0;margin-bottom:clamp(28px,8vw,56px);
+}
+.menu-overlay__close svg{display:block;width:clamp(26px,7vw,34px);height:auto;}
+.menu-overlay ul{list-style:none;margin:0;padding:0;width:100%;text-align:right;}
+.menu-overlay li{margin:0 0 clamp(20px,5vw,32px);}
+.menu-overlay a{
+  text-transform:uppercase;text-decoration:none;color:var(--ink);
+  font-size:clamp(1.4rem,7vw,2rem);line-height:1.1;font-weight:400;display:block;
+  overflow-wrap:break-word;
+}
+.menu-overlay a:hover,.menu-overlay a.is-active{text-decoration:underline;text-underline-offset:5px;}
+
+/* ============================================================================
+   HERO (shared by home + inner marketing pages)
+   ============================================================================ */
+.hero{
+  position:relative;padding:0 var(--pad);margin-top:calc(var(--navh) * -1);
+  background-color:var(--white);
+}
+/* Hero photo lives in an <img> (not a CSS background) so progressive JPEGs
+   resolve in place. design.js wraps it and slots a low-poly SVG <img> directly
+   beneath as an instant placeholder. The wrapper clips the photo to the hero —
+   only the photo, so the spore's sideways bleed is untouched. It sits at
+   z-index:0: behind the
+   hero's foreground (rail z2, wordmark z54, column z55) but — crucially — the
+   hero itself is NOT a stacking context, so the wordmark still competes in the
+   root context and rises over the nav's white strip (z50) yet under the nav
+   links (z70). (Don't add isolation/z-index to .hero: it would trap the
+   wordmark and bury it under the nav bar.) */
+.hero__bg{position:absolute;inset:0;overflow:hidden;z-index:0;}
+.hero__photo{
+  display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
+}
+/* wordmark: over the white strip (z54), under the text boxes (z55) */
+.mark{display:block;width:var(--markw);position:relative;z-index:54;margin-top:clamp(22px,1.6vw,32px);}
+.mark img{width:100%;height:auto;}
+
+/* page grid: universal text box (left) + spore/dates rail (right) */
+.grid{
+  display:grid;grid-template-columns:var(--boxw) minmax(0,1fr);
+  gap:0;align-items:start;position:relative;
+}
+.col{
+  position:relative;z-index:55;background:var(--white);
+  padding:clamp(24px,2.4vw,44px) var(--tpad) clamp(40px,4vw,72px);
+}
+.col p{margin:0 0 26px;line-height:1.5;}
+.col li{line-height:1.5;}
+.col h2,.col h3,.col h4{margin:0 0 2px;}
+.col h3{margin-top:clamp(40px,3.8vw,62px);}
+.col h4{margin-top:clamp(22px,2vw,32px);}
+.col .intro{text-transform:uppercase;font-weight:400;line-height:1.34;margin:0 0 10px;}
+:where(.col) a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;}
+.theme h3{margin-top:6px;}
+.theme h4{margin-top:clamp(22px,2vw,32px);}
+.theme p{margin:0 0 4px;}
+
+/* inner pages: pull the white column UP so it overlaps the lower wordmark */
+.hero--inner .col{margin-top:-7vw;}
+/* Keep the spore/dates rail from sitting so low that short text pages leave a
+   huge white gap before the footer. The rail's top space is filled by the hero
+   photo, so a smaller value just lets the spore overlap the photo. */
+.hero--inner .rail{padding-top:8vw;}
+
+/* homepage: single continuous column starts low over the photo */
+.hero--home .grid{margin-top:calc(17vw - 80px);}
+.hero--home .rail{margin-top:0;}
+.col .cta-row{margin:clamp(34px,3.4vw,56px) 0 clamp(38px,3.8vw,62px);}
+.col .focus{margin-top:clamp(34px,3.2vw,52px);}
+.col .note{margin-top:16px;}
+
+/* middle image (home / who): pulled up so the column ends OVER its top */
+main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:1;}
+
+/* hero CTAs */
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;max-width:600px;}
+.cta{
+  flex:1 1 200px;min-height:54px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:12px 16px;font:inherit;font-weight:700;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;border:2px solid var(--ink);font-size:.86rem;
+}
+.cta--solid{background:var(--ink);color:var(--white);text-decoration:none;}
+.cta--solid:hover{filter:brightness(0.9);}
+.cta--outline{background:transparent;color:var(--ink);}
+.cta--outline:hover{background:var(--ink);color:var(--white);}
+
+/* hand-drawn dividers */
+.divider{width:100%;max-width:none;height:auto;opacity:.85;margin:34px 0;display:block;}
+
+/* focus list */
+.focus h2,.focus h3{margin:0 0 6px;}
+.focus ul{list-style:none;padding:0;margin:0;}
+.focus li{padding:1px 0 1px 22px;position:relative;}
+.focus li::before{content:"\2022";position:absolute;left:2px;}
+
+/* right rail: big spore (extends BEHIND the white column) + black dates.
+   z-index:2 keeps the parallaxing spore + dates IN FRONT of the middle image. */
+.rail{position:relative;z-index:2;}
+.rail .spore{
+  width:130%;max-width:none;position:relative;z-index:1;
+  margin:0 0 0 -24%;display:block;
+}
+.bigdates{
+  position:relative;z-index:1;margin-top:-20%;
+  padding-left:clamp(24px,2.8vw,56px);
+  font-weight:400;line-height:1.04;text-transform:uppercase;color:var(--ink);
+  font-size:clamp(40px,4.5vw,88px);
+}
+.bigdates span{display:block;}
+.bigdates .gap{height:.42em;}
+
+/* middle image band (home / who): full-width natural height, clipped for parallax */
+.imgband{position:relative;overflow:hidden;}
+/* aspect-ratio reserves height so the low-poly SVG placeholder <img> (stacked
+   beneath by design.js) shows while the JPEG loads over it — no layout shift. */
+.imgband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;}
+
+/* ============================================================================
+   FOOTER — single component (identical on every marketing page)
+   ============================================================================ */
+.footerbox{
+  position:relative;z-index:2;
+  margin-left:var(--pad);margin-right:var(--pad);
+}
+/* on 3-image pages the box is pulled UP to overlap the bottom of the middle image.
+   Scoped to pages that actually have a middle image band — Blowfish always wraps
+   content in <main>, so an unscoped `main + footer` would wrongly fire on the
+   2-image pages (About / Call) too. */
+main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320px));}
+.footerbox .signup,
+.footerbox .support{
+  background:var(--white);width:var(--boxw);
+  padding:clamp(34px,3.6vw,58px) var(--tpad);
+}
+.footerbox .logos{
+  background:var(--white);
+  display:flex;align-items:center;justify-content:space-between;gap:clamp(20px,3vw,50px);flex-wrap:wrap;
+  padding:clamp(60px,6.4vw,118px) var(--tpad);
+}
+.footerbox .logos img{height:clamp(58px,5.6vw,98px);width:auto;}
+
+/* footer image: pulled UP so the box overlaps its TOP; wordmark + spore drop off the bottom */
+.endband{position:relative;overflow:hidden;z-index:0;margin-top:calc(-1 * clamp(110px,12vw,240px));}
+.endband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;}
+
+/* sign-up + support typography */
+.signup h2{margin:0 0 clamp(22px,2.2vw,38px);}
+.signup>p{margin:0 0 clamp(30px,3.2vw,56px);}
+.signup form{display:flex;gap:14px;flex-wrap:wrap;margin:0;}
+.signup .direct{margin:clamp(40px,4.2vw,74px) 0 0;}
+.signup .direct a{display:inline-block;margin-top:6px;text-decoration:underline;}
+.signup input[type=email]{
+  flex:1;min-width:200px;padding:15px 16px;border:1px solid var(--field-border);font:inherit;font-size:.9rem;
+  background:var(--field-bg);color:var(--ink);text-align:left;
+}
+.signup input[type=email]:focus::placeholder{color:transparent;}
+.signup button{
+  padding:15px 26px;border:none;background:var(--ink);color:var(--white);font:inherit;font-size:.9rem;font-weight:700;
+  text-transform:uppercase;cursor:pointer;
+}
+.signup button:hover{filter:brightness(0.9);}
+.signup .signup-msg{margin:clamp(14px,1.6vw,22px) 0 0;font-weight:700;}
+.support p{margin:0 0 clamp(14px,1.6vw,24px);}
+.support p:last-child{margin-bottom:0;}
+.footerbox a{text-decoration:underline;text-underline-offset:2px;}
+
+/* wordmark + spore DROP OFF the bottom of the page (clipped by the image foot) */
+.endband__mark{position:absolute;left:var(--pad);bottom:-5%;width:var(--markw);z-index:54;}
+.endband__mark img{width:100%;display:block;}
+.endband__spore{position:absolute;right:-9%;bottom:-12%;width:min(39%,745px);z-index:54;}
+
+/* ============================================================================
+   PEOPLE
+   ============================================================================ */
+.person{padding:clamp(20px,2.4vw,36px) 0 0;}
+.person:first-child{padding-top:0;}
+.person__name{font-weight:700;text-transform:uppercase;margin:0 0 12px;}
+.person__photo{width:100%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 14px;}
+.person__photo--empty{width:100%;aspect-ratio:1/1;background:#3a3a3a;margin:0 0 14px;}
+.person__role{font-weight:700;margin:0 0 14px;}
+.person__body p{margin:0 0 11px;}
+.person__body h4{margin:16px 0 1px;font-weight:700;}
+
+/* ============================================================================
+   RESPONSIVE  (incl. burger swap for mobile)
+   ============================================================================ */
+@media (max-width:880px){
+  body:has(.cs-hero){font-size:18px;}
+  .menubar ul{width:auto;gap:18px;}
+  /* swap the desktop links for the burger */
+  .menubar .menu-link{display:none;}
+  .menu-burger{display:flex;}
+  .theme-toggle{position:static;transform:none;margin-right:clamp(14px,3vw,22px);}
+  .menu-home-li{gap:0;}
+  /* nudge the whole nav bar's contents 6px toward the right edge on mobile */
+  .menubar{padding-right:calc(var(--pad) - 6px);}
+  /* Once scrolled, lift the white nav strip above the wordmark (z54) and text
+     column (z55) so content scrolls cleanly UNDER it — the burger/toggle/spore
+     (.menubar z70) stay on top. At rest (not scrolled) it stays z50 so the
+     wordmark keeps straddling over the nav bar. Flag set by design.js. */
+  html.is-scrolled .menu-bg{z-index:60;}
+
+  .grid{grid-template-columns:1fr;}
+  .mark{width:88%;}
+  /* the mobile wordmark is short, so the fixed nav strip would otherwise cover
+     almost all of its first line. Drop it so "CRITICAL" straddles the nav/photo
+     boundary (~half over the white nav bar, half over the background) — matching
+     the desktop overlap. Offset only (no layout shift to the column below). */
+  .hero .mark{position:relative;top:clamp(26px,7vw,44px);}
+  /* mobile: single column. The hero photo is partly tucked under the fixed nav,
+     so a 16:9 band reads as a thin sliver. Give it a tall FIXED height
+     (object-fit:cover crops instead of stretching, and reserves the space so
+     nothing jumps as the JPEG loads) and push the white column further down so
+     a taller slice of the banner shows above it. The photo is deliberately
+     taller than the reveal — extra height is just cropped, never a white gap.
+     Tune the pair together: `--hero-h` = photo height, the col/grid margin =
+     how far down the white starts (i.e. how much banner is visible). */
+  .hero__photo{height:clamp(360px,92vw,560px);}
+  .hero--inner .col{margin-top:clamp(150px,50vw,300px);}
+  .hero--home .grid{margin-top:clamp(150px,50vw,300px);}
+  /* No empty height between the text and the spore/dates → sign-up: the rail
+     sits directly under the content (no leading padding/gap). */
+  .hero--inner .rail{padding-top:0;}
+  .hero--home .rail{margin-top:0;}
+  /* all readable body copy sits on a full-bleed white background on mobile
+     (breaks out of the hero's side padding, then insets the text again).
+     Trim the bottom so the box hugs the spore/dates that follow it. */
+  .col{
+    background:var(--white);
+    margin-inline:calc(-1 * var(--pad));
+    padding:clamp(18px,5vw,28px) var(--pad) clamp(8px,2vw,12px);
   }
-
-  @media (min-width: 768px) {
-    --page-gutter: 6rem;
-  }
-
-  @media (min-width: 1024px) {
-    --page-gutter: 8rem;
-  }
+  .col > :last-child{margin-bottom:0;}
+  /* don't let the middle image ride up over the dates on mobile */
+  main>section.imgband{margin-top:0;}
+  /* spore sits BEHIND the date/location and overlaps up under the text (like the
+     desktop rail), rather than sitting above it. Keep ~1rem of white breathing
+     room above and below the date/location text. */
+  .rail .spore{width:96%;margin:1rem auto 0;display:block;position:relative;z-index:0;}
+  .bigdates{position:relative;z-index:1;margin:-28% 0 2rem;padding-left:0;font-size:clamp(28px,7vw,44px);}
+  .footerbox{margin-left:0;}
+  .footerbox .signup,.footerbox .support{width:auto;}
+  .footerbox .logos{justify-content:flex-start;gap:24px;}
+}
+@media (min-width:881px){
+  .menu-overlay{display:none;}
+}
+@media (max-width:560px){
+  .menubar a{font-size:.9rem;}
+  .cta{flex:1 1 100%;}
 }
 
-/*
-  Link Styling
-  ============
+/* ============================================================================
+   BLOWFISH-RENDERED PAGES (programme, collaborators, newsletters, calendar)
+   Light-touch: adopt D-DIN + teal accents; keep the theme's own layout.
+   ============================================================================ */
+body:not(:has(.cs-hero)){font-family:var(--cs-sans);}
+body:not(:has(.cs-hero)) .prose :where(a){text-decoration:underline;text-underline-offset:2px;}
 
-  Nav bar
-  -------
-  nav > a > p                 = in desktop
-  #menu-wrapper > ul > li > a = in mobile
-
-
-  List pages
-  ----------
-  div[href^="/programme/"]    = in programme list page
-
-
-  Single pages
-  ------------
-  p > a                       = in general article body
-  li > a                      = in a collaborator's "programme" section
-  a.programme-host > div      = in a programme event's "hosts" section
-
-*/
-
-p > a {
-  text-decoration: underline dotted;
+/* Table of Contents link styling (retained from previous site) */
+#TableOfContents ul li{margin-bottom:16px;}
+#TableOfContents ul li a{padding:4px 8px;box-decoration-break:clone;}
+@media (max-width:1024px){
+  #TableOfContents{max-width:100%;}
+  .toc-inside{margin-top:1rem;border:2px solid var(--ink);border-radius:0;}
+  .toc-inside>summary{background:var(--ink);color:var(--white);border-radius:0;}
+  .toc-inside>div{border-left:none;}
 }
 
-li > a {
-  background: var(--critical-highlight);
-  padding: .1rem .2rem;
+/* Programme calendar/list view picker (retained) */
+.programme-type-picker{margin-top:0 !important;font-size:14px;line-height:28px;letter-spacing:1px;}
+
+/* Legacy inline button class used on a few content pages (e.g. mission statement) */
+.homepage-programme-link{
+  display:inline-block;background:var(--ink);color:var(--white);
+  text-decoration:none;text-transform:uppercase;font-weight:700;font-size:.85rem;
+  padding:.55rem .9rem;border:2px solid var(--ink);
 }
-
-nav > a > p,
-.homepage-programme-link,
-div[href^="/programme"],
-a.programme-host > div {
-  background: var(--critical-highlight);
-  text-decoration: none;
-  padding: .1rem .3rem;
-}
-
-/* Header */
-.main-menu {
-  overflow: visible;
-}
-
-/* nav logo: 50% larger than the theme default (5rem) */
-.main-menu .logo svg {
-  width: 7.5rem;
-  height: 7.5rem;
-}
-
-#menu-wrapper ul li a p {
-  background: var(--critical-highlight);
-  color: rgb(247, 233, 218);
-  padding: 0.2rem 0.4rem;
-}
-
-
-nav > a > p,
-div[href^="/programme"],
-#menu-wrapper > ul > li > a {
-  padding: .2rem .4rem;
-}
-
-/* misc empty links */
-nav > a > p[title=""],
-#menu-wrapper > ul > li > a[href=""] {
-  display: none;
-}
-
-/* end Link Styling */
-
-/* Programme Calendar/List view picker */
-.programme-type-picker {
-  margin-top: 0 !important;
-  font-size: 14px;
-  line-height: 28px;
-  letter-spacing: 1px;
-}
-
-/* Table of Contents link styling */
-#TableOfContents ul li {
-  margin-bottom: 16px;
-}
-#TableOfContents ul li a {
-  padding: 4px 8px;
-  box-decoration-break: clone;
-}
-
-
-
-p {
-  text-align: justify;
-}
-
-p a {
-  text-decoration: underline dotted;
-}
-
-/* Pledgme  section styling */
-.pledgeme-section {
-  background: rgba(128, 20, 50, 0.1);
-  text-align: center;
-  padding: 0rem 1.5rem 3rem 1.5rem;
-  margin: 4rem 0;
-  border: 2px solid rgba(247, 233, 218, 0.3);
-  border-radius: 12px;
-}
-
-/* Newsletter signup section styling */
-.newsletter-section {
-  background: rgba(128, 20, 50, 0.1);
-  text-align: center;
-  padding: 0rem 1.5rem 3rem 1.5rem;
-  margin: 4rem 0;
-  border: 2px solid rgba(247, 233, 218, 0.3);
-  border-radius: 12px;
-}
-
-.button-form {}
-
-.newsletter-form {}
-
-.newsletter-section h3 {
-  font-family: bold_font;
-  font-size: 1.6rem;
-  margin-bottom: 0.5rem;
-  color: rgb(247, 233, 218);
-}
-
-.newsletter-section p {
-  font-family: regular_font;
-  color: rgb(247, 233, 218);
-  margin-bottom: 1rem;
-}
-
-/* Form input hover effects */
-.newsletter-form-input:hover {
-  border-color: rgb(247, 233, 218) !important;
-  box-shadow: 0 0 0 3px rgba(247, 233, 218, 0.1) !important;
-}
-
-.newsletter-form-input:focus {
-  outline: none !important;
-  border-color: rgb(247, 233, 218) !important;
-  box-shadow: 0 0 0 3px rgba(247, 233, 218, 0.2) !important;
-}
-
-/* Button hover effects */
-.newsletter-form-button:hover {
-  background: rgb(247, 233, 218) !important;
-  color: rgb(128, 20, 50) !important;
-  border-color: rgb(128, 20, 50) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
-}
-
-.newsletter-form-button:active {
-  transform: translateY(0px) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-}
-
-.pledgeme-form-button:active {
-  transform: translateY(0px) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-}
-.pledgeme-form-button:hover {
-  background: rgb(247, 233, 218) !important;
-  color: rgb(128, 20, 50) !important;
-  border-color: rgb(128, 20, 50) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
-}
-
-.newsletter-loading-button:hover {
-  background: rgb(247, 233, 218) !important;
-  color: rgb(128, 20, 50) !important;
-  border-color: rgb(128, 20, 50) !important;
-}
-
-/* Responsive design for newsletter section */
-@media (max-width: 768px) {
-  .newsletter-section {
-    margin: 1.5rem -1rem;
-    padding: 1rem;
-  }
-
-  .newsletter-section h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .newsletter-section p {
-    margin-bottom: 0.8rem;
-  }
-
-  .newsletter-form-input,
-  .newsletter-form-button,
-  .newsletter-loading-button {
-    max-width: 100% !important;
-    font-size: 14px !important;
-  }
-}
-
-/* Responsive Table of Contents */
-
-@media (max-width: 1024px) {
-  #TableOfContents {
-    max-width: 100%;
-  }
-  .toc-inside {
-    margin-top: 1rem;
-    border: 2px solid var(--critical-highlight);
-    border-radius: 0;
-  } 
-  .toc-inside > summary {
-    background: var(--critical-highlight);
-    border-radius: 0;
-  }
-  .toc-inside > div {
-    border-left: none;
-  }
-}
+.homepage-programme-link:hover{filter:brightness(0.9);}

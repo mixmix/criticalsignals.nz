@@ -1,0 +1,25 @@
+{{- /* Marketing footer — one component, identical on every marketing page:
+       a white box (sign-up + logos + support) that overlaps an end-band photo,
+       with the wordmark + spore dropping off the foot of the page. */ -}}
+<footer>
+  <div class="footerbox">
+    {{ partial "design/signup.html" . }}
+    <div class="logos">
+      <img src="/images/partners/eunic.svg" alt="EUNIC — EU National Institutes for Culture">
+      <img src="/images/partners/goethe.svg" alt="Goethe-Institut">
+      <img src="/images/partners/wellington.svg" alt="Victoria University of Wellington — Te Herenga Waka">
+    </div>
+    <div class="support">
+      <p>Critical Signals is supported by EUNIC New Zealand, Goethe Institut, Wellington Independent Arts Trust, and Victoria University.</p>
+      <p>EUNIC — European Union National Institutes for Culture is Europe's network of national cultural institutes and organisations, with 39 members from all EU member states and associated countries.</p>
+      <p>This site is served from donated e-waste in a cupboard at the <a href="https://vogelmorn.nz">Vogelmorn Bowling Club</a>.</p>
+    </div>
+  </div>
+  <section class="endband">
+    <img class="endband__photo" src="/images/backgrounds/01.jpeg" alt="" data-img-spot>
+    <a class="endband__mark" href="{{ "" | relLangURL }}" aria-label="Critical Signals — home">
+      <img src="/images/design/wordmark.svg" alt="Critical Signals">
+    </a>
+    <img class="endband__spore" src="/images/design/spore.svg" alt="">
+  </section>
+</footer>

@@ -23,7 +23,7 @@ cd fugu
 npm i
 ```
 
-Inputs are <neutral> <primary> <secondary>
+Inputs are `<neutral>` `<primary>` `<secondary>`
 ```bash
 ./index.js generate F8F4CE 194021 FF00FF > ../criticalsignals.nz/assets/css/schemes/crit-sigs.css 
 # NOTE: you may have to go in and comment out the first line
@@ -35,6 +35,57 @@ was being used then putting the associated codes in:
 Green: 194021 => rgb(25, 64, 33)
 Cream: F8F4CE => rgb(248, 244, 206)
 
+
+## Background photos
+
+The full-bleed photos (`static/images/backgrounds/NN.jpeg`, 1920x1080) are
+**progressive** JPEGs — they resolve coarse-to-sharp as they download. Every
+spot (heroes, image bands, footer) is an `<img>` so the browser renders those
+progressive passes in place; the heroes use a `.hero__bg`/`.hero__photo` layer
+(see `.hero` in `assets/css/custom.css`) rather than a CSS background, since
+CSS backgrounds don't render progressively.
+
+They're built from the high-res originals in the
+[draft repo](https://github.com/mixmix/criticalsignalsdraft/tree/main/assets/img):
+
+```bash
+./scripts/gen-backgrounds.sh          # all 10, progressive @ q90
+./scripts/gen-backgrounds.sh 4 9      # just those
+# needs libjpeg-turbo:  brew install jpeg-turbo   (provides djpeg + cjpeg)
+# tune with BG_QUALITY (default 90)
+```
+
+## Low-poly placeholders (LQIP)
+
+Each background has a tiny low-poly SVG twin in
+`static/images/backgrounds/lowpoly/NN.svg` (~6 KB vs ~400–900 KB) that shows an
+instant faceted preview while the JPEG loads. All ten are inlined as base64
+data-URIs into `window.CS_LOWPOLY` (partial `design/lowpoly-data.html`, emitted
+on marketing pages via `extend-footer.html`), so **no placeholder request is
+made**. The randomiser in `assets/js/design.js` shuffles the pool per page load
+and assigns each `[data-img-spot]` element its JPEG plus the matching inline SVG
+(set as the element's `background-image`); the progressive JPEG then resolves
+over the facets.
+
+To (re)generate the SVGs from the JPEGs:
+
+```bash
+./scripts/gen-lowpoly.sh          # all backgrounds
+./scripts/gen-lowpoly.sh 02 07    # just 02.jpeg and 07.jpeg
+```
+
+Requirements (macOS):
+
+```bash
+brew install go librsvg   # librsvg provides rsvg-convert
+# Node.js (for npx/SVGO) — via nvm, brew, or nodejs.org
+# fogleman/primitive is auto-installed on first run via `go install`
+```
+
+The script runs `primitive` several times per image (it's random), keeps the
+closest match by RMSE, then compresses with SVGO. Tune with `LOWPOLY_N`
+(triangle count, default 100), `LOWPOLY_ITERS` (passes/image, default 20) and
+`LOWPOLY_RES`. Rebuild Hugo afterwards so the inline `CS_LOWPOLY` array updates.
 
 ## Deploy
 

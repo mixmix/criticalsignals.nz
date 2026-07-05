@@ -1,7 +1,7 @@
 ---
 title: "Julian Oliver"
 date: 2025-06-01
-tags: ["core-team"]
+# tags: ["core-team"]
 ---
 
 [Julian Oliver](https://julianoliver.com) is a Critical Engineer, educator,
