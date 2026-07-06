@@ -98,6 +98,62 @@ document.addEventListener("DOMContentLoaded", function () {
     apply();
   }
 
+  // 2b. Teal halo for the big dates. The dates are black text sitting mostly over
+  //     the white page, crossing onto the middle image band at the bottom (and the
+  //     overlap shifts as the dates parallax). Pure CSS layering can't paint a halo
+  //     "over image but not white" here — the image band is a foreground element,
+  //     so no z-index both reveals over it and hides over white. Instead we clone
+  //     the dates as a transparent-text teal-glow overlay (see .bigdates__halo) and
+  //     clip it every frame to just the slice that overlaps the band, so the glow
+  //     never bleeds onto the white page. Runs regardless of reduced-motion.
+  (function dateHalo() {
+    const band = document.querySelector(".imgband");
+    const dateEls = document.querySelectorAll(".bigdates");
+    if (!band || !dateEls.length) return;
+    const halos = [];
+    dateEls.forEach(function (d) {
+      // Idempotent: drop any halo from a previous run BEFORE cloning, so we never
+      // clone a halo-inside-a-halo (which would render a duplicated, offset glow).
+      d.querySelectorAll(":scope > .bigdates__halo").forEach(function (old) { old.remove(); });
+      const halo = d.cloneNode(true);         // now copies ONLY the date spans, verbatim
+      halo.className = "bigdates__halo";       // drop `.bigdates` so parallax won't move it twice
+      halo.setAttribute("aria-hidden", "true");
+      d.appendChild(halo);                     // overlay inside the dates: inherits transform + type metrics
+      halos.push(halo);
+    });
+    let ticking = false;
+    const clip = function () {
+      const b = band.getBoundingClientRect();
+      halos.forEach(function (h) {
+        const r = h.getBoundingClientRect();   // reflects the live parallax transform
+        const top = Math.max(0, b.top - r.top);
+        const bottom = Math.max(0, r.bottom - b.bottom);
+        // reveal only the band-overlapping slice; if there's no overlap this clips everything away
+        h.style.clipPath = "inset(" + top + "px 0 " + bottom + "px 0)";
+      });
+      ticking = false;
+    };
+    const onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(clip); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    // Re-clip whenever layout can shift the dates: after the webfont swaps in, once
+    // images/everything has loaded, and on the next frame. Otherwise a clip measured
+    // against the fallback-font layout leaves the halo boundary on the wrong line
+    // until the first scroll.
+    clip();
+    requestAnimationFrame(clip);
+    window.addEventListener("load", clip);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(clip);
+    // Recompute on ANY layout change to the dates or band — catches font swaps and
+    // the dev server's CSS-only hot-swaps, which restyle the DOM without firing a
+    // scroll/resize/load event and would otherwise leave the clip boundary stale.
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(function () { onScroll(); });
+      ro.observe(band);
+      dateEls.forEach(function (d) { ro.observe(d); });
+    }
+  })();
+
   // 3. Burger menu — opens the full-screen overlay on mobile.
   const burger = document.querySelector(".menu-burger");
   const overlay = document.getElementById("cs-menu-overlay");

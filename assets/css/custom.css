@@ -165,9 +165,21 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .hero__photo{
   display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
 }
-/* wordmark: over the white strip (z54), under the text boxes (z55) */
-.mark{display:block;width:var(--markw);position:relative;z-index:54;margin-top:clamp(22px,1.6vw,32px);}
-.mark img{width:100%;height:auto;}
+/* wordmark: over the white strip (z54), under the text boxes (z55).
+   NB: no z-index on `.mark` itself — it must stay a NON stacking-context so its
+   shadow twin can drop below the nav strip in the root context (see below). */
+.mark{display:block;width:var(--markw);position:relative;margin-top:clamp(22px,1.6vw,32px);}
+.mark img{width:100%;height:auto;display:block;}
+/* foreground wordmark — the visible, opaque teal glyphs */
+.mark__fg{position:relative;z-index:54;}
+/* shadow twin — over the photo (z0) but UNDER the white strip (z50) + text column
+   (z55), so its dark halo appears ONLY where the wordmark crosses a photo, never
+   over white. Perfectly aligned via inset:0; sized by the in-flow foreground. */
+.mark__shadow{
+  position:absolute;inset:0;z-index:40;pointer-events:none;
+  /* filter:drop-shadow(0 2px 5px rgba(0,0,0,.2)); */
+  filter:drop-shadow(0 2px 5px #79388f40);
+}
 
 /* page grid: universal text box (left) + spore/dates rail (right) */
 .grid{
@@ -243,6 +255,15 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
 }
 .bigdates span{display:block;}
 .bigdates .gap{height:.42em;}
+/* Teal readability halo — a cloned overlay of the dates (transparent text, teal
+   glow) built + clipped by design.js so it shows ONLY where the dates cross the
+   middle image band, never over the white page. Sits behind the black glyphs. */
+.bigdates__halo{
+  position:absolute;inset:0;z-index:-1;pointer-events:none;
+  padding-left:inherit;   /* match .bigdates' own padding so glyphs line up exactly */
+  color:transparent;
+  text-shadow:0 0 .14em #94EEE596,0 0 .26em #94EEE596;
+}
 
 /* middle image band (home / who): full-width natural height, clipped for parallax */
 .imgband{position:relative;overflow:hidden;}

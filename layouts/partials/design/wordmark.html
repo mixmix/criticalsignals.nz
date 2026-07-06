@@ -1,4 +1,10 @@
 {{- /* The CRITICAL SIGNALS wordmark that slides over the hero photo, linking home. */ -}}
 <a class="mark" href="{{ "" | relLangURL }}" aria-label="Critical Signals — home">
-  <img src="/images/design/wordmark.svg" alt="Critical Signals">
+  {{- /* Shadow twin: an identical copy pinned BELOW the white nav strip (z50) but
+         ABOVE the hero photo (z0). Its drop-shadow halo therefore shows only where
+         the wordmark crosses the photo — the white strip/column cover it elsewhere,
+         so there's no shadow over white. The opaque foreground copy (z54) sits
+         exactly on top, hiding this twin's body and leaving just the halo. */ -}}
+  <img class="mark__shadow" src="/images/design/wordmark.svg" alt="" aria-hidden="true">
+  <img class="mark__fg" src="/images/design/wordmark.svg" alt="Critical Signals">
 </a>
