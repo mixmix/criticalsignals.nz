@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] Detangling Yourself from Big Tech"
+title: "Detangling Yourself from Big Tech"
+draft: true
 hosts:
   - "Bianca Grizhar"
 date: "2026-08-11"

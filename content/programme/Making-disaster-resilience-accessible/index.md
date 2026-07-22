@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] Making disaster resilience accessible"
+title: "Making disaster resilience accessible"
+draft: true
 date: "2026-09-15"
 start_time: "18:00"
 end_time: "20:00"

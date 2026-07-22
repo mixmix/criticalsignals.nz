@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] Sculpt the City"
+title: "Sculpt the City"
+draft: true
 date: "2026-09-05"
 start_time: "14:00"
 end_time: "17:00"

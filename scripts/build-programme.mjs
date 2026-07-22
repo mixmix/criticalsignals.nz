@@ -11,8 +11,9 @@
  *   the event object.
  * - Hosts are parsed out of the description, looking for a line of the form
  *   "Hosted by: <name-a>, <name-b>".
- * - Events with status "draft" are flagged in the header text ("[DRAFT] …")
- *   rather than as a Hugo draft, so they still render (buildDrafts = false).
+ * - Events with status "draft" are written with `draft: true` in the front
+ *   matter, so Hugo omits them from production builds (buildDrafts = false)
+ *   while `hugo server -D` still renders them for previewing.
  *
  * Every generated directory gets a hidden marker file so re-running the script
  * can safely prune events that have been removed from Ticket Tailor without
@@ -140,9 +141,8 @@ async function writeEvent (event, slug, collaborators) {
   const markdown = event.description ? turndown.turndown(event.description) : ''
   const { hosts, body } = extractHosts(markdown)
 
-  const headerTitle = isDraft ? `[DRAFT] ${event.name}` : event.name
-
-  const frontMatter = { title: headerTitle }
+  const frontMatter = { title: event.name }
+  if (isDraft) frontMatter.draft = true
   if (hosts.length) frontMatter.hosts = hosts
   frontMatter.date = event.start?.date
   if (event.start?.time) frontMatter.start_time = event.start.time

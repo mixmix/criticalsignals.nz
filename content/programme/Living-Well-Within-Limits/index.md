@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] Living Well Within Limits"
+title: "Living Well Within Limits"
+draft: true
 date: "2026-09-09"
 start_time: "18:00"
 end_time: "20:00"

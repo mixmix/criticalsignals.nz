@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] (Do Not!) Burn Your Journals"
+title: "(Do Not!) Burn Your Journals"
+draft: true
 date: "2026-08-13"
 start_time: "15:00"
 end_time: "20:00"

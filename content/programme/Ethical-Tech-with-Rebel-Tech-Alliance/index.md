@@ -1,5 +1,6 @@
 ---
-title: "[DRAFT] Ethical Tech with Rebel Tech Alliance"
+title: "Ethical Tech with Rebel Tech Alliance"
+draft: true
 date: "2026-08-20"
 start_time: "18:00"
 end_time: "20:00"
