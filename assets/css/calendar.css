@@ -392,14 +392,12 @@
 
 
 @media (max-width: 640px) {
-  .calendar-navigation {
-    margin-left: calc(-1 * var(--page-gutter));
-    margin-right: calc(-1 * var(--page-gutter));
-  }
-
   .calendar-container {
     margin-left: calc(-1 * var(--page-gutter));
     margin-right: calc(-1 * var(--page-gutter));
+  }
+  .event-item {
+    overflow-wrap: normal;
   }
 }
 

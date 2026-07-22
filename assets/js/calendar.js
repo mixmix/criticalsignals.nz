@@ -18,7 +18,9 @@ class Calendar {
   constructor(eventsData, collaboratorsData) {
     this.eventsData = eventsData;
     this.collaboratorsData = collaboratorsData;
-    this.currentDate = new Date();
+    // Open on the month of the earliest upcoming event, so visitors land on
+    // events rather than an empty current month (the season runs Aug–Oct).
+    this.currentDate = this.initialMonth();
     this.selectedDate = null;
     this.isListView = false;
     this.monthNames = [
@@ -31,6 +33,21 @@ class Calendar {
   init() {
     this.bindEvents();
     this.render();
+  }
+
+  /** Month to open on: the earliest upcoming event's month, else the current month. */
+  initialMonth() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const upcoming = this.eventsData
+      .filter(e => !e.dateTBC && e.date)
+      .map(e => parseEventDate(e.date))
+      .filter(d => d >= today)
+      .sort((a, b) => a - b);
+    if (upcoming.length) {
+      return new Date(upcoming[0].getFullYear(), upcoming[0].getMonth(), 1);
+    }
+    return new Date();
   }
 
   bindEvents() {
@@ -75,13 +92,16 @@ class Calendar {
     const month = this.currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    // start date we rendering:
+    // Grid is Monday-first: shift the JS week (0=Sun) so Monday is column 0.
     const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    startDate.setDate(startDate.getDate() - startOffset);
 
     const lastDay = new Date(year, month + 1, 0);
     const endDate = new Date(lastDay)
-    endDate.setDate(lastDay.getDate() + 7 - lastDay.getDay())
+    let endOffset = (8 - lastDay.getDay()) % 7;
+    if (endOffset === 0) endOffset = 7; // full trailing week when the month ends on a Monday
+    endDate.setDate(lastDay.getDate() + endOffset)
 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
@@ -325,10 +345,10 @@ class Calendar {
     if (event.signUpLink) {
       if (eventHasPassed) {
         registerButton = `
-          <a class="btn-register event-passed" style="cursor: not-allowed; opacity: 0.5;">Register</a>
+          <a class="btn-register event-passed" style="cursor: not-allowed; opacity: 0.5;">Tickets</a>
           <span class="event-passed-text">this event has passed</span>`;
       } else {
-        registerButton = `<a href="${event.signUpLink}" target="_blank" class="btn-register">Register</a>`;
+        registerButton = `<a href="${event.signUpLink}" target="_blank" class="btn-register">Tickets</a>`;
       }
     } else {
       if (eventHasPassed) {

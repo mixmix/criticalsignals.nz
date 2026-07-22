@@ -1,7 +1,7 @@
 /* Critical Signals — light scheme (2026 redesign)
    White surface, near-black ink, teal brand accent (#94EEE5 family).
    The marketing pages drive their own colours in custom.css; this scheme keeps
-   the Blowfish-rendered pages (programme, collaborators, newsletters) legible
+   the Blowfish-rendered pages (programme, people, newsletters) legible
    as black-on-white to match. */
 :root {
   --color-neutral: 255, 255, 255;

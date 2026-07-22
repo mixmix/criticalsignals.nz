@@ -5,7 +5,7 @@
    Layout is component-driven: partials render the nav, hero, right rail,
    footer, sign-up and people cards; this file styles them. Marketing pages
    (home / about / who / call) carry a `.cs-hero` header and go full-bleed;
-   Blowfish-rendered pages (programme, collaborators, newsletters) keep the
+   Blowfish-rendered pages (programme, people, newsletters) keep the
    theme's constrained column but inherit the light palette and D-DIN type.
    ============================================================================ */
 
@@ -331,7 +331,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 .person{padding:clamp(20px,2.4vw,36px) 0 0;}
 .person:first-child{padding-top:0;}
 .person__name{font-weight:700;text-transform:uppercase;margin:0 0 12px;}
-.person__photo{width:100%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 14px;}
+.person__photo{width:100%;max-width:600px;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 14px;}
 .person__photo--empty{width:100%;aspect-ratio:1/1;background:#3a3a3a;margin:0 0 14px;}
 .person__role{font-weight:700;margin:0 0 14px;}
 .person__body p{margin:0 0 11px;}
@@ -407,7 +407,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 }
 
 /* ============================================================================
-   BLOWFISH-RENDERED PAGES (programme, collaborators, newsletters, calendar)
+   BLOWFISH-RENDERED PAGES (programme, people, newsletters, calendar)
    Light-touch: adopt D-DIN + teal accents; keep the theme's own layout.
    ============================================================================ */
 body:not(:has(.cs-hero)){font-family:var(--cs-sans);}
@@ -433,3 +433,171 @@ body:not(:has(.cs-hero)) .prose :where(a){text-decoration:underline;text-underli
   padding:.55rem .9rem;border:2px solid var(--ink);
 }
 .homepage-programme-link:hover{filter:brightness(0.9);}
+
+/* ============================================================================
+   PROGRAMME / CALENDAR / EVENT — now on the marketing design system
+   (hero photo + wordmark + white column + spore/dates rail). These pages carry
+   a `.cs-hero` so they inherit the full-bleed marketing base above; the rules
+   here style the programme-specific content inside the white column.
+   ============================================================================ */
+
+/* crit-sigs "calendar" palette — teal fill, ink lines/text, white surface.
+   (These vars were referenced by calendar.css but never defined.) */
+:root{
+  --critical-green:#111111;      /* lines, text, solid fills */
+  --critical-cream:#ffffff;      /* surface / text on dark */
+  --critical-highlight:#d6f7f1;  /* light teal cell fill */
+  --page-gutter:var(--pad);
+}
+
+/* Big page / event heading + the Calendar|List view picker */
+body:has(.cs-hero) .prog-h1{
+  font-weight:700;text-transform:uppercase;letter-spacing:.02em;
+  font-size:2rem;margin:0 0 0.5rem;
+}
+.programme-type-picker{
+  margin:0 0 clamp(22px,2.2vw,34px) !important;
+  text-transform:uppercase;letter-spacing:1px;font-size:.8rem;
+}
+.programme-type-picker a{color:var(--ink);text-decoration:none;}
+.programme-type-picker a:hover,
+.programme-type-picker .is-active{text-decoration:underline;text-underline-offset:4px;}
+.prog-intro{margin:0 0 clamp(8px,1.2vw,16px);}
+
+/* --- Programme list --- */
+.prog-item{display:block;text-decoration:none;color:var(--ink);}
+.prog-item .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(12px,1.2vw,18px);}
+.prog-item__title{
+  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  font-weight:700;text-transform:uppercase;line-height:1.25;
+}
+.prog-item__arrow{flex:0 0 auto;}
+.prog-item:hover .prog-item__title{text-decoration:underline;text-underline-offset:3px;}
+.prog-item__date{display:block;margin-top:8px;}
+.prog-item__cat{display:block;margin-top:4px;font-weight:700;text-transform:uppercase;font-size:.8rem;}
+
+/* --- Event single --- */
+.event__meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 0 8px;}
+.event__sep{opacity:.4;}
+.event__cat{font-weight:700;text-transform:uppercase;font-size:.8rem;margin:0 0 clamp(20px,2.2vw,32px);}
+.event__body{margin:0 0 clamp(22px,2.4vw,38px);}
+.event__body p{margin:0 0 1em;}
+.event__body > :last-child{margin-bottom:0;}
+.event__tickets{margin:0 0 clamp(28px,3vw,46px);}
+.event__tickets a{font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;}
+.event__tickets a:hover{text-decoration:underline;text-underline-offset:4px;}
+.event__tickets.is-soon{font-weight:700;text-transform:uppercase;}
+.event__passed-text{font-style:italic;opacity:.55;}
+
+.event__hosts{margin-top:clamp(38px,3.8vw,60px);}
+.event__hosts-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
+.host{display:block;text-decoration:none;color:var(--ink);margin:0 0 clamp(24px,2.4vw,36px);max-width:600px;}
+.host__name{display:block;font-size:1rem;font-weight:300;text-transform:uppercase;margin:0 0 12px;}
+.host__photo{display:block;width:170px;max-width:60%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 12px;}
+.host__photo--empty{display:block;width:170px;aspect-ratio:1/1;background:var(--critical-highlight);margin:0 0 12px;}
+.host__bio{display:block;font-size:1rem;line-height:1.5;}
+.host:hover .host__name{text-decoration:underline;text-underline-offset:3px;}
+.event__divider{margin-top:clamp(28px,3vw,46px);}
+
+/* keep host portraits reading correctly through the dark-mode body invert */
+html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
+html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
+
+/* --- Calendar --- */
+/* Full-width white box (the calendar needs the width the narrow .col can't give) */
+.cal-box{
+  position:relative;z-index:55;background:var(--white);
+  margin-top:-7vw;max-width:1200px;
+  padding:clamp(24px,2.4vw,44px) var(--tpad) clamp(40px,4vw,72px);
+}
+.cal-toolbar{
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:1rem;
+  margin-bottom:clamp(16px,1.6vw,26px);
+}
+.cal-toolbar .programme-type-picker{margin:0 !important;}
+.calendar-navigation{display:flex;align-items:center;gap:1rem;text-transform:uppercase;letter-spacing:1px;font-size:.8rem;}
+.calendar-navigation button{background:none;border:none;padding:0;cursor:pointer;font:inherit;text-transform:uppercase;color:var(--ink);}
+.calendar-navigation button:hover{text-decoration:underline;text-underline-offset:4px;}
+.calendar-navigation #currentMonth{font-weight:700;min-width:9em;text-align:center;}
+
+/* Grid: teal future cells, white past/other-month cells, thin ink borders */
+.cal-box .calendar-container{border-top:1px solid var(--ink);border-left:1px solid var(--ink);box-shadow:none;}
+.cal-box .calendar-header{border-bottom:1px solid var(--ink);}
+.cal-box .calendar-header-day{
+  padding:8px 10px;text-align:left;text-transform:uppercase;letter-spacing:1px;
+  font-size:.64rem;color:var(--ink);opacity:.7;border-right:1px solid var(--ink);
+}
+.cal-box .calendar-day{
+  min-height:92px;height:auto;padding:6px;
+  background:var(--critical-highlight);
+  border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);
+}
+.cal-box .calendar-day.past{background:var(--white);}
+.cal-box .calendar-day.other-month{background:var(--white);color:var(--ink);}
+.cal-box .calendar-day.other-month:hover{background:#f4fdfb;}
+.cal-box .calendar-day.other-month .calendar-day-number{color:var(--ink);}
+.cal-box .calendar-day:hover{background:#eafcf9;}
+.cal-box .calendar-day-number{align-self:flex-end;color:var(--ink);opacity:.65;font-weight:400;font-size:.72rem;height:auto;margin-bottom:4px;}
+.cal-box .today-number{background:var(--ink);color:var(--white);opacity:1;border-radius:50%;width:20px;height:20px;justify-content:center;}
+.cal-box .event-item,
+.cal-box .event-item.event-workshop,
+.cal-box .event-item.event-seminar,
+.cal-box .event-item.event-event,
+.cal-box .event-item.event-default{
+  background:var(--white);border:1px solid var(--ink);
+  color:var(--ink);font-weight:700;font-size:.62rem;line-height:1.15;
+  text-transform:uppercase;padding:4px 5px;margin-bottom:3px;
+}
+.cal-box .event-item:hover{background:var(--ink);color:var(--white);box-shadow:none;}
+.cal-listview-title{font-weight:700;text-transform:uppercase;margin:clamp(24px,2.4vw,36px) 0 1rem;}
+
+/* Event pop-up modal — white panel with dark-teal text (per calendar_view.png).
+   Scoped with #eventModal so these win over calendar.css (which loads later and
+   drives the modal from the now-repurposed --critical-* vars). */
+#eventModal .cs-modal-content{
+  background:var(--white);border:1px solid var(--ink);border-radius:0;
+  box-shadow:0 24px 50px -12px rgba(0,0,0,.35);
+}
+#eventModal .cs-modal-inner{background:transparent;padding:clamp(22px,2.4vw,32px);}
+#eventModal .cs-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:16px;}
+#eventModal #modalTitle{color:var(--ink);font-weight:700;font-size:1.35rem;line-height:1.3;margin:0;}
+#eventModal #closeModal{
+  background:none;border:none;color:var(--ink);font-size:28px;line-height:1;cursor:pointer;
+  padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;transition:opacity .2s;
+}
+#eventModal #closeModal:hover{opacity:.7;}
+#eventModal .event-date,
+#eventModal .event-time,
+#eventModal .event-date-tbc,
+#eventModal .event-content,
+#eventModal .event-description,
+#eventModal .event-hosts,
+#eventModal .hosts-title,
+#eventModal .host-name,
+#eventModal .registration-note,
+#eventModal .event-passed-text{color:var(--ink);}
+#eventModal .host-link{color:var(--ink);}
+#eventModal .event-description{line-height:1.6;}
+#eventModal .host-link{background:var(--critical-highlight);text-decoration:none;}
+#eventModal .host-link:hover{filter:brightness(.96);}
+#eventModal .host-initials{background:#3f807a;color:var(--white);}
+#eventModal .event-actions{border-top:1px solid rgba(17,17,17,.15);}
+#eventModal .btn-details{background:var(--critical-highlight);color:var(--ink);text-transform:uppercase;letter-spacing:.03em;}
+#eventModal .btn-details:hover{filter:brightness(.96);}
+#eventModal .btn-register{background:transparent;color:var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.03em;box-shadow:none;transform:none;}
+#eventModal .btn-register:hover{text-decoration:underline;text-underline-offset:3px;transform:none;box-shadow:none;}
+
+/* Calendar rail: spore only (the dates rail belongs beside the narrow column,
+   not under the full-width calendar), dropped in at lower-right per the design. */
+.cal-hero .bigdates{display:none;}
+.cal-hero .rail{padding-top:0;margin-top:clamp(24px,3vw,48px);}
+.cal-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
+
+@media (max-width:880px){
+  .cal-box{margin-inline:calc(-1 * var(--pad));padding:clamp(18px,5vw,28px) var(--pad) clamp(20px,4vw,32px);}
+  .cal-toolbar{flex-direction:column;align-items:flex-start;gap:.6rem;}
+  .cal-box .calendar-day{min-height:64px;padding:6px 2px;}
+  .cal-box .event-item{padding:4px 3px;}
+  .cal-hero .rail .spore{width:80%;margin:1rem auto 0;}
+}

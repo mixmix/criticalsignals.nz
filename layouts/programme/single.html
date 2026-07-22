@@ -1,251 +1,94 @@
+{{- /* Programme — single event. Marketing design shell (hero photo + wordmark +
+       white text column + spore/dates rail). The column holds the event title,
+       date/time meta, category, description, a Tickets link and the hosts. */ -}}
 {{ define "main" }}
   {{ .Scratch.Set "scope" "single" }}
+  <section class="hero hero--inner cs-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/06.jpeg" alt="" data-img-spot></div>
+    {{ partial "design/wordmark.html" . }}
+    <div class="grid">
+      <div class="col">
+        <article class="event">
+          <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
-  <article>
-    {{ if .Params.showHero | default (.Site.Params.article.showHero | default false) }}
-      {{ $heroStyle := .Params.heroStyle }}
-
-      {{ if not $heroStyle }}{{ $heroStyle = .Site.Params.article.heroStyle }}{{ end }}
-      {{ $heroStyle := print "hero/" $heroStyle ".html" }}
-
-      {{ if templates.Exists ( printf "partials/%s" $heroStyle ) }}
-        {{ partial $heroStyle . }}
-      {{ else }}
-        {{ partial "hero/basic.html" . }}
-      {{ end }}
-    {{ end }}
-
-    <header id="single_header" class="mt-5 max-w-prose">
-      {{ if .Params.showBreadcrumbs | default (.Site.Params.article.showBreadcrumbs | default false) }}
-        {{ partial "breadcrumbs.html" . }}
-      {{ end }}
-      <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
-        {{ .Title | emojify }}
-      </h1>
-
-      <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
-        <!-- {{ partial "article-meta/basic.html" (dict "context" . "scope" "single") }} -->
-        {{ partial "article-meta/basic-programme.html" (dict "context" . "scope" "single") }}
-      </div>
-
-      {{ $authorsData := .Site.Data.authors }}
-      {{ $taxonomies := .Site.Taxonomies.authors }}
-      {{ $baseURL := .Site.BaseURL }}
-      {{ $taxonomyLink := 0 }}
-      {{ $showAuthor := 0 }}
-
-      {{ if not (strings.HasSuffix $baseURL "/") }}
-        {{ $baseURL = delimit (slice $baseURL "/") "" }}
-      {{ end }}
-
-      {{ if not (.Params.showAuthorBottom | default ( .Site.Params.article.showAuthorBottom | default false)) }}
-        {{ if .Params.showAuthor | default (.Site.Params.article.showAuthor | default true) }}
-          {{ $showAuthor = 1 }}
-          {{ partial "author.html" . }}
-        {{ end }}
-
-        {{ range $author := .Page.Params.authors }}
-          {{ $authorData := index $authorsData $author }}
-          {{- if $authorData -}}
-            {{ range $taxonomyname, $taxonomy := $taxonomies }}
-              {{ if (eq $taxonomyname $author) }}
-                {{ $taxonomyLink = delimit (slice $baseURL "authors/" $author "/") "" }}
+          <p class="event__meta">
+            {{ if .Params.dateTBC }}
+              <em>Date to be confirmed</em>
+            {{ else }}
+              <span class="event__date">{{ .Date.Format "2 January 2006" }}</span>
+              {{ with .Params.start_time }}
+                <span class="event__sep">|</span>
+                <span class="event__time">{{ . }}{{ with $.Params.end_time }}&ndash;{{ . }}{{ end }}</span>
               {{ end }}
             {{ end }}
+          </p>
 
-            {{ $finalLink := $taxonomyLink }}
-            {{ $currentLang := $.Site.Language.Lang }}
-            {{ if eq $.Site.LanguagePrefix "" }}
-              {{ $finalLink = printf "%sauthors/%s/" $baseURL $author }}
-            {{ else }}
-              {{ $finalLink = printf "%s%s/authors/%s/" $baseURL $currentLang $author }}
-            {{ end }} 
+          {{ with .Params.categories }}
+            <p class="event__cat">{{ index . 0 }}</p>
+          {{ end }}
 
-            {{ partial "author-extra.html" (dict "context" . "data" $authorData "link" $finalLink) }}
-          {{- end -}}
-        {{ end }}
+          <div class="event__body">
+            {{ .Content }}
+          </div>
 
-        {{ if or $taxonomyLink $showAuthor }}
-          <div class="mb-5"></div>
-        {{ end }}
-
-      {{ end }}
-    </header>
-    
-    <section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row">
-      {{ if or (and (.Params.showTableOfContents | default (.Site.Params.article.showTableOfContents | default false)) (in
-      .TableOfContents "<ul")) (.Site.Params.article.showRelatedPosts | default false) }} 
-        <div class="order-first lg:ml-auto px-0 lg:order-last ltr:lg:pl-8 rtl:lg:pr-8">
-          <div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky {{ if hasPrefix .Site.Params.header.layout "fixed" -}}
-            lg:top-[140px]{{ else }}lg:top-10{{ end }}">
-
-            {{ if and (.Params.showTableOfContents | default (.Site.Params.article.showTableOfContents | default false)) (in
-            .TableOfContents "<ul") }} {{ partial "toc.html" . }} {{ end }} {{ if .Site.Params.article.showRelatedPosts |
-              default false }} sd {{ end }}
-          </div>  
-        </div>
-      {{ end }}
-
-      <div class="min-w-0 min-h-0 max-w-fit">
-        {{ partial "series/series.html" . }}
-
-        <div class="article-content max-w-prose mb-0">
-          {{ .Content }}
-
+          {{/* Tickets / register link — disabled once the event is >2 days past */}}
+          {{ $currentDate := now }}
+          {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
+          {{ $eventHasPassed := .Date.Before $twoDaysAgo }}
           {{ with .Params.sign_up_link }}
-            {{/* Calculate if event has passed (more than 2 days ago) */}}
-            {{ $eventDate := $.Date }}
-            {{ $currentDate := now }}
-            {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
-            {{ $eventHasPassed := $eventDate.Before $twoDaysAgo }}
-            {{ $eventIsInFuture := $eventDate.After $currentDate }}
-            
-            <p class="programme-register-link {{ if $eventHasPassed }}has-passed{{ end }}">
-              <a
-                {{ if not $eventHasPassed }}href="{{ . }}"{{ end }}
-                class="px-4 py-2 !no-underline {{ if $eventHasPassed }}event-passed{{ end }}"
-                {{ if $eventHasPassed }}style="cursor: not-allowed;"{{ end }}
-              >
-                Register
-              </a>
-              {{ if $eventHasPassed }}
-                <span class="event-passed-text">this event has passed</span>
-              {{ end }}
-            </p>
-
+            {{ if $eventHasPassed }}
+              <p class="event__tickets is-passed">
+                <span class="event__passed-text">This event has passed</span>
+              </p>
+            {{ else }}
+              <p class="event__tickets">
+                <a href="{{ . }}">Tickets <span aria-hidden="true">&rarr;</span></a>
+              </p>
+            {{ end }}
           {{ else }}
-              {{ if not .Params.no_link }}
-                {{/* Check if event is in the future for "Registration coming soon" message */}}
-                {{ $eventDate := .Date }}
-                {{ $currentDate := now }}
-                {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
-                {{ $eventHasPassed := $eventDate.Before $twoDaysAgo }}
-                
-                {{ if $eventHasPassed }}
-                  <p class="programme-register-link has-passed">
-                    <span class="event-passed-text">this event has passed</span>
-                  </p>
-                {{ else }}
-                  <div style="font-weight: bold; text-decoration: underline;">
-                    Registration coming soon!
-                  </div>
-                {{ end }}
+            {{ if not .Params.no_link }}
+              {{ if $eventHasPassed }}
+                <p class="event__tickets is-passed">
+                  <span class="event__passed-text">This event has passed</span>
+                </p>
+              {{ else }}
+                <p class="event__tickets is-soon">Registration coming soon!</p>
               {{ end }}
+            {{ end }}
           {{ end }}
 
           {{ partial "article-meta/programme-video" . }}
 
-          {{ with .Params.hosts }}{{ partial "article-meta/programme-hosts" $ }}{{ end }}
-
-          {{ $defaultReplyByEmail := .Site.Params.replyByEmail }}
-          {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}
-          {{ if $replyByEmail }}
-            <strong class="block mt-8">
-              <a target="_blank" 
-              class="m-1 rounded bg-neutral-300 p-1.5 text-neutral-700 hover:bg-primary-500 hover:text-neutral dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-primary-400 dark:hover:text-neutral-800"
-              href="mailto:{{ .Site.Params.Author.email }}?subject={{ replace (printf "Reply to %s" .Title) "\"" "'" }}">
-                Reply by Email
-              </a>
-            </strong>
-          {{ end }}
-        </div>
-        
-        {{ if (.Params.showAuthorBottom | default ( .Site.Params.article.showAuthorBottom | default false)) }}
-
-          {{ if .Params.showAuthor | default (.Site.Params.article.showAuthor | default true) }}
-            {{ $showAuthor = 1 }}
-            {{ partial "author.html" . }}
-          {{ end }}
-
-          {{ range $author := .Page.Params.authors }}
-            {{ $authorData := index $authorsData $author }}
-            {{- if $authorData -}}
-              {{ range $taxonomyname, $taxonomy := $taxonomies }}
-                {{ if (eq $taxonomyname $author) }}
-                  {{ $taxonomyLink = delimit (slice $baseURL "authors/" $author "/") "" }}
+          {{ with .Params.hosts }}
+            <section class="event__hosts">
+              <h2 class="event__hosts-title">{{ if eq (len .) 1 }}Host{{ else }}Hosts{{ end }}</h2>
+              {{ range . }}
+                {{ $host := . }}
+                {{ $collab := index (where (where $.Site.RegularPages "Section" "people") "Title" $host) 0 }}
+                {{ if $collab }}
+                  <a class="host" href="{{ $collab.RelPermalink }}">
+                    <span class="host__name">{{ $collab.Title }}</span>
+                    {{ $img := $collab.Resources.GetMatch "featured.*" }}
+                    {{ with $img }}
+                      {{ $r := .Resize "300x" }}
+                      <img class="host__photo" src="{{ $r.RelPermalink }}" alt="{{ $collab.Title }}" loading="lazy">
+                    {{ end }}
+                    <span class="host__bio">{{ $collab.Content | plainify | truncate 220 }}</span>
+                  </a>
+                {{ else }}
+                  <div class="host">
+                    <span class="host__name">{{ $host }}</span>
+                    <div class="host__photo--empty" aria-hidden="true"></div>
+                  </div>
                 {{ end }}
               {{ end }}
-              {{ partial "author-extra.html" (dict "context" . "data" $authorData "link" $taxonomyLink) }}
-            {{- end -}}
+            </section>
           {{ end }}
 
-          {{ if or $taxonomyLink $showAuthor }}
-            <div class="mb-10"></div>
-          {{ end }}
-
-        {{ end }}
-
-        {{ partial "series/series-closed.html" . }}
-        {{ partial "sharing-links.html" . }}
-        {{ partial "related.html" . }}  
+          <img class="divider event__divider" src="/images/design/divider1.png" alt="">
+        </article>
       </div>
-
-      {{ $translations := .AllTranslations }}
-      {{ with .File }}
-        {{ $path := .Path }}
-        {{range $translations}}
-          {{ $lang := print "."  .Lang  ".md" }}
-          {{ $path = replace $path $lang ".md" }}
-        {{end}}
-      <script>
-        var oid = "views_{{ $path }}"
-        var oid_likes = "likes_{{ $path }}"
-      </script>
-      {{ $jsPage := resources.Get "js/page.js" }}
-      {{ $jsPage = $jsPage | resources.Minify | resources.Fingerprint "sha512" }}
-      <script type="text/javascript" src="{{ $jsPage.RelPermalink }}" integrity="{{ $jsPage.Data.Integrity }}"></script>
-      {{ end }}
-
-    </section>
-
-    <footer class="pt-8 max-w-prose print:hidden">
-      {{ partial "article-pagination.html" . }}
-
-      {{ if .Params.showComments | default (.Site.Params.article.showComments | default false) }}
-        {{ if templates.Exists "partials/comments.html" }}
-        <div class="pt-3">
-          <hr class="border-dotted border-neutral-300 dark:border-neutral-600" />
-          <div class="pt-3">
-            {{ partial "comments.html" . }}
-          </div>
-        </div>
-
-        {{ else }}
-          {{ warnf "[BLOWFISH] Comments are enabled for %s but no comments partial exists." .File.Path }}
-
-        {{ end }}
-      {{ end }}
-    </footer>
-  </article>
-
-  <style>
-    .programme-register-link {
-      margin-top: 2rem;
-    }
-    .programme-register-link.has-passed {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .programme-register-link a {
-      background: rgb(247, 233, 218);
-      color: rgb(128, 20, 50) !important; 
-      text-transform: uppercase;
-    }
-    .programme-register-link a.event-passed {
-      opacity: 0.5;
-      background: rgb(247, 233, 218);
-      color: rgb(128, 20, 50) !important;
-    }
-    .event-passed-text {
-      font-size: 0.875rem;
-      opacity: 0.5;
-      font-style: italic;
-    }
-
-    .rounded-lg {
-      border-radius: 0;
-    }
-  </style>
+      {{ partial "design/rail.html" . }}
+    </div>
+  </section>
 {{ end }}
-

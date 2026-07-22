@@ -1,0 +1,33 @@
+{{- /* Person — single bio page. Marketing design shell (hero photo + wordmark +
+       white text column + spore/dates rail), matching programme/single.html and
+       the inner marketing pages. The column holds the person's featured photo,
+       name, bio and the programmes they host. */ -}}
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "single" }}
+  <section class="hero hero--inner cs-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    {{ partial "design/wordmark.html" . }}
+    <div class="grid">
+      <div class="col">
+        <article class="person">
+          {{ $img := .Resources.GetMatch "featured.*" }}
+          {{ with $img }}
+            {{ $r := .Resize "600x" }}
+            <img class="person__photo" src="{{ $r.RelPermalink }}" alt="{{ $.Title }}">
+          {{ end }}
+
+          <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+
+          <div class="person__body">
+            {{ .Content }}
+          </div>
+
+          {{ partial "article-meta/collaborator-programmes" . }}
+
+          <img class="divider person__divider" src="/images/design/divider1.png" alt="">
+        </article>
+      </div>
+      {{ partial "design/rail.html" . }}
+    </div>
+  </section>
+{{ end }}
