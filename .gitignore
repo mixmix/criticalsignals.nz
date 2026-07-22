@@ -2,3 +2,4 @@ resources
 public
 .env
 .DS_Store
+node_modules
