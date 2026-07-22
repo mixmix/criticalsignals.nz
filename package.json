@@ -1,0 +1,14 @@
+{
+  "name": "criticalsignals.nz",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build scripts for the Critical Signals Hugo site",
+  "scripts": {
+    "build:programme": "node scripts/build-programme.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "turndown": "^7.2.0"
+  }
+}
