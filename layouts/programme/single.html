@@ -135,7 +135,7 @@
 
           {{ partial "article-meta/programme-video" . }}
 
-          {{ partial "article-meta/programme-hosts" . }}
+          {{ with .Params.hosts }}{{ partial "article-meta/programme-hosts" $ }}{{ end }}
 
           {{ $defaultReplyByEmail := .Site.Params.replyByEmail }}
           {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}
