@@ -1,11 +1,11 @@
-{{- /* "Who is involved" — generated from the collaborators tagged "core-team"
-       (leaf bundles under content/collaborators with tags: ["core-team"]). Each person
+{{- /* "Who is involved" — generated from the people tagged "core-team"
+       (leaf bundles under content/people with tags: ["core-team"]). Each person
        renders as a card: name (title), featured photo, optional role, and the
-       collaborator's bio. Order matches the collaborators list (reverse of the
+       person's bio. Order matches the people list (reverse of the
        section's default order). Any intro copy in this page's own body renders
        above the people. */ -}}
 {{ define "main" }}
-  {{ $core := where (.Site.GetPage "/collaborators").Pages ".Params.tags" "intersect" (slice "core-team") }}
+  {{ $core := where (.Site.GetPage "/people").Pages ".Params.tags" "intersect" (slice "core-team") }}
   <section class="hero hero--inner cs-hero">
     <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/07.jpeg" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}

@@ -1,19 +1,28 @@
 {{- /* Marketing pages get the full-bleed design footer; Blowfish-rendered
-       content pages (programme, collaborators, newsletters) get a simple,
+       content pages (programme, people, newsletters) get a simple,
        safe footer that stays inside the theme's column. */ -}}
 {{- if .Params.csDesign -}}
   {{ partial "design/footer.html" . }}
 {{- else -}}
   <footer id="site-footer" class="py-10 print:hidden text-sm text-neutral-500 dark:text-neutral-400">
-    <nav class="flex flex-wrap gap-x-6 gap-y-2 pb-4 uppercase">
+    <nav class="site-footer__nav uppercase">
       <a class="hover:underline" href="{{ "" | relLangURL }}">Home</a>
       {{- range .Site.Menus.main }}
         <a class="hover:underline" href="{{ .URL | relLangURL }}">{{ .Title | default (.Name | plainify) }}</a>
       {{- end }}
     </nav>
-    <p>&copy; {{ now.Format "2006" }} Critical Signals. Wellington, Aotearoa New Zealand.</p>
-    <p>This site is served from donated e-waste in a cupboard at the
-      <a class="hover:underline" href="https://vogelmorn.nz">Vogelmorn Bowling Club</a>.</p>
+    <p class="site-footer__line">&copy; {{ now.Format "2006" }} Critical Signals. Wellington, Aotearoa New Zealand.</p>
+    <p class="site-footer__line">This site is served from donated e-waste in a cupboard at
+      <a class="hover:underline" href="https://www.twofiftyseven.co/">two/fiftyseven</a>.</p>
+    <style>
+      #site-footer .site-footer__nav{
+        display:flex;flex-wrap:wrap;align-items:center;
+        column-gap:2.5rem;row-gap:1rem;
+        margin-bottom:1.75rem;line-height:1.6;
+      }
+      #site-footer .site-footer__nav a{display:inline-block;}
+      #site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}
+    </style>
     <script>
       {{ if not .Site.Params.disableImageZoom | default true }}
       mediumZoom(document.querySelectorAll("img:not(.nozoom)"), { margin: 24, background: 'rgba(0,0,0,0.5)', scrollOffset: 0 })

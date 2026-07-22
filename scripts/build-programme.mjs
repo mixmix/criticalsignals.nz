@@ -30,7 +30,7 @@ import TurndownService from 'turndown'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..')
 const PROGRAMME_DIR = join(REPO_ROOT, 'content', 'programme')
-const COLLABORATORS_DIR = join(REPO_ROOT, 'content', 'collaborators')
+const COLLABORATORS_DIR = join(REPO_ROOT, 'content', 'people')
 
 // Marker written into every generated event directory. Directories without it
 // (i.e. hand-authored pages) are never modified or deleted by this script.
@@ -173,8 +173,8 @@ async function writeEvent (event, slug, collaborators) {
   if (!location) missing.push('location')
   if (!event.url) missing.push('sign-up link')
 
-  // Hosts we found but who have no matching profile in content/collaborators/.
-  // Names must match a collaborator's Title exactly (that's how the
+  // Hosts we found but who have no matching profile in content/people/.
+  // Names must match a person's Title exactly (that's how the
   // programme-hosts partial links them).
   const hostsWithoutProfile = hosts.filter((name) => !collaborators.has(name.trim()))
 
@@ -190,8 +190,8 @@ async function writeEvent (event, slug, collaborators) {
 }
 
 /**
- * Build a set of collaborator names (their page Title) from
- * content/collaborators/*\/index.md, used to check whether a host has a profile.
+ * Build a set of people's names (their page Title) from
+ * content/people/*\/index.md, used to check whether a host has a profile.
  */
 async function loadCollaboratorTitles () {
   const titles = new Set()

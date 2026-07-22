@@ -15,7 +15,7 @@ own’ are in fact on privately owned datacenters far away, and often on US-owne
 and controlled property. While we Aotearoa New Zealanders might think of
 ourselves as politically, culturally and economically sovereign, we are very
 much not so when it comes to the digital infrastructure we use everyday. Week
-Three reflection from core team collaborator [Julian Oliver](/collaborators/julian/)
+Three reflection from core team collaborator [Julian Oliver](/people/julian/)
  
 Whena Owen, from TVNZ’s Q&A spent time at Critical Signals (115 Taranaki St) to
 chat about these themes, resulting in a story [airing on Sunday

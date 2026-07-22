@@ -1,101 +1,87 @@
+{{- /* Programme — calendar view. Marketing design shell (hero photo + wordmark
+       + spore/dates rail) wrapping a full-width white box that holds the month
+       grid. The grid itself is built client-side by assets/js/calendar.js from
+       the events-data JSON emitted below. */ -}}
 {{ define "main" }}
-  <article>
-    <header class="mb-0 max-w-prose">
-      <h1 class="mt-0 mb-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
-        {{ .Title | emojify }}
-      </h1>
-    </header>
+  <section class="hero hero--inner cs-hero cal-hero">
+    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    {{ partial "design/wordmark.html" . }}
 
-    {{/* <section class="mt-2 prose max-w-none dark:prose-invert"> */}}
-    {{/* {{ .Content }} */}}
-    {{/* </section> */}}
+    <div class="cal-box">
+      <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
-    <p class='programme-type-picker'>
-      Calendar View &nbsp; | &nbsp; <a href="/programme">List View</a>
-    </p>
-    
-    <!-- Calendar Controls -->
-    <div class="mt-8 mb-4 flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:justify-between">
-      
-      <!-- Center: Navigation cluster -->
-      <div class="calendar-navigation flex items-center justify-center space-x-4" style="flex: 1 1 auto;">
-        <button id="prevMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
-          <span class="text-base font-medium">← Prev</span>
-        </button>
-        <h2 id="currentMonth" class="text-2xl font-bold text-neutral-800 dark:text-neutral text-center" style="min-width: 180px; padding: 8px 10px;"></h2>
-        <button id="nextMonth" class="flex items-center text-neutral-700 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-primary-400 transition-colors">
-          <span class="text-base font-medium">Next →</span>
-        </button>
+      <div class="cal-toolbar">
+        <p class="programme-type-picker">
+          <span class="is-active">Calendar View</span> &nbsp;|&nbsp; <a href="/programme">List View</a>
+        </p>
+        <div class="calendar-navigation">
+          <button id="prevMonth" type="button" aria-label="Previous month">&larr; Prev</button>
+          <h2 id="currentMonth"></h2>
+          <button id="nextMonth" type="button" aria-label="Next month">Next &rarr;</button>
+        </div>
       </div>
-      
-    </div>
 
-    <!-- Calendar Grid -->
-    <div class="calendar-container overflow-hidden shadow-sm">
-      <div class="calendar-header ">
-        <div class="calendar-header-day">Sun<span>day</span></div>
-        <div class="calendar-header-day">Mon<span>day</span></div>
-        <div class="calendar-header-day">Tue<span>sday</span></div>
-        <div class="calendar-header-day">Wed<span>nesday</span></div>
-        <div class="calendar-header-day">Thu<span>rsday</span></div>
-        <div class="calendar-header-day">Fri<span>day</span></div>
-        <div class="calendar-header-day">Sat<span>urday</span></div>
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <div class="calendar-header-day">Mon<span>day</span></div>
+          <div class="calendar-header-day">Tue<span>sday</span></div>
+          <div class="calendar-header-day">Wed<span>nesday</span></div>
+          <div class="calendar-header-day">Thu<span>rsday</span></div>
+          <div class="calendar-header-day">Fri<span>day</span></div>
+          <div class="calendar-header-day">Sat<span>urday</span></div>
+          <div class="calendar-header-day">Sun<span>day</span></div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
       </div>
-      <div id="calendarGrid" class="calendar-grid">
-        <!-- Calendar days will be populated by JavaScript -->
-      </div>
-    </div>
 
-    <!-- Event Details Modal -->
-    <div id="eventModal" class="cs-modal-overlay" style="display: none;">
-      <div class="cs-modal-content">
-        <div class="cs-modal-inner">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <h3 id="modalTitle" style="font-size: 20px; font-weight: bold; color: rgb(247, 233, 218); margin: 0; line-height: 1.4;"></h3>
-            <button id="closeModal" style="color: rgb(247, 233, 218); background: none; border: none; font-size: 28px; cursor: pointer; padding: 0; line-height: 1; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">×</button>
-          </div>
-          <div id="modalContent">
-            <!-- Event details will be populated by JavaScript -->
+      <!-- Event Details Modal -->
+      <div id="eventModal" class="cs-modal-overlay" style="display: none;">
+        <div class="cs-modal-content">
+          <div class="cs-modal-inner">
+            <div class="cs-modal-head">
+              <h3 id="modalTitle"></h3>
+              <button id="closeModal" type="button" aria-label="Close">&times;</button>
+            </div>
+            <div id="modalContent"></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- List View -->
-    <div id="listView" class="hidden mt-8">
-      <h3 style="font-size: 20px; font-weight: bold; color: rgb(247, 233, 218); margin-bottom: 16px;">Upcoming Events</h3>
-      <div id="eventList" style="display: flex; flex-direction: column; gap: 0;">
-        <!-- Event list will be populated by JavaScript -->
+      <!-- List View (used by calendar.js on small screens) -->
+      <div id="listView" class="hidden">
+        <h3 class="cal-listview-title">Upcoming Events</h3>
+        <div id="eventList"></div>
       </div>
     </div>
-  </article>
 
-  <!-- Generate Events Data for JavaScript -->
+    {{ partial "design/rail.html" . }}
+  </section>
+
+  {{/* ---- Event + collaborator data for calendar.js ---- */}}
   {{ $events := slice }}
-  
-  <!-- Get all programme events (excluding the section page itself) -->
   {{ range .Site.AllPages }}
-    {{ if and (in .RelPermalink "/programme/") (ne .Kind "section") }}
-      {{ $eventData := dict 
-        "title" .Title 
-        "date" .Params.date 
-        "startTime" .Params.start_time 
-        "endTime" .Params.end_time 
-        "hosts" .Params.hosts 
-        "categories" .Params.categories 
-        "signUpLink" .Params.sign_up_link 
-        "dateTBC" .Params.dateTBC 
-        "url" .RelPermalink 
-        "summary" .Summary 
-        "content" .Content 
+    {{/* Skip the section page and draft events (flagged with a "[DRAFT] " title
+         prefix by scripts/build-programme.mjs, not Hugo's draft flag). */}}
+    {{ if and (in .RelPermalink "/programme/") (ne .Kind "section") (not (strings.HasPrefix .Title "[DRAFT]")) }}
+      {{ $eventData := dict
+        "title" .Title
+        "date" .Params.date
+        "startTime" .Params.start_time
+        "endTime" .Params.end_time
+        "hosts" .Params.hosts
+        "categories" .Params.categories
+        "signUpLink" .Params.sign_up_link
+        "dateTBC" .Params.dateTBC
+        "url" .RelPermalink
+        "summary" .Summary
+        "content" .Content
       }}
       {{ $events = $events | append $eventData }}
     {{ end }}
   {{ end }}
 
-  <!-- Generate Collaborators Data for JavaScript -->
   {{ $collaborators := dict }}
-  {{ range where .Site.RegularPages "Section" "collaborators" }}
+  {{ range where .Site.RegularPages "Section" "people" }}
     {{ $image := .Resources.GetMatch "featured.*" }}
     {{ $imageURL := "" }}
     {{ if $image }}
@@ -105,27 +91,20 @@
     {{ $collaborators = merge $collaborators (dict .Title (dict "name" .Title "image" $imageURL "url" .RelPermalink)) }}
   {{ end }}
 
-  <!-- Data for JavaScript -->
   <script type="application/json" id="events-data">{{ $events | jsonify | safeJS }}</script>
   <script type="application/json" id="collaborators-data">{{ $collaborators | jsonify | safeJS }}</script>
 
-  <!-- Include Calendar JavaScript -->
-  {{ $calendar := resources.Get "js/calendar.js" }}
-  {{ if $calendar }}
-    {{ $calendarJS := $calendar | minify }}
-    <script src="{{ $calendarJS.RelPermalink }}" defer></script>
+  {{ $calendarJS := resources.Get "js/calendar.js" }}
+  {{ if $calendarJS }}
+    <script src="{{ ($calendarJS | minify).RelPermalink }}" defer></script>
   {{ else }}
-    <!-- Fallback for development -->
     <script src="/js/calendar.js" defer></script>
   {{ end }}
 
-  <!-- Include Calendar CSS -->
-  {{ $calendar := resources.Get "css/calendar.css" }}
-  {{ if $calendar }}
-    {{ $calendarCSS := $calendar | minify }}
-    <link rel="stylesheet" href="{{ $calendarCSS.RelPermalink }}" >
+  {{ $calendarCSS := resources.Get "css/calendar.css" }}
+  {{ if $calendarCSS }}
+    <link rel="stylesheet" href="{{ ($calendarCSS | minify).RelPermalink }}">
   {{ else }}
-    <!-- Fallback for development -->
     <link rel="stylesheet" href="/css/calendar.css">
   {{ end }}
-{{ end }} 
+{{ end }}
