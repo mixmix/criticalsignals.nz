@@ -521,18 +521,18 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 .calendar-navigation #currentMonth{font-weight:700;min-width:9em;text-align:center;}
 
 /* Grid: teal future cells, white past/other-month cells, thin ink borders */
-.cal-box .calendar-container{border-top:1px solid var(--ink);border-left:1px solid var(--ink);box-shadow:none;}
-.cal-box .calendar-header{border-bottom:1px solid var(--ink);}
+.cal-box .calendar-container{border-top:1px solid #fff;border-left:1px solid #fff;box-shadow:none;}
+.cal-box .calendar-header{border-bottom:1px solid #fff;}
 .cal-box .calendar-header-day{
-  padding:8px 10px;text-align:left;text-transform:uppercase;letter-spacing:1px;
-  font-size:.64rem;color:var(--ink);opacity:.7;border-right:1px solid var(--ink);
+  padding:8px 10px;text-align:center;text-transform:uppercase;letter-spacing:1px;
+  font-size:.64rem;color:var(--ink);opacity:.7;border-right:1px solid #fff;
 }
 .cal-box .calendar-day{
   min-height:92px;height:auto;padding:6px;
   background:var(--critical-highlight);
-  border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);
+  border-right:1px solid #fff;border-bottom:1px solid #fff;
 }
-.cal-box .calendar-day.past{background:var(--white);}
+.cal-box .calendar-day.past{background:#e8e8e8;}
 .cal-box .calendar-day.other-month{background:var(--white);color:var(--ink);}
 .cal-box .calendar-day.other-month:hover{background:#f4fdfb;}
 .cal-box .calendar-day.other-month .calendar-day-number{color:var(--ink);}
@@ -597,7 +597,8 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 @media (max-width:880px){
   .cal-box{margin-inline:calc(-1 * var(--pad));padding:clamp(18px,5vw,28px) var(--pad) clamp(20px,4vw,32px);}
   .cal-toolbar{flex-direction:column;align-items:flex-start;gap:.6rem;}
-  .cal-box .calendar-day{min-height:64px;padding:6px 2px;}
+  .calendar-navigation{align-self:center;justify-content:center;}
+  .cal-box .calendar-day{min-height:64px;padding:2px 2px;}
   .cal-box .event-item{padding:4px 3px;}
   .cal-hero .rail .spore{width:80%;margin:1rem auto 0;}
 }
