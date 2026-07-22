@@ -30,6 +30,7 @@ import TurndownService from 'turndown'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..')
 const PROGRAMME_DIR = join(REPO_ROOT, 'content', 'programme')
+const COLLABORATORS_DIR = join(REPO_ROOT, 'content', 'collaborators')
 
 // Marker written into every generated event directory. Directories without it
 // (i.e. hand-authored pages) are never modified or deleted by this script.
@@ -62,19 +63,41 @@ main().catch((err) => {
 
 async function main () {
   const events = await fetchAllEvents()
+  const collaborators = await loadCollaboratorTitles()
   console.log(`Fetched ${events.length} event(s) from Ticket Tailor.\n`)
 
   const keptSlugs = new Set()
+  const reports = []
 
   for (const event of events) {
     const slug = slugify(event.name)
     keptSlugs.add(slug)
-    await writeEvent(event, slug)
+    reports.push(await writeEvent(event, slug, collaborators))
   }
 
   await pruneRemovedEvents(keptSlugs)
 
-  console.log('\nDone.')
+  printGroup('LIVE', reports.filter((r) => !r.isDraft))
+  printGroup('DRAFT', reports.filter((r) => r.isDraft))
+
+  const complete = reports.filter((r) => r.complete).length
+  console.log(`${complete}/${reports.length} event(s) have everything they need.`)
+  console.log('Done.')
+}
+
+function printGroup (label, reports) {
+  if (!reports.length) return
+  console.log(`[${label}]`)
+  for (const r of reports) {
+    console.log(`${r.complete ? '✓' : '✗'} ${r.name}`)
+    if (r.missing.length) console.log(`    missing: ${r.missing.join(', ')}`)
+    if (!r.hosts.length) {
+      console.log('    hosts: unable to find hosts')
+    } else if (r.hostsWithoutProfile.length) {
+      console.log(`    hosts: missing profiles (${r.hostsWithoutProfile.join(', ')})`)
+    }
+  }
+  console.log('')
 }
 
 /**
@@ -109,7 +132,7 @@ async function fetchAllEvents () {
   return all
 }
 
-async function writeEvent (event, slug) {
+async function writeEvent (event, slug, collaborators) {
   const isDraft = event.status === 'draft'
 
   // Turn the HTML description into clean markdown, then pull the hosts line out
@@ -141,7 +164,58 @@ async function writeEvent (event, slug) {
   await writeFile(join(dir, 'index.md'), file, 'utf8')
   await writeFile(join(dir, MARKER), `${event.id}\n`, 'utf8')
 
-  console.log(`  ${isDraft ? '[draft] ' : ''}wrote content/programme/${slug}/index.md`)
+  // Completeness report: what a finished event page needs. Hosts are tracked
+  // separately (see printGroup) so they get their own dedicated sub-line.
+  const location = event.venue?.name || (event.online_event === 'true' ? 'Online' : null)
+  const missing = []
+  if (!event.start?.time) missing.push('start time')
+  if (!event.end?.time) missing.push('end time')
+  if (!location) missing.push('location')
+  if (!event.url) missing.push('sign-up link')
+
+  // Hosts we found but who have no matching profile in content/collaborators/.
+  // Names must match a collaborator's Title exactly (that's how the
+  // programme-hosts partial links them).
+  const hostsWithoutProfile = hosts.filter((name) => !collaborators.has(name.trim()))
+
+  return {
+    name: event.name,
+    slug,
+    isDraft,
+    hosts,
+    hostsWithoutProfile,
+    missing,
+    complete: missing.length === 0 && hosts.length > 0
+  }
+}
+
+/**
+ * Build a set of collaborator names (their page Title) from
+ * content/collaborators/*\/index.md, used to check whether a host has a profile.
+ */
+async function loadCollaboratorTitles () {
+  const titles = new Set()
+
+  let entries
+  try {
+    entries = await readdir(COLLABORATORS_DIR, { withFileTypes: true })
+  } catch {
+    return titles
+  }
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue
+    let text
+    try {
+      text = await readFile(join(COLLABORATORS_DIR, entry.name, 'index.md'), 'utf8')
+    } catch {
+      continue
+    }
+    const match = text.match(/^title:\s*["']?(.+?)["']?\s*$/m)
+    if (match) titles.add(match[1].trim())
+  }
+
+  return titles
 }
 
 /**
