@@ -1,0 +1,46 @@
+name: Update programme from Ticket Tailor
+
+on:
+    schedule:
+        - cron: "0 * * * *" # every hour
+    workflow_dispatch: {} # "Run workflow" button in the Actions tab
+
+jobs:
+    update:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  # A PAT (not the default GITHUB_TOKEN) so the resulting push
+                  # triggers deploy.yml — GITHUB_TOKEN pushes are blocked from
+                  # triggering other workflows.
+                  token: ${{ secrets.DEPLOY_PAT }}
+
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Build programme from Ticket Tailor
+              run: pnpm run build:programme
+              env:
+                  TICKET_TAILOR_API_KEY: ${{ secrets.TICKET_TAILOR_API_KEY }}
+
+            - name: Commit if changed
+              run: |
+                  if [ -n "$(git status --porcelain content/programme)" ]; then
+                    git config user.name  "github-actions[bot]"
+                    git config user.email "github-actions[bot]@users.noreply.github.com"
+                    git add content/programme
+                    git commit -m "update from Ticket Tailor"
+                    git push
+                  else
+                    echo "No changes."
+                  fi
