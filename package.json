@@ -5,7 +5,8 @@
   "type": "module",
   "description": "Build scripts for the Critical Signals Hugo site",
   "scripts": {
-    "build:programme": "node scripts/build-programme.mjs"
+    "build:programme": "node scripts/build-programme.mjs",
+    "build:slugs": "node scripts/build-slugs.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

@@ -17,7 +17,7 @@
     <h3>Programme entries</h2>
     <ul>
       {{ range $matchingProgrammes }}
-        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+        <li><a href="{{ .Permalink }}">{{ .Title | emojify }}{{ if or .Params.subtitle .Params.part }} &mdash;{{ with .Params.subtitle }} {{ . | emojify }}{{ end }}{{ with .Params.part }} &middot; Part {{ . }}{{ end }}{{ end }}</a></li>
       {{ end }}
     </ul>
   </section>

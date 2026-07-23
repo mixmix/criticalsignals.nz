@@ -27,6 +27,7 @@ import { readFile, writeFile, mkdir, readdir, rm, access } from 'node:fs/promise
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import TurndownService from 'turndown'
+import { generateSlugs } from './build-slugs.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..')
@@ -77,6 +78,10 @@ async function main () {
   }
 
   await pruneRemovedEvents(keptSlugs)
+
+  // Refresh auto-generated slugs on hand-authored pages that have been split
+  // into title + subtitle + part.
+  await generateSlugs()
 
   printGroup('LIVE', reports.filter((r) => !r.isDraft))
   printGroup('DRAFT', reports.filter((r) => r.isDraft))

@@ -11,6 +11,13 @@
         <article class="event">
           <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
+          {{ if or .Params.subtitle .Params.part }}
+            <p class="event__subtitle">
+              {{- with .Params.subtitle }}<span class="event__subtitle-part">{{ . | emojify }}</span>{{ end -}}
+              {{- with .Params.part }}<span class="event__subtitle-part">Part {{ . }}</span>{{ end -}}
+            </p>
+          {{ end }}
+
           <p class="event__meta">
             {{ if .Params.dateTBC }}
               <em>Date to be confirmed</em>

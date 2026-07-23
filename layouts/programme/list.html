@@ -1,6 +1,7 @@
 {{- /* Programme — list view. Marketing design shell (hero photo + wordmark +
-       white text column + spore/dates rail), with the events as a simple
-       chronological list: hand-drawn divider, title + arrow, date, category. */ -}}
+       white text column + spore/dates rail), with the events grouped by date:
+       a hand-drawn divider + date heading, then each event on that day
+       (title + arrow, category). Date-to-be-confirmed events group at the end. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero">
     <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
@@ -16,28 +17,70 @@
         <div class="prog-intro">{{ .Content }}</div>
 
         {{/* Draft events are flagged with a "[DRAFT] " title prefix by
-             scripts/build-programme.mjs (not Hugo's draft flag). Hide them. */}}
-        {{ $live := slice }}
+             scripts/build-programme.mjs (not Hugo's draft flag). Hide them.
+             Split off date-to-be-confirmed events so they group at the end. */}}
+        {{ $dated := slice }}
+        {{ $tbc := slice }}
         {{ range .Pages.ByDate }}
-          {{ if not (strings.HasPrefix .Title "[DRAFT]") }}{{ $live = $live | append . }}{{ end }}
+          {{ if not (strings.HasPrefix .Title "[DRAFT]") }}
+            {{ if .Params.dateTBC }}
+              {{ $tbc = $tbc | append . }}
+            {{ else }}
+              {{ $dated = $dated | append . }}
+            {{ end }}
+          {{ end }}
         {{ end }}
 
-        {{ if gt (len $live) 0 }}
+        {{ if or (gt (len $dated) 0) (gt (len $tbc) 0) }}
           <div class="prog-list">
-            {{ range $i, $p := $live }}
-              <a class="prog-item" href="{{ $p.RelPermalink }}">
-                <img class="divider" src="/images/design/divider{{ add (mod $i 2) 1 }}.png" alt="">
-                <span class="prog-item__title">
-                  {{ $p.Title | emojify }}
-                  <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
-                </span>
-                <span class="prog-item__date">
-                  {{ if $p.Params.dateTBC }}Date to be confirmed{{ else }}{{ $p.Date.Format "2 January 2006" }}{{ end }}
-                </span>
-                {{ with $p.Params.categories }}
-                  <span class="prog-item__cat">{{ index . 0 }}</span>
+            {{ $gi := 0 }}
+            {{ range $g := $dated.GroupByDate "2 January 2006" "asc" }}
+              <div class="prog-group">
+                <img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">
+                <h2 class="prog-group__date">{{ $g.Key }}</h2>
+                {{ range $p := $g.Pages }}
+                  <a class="prog-item" href="{{ $p.RelPermalink }}">
+                    <span class="prog-item__title">
+                      {{ $p.Title | emojify }}
+                      <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
+                    </span>
+                    {{ if or $p.Params.subtitle $p.Params.part }}
+                      <span class="prog-item__subtitle">
+                        {{- with $p.Params.subtitle }}<span class="prog-item__subtitle-part">{{ . | emojify }}</span>{{ end -}}
+                        {{- with $p.Params.part }}<span class="prog-item__subtitle-part">Part {{ . }}</span>{{ end -}}
+                      </span>
+                    {{ end }}
+                    {{ with $p.Params.categories }}
+                      <span class="prog-item__cat">{{ index . 0 }}</span>
+                    {{ end }}
+                  </a>
                 {{ end }}
-              </a>
+              </div>
+              {{ $gi = add $gi 1 }}
+            {{ end }}
+
+            {{ if gt (len $tbc) 0 }}
+              <div class="prog-group">
+                <img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">
+                <h2 class="prog-group__date">Date to be confirmed</h2>
+                {{ range $p := $tbc }}
+                  <a class="prog-item" href="{{ $p.RelPermalink }}">
+                    <span class="prog-item__title">
+                      {{ $p.Title | emojify }}
+                      <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
+                    </span>
+                    {{ if or $p.Params.subtitle $p.Params.part }}
+                      <span class="prog-item__subtitle">
+                        {{- with $p.Params.subtitle }}<span class="prog-item__subtitle-part">{{ . | emojify }}</span>{{ end -}}
+                        {{- with $p.Params.part }}<span class="prog-item__subtitle-part">Part {{ . }}</span>{{ end -}}
+                      </span>
+                    {{ end }}
+                    {{ with $p.Params.categories }}
+                      <span class="prog-item__cat">{{ index . 0 }}</span>
+                    {{ end }}
+                  </a>
+                {{ end }}
+              </div>
             {{ end }}
           </div>
         {{ else }}

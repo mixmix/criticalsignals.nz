@@ -464,19 +464,29 @@ body:has(.cs-hero) .prog-h1{
 .programme-type-picker .is-active{text-decoration:underline;text-underline-offset:4px;}
 .prog-intro{margin:0 0 clamp(8px,1.2vw,16px);}
 
-/* --- Programme list --- */
-.prog-item{display:block;text-decoration:none;color:var(--ink);}
-.prog-item .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(12px,1.2vw,18px);}
+/* --- Programme list (grouped by date) --- */
+.prog-group .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(10px,1vw,16px);}
+/* breathing room between the text column and the spore/dates rail */
+body:has(.prog-list) .grid{column-gap:clamp(20px,3vw,48px);}
+body:has(.cs-hero) .prog-group__date{
+  font-weight:400;text-transform:uppercase;letter-spacing:.02em;
+  font-size:1rem;margin:0 0 clamp(10px,1.2vw,16px);
+}
+.prog-item{display:block;text-decoration:none;color:var(--ink);margin:0 0 clamp(14px,1.6vw,22px);}
+.prog-item:last-child{margin-bottom:0;}
 .prog-item__title{
   display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
   font-weight:700;text-transform:uppercase;line-height:1.25;
 }
 .prog-item__arrow{flex:0 0 auto;}
 .prog-item:hover .prog-item__title{text-decoration:underline;text-underline-offset:3px;}
-.prog-item__date{display:block;margin-top:8px;}
 .prog-item__cat{display:block;margin-top:4px;font-weight:700;text-transform:uppercase;font-size:.8rem;}
+.prog-item__subtitle{display:block;margin-top:2px;font-weight:700;text-transform:none;font-size:.85rem;opacity:.7;}
+.prog-item__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .4em;opacity:.6;}
 
 /* --- Event single --- */
+.event .event__subtitle{margin:-.15rem 0 10px;font-weight:700;text-transform:none;font-size:1.05rem;opacity:.7;}
+.event__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .45em;opacity:.6;}
 .event__meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 0 8px;}
 .event__sep{opacity:.4;}
 .event__cat{font-weight:700;text-transform:uppercase;font-size:.8rem;margin:0 0 clamp(20px,2.2vw,32px);}
@@ -484,8 +494,13 @@ body:has(.cs-hero) .prog-h1{
 .event__body p{margin:0 0 1em;}
 .event__body > :last-child{margin-bottom:0;}
 .event__tickets{margin:0 0 clamp(28px,3vw,46px);}
-.event__tickets a{font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;}
-.event__tickets a:hover{text-decoration:underline;text-underline-offset:4px;}
+.event__tickets a{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:12px 24px;min-height:54px;
+  background:var(--ink);color:var(--white);border:2px solid var(--ink);
+  font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;
+}
+.event__tickets a:hover{filter:brightness(0.9);text-decoration:none;}
 .event__tickets.is-soon{font-weight:700;text-transform:uppercase;}
 .event__passed-text{font-style:italic;opacity:.55;}
 
