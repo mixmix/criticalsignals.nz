@@ -8,7 +8,7 @@ hosts:
 date: "2026-08-13"
 start_time: "15:00"
 end_time: "17:00"
-sign_up_link: https://do-not-burn-your-journals.lilregie.com/
+sign_up_link: https://do-not-burn-your-journals.lilregie.com/booking/attendees/new
 ---
 
 **Critical Signals is excited to bring you this six week journaling series in collaboration with author, poet and prolific journal-keeper, Nadine Hura**
