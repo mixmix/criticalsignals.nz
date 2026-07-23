@@ -120,12 +120,11 @@ Find out more about the course structure, including a message from Nadine about 
     margin-bottom: 1rem;
   }
   table.bordered {
-    border-bottom: 1px solid black;
-    tr {
+    td {
       border-top: 1px solid black;
     }
-    tr:first-child {
-      border-top: none;
+    tr:last-child td {
+      border-bottom: 1px solid black;
     }
   }
 </style>

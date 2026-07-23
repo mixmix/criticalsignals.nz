@@ -495,8 +495,8 @@ body:has(.cs-hero) .prog-group__date{
 .event__body > :last-child{margin-bottom:0;}
 .event__tickets{margin:0 0 clamp(28px,3vw,46px);}
 .event__tickets a{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:12px 24px;min-height:54px;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  padding:12px 48px;min-height:54px;
   background:var(--ink);color:var(--white);border:2px solid var(--ink);
   font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;
 }

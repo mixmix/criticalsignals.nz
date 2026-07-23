@@ -4,9 +4,12 @@
 {{ $matchingProgrammes := slice }} <!-- Initialize an empty slice to collect matching programmes -->
 {{ range $programmes }}
   {{ if in .Params.hosts $name }} <!-- Check if the current collaborator is in the 'hosts' array -->
-    {{ $matchingProgrammes = $matchingProgrammes | append . }} <!-- Add matching programme to the collection -->
+    {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }} <!-- Combine date + start_time so events order chronologically -->
+    {{ $matchingProgrammes = $matchingProgrammes | append (dict "page" . "sortKey" $sortKey) }} <!-- Add matching programme to the collection -->
   {{ end }}
 {{ end }}
+{{ $matchingProgrammes = sort $matchingProgrammes "sortKey" "asc" }} <!-- Order from first to last -->
+{{ $matchingProgrammes = apply $matchingProgrammes "index" "." "page" }} <!-- Unwrap back to pages -->
 
 <!-- Check how many matching programmes there are -->
 {{ $count := len $matchingProgrammes }}
