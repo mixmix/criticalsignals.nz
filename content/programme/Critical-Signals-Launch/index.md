@@ -1,5 +1,7 @@
 ---
 title: "Critical Signals Launch"
+draft: true
+# NOTE: this is hidden from public because it's mainly for partner orgs
 date: "2026-08-06"
 start_time: "17:30"
 end_time: "21:00"

@@ -90,7 +90,7 @@ function printGroup (label, reports) {
   if (!reports.length) return
   console.log(`[${label}]`)
   for (const r of reports) {
-    console.log(`${r.complete ? '✓' : '✗'} ${r.name}`)
+    console.log(`${r.complete ? '✓' : '✗'} ${r.name}${r.custom ? ' (CUSTOM)' : ''}`)
     if (r.missing.length) console.log(`    missing: ${r.missing.join(', ')}`)
     if (!r.hosts.length) {
       console.log('    hosts: unable to find hosts')
@@ -160,9 +160,17 @@ async function writeEvent (event, slug, collaborators) {
   const file = `${toYamlFrontMatter(frontMatter)}\n${body.trim()}\n`
 
   const dir = join(PROGRAMME_DIR, slug)
-  await mkdir(dir, { recursive: true })
-  await writeFile(join(dir, 'index.md'), file, 'utf8')
-  await writeFile(join(dir, MARKER), `${event.id}\n`, 'utf8')
+
+  // A directory that already exists without our marker is a hand-authored
+  // ("custom") page. Never overwrite it or drop a marker into it — we still
+  // audit it below so the summary can report what it's missing.
+  const isCustom = (await exists(dir)) && !(await exists(join(dir, MARKER)))
+
+  if (!isCustom) {
+    await mkdir(dir, { recursive: true })
+    await writeFile(join(dir, 'index.md'), file, 'utf8')
+    await writeFile(join(dir, MARKER), `${event.id}\n`, 'utf8')
+  }
 
   // Completeness report: what a finished event page needs. Hosts are tracked
   // separately (see printGroup) so they get their own dedicated sub-line.
@@ -182,6 +190,7 @@ async function writeEvent (event, slug, collaborators) {
     name: event.name,
     slug,
     isDraft,
+    custom: isCustom,
     hosts,
     hostsWithoutProfile,
     missing,
