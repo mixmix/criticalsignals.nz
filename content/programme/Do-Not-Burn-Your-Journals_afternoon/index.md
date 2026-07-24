@@ -23,13 +23,12 @@ Starting on Thursday 13th of August, and running through til 24th of August, you
 
 ### Tickets:
 
-This workshop series is intended to support communities whose writing blocks are external and structural as much as they are internal. Accordingly, people experiencing peak colonial oppressions are invited to purchase tickets **first**. This includes (but is not limited to) an acute lack of time, money, resource, domestic support, disability and/or identity, language and cultural persecution). 
+This workshop series is intended to support communities whose writing blocks are external and structural as much as they are internal. Accordingly, people experiencing peak colonial oppressions are invited to purchase tickets **first**. (i.e. indigenous communities and whānau facing an acute lack of time, money, resource, domestic support, disability and/or identity, language and cultural persecution). The early release ticket period is open now until 2nd August. General tickets will be available from 3rd of August at 9am.
 
 <table class="bordered">
   <tr>
     <th>Type</th>
     <th>Cost</th>
-    <th>On sale</th>
   </tr>
   <tr>
     <td>
@@ -39,9 +38,6 @@ This workshop series is intended to support communities whose writing blocks are
     <td>
       <strong>$120</strong>
     </td>
-    <td>
-      July 30th
-    </td>
   </tr>
   <tr>
     <td>
@@ -50,14 +46,10 @@ This workshop series is intended to support communities whose writing blocks are
     <td>
       <strong>$250</strong>
     </td>
-    <td>
-      Aug 4th
-    </td>
   </tr>
 </table>
 
-
-Find out more about the course structure, including a message from Nadine about what to expect, here. (LINK TO THE WEBPAGE)
+Kia ora koutou, Ko Nadine Hura ahau. I’m excited to be able to offer this journaling workshop in person and in extended format for the first time. I’ll be sharing everything I’ve learned about journaling the hard way, which is to say: after 40 years not being able to stop. We’ll explore the conditions you need to generate your morning pages and to develop a consistent creative practice you will love and look forward to each day. I’ll provide optional weekly readings and a range of practical tools, frameworks and strategies to help you hone your craft and get used to (or at least accept!) your own voice. Whether you’re an experienced writer who feels like your own worst enemy, or someone on the verge of burnout and in need of a healthy outlet, this might be the opportunity you need to (re)discover your flow and start (or finish) that draft.
 
 ### Dates:
 
@@ -113,9 +105,6 @@ Find out more about the course structure, including a message from Nadine about 
     }
     td:nth-child(2) {
       padding-right: 6px;
-    }
-    td:nth-child(3) {
-      font-size: 0.8rem;
     }
     margin-bottom: 1rem;
   }
