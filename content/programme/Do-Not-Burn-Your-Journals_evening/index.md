@@ -19,7 +19,7 @@ Full of inspiration and hacks to get you writing even when you feel blocked, jou
 
 ### The details:
 
-Starting on Thursday 13th of August, and running through til 24th of August, you can choose to join the afternoon cohort (3pm-5pm) or the evening cohort (6pm-8pm). With only 8 places in each cohort, these are small group sessions designed to be mutually supportive, encouraging and fun. Please check the dates below and only sign up if you can commit to a minimum of 4 of the 6 workshops.
+Starting on Thursday 13th of August, and running through til 24th of September, you can choose to join the afternoon cohort (3pm-5pm) or the evening cohort (6pm-8pm). With only 8 places in each cohort, these are small group sessions designed to be mutually supportive, encouraging and fun. Please check the dates below and only sign up if you can commit to a minimum of 4 of the 6 workshops.
 
 ### Tickets:
 
