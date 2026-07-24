@@ -17,8 +17,6 @@ _“Stealing time to gather the archival evidence that you have lived your life,
 
 Full of inspiration and hacks to get you writing even when you feel blocked, journals can be the seed-stuff of essays, blogs, short stories, long rants, prose poetry, weird zines and even full length manuscripts. Whether you identify as a writer or would never dare, this space is for everyone who loves language, cares about shit, and wants to learn to work with creative energy to fulfil their potential.
 
-Kia ora koutou, I’m excited to be able to offer this journaling workshop in person and in extended format for the first time. I’ll be sharing everything I’ve learned about journaling the hard way, which is to say: after 40 years not being able to stop. We’ll explore the conditions you need to generate your morning pages and to develop a consistent creative practice you will love and look forward to each day. I’ll provide optional weekly readings and a range of practical tools, frameworks and strategies to help you hone your craft and get used to (or at least accept!) your own voice. Whether you’re an experienced writer who feels like your own worst enemy, or someone on the verge of burnout and in need of a healthy outlet, this might be the opportunity you need to (re)discover your flow and start (or finish) that draft.
-
 ### The details:
 
 Starting on Thursday 13th of August, and running through til 24th of August, you can choose to join the afternoon cohort (3pm-5pm) or the evening cohort (6pm-8pm). With only 8 places in each cohort, these are small group sessions designed to be mutually supportive, encouraging and fun. Please check the dates below and only sign up if you can commit to a minimum of 4 of the 6 workshops.
