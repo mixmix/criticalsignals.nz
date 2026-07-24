@@ -1,11 +1,11 @@
 ---
 title: "Detangling Yourself from Big Tech"
-draft: true
 hosts:
   - "Bianca Grizhar"
 date: "2026-08-11"
 start_time: "12:00"
 end_time: "15:00"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2321645"
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_635,q_100,w_2000,x_0,y_268/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/vik677jx4oifpyjpptwd.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8743616"
 ---
