@@ -1,14 +1,14 @@
 ---
-title: "(Do Not!) Burn Your Journals"
+title: "Journaling is not a Luxury"
 subtitle: "Afternoon Series"
 part: "1"
-slug: "do-not-burn-your-journals_afternoon-series_1"
+slug: "journaling-is-not-a-luxury_afternoon-series_1"
 hosts:
   - "Nadine Hura"
 date: "2026-08-13"
 start_time: "15:00"
 end_time: "17:00"
-sign_up_link: https://do-not-burn-your-journals.lilregie.com/
+sign_up_link: https://journaling-is-not-a-luxury.lilregie.com/
 ---
 
 **Critical Signals is excited to bring you this six week journaling series in collaboration with author, poet and prolific journal-keeper, Nadine Hura**
