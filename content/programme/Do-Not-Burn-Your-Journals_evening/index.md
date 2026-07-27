@@ -1,14 +1,14 @@
 ---
-title: "(Do Not!) Burn Your Journals"
+title: "Journaling is not a Luxury"
 subtitle: "Evening Series"
 part: "1"
-slug: "do-not-burn-your-journals_evening-series_1"
+slug: "journaling-is-not-a-luxury_evening-series_1"
 hosts:
   - "Nadine Hura"
 date: "2026-08-13"
 start_time: "18:00"
 end_time: "20:00"
-sign_up_link: https://do-not-burn-your-journals.lilregie.com/booking/attendees/new
+sign_up_link: https://journaling-is-not-a-luxury.lilregie.com/
 ---
 
 **Critical Signals is excited to bring you this six week journaling series in collaboration with author, poet and prolific journal-keeper, Nadine Hura**
@@ -19,17 +19,16 @@ Full of inspiration and hacks to get you writing even when you feel blocked, jou
 
 ### The details:
 
-Starting on Thursday 13th of August, and running through til 24th of August, you can choose to join the afternoon cohort (3pm-5pm) or the evening cohort (6pm-8pm). With only 10 places in each cohort, these are small group sessions designed to be mutually supportive, encouraging and fun. Please check the dates below and only sign up if you can commit to a minimum of 4 of the 6 workshops.
+Starting on Thursday 13th of August, and running through til 24th of September, you can choose to join the afternoon cohort (3pm-5pm) or the evening cohort (6pm-8pm). With only 8 places in each cohort, these are small group sessions designed to be mutually supportive, encouraging and fun. Please check the dates below and only sign up if you can commit to a minimum of 4 of the 6 workshops.
 
 ### Tickets:
 
-This workshop series is intended to support communities whose writing blocks are external and structural as much as they are internal. Accordingly, people experiencing peak colonial oppressions are invited to purchase tickets **first**. This includes (but is not limited to) an acute lack of time, money, resource, domestic support, disability and/or identity, language and cultural persecution). 
+This workshop series is intended to support communities whose writing blocks are external and structural as much as they are internal. Accordingly, people experiencing peak colonial oppressions are invited to purchase tickets **first**. (i.e. indigenous communities and whānau facing an acute lack of time, money, resource, domestic support, disability and/or identity, language and cultural persecution). The early release ticket period is open now until 2nd August. General tickets will be available from 3rd of August at 9am.
 
 <table class="bordered">
   <tr>
     <th>Type</th>
     <th>Cost</th>
-    <th>On sale</th>
   </tr>
   <tr>
     <td>
@@ -39,9 +38,6 @@ This workshop series is intended to support communities whose writing blocks are
     <td>
       <strong>$120</strong>
     </td>
-    <td>
-      July 30th
-    </td>
   </tr>
   <tr>
     <td>
@@ -50,14 +46,8 @@ This workshop series is intended to support communities whose writing blocks are
     <td>
       <strong>$250</strong>
     </td>
-    <td>
-      Aug 4th
-    </td>
   </tr>
 </table>
-
-
-Find out more about the course structure, including a message from Nadine about what to expect, here. (LINK TO THE WEBPAGE)
 
 ### Dates:
 
@@ -114,9 +104,6 @@ Find out more about the course structure, including a message from Nadine about 
     td:nth-child(2) {
       padding-right: 6px;
     }
-    td:nth-child(3) {
-      font-size: 0.8rem;
-    }
     margin-bottom: 1rem;
   }
   table.bordered {
@@ -128,3 +115,4 @@ Find out more about the course structure, including a message from Nadine about 
     }
   }
 </style>
+
