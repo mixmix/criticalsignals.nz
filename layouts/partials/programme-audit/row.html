@@ -1,0 +1,33 @@
+{{- /* One <tr> for the /_programme/ audit table. Expects a row dict:
+       {page, hosts, ticketOk, editURL, editLabel, isDraft}. */ -}}
+{{ $event := .page }}
+<tr{{ if .isDraft }} class="programme-audit__row--draft"{{ end }}>
+  <td><a class="programme-audit__link" href="{{ $event.RelPermalink }}">{{ $event.Title | emojify }}</a></td>
+  <td>
+    {{ if .hosts }}
+      <ul class="programme-audit__hosts">
+        {{ range .hosts }}
+          <li{{ with .tooltip }} class="programme-audit__tooltip" data-tooltip="{{ . }}"{{ end }}>
+            {{ if eq .status "complete" }}
+              ✅
+            {{ else if eq .status "incomplete" }}
+              🔥
+            {{ else }}
+              ❓
+            {{ end }}
+            {{ if .page }}
+              <a class="programme-audit__link" href="{{ .page.RelPermalink }}">{{ .name }}</a>
+            {{ else }}
+              {{ .name }}
+            {{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <span class="programme-audit__tooltip" data-tooltip="No hosts listed for this event">❓❗</span>
+    {{ end }}
+  </td>
+  <td><span class="programme-audit__tooltip" data-tooltip="{{ if .ticketOk }}Ticket sign-up link set{{ else }}No ticket sign-up link{{ end }}">{{ if .ticketOk }}✅{{ else }}🔥{{ end }}</span></td>
+  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--view" href="{{ $event.RelPermalink }}">View →</a></td>
+  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--edit programme-audit__tooltip" data-tooltip="Edit on {{ .editLabel }}" href="{{ .editURL }}" target="_blank" rel="noopener noreferrer">✏️ Edit</a></td>
+</tr>

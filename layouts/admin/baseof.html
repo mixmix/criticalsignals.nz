@@ -1,0 +1,16 @@
+{{- /* Minimal shell for the unlisted /_admin/ audit pages — reuses head.html
+       for fonts/CSS/meta but skips the site header and footer entirely. */ -}}
+<!doctype html>
+<html
+  lang="{{ with .Site.Params.isoCode | default (.Site.LanguageCode | default "en") }}{{- . -}}{{ end }}"
+  class="scroll-smooth"
+  data-default-appearance="{{ .Site.Params.defaultAppearance | default "light" }}"
+  data-auto-appearance="{{ .Site.Params.autoSwitchAppearance | default "true" }}">
+  {{- partial "head.html" . -}}
+  <body
+    class="flex flex-col min-h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32">
+    <main id="main-content" class="grow">
+      {{ block "main" . }}{{ end }}
+    </main>
+  </body>
+</html>

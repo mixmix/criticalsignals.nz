@@ -1,5 +1,5 @@
 ---
-title: "(Do Not!) Burn Your Journals"
+title: "(Do Not!) Burn Your Journals <placeholder>"
 draft: true
 ---
 

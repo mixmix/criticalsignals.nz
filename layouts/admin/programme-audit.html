@@ -1,0 +1,197 @@
+{{- /* Unlisted audit page at /_admin/programme/ — not linked from nav, noindex.
+       Rebuilt from front matter on every build: one row per programme event,
+       showing whether each named host resolves to a content/people profile
+       (and whether that profile is complete: name + description + image),
+       and whether a ticket sign-up link is set. */ -}}
+{{ define "main" }}
+  {{ $programmes := where .Site.RegularPages "Type" "programme" }}
+
+  {{ $rows := slice }}
+  {{ range $programmes }}
+    {{ $event := . }}
+    {{ $hostNames := $event.Params.hosts | default slice }}
+
+    {{ $hostInfos := slice }}
+    {{ range $hostNames }}
+      {{ $hostName := . }}
+      {{ $personPage := index (where (where $.Site.RegularPages "Section" "people") "Title" $hostName) 0 }}
+
+      {{ $status := "missing" }}
+      {{ $tooltip := "❓ no profile page" }}
+      {{ if $personPage }}
+        {{ $img := ($personPage.Resources.ByType "image").GetMatch "*feature*" }}
+        {{ if not $img }}{{ $img = ($personPage.Resources.ByType "image").GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
+        {{ $plain := strings.TrimSpace ($personPage.Plain | default "") }}
+        {{ $hasDesc := or (ne $personPage.Description "") (ne $plain "") }}
+
+        {{ $missing := slice }}
+        {{ if not $hasDesc }}{{ $missing = $missing | append "❓ description" }}{{ end }}
+        {{ if not $img }}{{ $missing = $missing | append "❓ image" }}{{ end }}
+
+        {{ if gt (len $missing) 0 }}
+          {{ $status = "incomplete" }}
+          {{ $tooltip = delimit $missing "\n" }}
+        {{ else }}
+          {{ $status = "complete" }}
+          {{ $tooltip = "" }}
+        {{ end }}
+      {{ end }}
+
+      {{ $hostInfos = $hostInfos | append (dict "name" $hostName "page" $personPage "status" $status "tooltip" $tooltip) }}
+    {{ end }}
+
+    {{ $ticketOk := ne ($event.Params.sign_up_link | default "") "" }}
+    {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }}
+
+    {{/* Events regenerated from Ticket Tailor (see scripts/build-programme.mjs)
+         always carry a ticket_tailor_id — hand-authored ("custom") events never
+         do, since the script never touches directories without its marker
+         file. Edit those in Ticket Tailor itself; everything else on GitHub. */}}
+    {{ $ticketTailorID := $event.Params.ticket_tailor_id | default "" }}
+    {{ if ne $ticketTailorID "" }}
+      {{ $editURL := printf "https://app.tickettailor.com/event/%s" $ticketTailorID }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketOk" $ticketOk "sortKey" $sortKey "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
+    {{ else }}
+      {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $event.File.Path }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketOk" $ticketOk "sortKey" $sortKey "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
+    {{ end }}
+  {{ end }}
+
+  {{/* Live events first (soonest first), drafts in their own section at the
+       bottom (also soonest first). Note: drafts only appear here at all when
+       the site is built with buildDrafts on (e.g. `hugo server -D`) — the
+       production build (buildDrafts = false, see hugo.toml) excludes draft
+       pages from the page graph entirely, by design, so this section is
+       naturally empty on the deployed site. */}}
+  {{ $liveRows := sort (where $rows "isDraft" false) "sortKey" "asc" }}
+  {{ $draftRows := sort (where $rows "isDraft" true) "sortKey" "asc" }}
+
+  <section class="programme-audit">
+    {{ partial "admin/nav.html" . }}
+    <div class="programme-audit__intro prose dark:prose-invert">
+      <h1>Programme — unlisted audit</h1>
+    </div>
+
+    <div class="programme-audit__table-wrap">
+      <table class="programme-audit__table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Hosts</th>
+            <th>Ticket url</th>
+            <th class="programme-audit__actions-col" colspan="2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $liveRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
+          {{ if $draftRows }}
+            <tr class="programme-audit__drafts-divider"><td colspan="5">Drafts</td></tr>
+            {{ range $draftRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <style>
+    .programme-audit {
+      padding: 3rem 0 5rem;
+    }
+    .programme-audit__intro {
+      max-width: 65ch;
+      margin-bottom: 2rem;
+    }
+    .programme-audit__table-wrap {
+      overflow-x: auto;
+    }
+    .programme-audit__table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .programme-audit__table th,
+    .programme-audit__table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+      overflow-wrap: break-word;
+    }
+    .programme-audit__table th {
+      color: var(--critical-green);
+      background: var(--critical-cream);
+    }
+    .programme-audit__table th.programme-audit__actions-col,
+    .programme-audit__table td.programme-audit__actions-col {
+      width: 1%;
+      white-space: nowrap;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    .programme-audit__table th.programme-audit__actions-col {
+      text-align: center;
+      background: #fff;
+    }
+    .programme-audit__table td.programme-audit__actions-col {
+      background: lightgrey;
+    }
+    .programme-audit__hosts {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .programme-audit__hosts li {
+      padding: 0;
+    }
+    .programme-audit__link {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .programme-audit__btn {
+      display: inline-block;
+      white-space: nowrap;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 300;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      background: #fff;
+      color: #333;
+    }
+    .programme-audit__btn:hover {
+      background: #e6e6e6;
+    }
+    .programme-audit__drafts-divider td {
+      color: #888;
+      background: #f0f0f0;
+      font-weight: 700;
+    }
+    tr.programme-audit__row--draft {
+      color: #999;
+      opacity: 0.6;
+    }
+    .programme-audit__tooltip {
+      position: relative;
+    }
+    .programme-audit__tooltip[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 6px;
+      white-space: pre-line;
+      text-align: left;
+      background: #222;
+      color: #fff;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      font-weight: 400;
+      z-index: 20;
+      pointer-events: none;
+    }
+  </style>
+{{ end }}

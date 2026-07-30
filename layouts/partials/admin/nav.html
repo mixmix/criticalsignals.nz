@@ -1,0 +1,30 @@
+{{- /* Small top-of-page nav shared by every /_admin/* page, linking the
+       two leaf audit pages. */ -}}
+{{ $links := slice
+  (dict "label" "People" "url" "/_admin/people/")
+  (dict "label" "Programme" "url" "/_admin/programme/")
+}}
+<nav class="admin-nav">
+  {{ range $links }}
+    <a href="{{ .url }}"{{ if eq $.RelPermalink .url }} aria-current="page"{{ end }}>{{ .label }}</a>
+  {{ end }}
+</nav>
+<style>
+  .admin-nav {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+  .admin-nav a {
+    text-decoration: none;
+    color: #888;
+  }
+  .admin-nav a:hover {
+    text-decoration: underline;
+  }
+  .admin-nav a[aria-current="page"] {
+    color: inherit;
+    text-decoration: underline;
+  }
+</style>

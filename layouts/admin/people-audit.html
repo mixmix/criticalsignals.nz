@@ -1,0 +1,83 @@
+{{- /* Unlisted audit page at /_admin/people/ — not linked from nav, noindex.
+       Rebuilt from front matter on every build: every content/people profile
+       that is either tagged "core-team" or named in a programme event's
+       `hosts` list counts as "featured"; everything else drops into the
+       "not yet featured" section at the bottom. */ -}}
+{{ define "main" }}
+  {{ $people := (.Site.GetPage "/people").Pages }}
+  {{ $programmes := where .Site.Pages "Type" "programme" }}
+  {{ $sortedPeople := sort $people "Title" }}
+
+  {{ $featuredRows := slice }}
+  {{ $unusedRows := slice }}
+
+  {{ range $sortedPeople }}
+    {{ $p := . }}
+    {{ $name := $p.Params.Title }}
+    {{ $tags := $p.Params.tags | default slice }}
+    {{ $isCore := in $tags "core-team" }}
+
+    {{ $hostedPages := where $programmes ".Params.hosts" "intersect" (slice $name) }}
+    {{ $eventRows := slice }}
+    {{ range $hostedPages }}
+      {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }}
+      {{ $eventRows = $eventRows | append (dict "page" . "sortKey" $sortKey) }}
+    {{ end }}
+    {{ $eventRows = sort $eventRows "sortKey" "asc" }}
+    {{ $events := apply $eventRows "index" "." "page" }}
+
+    {{ $row := dict "page" $p "isCore" $isCore "events" $events }}
+    {{ if or $isCore (gt (len $events) 0) }}
+      {{ $featuredRows = $featuredRows | append $row }}
+    {{ else }}
+      {{ $unusedRows = $unusedRows | append $row }}
+    {{ end }}
+  {{ end }}
+
+  <section class="people-audit">
+    {{ partial "admin/nav.html" . }}
+    <div class="people-audit__intro prose dark:prose-invert">
+      <h1>People — unlisted audit</h1>
+    </div>
+
+    <h2>Featured people ({{ len $featuredRows }})</h2>
+    <div class="people-audit__grid">
+      {{ range $featuredRows }}{{ partial "people-audit/card.html" . }}{{ end }}
+    </div>
+
+    <h2>Not yet featured ({{ len $unusedRows }})</h2>
+    <p class="people-audit__note">
+      Not tagged <code>core-team</code>, and not listed as a host on any programme event.
+    </p>
+    <div class="people-audit__grid">
+      {{ range $unusedRows }}{{ partial "people-audit/card.html" . }}{{ end }}
+    </div>
+  </section>
+
+  <style>
+    .people-audit {
+      padding: 3rem 0 5rem;
+    }
+    .people-audit__intro {
+      max-width: 65ch;
+      margin-bottom: 2rem;
+    }
+    .people-audit h2 {
+      color: var(--critical-green);
+      background: var(--critical-cream);
+      padding: 0.2rem 0.5rem;
+      margin: 2rem 0 1rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .people-audit__note {
+      opacity: 0.75;
+      margin-bottom: 1rem;
+    }
+    .people-audit__grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+  </style>
+{{ end }}

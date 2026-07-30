@@ -1,0 +1,171 @@
+{{- /* Card for the /_people/ audit page. Expects a dict: {page, isCore, events} */ -}}
+{{ $p := .page }}
+{{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $p.File.Path }}
+
+{{ $img := ($p.Resources.ByType "image").GetMatch "*feature*" }}
+{{ if not $img }}{{ $img = ($p.Resources.ByType "image").GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
+
+{{ $plain := strings.TrimSpace ($p.Plain | default "") }}
+
+<article class="audit-card">
+  <div class="audit-card__media">
+    {{ with $img }}
+      {{ $r := . }}
+      {{ if not (strings.HasSuffix .RelPermalink ".svg") }}{{ $r = .Resize "400x400" }}{{ end }}
+      <img class="audit-card__photo" src="{{ $r.RelPermalink }}" alt="{{ $p.Title }}" loading="lazy">
+    {{ else }}
+      <div class="audit-card__photo audit-card__photo--empty" aria-hidden="true">🔥</div>
+    {{ end }}
+    {{ if .isCore }}
+      <span class="audit-badge audit-badge--core audit-badge--overlay">Core team</span>
+    {{ end }}
+  </div>
+
+  <div class="audit-card__body">
+    <h3 class="audit-card__name"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+
+    <p class="audit-card__desc">
+      {{ if $p.Description }}
+        {{ $p.Description }}
+      {{ else if $plain }}
+        {{ $plain | truncate 200 }}
+      {{ else }}
+        <span class="audit-card__todo">🔥 &lt;TODO&gt; no description yet</span>
+      {{ end }}
+    </p>
+
+    {{ if gt (len .events) 0 }}
+      <div class="audit-card__events">
+        <strong>Programme:</strong>
+        <ul>
+          {{ range .events }}<li><a href="{{ .RelPermalink }}">{{ .Title | emojify }}</a></li>{{ end }}
+        </ul>
+      </div>
+    {{ end }}
+  </div>
+
+  <div class="audit-card__footer">
+    <a class="audit-card__btn audit-card__btn--view" href="{{ $p.RelPermalink }}">View page →</a>
+    <a class="audit-card__btn audit-card__btn--edit" href="{{ $editURL }}" target="_blank" rel="noopener noreferrer">✏️ Edit</a>
+  </div>
+</article>
+
+<style>
+  .audit-card {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 260px;
+    max-width: 260px;
+    background: var(--critical-cream, #f4f1ea);
+    color: #1a1a1a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  .audit-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+  .audit-card__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+  }
+  .audit-card__photo--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #555;
+    font-size: 2.5rem;
+  }
+  .audit-card__body {
+    flex: 1 1 auto;
+    padding: 0.75rem 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .audit-card__name {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .audit-card__name a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .audit-card__name a:hover {
+    text-decoration: underline;
+  }
+  .audit-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+  .audit-badge--core {
+    background: var(--critical-highlight, #d6f7f1);
+    color: #1a1a1a;
+  }
+  .audit-badge--overlay {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+  .audit-card__desc {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+  .audit-card__todo {
+    color: #b3261e;
+    font-weight: 700;
+  }
+  .audit-card__events {
+    font-size: 0.8rem;
+  }
+  .audit-card__events ul {
+    list-style: disc;
+    margin: 0.2rem 0 0;
+    padding-left: 1.1rem;
+  }
+  .audit-card__events li {
+    padding: 0;
+    margin: 0.1rem 0;
+  }
+  .audit-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    background: lightgrey;
+  }
+  .audit-card__btn {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 300;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.22rem 0.45rem;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #333;
+    background: #fff;
+  }
+  .audit-card__btn:hover {
+    background: #e6e6e6;
+  }
+  html[data-theme="dark"] .audit-card {
+    background: #2a2a2a;
+    color: #f4f1ea;
+  }
+</style>

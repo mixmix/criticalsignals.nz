@@ -1,0 +1,25 @@
+{{- /* Section index for /_admin/ — links to the two leaf audit pages. */ -}}
+{{ define "main" }}
+  <section class="admin-index">
+    {{ partial "admin/nav.html" . }}
+    <h1>Admin</h1>
+    <ul>
+      <li><a href="/_admin/people/">People — unlisted audit</a></li>
+      <li><a href="/_admin/programme/">Programme — unlisted audit</a></li>
+    </ul>
+  </section>
+
+  <style>
+    .admin-index {
+      max-width: 65ch;
+      padding: 3rem 0 5rem;
+    }
+    .admin-index ul {
+      list-style: disc;
+      padding-left: 1.2rem;
+    }
+    .admin-index li {
+      margin: 0.3rem 0;
+    }
+  </style>
+{{ end }}
