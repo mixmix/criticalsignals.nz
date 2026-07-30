@@ -17,6 +17,11 @@
         })
       }
     }
+    else {
+      mixpanel.track('entry_from', {
+        utm_source: 'unknown'
+      })
+    }
   })
 </script>
 {{- end }}
