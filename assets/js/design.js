@@ -5,6 +5,7 @@
 (function randomiseImages() {
   const spots = document.querySelectorAll("[data-img-spot]");
   if (!spots.length) return;
+  const MIN_PLACEHOLDER_MS = 400;
   // Low-poly placeholders are inlined as base64 data-URIs (window.CS_LOWPOLY,
   // see design/lowpoly-data.html) so previewing any photo needs no request;
   // fall back to the on-disk SVG if the inline array is somehow absent.
@@ -42,6 +43,18 @@
       wrap.appendChild(el);      // JPEG moves into the wrap, painting on top
       el.style.position = "relative";
       el.style.zIndex = "1";
+      // Fade the JPEG in over the SVG rather than letting it snap into place the
+      // instant it decodes — opacity 0 until `load` fires, then eased up to 1.
+      // The placeholder stays on screen at least MIN_PLACEHOLDER_MS even if the
+      // JPEG loads (near-)instantly from cache, so it's never just a flicker.
+      el.style.opacity = "0";
+      el.style.transition = "opacity .6s ease";
+      const requestedAt = Date.now();
+      el.addEventListener("load", function () {
+        const wait = MIN_PLACEHOLDER_MS - (Date.now() - requestedAt);
+        if (wait > 0) window.setTimeout(function () { el.style.opacity = "1"; }, wait);
+        else el.style.opacity = "1";
+      }, { once: true });
       el.src = pick.jpeg;
     } else {
       // Layered background: JPEG on top, SVG beneath — SVG shows until JPEG loads.
@@ -176,6 +189,31 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.addEventListener("click", function (e) { if (e.target === overlay) shut(); });
     overlay.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", shut); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") shut(); });
+  }
+
+  // 4. Fade the photos out on the way to another page, so they dissolve away
+  //    instead of hard-cutting — the outbound bookend to the fade-in above,
+  //    so hero/band images feel like they cross-dissolve across navigations.
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.addEventListener("click", function (e) {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest("a[href]");
+      if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+      let url;
+      try { url = new URL(a.href, location.href); } catch (err) { return; }
+      if (url.origin !== location.origin) return;
+      // Same page (only the hash differs, e.g. an in-page anchor): no navigation, no fade.
+      if (url.pathname === location.pathname && url.search === location.search) return;
+      const photos = document.querySelectorAll("[data-img-spot]");
+      if (!photos.length) return;
+      e.preventDefault();
+      photos.forEach(function (img) {
+        img.style.transition = "opacity .35s ease";
+        img.style.opacity = "0";
+      });
+      window.setTimeout(function () { window.location.href = a.href; }, 350);
+    });
   }
 
   // 5. Footer sign-up forms → Loops.so.

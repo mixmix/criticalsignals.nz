@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div class="calendar-container">
+      <div class="calendar-container is-loading">
         <div class="calendar-header">
           <div class="calendar-header-day">Mon<span>day</span></div>
           <div class="calendar-header-day">Tue<span>sday</span></div>
@@ -31,6 +31,9 @@
           <div class="calendar-header-day">Fri<span>day</span></div>
           <div class="calendar-header-day">Sat<span>urday</span></div>
           <div class="calendar-header-day">Sun<span>day</span></div>
+        </div>
+        <div id="calendarLoading" class="calendar-loading" aria-hidden="true">
+          <div class="calendar-spinner"></div>
         </div>
         <div id="calendarGrid" class="calendar-grid"></div>
       </div>

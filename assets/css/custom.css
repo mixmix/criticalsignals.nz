@@ -474,8 +474,6 @@ body:has(.cs-hero) .prog-h1{
 
 /* --- Programme list (grouped by date) --- */
 .prog-group .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(10px,1vw,16px);}
-/* breathing room between the text column and the spore/dates rail */
-body:has(.prog-list) .grid{column-gap:clamp(20px,3vw,48px);}
 body:has(.cs-hero) .prog-group__date{
   font-weight:400;text-transform:uppercase;letter-spacing:.02em;
   font-size:1rem;margin:0 0 clamp(10px,1.2vw,16px);
@@ -483,7 +481,7 @@ body:has(.cs-hero) .prog-group__date{
 .prog-item{display:block;text-decoration:none;color:var(--ink);margin:0 0 clamp(14px,1.6vw,22px);}
 .prog-item:last-child{margin-bottom:0;}
 .prog-item__title{
-  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  display:flex;align-items:baseline;justify-content:flex-start;gap:.5rem;
   font-weight:700;text-transform:uppercase;line-height:1.25;
 }
 .prog-item__arrow{flex:0 0 auto;}
@@ -553,14 +551,15 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 }
 .cal-box .calendar-day{
   min-height:92px;height:auto;padding:6px;
-  background:var(--critical-highlight);
+  --tile-bg:var(--critical-highlight);
+  background-color:var(--tile-bg);
   border-right:1px solid #fff;border-bottom:1px solid #fff;
 }
-.cal-box .calendar-day.past{background:#e8e8e8;}
-.cal-box .calendar-day.other-month{background:var(--white);color:var(--ink);}
-.cal-box .calendar-day.other-month:hover{background:#f4fdfb;}
+.cal-box .calendar-day.past{--tile-bg:#e8e8e8;background-color:var(--tile-bg);}
+.cal-box .calendar-day.other-month{--tile-bg:var(--white);background-color:var(--tile-bg);color:var(--ink);}
+.cal-box .calendar-day.other-month:hover{background-color:#f4fdfb;}
 .cal-box .calendar-day.other-month .calendar-day-number{color:var(--ink);}
-.cal-box .calendar-day:hover{background:#eafcf9;}
+.cal-box .calendar-day:hover{background-color:#eafcf9;}
 .cal-box .calendar-day-number{align-self:flex-end;color:var(--ink);opacity:.65;font-weight:400;font-size:.72rem;height:auto;margin-bottom:4px;}
 .cal-box .today-number{background:var(--ink);color:var(--white);opacity:1;border-radius:50%;width:20px;height:20px;justify-content:center;}
 .cal-box .event-item,
@@ -612,11 +611,14 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 #eventModal .btn-register{background:transparent;color:var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.03em;box-shadow:none;transform:none;}
 #eventModal .btn-register:hover{text-decoration:underline;text-underline-offset:3px;transform:none;box-shadow:none;}
 
-/* Calendar rail: spore only (the dates rail belongs beside the narrow column,
-   not under the full-width calendar), dropped in at lower-right per the design. */
-.cal-hero .bigdates{display:none;}
-.cal-hero .rail{padding-top:0;margin-top:clamp(24px,3vw,48px);}
-.cal-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
+/* Calendar/list rail: spore only (the dates rail belongs beside the narrow
+   column, not under a full-width box), dropped in at lower-right per the design. */
+.cal-hero .bigdates,
+.prog-hero .bigdates{display:none;}
+.cal-hero .rail,
+.prog-hero .rail{padding-top:0;margin-top:clamp(24px,3vw,48px);}
+.cal-hero .rail .spore,
+.prog-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
 
 @media (max-width:880px){
   /* Programme/calendar: a slightly shorter hero reveal than the rest of the
@@ -624,7 +626,6 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
      so the view-picker sits at the same height on both. */
   .cal-hero .hero__photo,
   .prog-hero .hero__photo{height:clamp(220px,58vw,350px);}
-  .prog-hero .col{margin-top:clamp(90px,30vw,180px);}
   .cal-box{
     margin-top:clamp(90px,30vw,180px);
     margin-inline:calc(-1 * var(--pad));
@@ -633,5 +634,6 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
   /* .cal-toolbar{gap:.6rem;} */
   .cal-box .calendar-day{min-height:64px;padding:2px 2px;}
   .cal-box .event-item{padding:4px 3px;}
-  .cal-hero .rail .spore{width:80%;margin:1rem auto 0;}
+  .cal-hero .rail .spore,
+  .prog-hero .rail .spore{width:80%;margin:1rem auto 0;}
 }

@@ -13,6 +13,71 @@
   /* background-color: rgb(252, 251, 235); */
 }
 
+/* Loading state: spinner shown, grid hidden, until calendar.js finishes its
+   first render */
+.calendar-loading {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.calendar-container.is-loading .calendar-grid {
+  display: none;
+}
+
+.calendar-container.is-loading .calendar-loading {
+  display: flex;
+}
+
+.calendar-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(155, 35, 65, 0.15);
+  border-top-color: var(--critical-green);
+  border-radius: 50%;
+  animation: calendar-spin 0.8s linear infinite;
+}
+
+@keyframes calendar-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Days arrive into place as if dropped in slightly skewed, straightening
+   out on landing. Staggered top-left to bottom-right via an inline
+   animation-delay set per day in calendar.js */
+@keyframes calendar-day-in {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate(-14px, -10px) skew(-8deg, -4deg) scale(0.94);
+    background-color: #fafafa;
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(0, 0) skew(0deg, 0deg) scale(1);
+    background-color: var(--tile-bg);
+  }
+}
+
+.calendar-day.cal-day-anim {
+  animation: calendar-day-in 0.22s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-spinner {
+    animation: none;
+  }
+  .calendar-day.cal-day-anim {
+    animation: none;
+  }
+}
+
 .calendar-day {
   min-height: 120px;
   border-bottom: 1px solid #9b23414f;
@@ -21,7 +86,8 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: rgb(251, 249, 225);
+  --tile-bg: rgb(251, 249, 225);
+  background-color: var(--tile-bg);
   transition: background-color 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -40,7 +106,8 @@
 }
 
 .calendar-day.other-month {
-  background-color: var(--critical-highlight);
+  --tile-bg: var(--critical-highlight);
+  background-color: var(--tile-bg);
   color: var(--critical-green);
 }
 

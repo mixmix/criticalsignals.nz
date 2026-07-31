@@ -23,6 +23,7 @@ class Calendar {
     this.currentDate = this.initialMonth();
     this.selectedDate = null;
     this.isListView = false;
+    this.isFirstRender = true;
     this.monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
@@ -103,13 +104,30 @@ class Calendar {
     if (endOffset === 0) endOffset = 7; // full trailing week when the month ends on a Monday
     endDate.setDate(lastDay.getDate() + endOffset)
 
+    let visibleIndex = 0;
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       if (date >= endDate) continue
 
+      // Row-major grid order is already top-left -> bottom-right, so a
+      // simple incrementing delay staggers the arrival animation that way.
       const dayElement = this.createDayElement(date, month);
+      dayElement.classList.add('cal-day-anim');
+      dayElement.style.animationDelay = `${visibleIndex * 12}ms`;
+      // Drop the animation once it finishes so it doesn't keep overriding
+      // normal styles like :hover indefinitely.
+      dayElement.addEventListener('animationend', () => {
+        dayElement.classList.remove('cal-day-anim');
+        dayElement.style.animationDelay = '';
+      }, { once: true });
       grid.appendChild(dayElement);
+      visibleIndex++;
+    }
+
+    if (this.isFirstRender) {
+      document.querySelector('.calendar-container').classList.remove('is-loading');
+      this.isFirstRender = false;
     }
   }
 
