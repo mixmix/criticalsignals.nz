@@ -4,8 +4,12 @@
 # background photos, used as instant LQIP previews while the full JPEG loads.
 #
 # For each static/images/backgrounds/NN.jpeg it runs fogleman/primitive several
-# times (it's stochastic), keeps the closest match by RMSE, then compresses the
-# winner with SVGO — writing static/images/backgrounds/lowpoly/NN.svg.
+# times (it's stochastic), keeps the closest match by RMSE, compresses the
+# winner with SVGO, then bakes in 3 turbulence-noise textures (see
+# scripts/lib/lowpoly-texture.mjs): the first third of facets laid down get a
+# broad, low-frequency "brushstroke" texture, the next third a finer one, and
+# the last third the finest, smallest-wavelength grain — writing
+# static/images/backgrounds/lowpoly/NN.svg.
 #
 # Usage:
 #   ./scripts/gen-lowpoly.sh            # regenerate all backgrounds
@@ -35,6 +39,7 @@ need() { command -v "$1" >/dev/null 2>&1 || { echo "✗ missing '$1' — $2" >&2
 need go   "install Go: https://go.dev/dl/"
 need rsvg-convert "install librsvg: brew install librsvg"
 need npx  "install Node.js (bundles npx): https://nodejs.org/"
+need node "install Node.js: https://nodejs.org/"
 
 export PATH="$PATH:$(go env GOPATH)/bin"
 if ! command -v primitive >/dev/null 2>&1; then
@@ -60,6 +65,7 @@ fi
 echo "settings: N=$N triangles, ITERS=$ITERS passes/image, RES=$RES"
 
 done_svgs=()
+done_imgs=()
 for i in "${imgs[@]}"; do
   jpeg="$SRC/$i.jpeg"
   if [ ! -f "$jpeg" ]; then echo "  skip $i (no $jpeg)"; continue; fi
@@ -76,6 +82,7 @@ for i in "${imgs[@]}"; do
   done
   cp "$best" "$OUT/$i.svg"
   done_svgs+=("$OUT/$i.svg")
+  done_imgs+=("$i")
   printf '  %s  best MSE=%s\n' "$i" "$bestscore"
 done
 
@@ -83,6 +90,12 @@ done
 echo "→ compressing with SVGO…"
 for svg in "${done_svgs[@]}"; do
   npx -y svgo@latest --quiet --config "$SCRIPT_DIR/lib/svgo.config.mjs" "$svg" -o "$svg"
+done
+
+# --- bake in the coarse-to-fine turbulence textures ---------------------------
+echo "→ layering turbulence textures…"
+for i in "${done_imgs[@]}"; do
+  node "$SCRIPT_DIR/lib/lowpoly-texture.mjs" "$OUT/$i.svg" "$i"
 done
 
 echo "✓ done → $OUT"

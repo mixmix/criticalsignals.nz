@@ -49,6 +49,11 @@ function buildLowpolyPlaceholder(wrap, svgText) {
   blur.setAttribute("stdDeviation", "2.5");
   filter.appendChild(blur);
   defs.appendChild(filter);
+  // Carry over the per-facet turbulence filters baked into the source SVG
+  // (see scripts/lib/lowpoly-texture.mjs) — cloning facets alone (below) is a
+  // shallow clone of each <path>, so their `url(#...)` filter references
+  // would otherwise point at nothing once reparented into this new <svg>.
+  source.querySelectorAll("defs > filter").forEach(function (f) { defs.appendChild(f.cloneNode(true)); });
   svg.appendChild(defs);
   const facetGroup = document.createElementNS(svgNS, "g");
   facetGroup.setAttribute("filter", "url(#" + filterId + ")");
