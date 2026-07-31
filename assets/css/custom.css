@@ -423,8 +423,12 @@ body:not(:has(.cs-hero)) .prose :where(a){text-decoration:underline;text-underli
   .toc-inside>div{border-left:none;}
 }
 
-/* Programme calendar/list view picker (retained) */
-.view-picker{display:inline-flex;margin-top:0;border:2px solid var(--ink);}
+/* Programme calendar/list view picker (retained). Block + fit-content (not
+   inline-flex) so its top edge sits by plain margin collapsing with the H1
+   above — inline-flex would place it in an inline formatting context, whose
+   line-height/baseline math shifted it a few px differently on this page
+   than inside .cal-toolbar's flex column (where it's blockified anyway). */
+.view-picker{display:flex;width:fit-content;margin-top:0;border:2px solid var(--ink);}
 .view-picker__btn{
   display:inline-block;padding:.4rem 1rem;
   font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;

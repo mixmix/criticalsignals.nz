@@ -1,6 +1,116 @@
 // Critical Signals — image randomiser, spore/dates parallax, burger menu,
 // dark-mode toggle, and Loops.so sign-up handling.
 
+var PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Off for now — the cross-dissolve on the way OUT to another page (section 4).
+// Flip to true to re-enable; the build-in/fade-in on arrival is unaffected.
+var ENABLE_OUTBOUND_FADE = false;
+// Placeholder controllers keyed by spot, shared between the build-in (section 1)
+// and the outbound teardown (section 4), so a page-leave can un-assemble the
+// same triangles a page-arrival assembled.
+var lowpolyControllers = [];
+// Each placeholder gets its own <filter id>, since several can be on one page.
+var lowpolyFilterCount = 0;
+
+// A low-poly SVG is a solid base fill plus ~100 triangular facet <path>s. Rather
+// than showing it as one flat image, parse it and grow/shrink those facets into
+// a live inline <svg> a batch at a time — so the placeholder visibly assembles
+// itself out of triangles on arrival, and dissolves back into them on the way
+// out, instead of just popping or fading as a flat bitmap.
+function buildLowpolyPlaceholder(wrap, svgText) {
+  const BUILD_MS = 220;
+  let source;
+  try { source = new DOMParser().parseFromString(svgText, "image/svg+xml").documentElement; }
+  catch (e) { return null; }
+  const paths = Array.prototype.slice.call(source.querySelectorAll("path"));
+  if (!paths.length) return null;
+  const group = source.querySelector("g[fill-opacity]");
+  const facetOpacity = group && group.getAttribute("fill-opacity");
+
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 " + (source.getAttribute("width") || 1024) + " " + (source.getAttribute("height") || 576));
+  svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
+  svg.setAttribute("aria-hidden", "true");
+  svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block;";
+
+  // Soften the hard triangle edges with a gaussian blur, so the placeholder
+  // reads as a blurred photo preview rather than a stack of flat facets. The
+  // filter sits on a wrapping <g> (not each facet) so it's one blur pass over
+  // the assembled whole, not per-triangle; each placeholder gets its own
+  // filter id since several can share a page.
+  const filterId = "lowpoly-blur-" + (lowpolyFilterCount++);
+  const defs = document.createElementNS(svgNS, "defs");
+  const filter = document.createElementNS(svgNS, "filter");
+  filter.setAttribute("id", filterId);
+  filter.setAttribute("x", "-10%"); filter.setAttribute("y", "-10%");
+  filter.setAttribute("width", "120%"); filter.setAttribute("height", "120%");
+  const blur = document.createElementNS(svgNS, "feGaussianBlur");
+  blur.setAttribute("stdDeviation", "2.5");
+  filter.appendChild(blur);
+  defs.appendChild(filter);
+  svg.appendChild(defs);
+  const facetGroup = document.createElementNS(svgNS, "g");
+  facetGroup.setAttribute("filter", "url(#" + filterId + ")");
+  svg.appendChild(facetGroup);
+  wrap.insertBefore(svg, wrap.firstChild);
+
+  // Background fill first (index 0, fully opaque), then each translucent facet —
+  // same visual as the original flat SVG, just built up node by node.
+  const facets = paths.map(function (p, i) {
+    const clone = p.cloneNode(false);
+    if (i > 0 && facetOpacity) clone.setAttribute("fill-opacity", facetOpacity);
+    return clone;
+  });
+
+  let added = 0;
+  let raf = null;
+  if (PREFERS_REDUCED_MOTION) {
+    facets.forEach(function (n) { facetGroup.appendChild(n); });
+    added = facets.length;
+  } else {
+    const t0 = performance.now();
+    (function grow() {
+      const target = Math.min(facets.length, Math.ceil(((performance.now() - t0) / BUILD_MS) * facets.length));
+      while (added < target) facetGroup.appendChild(facets[added++]);
+      if (added < facets.length) raf = requestAnimationFrame(grow);
+    })();
+  }
+
+  return {
+    shrink: function (durationMs) {
+      if (raf) cancelAnimationFrame(raf);
+      if (PREFERS_REDUCED_MOTION) { svg.remove(); return; }
+      const total = facetGroup.children.length;
+      const t0 = performance.now();
+      (function shrink() {
+        const remaining = Math.max(0, total - Math.ceil(((performance.now() - t0) / durationMs) * total));
+        while (facetGroup.children.length > remaining) facetGroup.removeChild(facetGroup.lastElementChild);
+        if (facetGroup.children.length > 0) requestAnimationFrame(shrink);
+      })();
+    },
+  };
+}
+
+// Decodes an inlined base64 SVG data-URI synchronously (no request, so the
+// build-in can start on the same tick); falls back to fetching the on-disk
+// path for the rare case the inline array (window.CS_LOWPOLY) is absent.
+function loadSvgText(src, cb) {
+  const marker = "data:image/svg+xml;base64,";
+  if (src.indexOf(marker) === 0) { cb(atob(src.slice(marker.length))); return; }
+  fetch(src).then(function (res) { return res.text(); }).then(cb).catch(function () {});
+}
+
+// The low-poly SVG's first <path> is always a full-canvas rect in the photo's
+// dominant colour (see buildLowpolyPlaceholder). Pull it out with a cheap
+// regex rather than a full DOM parse, so a solid-colour placeholder can be
+// painted the instant the (usually inline, synchronously-decoded) SVG text is
+// available — no waiting on facets to build or the JPEG to load.
+function svgBaseColor(svgText) {
+  const m = /<path[^>]*\sfill="(#[0-9a-fA-F]{3,8})"/.exec(svgText);
+  return m ? m[1] : null;
+}
+
 // 1. Randomise the photo in each marked spot, distinct per page.
 (function randomiseImages() {
   const spots = document.querySelectorAll("[data-img-spot]");
@@ -24,22 +134,14 @@
   spots.forEach(function (el, i) {
     const pick = pool[i % pool.length];
     if (el.tagName === "IMG") {
-      // Two real <img>s stacked in the same box: the low-poly SVG placeholder
-      // sits directly UNDER the JPEG, so it's guaranteed present in the DOM
-      // (no reliance on CSS background painting). Wrap the JPEG in a relative
-      // holder sized by the JPEG itself, and absolutely overlay the SVG behind
-      // it — exact alignment regardless of the outer container's size. The
-      // progressive JPEG then resolves (coarse → sharp) over the SVG: that's
-      // the "merge in as it loads". object-fit:cover keeps both cropped alike.
+      // The low-poly placeholder sits directly UNDER the JPEG, built live as an
+      // inline <svg> (see buildLowpolyPlaceholder) so it's guaranteed present in
+      // the DOM (no reliance on CSS background painting). Wrap the JPEG in a
+      // relative holder sized by the JPEG itself, and absolutely overlay the SVG
+      // behind it — exact alignment regardless of the outer container's size.
       const wrap = document.createElement("span");
       wrap.style.cssText = "position:relative;display:block;";
       el.parentNode.insertBefore(wrap, el);
-      const ph = document.createElement("img");
-      ph.alt = "";
-      ph.setAttribute("aria-hidden", "true");
-      ph.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;";
-      ph.src = pick.svg;
-      wrap.appendChild(ph);      // placeholder first (underneath)
       wrap.appendChild(el);      // JPEG moves into the wrap, painting on top
       el.style.position = "relative";
       el.style.zIndex = "1";
@@ -56,9 +158,22 @@
         else el.style.opacity = "1";
       }, { once: true });
       el.src = pick.jpeg;
+      loadSvgText(pick.svg, function (svgText) {
+        // Paint the dominant colour on the wrap straight away — cheaper and
+        // faster than waiting for the facets to build, and it still shows
+        // through their translucent edges once they do.
+        const bg = svgBaseColor(svgText);
+        if (bg) wrap.style.backgroundColor = bg;
+        const placeholder = buildLowpolyPlaceholder(wrap, svgText);
+        if (placeholder) lowpolyControllers.push(placeholder);
+      });
     } else {
       // Layered background: JPEG on top, SVG beneath — SVG shows until JPEG loads.
       el.style.backgroundImage = "url('" + pick.jpeg + "'),url('" + pick.svg + "')";
+      loadSvgText(pick.svg, function (svgText) {
+        const bg = svgBaseColor(svgText);
+        if (bg) el.style.backgroundColor = bg;
+      });
     }
   });
 })();
@@ -81,7 +196,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".bigdates").forEach(function (el) { drifters.push({ el: el, rate: 0.20 }); });
 
     const PHOTO_SCALE = 1.14;
-    const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo, .hero__photo"));
+    // Transform the WRAP (span from section 1), not the <img> itself — the wrap
+    // is what holds both the JPEG and its low-poly SVG placeholder stacked
+    // together, so scaling/panning it keeps the two in lockstep. Transforming
+    // the <img> alone would drift the JPEG away from the still-static SVG
+    // beneath it (or leave a visible seam once the JPEG has faded in).
+    const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo, .hero__photo")).map(function (el) { return el.parentElement; });
     photos.forEach(function (el) { el.style.willChange = "transform"; });
 
     let ticking = false;
@@ -94,13 +214,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const y = window.pageYOffset;
       const vh = window.innerHeight;
       drifters.forEach(function (d) { d.el.style.transform = mobile ? "" : "translate3d(0," + (y * d.rate).toFixed(1) + "px,0)"; });
-      photos.forEach(function (img) {
-        if (mobile) { img.style.transform = ""; return; }
-        const r = img.getBoundingClientRect();
+      photos.forEach(function (wrap) {
+        if (mobile) { wrap.style.transform = ""; return; }
+        const r = wrap.getBoundingClientRect();
         const slack = (r.height * (PHOTO_SCALE - 1)) / 2;
         let t = -((r.top + r.height / 2) - vh / 2) * 0.09;
         if (t > slack) t = slack; else if (t < -slack) t = -slack;
-        img.style.transform = "translate3d(0," + t.toFixed(1) + "px,0) scale(" + PHOTO_SCALE + ")";
+        wrap.style.transform = "translate3d(0," + t.toFixed(1) + "px,0) scale(" + PHOTO_SCALE + ")";
       });
       ticking = false;
     };
@@ -191,10 +311,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") shut(); });
   }
 
-  // 4. Fade the photos out on the way to another page, so they dissolve away
-  //    instead of hard-cutting — the outbound bookend to the fade-in above,
-  //    so hero/band images feel like they cross-dissolve across navigations.
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  // 4. Fade the photos out — and shrink each low-poly placeholder back down to
+  //    nothing, facet by facet — on the way to another page, so everything
+  //    dissolves away instead of hard-cutting. The outbound bookend to the
+  //    build-in/fade-in above, so hero/band images feel like they cross-dissolve
+  //    across navigations. Currently disabled — flip ENABLE_OUTBOUND_FADE to
+  //    turn it back on.
+  if (ENABLE_OUTBOUND_FADE && !PREFERS_REDUCED_MOTION) {
     document.addEventListener("click", function (e) {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -212,6 +335,7 @@ document.addEventListener("DOMContentLoaded", function () {
         img.style.transition = "opacity .35s ease";
         img.style.opacity = "0";
       });
+      lowpolyControllers.forEach(function (c) { c.shrink(180); });
       window.setTimeout(function () { window.location.href = a.href; }, 350);
     });
   }
