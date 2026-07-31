@@ -3,26 +3,26 @@
        a hand-drawn divider + date heading, then each event on that day
        (title + arrow, category). Date-to-be-confirmed events group at the end. */ -}}
 {{ define "main" }}
-  <section class="hero hero--inner cs-hero">
+  <section class="hero hero--inner cs-hero prog-hero">
     <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">
         <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
-        <p class="programme-type-picker">
-          <a href="/calendar">Calendar View</a> &nbsp;|&nbsp; <span class="is-active">List View</span>
-        </p>
+        <div class="view-picker" role="group" aria-label="View">
+          <a href="/calendar" class="view-picker__btn">Calendar View</a>
+          <span class="view-picker__btn is-active">List View</span>
+        </div>
 
         <div class="prog-intro">{{ .Content }}</div>
 
-        {{/* Draft events are flagged with a "[DRAFT] " title prefix by
-             scripts/build-programme.mjs (not Hugo's draft flag). Hide them.
+        {{/* Draft events are flagged with `draft: true` in front matter. Hide them.
              Split off date-to-be-confirmed events so they group at the end. */}}
         {{ $dated := slice }}
         {{ $tbc := slice }}
         {{ range .Pages.ByDate }}
-          {{ if not (strings.HasPrefix .Title "[DRAFT]") }}
+          {{ if not .Draft }}
             {{ if .Params.dateTBC }}
               {{ $tbc = $tbc | append . }}
             {{ else }}
@@ -36,7 +36,7 @@
             {{ $gi := 0 }}
             {{ range $g := $dated.GroupByDate "2 January 2006" "asc" }}
               <div class="prog-group">
-                <img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
                 <h2 class="prog-group__date">{{ $g.Key }}</h2>
                 {{ range $p := $g.Pages }}
                   <a class="prog-item" href="{{ $p.RelPermalink }}">
@@ -61,7 +61,7 @@
 
             {{ if gt (len $tbc) 0 }}
               <div class="prog-group">
-                <img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
                 <h2 class="prog-group__date">Date to be confirmed</h2>
                 {{ range $p := $tbc }}
                   <a class="prog-item" href="{{ $p.RelPermalink }}">

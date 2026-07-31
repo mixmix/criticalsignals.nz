@@ -229,7 +229,7 @@ class Calendar {
   getEventsForDate(date) {
     const dateStr = date.toISOString().split('T')[0];
     return this.eventsData.filter(event => {
-      if (event.dateTBC) return false;
+      if (event.dateTBC || !event.date) return false;
       const eventDate = parseEventDate(event.date);
       return eventDate.toISOString().split('T')[0] === dateStr;
     });

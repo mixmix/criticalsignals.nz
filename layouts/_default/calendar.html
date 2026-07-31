@@ -11,9 +11,10 @@
       <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
       <div class="cal-toolbar">
-        <p class="programme-type-picker">
-          <span class="is-active">Calendar View</span> &nbsp;|&nbsp; <a href="/programme">List View</a>
-        </p>
+        <div class="view-picker" role="group" aria-label="View">
+          <span class="view-picker__btn is-active">Calendar View</span>
+          <a href="/programme" class="view-picker__btn">List View</a>
+        </div>
         <div class="calendar-navigation">
           <button id="prevMonth" type="button" aria-label="Previous month">&larr; Prev</button>
           <h2 id="currentMonth"></h2>
@@ -60,9 +61,10 @@
   {{/* ---- Event + collaborator data for calendar.js ---- */}}
   {{ $events := slice }}
   {{ range .Site.AllPages }}
-    {{/* Skip the section page and draft events (flagged with a "[DRAFT] " title
-         prefix by scripts/build-programme.mjs, not Hugo's draft flag). */}}
-    {{ if and (in .RelPermalink "/programme/") (ne .Kind "section") (not (strings.HasPrefix .Title "[DRAFT]")) }}
+    {{/* Skip the section page and draft events (flagged with `draft: true`
+         in front matter). .Site.AllPages includes drafts regardless of the
+         buildDrafts setting, so this must be checked explicitly. */}}
+    {{ if and (strings.HasPrefix .RelPermalink "/programme/") (ne .Kind "section") (not .Draft) }}
       {{ $eventData := dict
         "title" .Title
         "date" .Params.date

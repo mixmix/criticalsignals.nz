@@ -424,7 +424,17 @@ body:not(:has(.cs-hero)) .prose :where(a){text-decoration:underline;text-underli
 }
 
 /* Programme calendar/list view picker (retained) */
-.programme-type-picker{margin-top:0 !important;font-size:14px;line-height:28px;letter-spacing:1px;}
+.view-picker{display:inline-flex;margin-top:0;border:2px solid var(--ink);}
+.view-picker__btn{
+  display:inline-block;padding:.4rem 1rem;
+  font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:var(--ink);text-decoration:none;background:var(--white);
+  border-right:2px solid var(--ink);
+}
+.view-picker__btn:last-child{border-right:none;}
+.view-picker__btn:hover{background:var(--critical-highlight);text-decoration:none;}
+.view-picker__btn.is-active{background:var(--ink);color:var(--white);}
+.view-picker__btn.is-active:hover{background:var(--ink);}
 
 /* Legacy inline button class used on a few content pages (e.g. mission statement) */
 .homepage-programme-link{
@@ -455,14 +465,12 @@ body:has(.cs-hero) .prog-h1{
   font-weight:700;text-transform:uppercase;letter-spacing:.02em;
   font-size:2rem;margin:0 0 0.5rem;
 }
-.programme-type-picker{
-  margin:0 0 clamp(22px,2.2vw,34px) !important;
-  text-transform:uppercase;letter-spacing:1px;font-size:.8rem;
-}
-.programme-type-picker a{color:var(--ink);text-decoration:none;}
-.programme-type-picker a:hover,
-.programme-type-picker .is-active{text-decoration:underline;text-underline-offset:4px;}
-.prog-intro{margin:0 0 clamp(8px,1.2vw,16px);}
+.view-picker{margin:0 0 clamp(22px,2.2vw,34px);}
+/* No margin of its own — when empty it must add nothing after .view-picker;
+   when it has intro text, the text's own paragraph margin provides the gap
+   before .prog-list. */
+.prog-intro{margin:0;}
+.prog-intro:not(:empty){margin-bottom:clamp(8px,1.2vw,16px);}
 
 /* --- Programme list (grouped by date) --- */
 .prog-group .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(10px,1vw,16px);}
@@ -526,11 +534,12 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
   padding:clamp(24px,2.4vw,44px) var(--tpad) clamp(40px,4vw,72px);
 }
 .cal-toolbar{
-  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:1rem;
-  margin-bottom:clamp(16px,1.6vw,26px);
+  display:flex;flex-direction:column;align-items:stretch;
+  gap:clamp(22px,2.2vw,34px);
+  margin-bottom:clamp(6px,.8vw,12px);
 }
-.cal-toolbar .programme-type-picker{margin:0 !important;}
-.calendar-navigation{display:flex;align-items:center;gap:1rem;text-transform:uppercase;letter-spacing:1px;font-size:.8rem;}
+.cal-toolbar .view-picker{margin:0;align-self:flex-start;}
+.calendar-navigation{display:flex;align-items:center;justify-content:center;gap:1rem;text-transform:uppercase;letter-spacing:1px;font-size:.8rem;}
 .calendar-navigation button{background:none;border:none;padding:0;cursor:pointer;font:inherit;text-transform:uppercase;color:var(--ink);}
 .calendar-navigation button:hover{text-decoration:underline;text-underline-offset:4px;}
 .calendar-navigation #currentMonth{font-weight:700;min-width:9em;text-align:center;}
@@ -610,9 +619,18 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 .cal-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
 
 @media (max-width:880px){
-  .cal-box{margin-inline:calc(-1 * var(--pad));padding:clamp(18px,5vw,28px) var(--pad) clamp(20px,4vw,32px);}
-  .cal-toolbar{flex-direction:column;align-items:flex-start;gap:.6rem;}
-  .calendar-navigation{align-self:center;justify-content:center;}
+  /* Programme/calendar: a slightly shorter hero reveal than the rest of the
+     site (smaller photo + smaller drop), kept in sync between the two pages
+     so the view-picker sits at the same height on both. */
+  .cal-hero .hero__photo,
+  .prog-hero .hero__photo{height:clamp(220px,58vw,350px);}
+  .prog-hero .col{margin-top:clamp(90px,30vw,180px);}
+  .cal-box{
+    margin-top:clamp(90px,30vw,180px);
+    margin-inline:calc(-1 * var(--pad));
+    padding:clamp(18px,5vw,28px) var(--pad) clamp(20px,4vw,32px);
+  }
+  /* .cal-toolbar{gap:.6rem;} */
   .cal-box .calendar-day{min-height:64px;padding:2px 2px;}
   .cal-box .event-item{padding:4px 3px;}
   .cal-hero .rail .spore{width:80%;margin:1rem auto 0;}
