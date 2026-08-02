@@ -3,14 +3,4 @@ title: "Giuseppe Micciarelli"
 date: 2026-07-30
 ---
 
-Giuseppe Micciarelli is a political philosopher and sociologist of law; he
-has published numerous essays and articles on commons and critical theory on
-neoliberalisation of public and private institutions. With his political and
-legal hacker methodology, he supports social movements, practitioners,
-associations, and local administrations to empower democratization tools.
-
-He is one of the researchers and activists who developed the governance of
-urban commons in Naples, setting up civic and collective urban use; he
-designed the policy of creative and care income for cultural workers and
-supported dozens of regeneration experiences around the world, helping them
-to deal with public administrations and market co-optation.
+Giuseppe Micciarelli is a scholar whose research lies at the intersection of political theory and the sociology of law.  He has published extensively on the commons, critical theory, social movements, algorithmic governance, and the neoliberalisation of public and private institutions He is currently exploring the grassroots design of digital twins through citizen-science approaches, with the aim of enabling community oversight of climate-change impacts and extreme events.. Drawing on a methodology of political and legal hacking, he works with practitioners, associations, and local authorities to strengthen democratic tools and policies.He has supported dozens of commons-based regeneration initiatives around the world, helping them navigate their relationships with public authorities and resist co-optation by market actors. He is among the researchers and activists who developed the governance framework for urban commons in Naples, contributing to the establishment of the "urban civic use" model. 
