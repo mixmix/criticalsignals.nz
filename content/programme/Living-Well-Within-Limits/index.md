@@ -1,5 +1,7 @@
 ---
 title: "Living Well Within Limits"
+hosts:
+  - "Julia Steinberger"
 date: "2026-09-09"
 start_time: "18:00"
 end_time: "20:00"
