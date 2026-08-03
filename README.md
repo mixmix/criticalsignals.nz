@@ -77,15 +77,26 @@ To (re)generate the SVGs from the JPEGs:
 Requirements (macOS):
 
 ```bash
-brew install go librsvg   # librsvg provides rsvg-convert
-# Node.js (for npx/SVGO) — via nvm, brew, or nodejs.org
-# fogleman/primitive is auto-installed on first run via `go install`
+brew install go   # builds scripts/lib/lowpoly-warp.go
+# Node.js (for npx/SVGO)  — via nvm, brew, or nodejs.org
 ```
 
-The script runs `primitive` several times per image (it's random), keeps the
-closest match by RMSE, then compresses with SVGO. Tune with `LOWPOLY_N`
-(triangle count, default 100), `LOWPOLY_ITERS` (passes/image, default 20) and
-`LOWPOLY_RES`. Rebuild Hugo afterwards so the inline `CS_LOWPOLY` array updates.
+The script's fitter (`scripts/lib/lowpoly-warp.go`) fits N triangles against
+the real photo (position, then color/alpha), then tunes 3 shared turbulence
+filters — a low-frequency "big wave" over the first 50% of triangles (in
+paint order), a "mid" wave over the next 30%, and a high-frequency "small
+wave" over the last 20% — searching each tier's frequency/scale for the
+boldest warp that stays within an error-tolerance budget of the flat fit (see
+that file's header/comments for why it's a budget, not a strict minimum).
+It's run several times per image (it's stochastic), the lowest-error result
+is kept, then compressed with SVGO. Every (image, attempt) pair is fitted
+concurrently, so a full rebuild of all ten is ~2min. Tune with `LOWPOLY_N`
+(triangle count, default 100), `LOWPOLY_EFFORT` (how hard each attempt
+searches, default 8), `LOWPOLY_ITERS` (attempts/image, default 5),
+`LOWPOLY_RES` and `LOWPOLY_JOBS` (concurrency). Budget is far better spent on
+EFFORT than on ITERS: at matched CPU cost, 4x the attempts measured 0–2.4%
+lower error against 3.9–6.9% for 4x the effort.
+Rebuild Hugo afterwards so the inline `CS_LOWPOLY` array updates.
 
 ## Deploy
 

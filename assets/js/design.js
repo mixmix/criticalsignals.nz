@@ -10,6 +10,7 @@ var ENABLE_OUTBOUND_FADE = false;
 // same triangles a page-arrival assembled.
 var lowpolyControllers = [];
 // Each placeholder gets its own <filter id>, since several can be on one page.
+// Unused while the blur below is commented out; kept for when it comes back.
 var lowpolyFilterCount = 0;
 
 // A low-poly SVG is a solid base fill plus ~100 triangular facet <path>s. Rather
@@ -34,13 +35,15 @@ function buildLowpolyPlaceholder(wrap, svgText) {
   svg.setAttribute("aria-hidden", "true");
   svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block;";
 
-  // Soften the hard triangle edges with a gaussian blur, so the placeholder
-  // reads as a blurred photo preview rather than a stack of flat facets. The
-  // filter sits on a wrapping <g> (not each facet) so it's one blur pass over
-  // the assembled whole, not per-triangle; each placeholder gets its own
-  // filter id since several can share a page.
-  const filterId = "lowpoly-blur-" + (lowpolyFilterCount++);
   const defs = document.createElementNS(svgNS, "defs");
+  // Gaussian blur over the assembled facets — disabled for now while the
+  // turbulence warp is being tuned, so the facet edges show as generated.
+  // Softens the hard triangle edges so the placeholder reads as a blurred
+  // photo preview rather than a stack of flat facets. The filter sits on a
+  // wrapping <g> (not each facet) so it's one blur pass over the assembled
+  // whole, not per-triangle; each placeholder gets its own filter id since
+  // several can share a page.
+  const filterId = "lowpoly-blur-" + (lowpolyFilterCount++);
   const filter = document.createElementNS(svgNS, "filter");
   filter.setAttribute("id", filterId);
   filter.setAttribute("x", "-10%"); filter.setAttribute("y", "-10%");
@@ -56,7 +59,7 @@ function buildLowpolyPlaceholder(wrap, svgText) {
   source.querySelectorAll("defs > filter").forEach(function (f) { defs.appendChild(f.cloneNode(true)); });
   svg.appendChild(defs);
   const facetGroup = document.createElementNS(svgNS, "g");
-  facetGroup.setAttribute("filter", "url(#" + filterId + ")");
+  facetGroup.setAttribute("filter", "url(#" + filterId + ")"); // disable blur here
   svg.appendChild(facetGroup);
   wrap.insertBefore(svg, wrap.firstChild);
 

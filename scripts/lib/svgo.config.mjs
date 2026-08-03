@@ -1,8 +1,9 @@
-// Max-compression SVGO config for fogleman/primitive output.
-// Wins: bake the outer scale() into coords, convert polygons to compact <path>
-// data, hoist the shared fill-opacity onto the parent <g>, drop version/metadata.
-// floatPrecision is kept high (5) so the scale() transform stays accurate and
-// the triangles still reach the image edges (no white gaps).
+// Max-compression SVGO config for scripts/lib/lowpoly-warp.go output.
+// Drops version/metadata and rounds numeric precision; cleanupIDs keeps the
+// per-tier <filter id> references (url(#w-big) etc.) consistent while
+// minifying them. floatPrecision is kept high (5) so small feTurbulence
+// baseFrequency values (e.g. 0.00749) don't get rounded down to 0.01 and
+// change the texture.
 export default {
   multipass: true,
   js2svg: { pretty: false, indent: 0 },
@@ -15,9 +16,5 @@ export default {
         },
       },
     },
-    // round the polygon point lists to integers
-    { name: 'cleanupListOfValues', params: { floatPrecision: 0 } },
-    // pull identical attributes (fill-opacity) up onto the parent <g>
-    'moveElemsAttrsToGroup',
   ],
 };
