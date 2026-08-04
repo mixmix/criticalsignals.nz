@@ -1,5 +1,7 @@
 ---
 title: "Urban Commoning - Returning City Spaces to The People"
+hosts:
+  - "Giuseppe Micciarelli"
 date: "2026-08-19"
 start_time: "18:00"
 end_time: "20:00"
