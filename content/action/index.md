@@ -11,8 +11,11 @@ showHeadingAnchors: false
 <p class="intro">Thanks for stopping by. Here's how to get involved with Critical Signals 2026.</p>
 
 <div class="cta-row">
-  <a class="cta cta--solid" href="#signup">Sign up for our newsletter</a>
+  <a class="cta cta--solid" href="/programme/">View Programme</a>
   <a class="cta cta--outline" href="/call-for-contributions/">Have a proposal? Click here</a>
+</div>
+<div class="cta-row">
+  <a class="cta cta--outline" href="#signup">Sign up for our newsletter</a>
 </div>
 
 <img class="divider" src="/images/design/divider1.png" alt="">
