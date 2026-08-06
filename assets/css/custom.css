@@ -213,6 +213,8 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .hero--home .rail{margin-top:0;}
 .col .cta-row{margin:clamp(34px,3.4vw,56px) 0 clamp(38px,3.8vw,62px);}
 .col .focus{margin-top:clamp(34px,3.2vw,52px);}
+.col .upcoming{margin-top:clamp(34px,3.2vw,52px);}
+.upcoming .prog-list{margin-top:clamp(14px,1.6vw,22px);}
 .col .note{margin-top:16px;}
 
 /* middle image (home / who): pulled up so the column ends OVER its top */
@@ -232,7 +234,8 @@ main>section.imgband{margin-top:-26vw;margin-bottom:0;position:relative;z-index:
 .cta--outline:hover{background:var(--ink);color:var(--white);}
 
 /* hand-drawn dividers */
-.divider{width:100%;max-width:none;height:auto;opacity:.85;margin:34px 0;display:block;}
+.divider{width:100%;height:auto;opacity:.85;margin:34px 0;display:block;}
+main img.divider {max-width:500px}
 
 /* focus list */
 .focus h2,.focus h3{margin:0 0 6px;}
@@ -482,7 +485,12 @@ body:has(.cs-hero) .prog-group__date{
   font-weight:400;text-transform:uppercase;letter-spacing:.02em;
   font-size:1rem;margin:0 0 clamp(10px,1.2vw,16px);
 }
-.prog-item{display:block;text-decoration:none;color:var(--ink);margin:0 0 clamp(14px,1.6vw,22px);}
+.prog-item{
+  display:block;
+  text-decoration:none;
+  color:var(--ink);
+  margin:0 0 clamp(14px,1.6vw,22px) 1rem;
+}
 .prog-item:last-child{margin-bottom:0;}
 .prog-item__title{
   display:flex;align-items:baseline;justify-content:flex-start;gap:.5rem;
@@ -493,6 +501,27 @@ body:has(.cs-hero) .prog-group__date{
 .prog-item__cat{display:block;margin-top:4px;font-weight:700;text-transform:uppercase;font-size:.8rem;}
 .prog-item__subtitle{display:block;margin-top:2px;font-weight:700;text-transform:none;font-size:.85rem;opacity:.7;}
 .prog-item__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .4em;opacity:.6;}
+.prog-item__date{display:block;margin-top:2px;font-weight:400;text-transform:uppercase;font-size:.85rem;opacity:.7;}
+
+/* --- Past / Upcoming events (collapsible sections, same chrome) --- */
+.prog-past{margin-bottom:clamp(28px,3vw,44px);}
+.prog-past__summary{
+  cursor:pointer;list-style:none;user-select:none;
+  display:flex;align-items:center;gap:.55rem;
+  font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:.95rem;
+}
+.prog-past__summary::-webkit-details-marker{display:none;}
+.prog-past__summary::before{
+  content:"";flex:0 0 auto;width:8px;height:8px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-45deg);transition:transform .18s ease;
+}
+.prog-past[open] .prog-past__summary::before{transform:rotate(45deg);}
+.prog-past__summary:hover{opacity:.7;}
+.prog-past__list{margin-top:clamp(16px,1.8vw,26px);}
+.prog-past__list .prog-group:first-child .prog-group__date{margin-top:0;}
+/* only the Past Events section mutes its rows; Upcoming stays full-strength */
+.prog-past--muted .prog-past__list .prog-group{opacity:.7;}
 
 /* --- Event single --- */
 .event .event__subtitle{margin:-.15rem 0 10px;font-weight:700;text-transform:none;font-size:1.05rem;opacity:.7;}

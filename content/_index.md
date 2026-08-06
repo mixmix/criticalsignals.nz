@@ -2,6 +2,7 @@
 title: Critical Signals
 csDesign: true
 showHeadingAnchors: false
+upcomingEventsCount: 4
 ---
 
 <p class="intro">Critical Signals is a collective endeavour for creative resilience: a gathering place for people who believe communities shape their own futures.</p>
@@ -16,6 +17,10 @@ Critical Signals is a three month gathering, practicing community resilience in 
 We collaborate with artists, academics, activists, scientists, technologists, makers and the public to explore crises, commons and community, stimulating critical discourse and action through trusted networks.
 
 <img class="divider" src="/images/design/divider1.png" alt="">
+
+{{< upcoming-events >}}
+
+<img class="divider" src="/images/design/divider2.png" alt="">
 
 <div class="theme">
 
@@ -45,7 +50,7 @@ How we utilise the power of space and place in ways that enable us all.
 
 </div>
 
-<img class="divider" src="/images/design/divider2.png" alt="">
+<img class="divider" src="/images/design/divider1.png" alt="">
 
 <div class="focus">
 

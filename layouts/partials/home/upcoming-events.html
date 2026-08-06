@@ -1,0 +1,35 @@
+{{- /* Home — Upcoming Events: the next N events from the programme (soonest
+       first, dateTBC/past events excluded), each linking to its event page,
+       plus a link through to the full programme. N is read from the front
+       matter of the page calling this partial (`upcomingEventsCount`),
+       defaulting to 4. */ -}}
+{{- $n := .Params.upcomingEventsCount | default 4 -}}
+{{- $events := where .Site.RegularPages "Section" "programme" -}}
+{{- $upcoming := slice -}}
+{{- range $events.ByDate -}}
+  {{- if and (not .Draft) (not .Params.dateTBC) (not (.Date.Before now)) -}}
+    {{- $upcoming = $upcoming | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- with $upcoming -}}
+  <div class="upcoming">
+    <h3>Upcoming Events</h3>
+    <div class="prog-list">
+      {{- range first $n . }}
+        <a class="prog-item" href="{{ .RelPermalink }}">
+          <span class="prog-item__title">
+            {{ .Title | emojify }}
+            <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
+          </span>
+          <span class="prog-item__date">{{ .Date.Format "2 January 2006" }}</span>
+          {{- with .Params.categories }}
+            <span class="prog-item__cat">{{ index . 0 }}</span>
+          {{- end }}
+        </a>
+      {{- end }}
+    </div>
+    <div class="cta-row">
+      <a class="cta cta--outline" href="/programme/">See the full programme</a>
+    </div>
+  </div>
+{{- end -}}

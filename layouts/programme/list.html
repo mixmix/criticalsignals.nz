@@ -1,7 +1,9 @@
 {{- /* Programme — list view. Marketing design shell (hero photo + wordmark
        + full-width white box, spore rail below) with the events grouped by
        date: a hand-drawn divider + date heading, then each event on that day
-       (title + arrow, category). Date-to-be-confirmed events group at the end. */ -}}
+       (title + arrow, category). Date-to-be-confirmed events group at the end.
+       Events whose date has already passed are tucked into a collapsed
+       <details> at the very bottom instead of cluttering the upcoming list. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero prog-hero">
     <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
@@ -18,71 +20,65 @@
       <div class="prog-intro">{{ .Content }}</div>
 
       {{/* Draft events are flagged with `draft: true` in front matter. Hide them.
-           Split off date-to-be-confirmed events so they group at the end. */}}
+           Split off date-to-be-confirmed events so they group at the end, and
+           split off already-past events so they collapse into the details box. */}}
+      {{ $now := now }}
       {{ $dated := slice }}
+      {{ $past := slice }}
       {{ $tbc := slice }}
       {{ range .Pages.ByDate }}
         {{ if not .Draft }}
           {{ if .Params.dateTBC }}
             {{ $tbc = $tbc | append . }}
+          {{ else if .Date.Before $now }}
+            {{ $past = $past | append . }}
           {{ else }}
             {{ $dated = $dated | append . }}
           {{ end }}
         {{ end }}
       {{ end }}
 
-      {{ if or (gt (len $dated) 0) (gt (len $tbc) 0) }}
-        <div class="prog-list">
-          {{ $gi := 0 }}
-          {{ range $g := $dated.GroupByDate "2 January 2006" "asc" }}
-            <div class="prog-group">
-              {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
-              <h2 class="prog-group__date">{{ $g.Key }}</h2>
-              {{ range $p := $g.Pages }}
-                <a class="prog-item" href="{{ $p.RelPermalink }}">
-                  <span class="prog-item__title">
-                    {{ $p.Title | emojify }}
-                    <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
-                  </span>
-                  {{ if or $p.Params.subtitle $p.Params.part }}
-                    <span class="prog-item__subtitle">
-                      {{- with $p.Params.subtitle }}<span class="prog-item__subtitle-part">{{ . | emojify }}</span>{{ end -}}
-                      {{- with $p.Params.part }}<span class="prog-item__subtitle-part">Part {{ . }}</span>{{ end -}}
-                    </span>
-                  {{ end }}
-                  {{ with $p.Params.categories }}
-                    <span class="prog-item__cat">{{ index . 0 }}</span>
-                  {{ end }}
-                </a>
-              {{ end }}
-            </div>
-            {{ $gi = add $gi 1 }}
-          {{ end }}
+      {{ if gt (len $past) 0 }}
+        <details class="prog-past prog-past--muted">
+          <summary class="prog-past__summary">Past events ({{ len $past }})</summary>
+          <div class="prog-past__list">
+            {{ $pgi := 0 }}
+            {{ range $g := $past.GroupByDate "2 January 2006" "desc" }}
+              <div class="prog-group">
+                {{ if gt $pgi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.png" alt="">{{ end }}
+                <h2 class="prog-group__date">{{ $g.Key }}</h2>
+                {{ range $p := $g.Pages }}{{ partial "programme/item.html" $p }}{{ end }}
+              </div>
+              {{ $pgi = add $pgi 1 }}
+            {{ end }}
+            <img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.png" alt="">
+          </div>
+        </details>
+      {{ end }}
 
-          {{ if gt (len $tbc) 0 }}
-            <div class="prog-group">
-              {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
-              <h2 class="prog-group__date">Date to be confirmed</h2>
-              {{ range $p := $tbc }}
-                <a class="prog-item" href="{{ $p.RelPermalink }}">
-                  <span class="prog-item__title">
-                    {{ $p.Title | emojify }}
-                    <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
-                  </span>
-                  {{ if or $p.Params.subtitle $p.Params.part }}
-                    <span class="prog-item__subtitle">
-                      {{- with $p.Params.subtitle }}<span class="prog-item__subtitle-part">{{ . | emojify }}</span>{{ end -}}
-                      {{- with $p.Params.part }}<span class="prog-item__subtitle-part">Part {{ . }}</span>{{ end -}}
-                    </span>
-                  {{ end }}
-                  {{ with $p.Params.categories }}
-                    <span class="prog-item__cat">{{ index . 0 }}</span>
-                  {{ end }}
-                </a>
-              {{ end }}
-            </div>
-          {{ end }}
-        </div>
+      {{ if or (gt (len $dated) 0) (gt (len $tbc) 0) }}
+        <details class="prog-past" open>
+          <summary class="prog-past__summary">Upcoming Events</summary>
+          <div class="prog-past__list">
+            {{ $gi := 0 }}
+            {{ range $g := $dated.GroupByDate "2 January 2006" "asc" }}
+              <div class="prog-group">
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
+                <h2 class="prog-group__date">{{ $g.Key }}</h2>
+                {{ range $p := $g.Pages }}{{ partial "programme/item.html" $p }}{{ end }}
+              </div>
+              {{ $gi = add $gi 1 }}
+            {{ end }}
+
+            {{ if gt (len $tbc) 0 }}
+              <div class="prog-group">
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
+                <h2 class="prog-group__date">Date to be confirmed</h2>
+                {{ range $p := $tbc }}{{ partial "programme/item.html" $p }}{{ end }}
+              </div>
+            {{ end }}
+          </div>
+        </details>
       {{ else }}
         <p><em>{{ i18n "list.no_articles" | emojify }}</em></p>
       {{ end }}

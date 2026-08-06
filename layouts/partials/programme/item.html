@@ -1,0 +1,16 @@
+{{- /* Single programme-list event link. Expects the event Page as context. */ -}}
+<a class="prog-item" href="{{ .RelPermalink }}">
+  <span class="prog-item__title">
+    {{ .Title | emojify }}
+    <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
+  </span>
+  {{ if or .Params.subtitle .Params.part }}
+    <span class="prog-item__subtitle">
+      {{- with .Params.subtitle }}<span class="prog-item__subtitle-part">{{ . | emojify }}</span>{{ end -}}
+      {{- with .Params.part }}<span class="prog-item__subtitle-part">Part {{ . }}</span>{{ end -}}
+    </span>
+  {{ end }}
+  {{ with .Params.categories }}
+    <span class="prog-item__cat">{{ index . 0 }}</span>
+  {{ end }}
+</a>
