@@ -10,7 +10,7 @@
     <div class="grid">
       <div class="col">
         <article class="person">
-          {{ $img := .Resources.GetMatch "featured.*" }}
+          {{ $img := partial "feature-image.html" . }}
           {{ with $img }}
             {{ $r := .Resize "600x" }}
             <img class="person__photo" src="{{ $r.RelPermalink }}" alt="{{ $.Title }}">

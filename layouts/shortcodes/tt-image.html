@@ -1,0 +1,13 @@
+{{- /* An inline image imported from a Ticket Tailor event description
+       (written by scripts/build-programme.mjs).
+
+       Ticket Tailor authors size these images by hand — the uploaded file is
+       served much larger than the size they chose to display it at — so we
+       carry the authored width/height through rather than letting the image
+       fill the whole text column. CSS (.md-img) keeps it responsive on narrow
+       screens. */ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "" -}}
+<img class="md-img" src="{{ $src }}" alt="{{ $alt }}" loading="lazy" decoding="async"
+  {{- with .Get "width" }} width="{{ . }}"{{ end }}
+  {{- with .Get "height" }} height="{{ . }}"{{ end }}>

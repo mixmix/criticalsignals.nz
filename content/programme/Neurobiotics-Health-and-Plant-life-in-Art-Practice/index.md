@@ -20,6 +20,6 @@ Taking the form of **installations, interactive environments, or experimental sy
 
 
 
-![event\_description\_image\_327194\_1785732597\_8e4d7.jpg?\_a=BAAHWXDQ](https://uploads.tickettailorassets.com/c_limit,w_630/v1/production/userfiles/event_description_image_327194_1785732597_8e4d7.jpg?_a=BAAHWXDQ)
+{{< tt-image src="https://uploads.tickettailorassets.com/c_limit,w_630/v1/production/userfiles/event_description_image_327194_1785732597_8e4d7.jpg?_a=BAAHWXDQ" width="167" height="112" >}}
 
-![event\_description\_image\_327194\_1785732628\_20c69.png?\_a=BAAHWXDQ](https://uploads.tickettailorassets.com/c_limit,w_630/v1/production/userfiles/event_description_image_327194_1785732628_20c69.png?_a=BAAHWXDQ)
+{{< tt-image src="https://uploads.tickettailorassets.com/c_limit,w_630/v1/production/userfiles/event_description_image_327194_1785732628_20c69.png?_a=BAAHWXDQ" width="121" height="104" >}}

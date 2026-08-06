@@ -17,8 +17,7 @@
           {{ if $i }}<img class="divider" src="/images/design/divider{{ add (mod $i 2) 1 }}.png" alt="">{{ end }}
           <article class="person">
             <h2 class="person__name">{{ $p.Title }}</h2>
-            {{ $featured := ($p.Resources.ByType "image").GetMatch "*feature*" }}
-            {{ if not $featured }}{{ $featured = ($p.Resources.ByType "image").GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
+            {{ $featured := partial "feature-image.html" $p }}
             {{ with $featured }}
               {{ $img := . }}
               {{ if not (strings.HasSuffix $img.RelPermalink ".svg") }}{{ $img = $img.Resize "700x" }}{{ end }}

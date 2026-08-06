@@ -19,7 +19,7 @@
       <!-- If a collaborator page is found, insert the name and image -->
       {{ if $collaboratorPage }}
         <a href="{{ $collaboratorPage.Permalink }}" class="programme-host">
-          {{ $image := $collaboratorPage.Resources.GetMatch "featured.*" }}
+          {{ $image := partial "feature-image.html" $collaboratorPage }}
           {{ if $image }}
             <!-- scale image down to 120 wide -->
             {{ $resizedImage := $image.Resize "120x" }}

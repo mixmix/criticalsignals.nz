@@ -1,0 +1,41 @@
+{{- /* Resolve a page's feature image. Call with the Page; returns the image
+       resource, or nil if there isn't one. Used for people bios, host cards and
+       programme event headers alike.
+
+       The rule — one rule, used everywhere a page's photo is shown:
+         1. front matter `featureimage:` — either a filename inside the page's
+            bundle ("portrait-2026.jpg") or a remote URL ("https://…/x.jpg").
+            Ticket Tailor event headers arrive as remote URLs — see
+            scripts/build-programme.mjs.
+         2. otherwise the bundle resource named `featured.*`
+
+       Anything else in the folder is ignored, so a mis-named upload shows up as
+       "no photo". /_admin/people/ flags that case — see people-audit/card.html.
+
+       A remote URL that won't fetch (Ticket Tailor rotates its asset links)
+       warns and falls through to the bundle rather than failing the build. */ -}}
+
+{{- $p := . -}}
+{{- $img := false -}}
+
+{{- with $p.Params.featureimage -}}
+  {{- if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") -}}
+    {{- $url := . -}}
+    {{- $fetched := try (resources.GetRemote $url) -}}
+    {{- with $fetched.Err -}}
+      {{- warnf "feature-image: %q could not fetch %s: %s" $p.Path $url . -}}
+    {{- else -}}
+      {{- with $fetched.Value -}}
+        {{- $img = . -}}
+      {{- else -}}
+        {{- warnf "feature-image: %q points at a featureimage URL with nothing behind it: %s" $p.Path $url -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $img = $p.Resources.GetMatch . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $img -}}{{- $img = $p.Resources.GetMatch "featured.*" -}}{{- end -}}
+
+{{- return $img -}}

@@ -9,6 +9,20 @@
     <div class="grid">
       <div class="col">
         <article class="event">
+          {{/* Header image — the event's `featureimage` (Ticket Tailor's header
+               upload, or a file dropped in the page bundle). Same rule as a
+               person's photo, see partials/feature-image.html. */}}
+          {{ with partial "feature-image.html" . }}
+            {{ $r := . }}
+            {{ if not (strings.HasSuffix .RelPermalink ".svg") }}
+              {{/* Ticket Tailor serves these ~1172px wide, about the width of
+                   the text column at 2x — cap rather than upscale. */}}
+              {{ $r = .Resize (printf "%dx" (cond (gt .Width 1200) 1200 .Width)) }}
+            {{ end }}
+            <img class="event__photo" src="{{ $r.RelPermalink }}" alt=""
+              width="{{ $r.Width }}" height="{{ $r.Height }}" decoding="async">
+          {{ end }}
+
           <h1 class="prog-h1">{{ .Title | emojify }}</h1>
 
           {{ if or .Params.subtitle .Params.part }}
@@ -75,7 +89,7 @@
                 {{ if $collab }}
                   <a class="host" href="{{ $collab.RelPermalink }}">
                     <span class="host__name">{{ $collab.Title }}</span>
-                    {{ $img := $collab.Resources.GetMatch "featured.*" }}
+                    {{ $img := partial "feature-image.html" $collab }}
                     {{ with $img }}
                       {{ $r := .Resize "300x" }}
                       <img class="host__photo" src="{{ $r.RelPermalink }}" alt="{{ $collab.Title }}" loading="lazy">

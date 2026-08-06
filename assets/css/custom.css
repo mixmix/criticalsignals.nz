@@ -524,6 +524,9 @@ body:has(.cs-hero) .prog-group__date{
 .prog-past--muted .prog-past__list .prog-group{opacity:.7;}
 
 /* --- Event single --- */
+/* header image (Ticket Tailor's event header, or a bundled `featured.*`) — runs
+   the full width of the text column, above the title */
+.event__photo{display:block;width:100%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 clamp(16px,1.8vw,26px);}
 .event .event__subtitle{margin:-.15rem 0 10px;font-weight:700;text-transform:none;font-size:1.05rem;opacity:.7;}
 .event__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .45em;opacity:.6;}
 .event__meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 0 8px;}
@@ -532,6 +535,11 @@ body:has(.cs-hero) .prog-group__date{
 .event__body{margin:0 0 clamp(22px,2.4vw,38px);}
 .event__body p{margin:0 0 1em;}
 .event__body > :last-child{margin-bottom:0;}
+/* Images imported from a Ticket Tailor description (layouts/shortcodes/tt-image.html).
+   They keep the width/height the author set over there — shrink, never stretch —
+   and sit in the text flow as bare block images, so they carry the same bottom
+   spacing as a paragraph. */
+.md-img{display:block;max-width:100%;height:auto;margin:0 0 1em;}
 .event__tickets{margin:0 0 clamp(28px,3vw,46px);}
 .event__tickets a{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
@@ -553,7 +561,8 @@ body:has(.cs-hero) .prog-group__date{
 .host:hover .host__name{text-decoration:underline;text-underline-offset:3px;}
 .event__divider{margin-top:clamp(28px,3vw,46px);}
 
-/* keep host portraits reading correctly through the dark-mode body invert */
+/* keep event/host photos reading correctly through the dark-mode body invert */
+html[data-theme="dark"] .event__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 

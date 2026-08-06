@@ -2,8 +2,15 @@
 {{ $p := .page }}
 {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $p.File.Path }}
 
-{{ $img := ($p.Resources.ByType "image").GetMatch "*feature*" }}
-{{ if not $img }}{{ $img = ($p.Resources.ByType "image").GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
+{{- /* Resolve exactly the way the live pages do, so this audit can't show a
+       photo the real page won't. Then list any images we had to ignore — a
+       mis-named upload otherwise looks identical to an empty folder. */ -}}
+{{ $img := partial "feature-image.html" $p }}
+{{ $allImages := $p.Resources.ByType "image" }}
+{{ $orphans := slice }}
+{{ range $allImages }}
+  {{ if or (not $img) (ne .Name $img.Name) }}{{ $orphans = $orphans | append .Name }}{{ end }}
+{{ end }}
 
 {{ $plain := strings.TrimSpace ($p.Plain | default "") }}
 
@@ -16,6 +23,9 @@
     {{ else }}
       <div class="audit-card__photo audit-card__photo--empty" aria-hidden="true">🔥</div>
     {{ end }}
+    {{ if and (not $img) $orphans }}
+      <span class="audit-badge audit-badge--warn audit-badge--overlay-left">Mis-named image</span>
+    {{ end }}
     {{ if .isCore }}
       <span class="audit-badge audit-badge--core audit-badge--overlay">Core team</span>
     {{ end }}
@@ -23,6 +33,21 @@
 
   <div class="audit-card__body">
     <h3 class="audit-card__name"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+
+    {{ if $orphans }}
+      <p class="audit-card__imgwarn">
+        {{ if $img }}
+          Unused image{{ if gt (len $orphans) 1 }}s{{ end }} in folder:
+        {{ else }}
+          🔥 &lt;TODO&gt; image{{ if gt (len $orphans) 1 }}s{{ end }} in folder, but not named
+          <code>featured.*</code> — rename, or point front matter
+          <code>featureimage:</code> at it:
+        {{ end }}
+        {{ range $orphans }}<code>{{ . }}</code> {{ end }}
+      </p>
+    {{ else if not $img }}
+      <p class="audit-card__imgwarn">🔥 &lt;TODO&gt; no photo in folder</p>
+    {{ end }}
 
     <p class="audit-card__desc">
       {{ if $p.Description }}
@@ -113,11 +138,35 @@
     background: var(--critical-highlight, #d6f7f1);
     color: #1a1a1a;
   }
-  .audit-badge--overlay {
+  .audit-badge--warn {
+    background: #b3261e;
+    color: #fff;
+  }
+  .audit-badge--overlay,
+  .audit-badge--overlay-left {
     position: absolute;
     top: 0.4rem;
     right: 0.4rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+  .audit-badge--overlay-left {
+    right: auto;
+    left: 0.4rem;
+  }
+  .audit-card__imgwarn {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    margin: 0;
+    color: #b3261e;
+    font-weight: 700;
+  }
+  .audit-card__imgwarn code {
+    font-weight: 400;
+    word-break: break-all;
+  }
+  html[data-theme="dark"] .audit-card__imgwarn,
+  html[data-theme="dark"] .audit-card__todo {
+    color: #ff8a80;
   }
   .audit-card__desc {
     font-size: 0.85rem;

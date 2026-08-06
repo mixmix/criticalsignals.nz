@@ -58,6 +58,30 @@ const turndown = new TurndownService({
   emDelimiter: '_'
 })
 
+// Ticket Tailor's editor lets authors scale inline images by hand: the upload
+// is served at up to 630px wide but the <img> carries the size they actually
+// displayed it at (e.g. 167x112 for a small logo). Turndown's default image
+// rule drops width/height, so those images landed on our pages stretched to
+// the full width of the text column. Carry the authored size through to the
+// tt-image shortcode instead (layouts/shortcodes/tt-image.html).
+turndown.addRule('sizedImage', {
+  filter: 'img',
+  replacement (content, node) {
+    const src = node.getAttribute('src')
+    if (!src) return ''
+
+    const attrs = [`src="${escapeAttr(src)}"`]
+    const alt = imageAlt(node.getAttribute('alt'), src)
+    if (alt) attrs.push(`alt="${escapeAttr(alt)}"`)
+    for (const name of ['width', 'height']) {
+      const px = pixelValue(node.getAttribute(name))
+      if (px) attrs.push(`${name}="${px}"`)
+    }
+
+    return `\n\n{{< tt-image ${attrs.join(' ')} >}}\n\n`
+  }
+})
+
 main().catch((err) => {
   console.error(err)
   process.exit(1)
@@ -157,6 +181,10 @@ async function writeEvent (event, slug, collaborators) {
   // "Registration coming soon!". Published events link to their event page.
   if (!isDraft && event.url) frontMatter.sign_up_link = event.url
 
+  // The event's header image, rendered at the top of the page. `featureimage`
+  // is the site-wide key for "this page's photo" (people use it too) and it
+  // takes a remote URL as well as a bundled filename — see
+  // layouts/partials/feature-image.html.
   if (event.images?.header) frontMatter.featureimage = event.images.header
 
   // Kept for traceability + safe pruning on re-runs.
@@ -283,6 +311,29 @@ function extractHosts (markdown) {
     .replace(/[ \t]+$/gm, '')
 
   return { hosts, body }
+}
+
+/**
+ * Ticket Tailor defaults an image's alt text to its filename, which is noise
+ * for a screen reader. Treat that as decorative (empty alt) and keep anything
+ * the author actually wrote.
+ */
+function imageAlt (alt, src) {
+  if (!alt) return ''
+  const filename = decodeURIComponent(src.split('/').pop() || '')
+  if (alt.trim() === filename.trim()) return ''
+  return alt.trim()
+}
+
+/** A width/height attribute in whole pixels, or null if it isn't one (e.g. "50%"). */
+function pixelValue (value) {
+  if (!value) return null
+  const match = String(value).trim().match(/^(\d+)(?:px)?$/i)
+  return match ? Number(match[1]) : null
+}
+
+function escapeAttr (value) {
+  return String(value).replace(/"/g, '&quot;')
 }
 
 function slugify (name) {

@@ -19,14 +19,26 @@
       {{ $status := "missing" }}
       {{ $tooltip := "❓ no profile page" }}
       {{ if $personPage }}
-        {{ $img := ($personPage.Resources.ByType "image").GetMatch "*feature*" }}
-        {{ if not $img }}{{ $img = ($personPage.Resources.ByType "image").GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
+        {{/* Resolve the photo exactly as the live pages do, so this audit can't
+             call a profile complete on the strength of an image the site will
+             never load — see partials/feature-image.html. */}}
+        {{ $img := partial "feature-image.html" $personPage }}
         {{ $plain := strings.TrimSpace ($personPage.Plain | default "") }}
         {{ $hasDesc := or (ne $personPage.Description "") (ne $plain "") }}
 
         {{ $missing := slice }}
         {{ if not $hasDesc }}{{ $missing = $missing | append "❓ description" }}{{ end }}
-        {{ if not $img }}{{ $missing = $missing | append "❓ image" }}{{ end }}
+        {{ if not $img }}
+          {{/* Name the files we had to ignore: "no image" and "image uploaded
+               under the wrong name" need different fixes. */}}
+          {{ $ignored := slice }}
+          {{ range $personPage.Resources.ByType "image" }}{{ $ignored = $ignored | append .Name }}{{ end }}
+          {{ if $ignored }}
+            {{ $missing = $missing | append (printf "❓ image — not named featured.* : %s" (delimit $ignored ", ")) }}
+          {{ else }}
+            {{ $missing = $missing | append "❓ image" }}
+          {{ end }}
+        {{ end }}
 
         {{ if gt (len $missing) 0 }}
           {{ $status = "incomplete" }}
