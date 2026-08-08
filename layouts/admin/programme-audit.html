@@ -52,8 +52,36 @@
       {{ $hostInfos = $hostInfos | append (dict "name" $hostName "page" $personPage "status" $status "tooltip" $tooltip) }}
     {{ end }}
 
-    {{ $ticketOk := ne ($event.Params.sign_up_link | default "") "" }}
-    {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }}
+    {{/* Three states, not two: `sign_up_link: false` is a deliberate "no ticket
+         needed, just show up", which shouldn't be flagged like a missing link. */}}
+    {{ $ticketStatus := "none" }}
+    {{ if eq $event.Params.sign_up_link false }}
+      {{ $ticketStatus = "optout" }}
+    {{ else if ne ($event.Params.sign_up_link | default "") "" }}
+      {{ $ticketStatus = "ok" }}
+    {{ end }}
+
+    {{/* When it runs. A recurring event (front matter `dates:`) shows its first
+         session and an ellipsis, with every date in the hover tooltip — the
+         column has room for one line, and the audit mostly wants to know
+         "when does this start". Sorting is off the first date for the same
+         reason, and can't read .Params.date since `dates:` events don't set it. */}}
+    {{ $dates := partial "programme/dates.html" $event }}
+    {{ $time := partial "programme/time.html" $event }}
+    {{/* Dates and time are kept apart for the cell, where the time gets its own
+         styled span, and pre-joined for the tooltip, which is a data- attribute
+         and so can only carry plain text. No year on either — the whole
+         programme runs in one season, so it would just be noise. */}}
+    {{ $whenDates := slice }}
+    {{ $whenLines := slice }}
+    {{ range $dates }}
+      {{ $day := .Format "2 Jan" }}
+      {{ $whenDates = $whenDates | append $day }}
+      {{ $whenLines = $whenLines | append (cond (eq $time "") $day (printf "%s · %s" $day $time)) }}
+    {{ end }}
+    {{ $firstDay := "" }}
+    {{ if $dates }}{{ $firstDay = (index $dates 0).Format "2006-01-02" }}{{ end }}
+    {{ $sortKey := printf "%s %s" $firstDay ($event.Params.start_time | default "") }}
 
     {{/* Events regenerated from Ticket Tailor (see scripts/build-programme.mjs)
          always carry a ticket_tailor_id — hand-authored ("custom") events never
@@ -62,10 +90,10 @@
     {{ $ticketTailorID := $event.Params.ticket_tailor_id | default "" }}
     {{ if ne $ticketTailorID "" }}
       {{ $editURL := printf "https://app.tickettailor.com/event/%s" $ticketTailorID }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketOk" $ticketOk "sortKey" $sortKey "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
     {{ else }}
       {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $event.File.Path }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketOk" $ticketOk "sortKey" $sortKey "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
     {{ end }}
   {{ end }}
 
@@ -88,16 +116,17 @@
       <table class="programme-audit__table">
         <thead>
           <tr>
+            <th>Time</th>
             <th>Event</th>
             <th>Hosts</th>
-            <th>Ticket url</th>
+            <th>Ticket</th>
             <th class="programme-audit__actions-col" colspan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {{ range $liveRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
           {{ if $draftRows }}
-            <tr class="programme-audit__drafts-divider"><td colspan="5">Drafts</td></tr>
+            <tr class="programme-audit__drafts-divider"><td colspan="6">Drafts</td></tr>
             {{ range $draftRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
           {{ end }}
         </tbody>
@@ -147,6 +176,24 @@
     .programme-audit__table td.programme-audit__actions-col {
       background: lightgrey;
     }
+    .programme-audit__table td.programme-audit__when {
+      white-space: nowrap;
+    }
+    .programme-audit__time {
+      font-size: 0.7rem;
+      color: #666;
+      letter-spacing: 1px;
+      margin-left: 5px;
+    }
+    /* The "…" that stands in for a recurring event's remaining dates */
+    .programme-audit__more {
+      display: inline-block;
+      margin-left: 0.15rem;
+      padding: 0 0.2rem;
+      cursor: help;
+      font-weight: 700;
+      border-bottom: 1px dotted currentColor;
+    }
     .programme-audit__hosts {
       list-style: none;
       margin: 0;
@@ -185,25 +232,79 @@
       opacity: 0.6;
     }
     .programme-audit__tooltip {
-      position: relative;
+      cursor: help;
     }
-    .programme-audit__tooltip[data-tooltip]:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 100%;
-      left: 0;
-      margin-bottom: 6px;
+    /* Tooltips render in the browser's top layer (see the popover below), so
+       nothing on the page can cover or clip them — which an absolutely
+       positioned tooltip couldn't manage here: .programme-audit__table-wrap
+       sets overflow-x, and CSS forces overflow-y to match, so the wrapper cuts
+       off anything reaching past a row. */
+    .programme-audit__tip {
+      /* override the UA popover defaults */
+      inset: auto;
+      margin: 0;
+      border: none;
+      padding: 0.4rem 0.6rem;
+      overflow: visible;
+
+      position: fixed;
       white-space: pre-line;
+      width: max-content;
+      max-width: 40ch;
       text-align: left;
       background: #222;
       color: #fff;
-      padding: 0.4rem 0.6rem;
       border-radius: 4px;
       font-size: 0.85rem;
       line-height: 1.5;
       font-weight: 400;
-      z-index: 20;
       pointer-events: none;
     }
   </style>
+
+  <div id="programme-audit-tip" class="programme-audit__tip" popover="manual"></div>
+
+  <script>
+    /* One shared tooltip, shown on hover/focus of any [data-tooltip]. It lives
+       in the top layer, so it sits above everything and escapes the table
+       wrapper's clipping; that means it has to be placed by hand, in viewport
+       coordinates. Sits above its anchor, flipping below when the anchor is
+       too near the top of the screen. */
+    (function () {
+      var tip = document.getElementById('programme-audit-tip');
+      if (!tip || !tip.showPopover) return;
+      var shown = false;
+
+      function show(anchor) {
+        tip.textContent = anchor.getAttribute('data-tooltip');
+        // Park it offscreen for the measuring pass, so it can't flash in the
+        // wrong place before we know how tall it is.
+        tip.style.top = '-9999px';
+        tip.style.left = '0px';
+        if (!shown) { tip.showPopover(); shown = true; }
+
+        var a = anchor.getBoundingClientRect();
+        var t = tip.getBoundingClientRect();
+        var top = a.top - t.height - 6;
+        if (top < 4) top = a.bottom + 6;
+        var left = Math.min(a.left, window.innerWidth - t.width - 8);
+        tip.style.top = Math.round(top) + 'px';
+        tip.style.left = Math.round(Math.max(8, left)) + 'px';
+      }
+
+      function hide() {
+        if (shown) { tip.hidePopover(); shown = false; }
+      }
+
+      document.querySelectorAll('[data-tooltip]').forEach(function (el) {
+        el.addEventListener('mouseenter', function () { show(el); });
+        el.addEventListener('mouseleave', hide);
+        el.addEventListener('focus', function () { show(el); });
+        el.addEventListener('blur', hide);
+      });
+      // A tooltip pinned to viewport coordinates goes stale the moment
+      // anything scrolls underneath it.
+      window.addEventListener('scroll', hide, true);
+    })();
+  </script>
 {{ end }}

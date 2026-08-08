@@ -5,7 +5,7 @@ part: "1"
 slug: "journaling-is-not-a-luxury_evening-series_1"
 hosts:
   - "Nadine Hura"
-date: "2026-08-13"
+date: 2026-08-13
 start_time: "18:00"
 end_time: "20:00"
 sign_up_link: https://journaling-is-not-a-luxury.lilregie.com/

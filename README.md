@@ -14,6 +14,35 @@ For CLI tool which offers interactive configuration:
 npx blowfish-tools
 ```
 
+## Recurring events
+
+An event usually carries a single `date:`. Something that runs on many days
+takes a `dates:` list instead:
+
+```yaml
+dates:
+  - 2026-08-11
+  - 2026-08-12
+start_time: "10:00"
+end_time: "14:00"
+calendar_symbol: "☕"   # optional, one character
+```
+
+It stays **one page**, and `start_time`/`end_time` apply to every date. It then
+appears:
+
+- on `/programme` — once under **each** date it runs on;
+- on the calendar — in every one of those day cells; if `calendar_symbol` is set
+  the day is marked with that glyph on its top row, beside the date, instead of
+  the event taking a slot in the cell's list. It must be a single character —
+  anything longer is trimmed, with a warning at build time;
+- on the homepage's Upcoming Events — once, dated by its next session;
+- on its own page — the next three sessions, with the full run (past dates
+  greyed) behind a "Show all dates" toggle.
+
+The dates are read via `partials/programme/dates.html`, which every one of those
+surfaces goes through, so `date:` and `dates:` events stay interchangeable.
+
 ## Color Scheme
 
 ```bash

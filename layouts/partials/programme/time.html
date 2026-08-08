@@ -1,0 +1,11 @@
+{{- /* An event's time of day — "10:00–14:00", or "10:00" with no end_time, or
+       "" if it has neither. Expects the event Page.
+
+       start_time/end_time describe the session, not any one date, so a
+       recurring event (front matter `dates:`) reuses this across all of them. */ -}}
+{{- $time := "" -}}
+{{- with .Params.start_time -}}
+  {{- $time = . -}}
+  {{- with $.Params.end_time -}}{{- $time = printf "%s–%s" $time . -}}{{- end -}}
+{{- end -}}
+{{- return $time -}}

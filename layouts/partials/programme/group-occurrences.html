@@ -1,0 +1,23 @@
+{{- /* Collapses an already-ordered occurrence slice (see programme/occurrences.html)
+       into one group per day, keeping the order it was given. Returns a slice of
+       dicts: `label` (the date heading) and `pages` (the events on that day).
+
+       Hugo's GroupByDate can't do this — it groups Pages by their single .Date,
+       and a recurring event needs to land in several groups at once. */ -}}
+{{- $groups := slice -}}
+{{- range $o := . -}}
+  {{- $n := len $groups -}}
+  {{- $merged := false -}}
+  {{- if gt $n 0 -}}
+    {{- $last := index $groups (sub $n 1) -}}
+    {{- if eq $last.day $o.day -}}
+      {{- $grown := dict "day" $last.day "label" $last.label "pages" ($last.pages | append $o.page) -}}
+      {{- $groups = first (sub $n 1) $groups | append $grown -}}
+      {{- $merged = true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $merged -}}
+    {{- $groups = $groups | append (dict "day" $o.day "label" $o.label "pages" (slice $o.page)) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $groups -}}

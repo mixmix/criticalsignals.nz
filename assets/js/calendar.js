@@ -151,28 +151,40 @@ class Calendar {
       dayEl.classList.add('past');
     }
 
+    const dayEvents = this.getEventsForDate(date);
+
+    // Top row: any `calendar_symbol` events sit here, on the same line as the
+    // date, so a recurring event marks its days without taking a list slot.
+    const head = document.createElement('div');
+    head.className = 'calendar-day-head';
+
+    const symbols = document.createElement('div');
+    symbols.className = 'calendar-day-symbols';
+    dayEvents
+      .filter(event => event.calendarSymbol)
+      .forEach(event => symbols.appendChild(this.createEventElement(event)));
+    head.appendChild(symbols);
+
     // Day number
     const dayNumber = document.createElement('div');
     dayNumber.className = 'calendar-day-number';
-    
+
     if (isToday) {
       dayNumber.classList.add('today-number');
     }
-    
-    dayNumber.textContent = date.getDate();
-    dayEl.appendChild(dayNumber);
 
-    // Events container
+    dayNumber.textContent = date.getDate();
+    head.appendChild(dayNumber);
+    dayEl.appendChild(head);
+
+    // Events container — everything that shows as a title
     const eventsContainer = document.createElement('div');
     eventsContainer.className = 'calendar-events-container';
-    
-    // Events for this day
-    const dayEvents = this.getEventsForDate(date);
-    dayEvents.forEach(event => {
-      const eventEl = this.createEventElement(event);
-      eventsContainer.appendChild(eventEl);
-    });
-    
+
+    dayEvents
+      .filter(event => !event.calendarSymbol)
+      .forEach(event => eventsContainer.appendChild(this.createEventElement(event)));
+
     dayEl.appendChild(eventsContainer);
 
     return dayEl;
@@ -188,7 +200,24 @@ class Calendar {
       ? event.categories[0].toLowerCase() 
       : 'default';
     eventEl.classList.add(`event-${category}`);
-    
+
+    // `sign_up_link: false` means drop in, no ticket needed — those get a white
+    // border rather than their category's.
+    if (event.signUpLink === false) {
+      eventEl.classList.add('event-item--no-signup');
+    }
+
+    // A recurring event can set `calendar_symbol: "☕"` in front matter to show
+    // as a single glyph on the day's top row rather than repeating its title on
+    // every day it runs. createDayElement puts these in .calendar-day-symbols.
+    if (event.calendarSymbol) {
+      eventEl.classList.add('event-item--symbol');
+      eventEl.textContent = event.calendarSymbol;
+      eventEl.title = event.title;
+      eventEl.addEventListener('click', () => this.showEventDetails(event));
+      return eventEl;
+    }
+
     // Add responsive font sizing based on title length
     // const titleLength = event.title.length;
     // if (titleLength > 60) {
@@ -243,14 +272,14 @@ class Calendar {
     }
   }
 
-  /** Get all events for a specific date */
+  /** Get all events for a specific date, in the order they start */
   getEventsForDate(date) {
     const dateStr = date.toISOString().split('T')[0];
     return this.eventsData.filter(event => {
       if (event.dateTBC || !event.date) return false;
       const eventDate = parseEventDate(event.date);
       return eventDate.toISOString().split('T')[0] === dateStr;
-    });
+    }).sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
   }
 
   isToday(date) {
@@ -285,6 +314,9 @@ class Calendar {
           timeZone: 'Pacific/Auckland'
         })}
       </p>`;
+      if (event.dateCount > 1) {
+        contentHTML += `<p class="event-recurring">One of ${event.dateCount} dates &mdash; see the event page for all of them.</p>`;
+      }
     }
     
     if (event.startTime) {

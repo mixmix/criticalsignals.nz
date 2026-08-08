@@ -1,0 +1,29 @@
+{{- /* Flattens a slice of event Pages into one occurrence per date, oldest
+       first. Expects the page slice as context; returns a slice of dicts:
+
+         day   "2026-08-11"        — grouping key, also comparable as a string
+         label "11 August 2026"    — what the programme list prints as a heading
+         page  the event Page
+
+       A recurring event (front matter `dates:`, see programme/dates.html)
+       therefore appears once per date, so the programme list can show it on
+       every day it runs. dateTBC events have no dates and drop out entirely —
+       callers handle those separately.
+
+       Sorting is by day *and* start_time so two events on the same day read in
+       the order they happen. */ -}}
+{{- $out := slice -}}
+{{- range $p := . -}}
+  {{- range partial "programme/dates.html" $p -}}
+    {{- $day := .Format "2006-01-02" -}}
+    {{- $out = $out | append (dict
+      "day" $day
+      "label" (.Format "2 January 2006")
+      "sort" (printf "%s %s" $day ($p.Params.start_time | default ""))
+      "page" $p) -}}
+  {{- end -}}
+{{- end -}}
+{{- if $out -}}
+  {{- $out = sort $out "sort" "asc" -}}
+{{- end -}}
+{{- return $out -}}

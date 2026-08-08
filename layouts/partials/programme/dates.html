@@ -1,0 +1,22 @@
+{{- /* Every date an event runs on, oldest first, as a slice of time values.
+       Expects the event Page as context.
+
+       An event carries either a single `date:` (the usual case — Ticket Tailor
+       exports write that) or a `dates:` list for something recurring, e.g. the
+       Kiekie Koha Coffee Hours. `dates:` wins if both are present. A `dateTBC:`
+       event has no dates at all, and neither does a page missing both keys, so
+       callers always get a slice and can range over it safely.
+
+       Hugo hands YAML dates back as plain strings ("2026-08-07"), hence the
+       time.AsTime; .Date is already a time value. */ -}}
+{{- $dates := slice -}}
+{{- if .Params.dateTBC -}}
+{{- else if .Params.dates -}}
+  {{- range .Params.dates -}}
+    {{- $dates = $dates | append (time.AsTime .) -}}
+  {{- end -}}
+  {{- $dates = sort $dates -}}
+{{- else if not .Date.IsZero -}}
+  {{- $dates = $dates | append .Date -}}
+{{- end -}}
+{{- return $dates -}}

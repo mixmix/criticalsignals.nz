@@ -1,0 +1,62 @@
+{{- /* Event single — the date/time line under the title. Expects the event Page.
+
+       A one-off event prints a single "date | time" line, as it always has. A
+       recurring event (front matter `dates:`) prints its next three sessions
+       and hides the rest — past and future — behind a "Show all dates" toggle,
+       with the ones that have been and gone greyed out. */ -}}
+{{- $dates := partial "programme/dates.html" . -}}
+{{- $today := now.Format "2006-01-02" -}}
+{{- /* start_time/end_time apply to every date, so the time is rendered once
+       per row rather than being a property of any one date. */ -}}
+{{- $time := partial "programme/time.html" . -}}
+
+{{- if .Params.dateTBC -}}
+  <p class="event__meta"><em>Date to be confirmed</em></p>
+{{- else if le (len $dates) 1 -}}
+  <p class="event__meta">
+    {{- with $dates -}}
+      <span class="event__date">{{ (index . 0).Format "2 January 2006" }}</span>
+    {{- end -}}
+    {{- with $time }}
+      <span class="event__sep">|</span>
+      <span class="event__time">{{ . }}</span>
+    {{- end -}}
+  </p>
+{{- else -}}
+  {{- /* Every date is written out once, in one list, and the ones outside the
+         next three are hidden until the toggle is opened (CSS does the reveal,
+         see .is-extra in custom.css). One list means one grid, so the "|"
+         column lines up across the whole run rather than drifting between a
+         preview list and a full one. */ -}}
+  {{- $upcoming := slice -}}
+  {{- range $dates -}}
+    {{- if ge (.Format "2006-01-02") $today -}}{{- $upcoming = $upcoming | append . -}}{{- end -}}
+  {{- end -}}
+  {{- $next := slice -}}
+  {{- range first 3 $upcoming -}}{{- $next = $next | append (.Format "2006-01-02") -}}{{- end -}}
+  <div class="event__dates">
+    {{- if not $upcoming }}
+      <p class="event__dates-label">All dates have passed</p>
+    {{- end }}
+    <ul class="event__datelist">
+      {{- range $dates }}
+        {{- $day := .Format "2006-01-02" }}
+        <li class="event__dateitem{{ if lt $day $today }} is-past{{ end }}{{ if not (in $next $day) }} is-extra{{ end }}">
+          <span class="event__date">{{ .Format "2 January 2006" }}</span>
+          {{- with $time }}
+            <span class="event__sep">|</span>
+            <span class="event__time">{{ . }}</span>
+          {{- end }}
+        </li>
+      {{- end }}
+    </ul>
+    {{- /* A disclosure with nothing inside it: the rows it reveals live in the
+           list above so they share its grid, and CSS keys off [open]. */}}
+    <details class="event__dates-all">
+      <summary class="event__dates-toggle">
+        <span class="event__dates-more">Show all dates ({{ len $dates }})</span>
+        <span class="event__dates-less">Show fewer</span>
+      </summary>
+    </details>
+  </div>
+{{- end -}}

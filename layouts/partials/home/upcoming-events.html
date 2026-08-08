@@ -2,12 +2,19 @@
        first, dateTBC/past events excluded), each linking to its event page,
        plus a link through to the full programme. N is read from the front
        matter of the page calling this partial (`upcomingEventsCount`),
-       defaulting to 4. */ -}}
+       defaulting to 4.
+
+       A recurring event (front matter `dates:`) appears once here, dated by
+       its next session — unlike the programme list, which shows it on every
+       day it runs. */ -}}
 {{- $n := .Params.upcomingEventsCount | default 4 -}}
 {{- $events := where .Site.RegularPages "Section" "programme" -}}
+{{- $today := now.Format "2006-01-02" -}}
 {{- $upcoming := slice -}}
-{{- range $events.ByDate -}}
-  {{- if and (not .Draft) (not .Params.dateTBC) (not (.Date.Before now)) -}}
+{{- $seen := slice -}}
+{{- range partial "programme/occurrences.html" $events -}}
+  {{- if and (not .page.Draft) (ge .day $today) (not (in $seen .page.RelPermalink)) -}}
+    {{- $seen = $seen | append .page.RelPermalink -}}
     {{- $upcoming = $upcoming | append . -}}
   {{- end -}}
 {{- end -}}
@@ -16,13 +23,13 @@
     <h3>Upcoming Events</h3>
     <div class="prog-list">
       {{- range first $n . }}
-        <a class="prog-item" href="{{ .RelPermalink }}">
+        <a class="prog-item" href="{{ .page.RelPermalink }}">
           <span class="prog-item__title">
-            {{ .Title | emojify }}
+            {{ .page.Title | emojify }}
             <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
           </span>
-          <span class="prog-item__date">{{ .Date.Format "2 January 2006" }}</span>
-          {{- with .Params.categories }}
+          <span class="prog-item__date">{{ .label }}</span>
+          {{- with .page.Params.categories }}
             <span class="prog-item__cat">{{ index . 0 }}</span>
           {{- end }}
         </a>

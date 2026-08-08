@@ -3,7 +3,10 @@
        date: a hand-drawn divider + date heading, then each event on that day
        (title + arrow, category). Date-to-be-confirmed events group at the end.
        Events whose date has already passed are tucked into a collapsed
-       <details> at the very bottom instead of cluttering the upcoming list. */ -}}
+       <details> at the very bottom instead of cluttering the upcoming list.
+
+       Grouping runs over *occurrences*, not pages, so a recurring event
+       (front matter `dates:`) is listed on every day it runs. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero prog-hero">
     <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
@@ -20,34 +23,47 @@
       <div class="prog-intro">{{ .Content }}</div>
 
       {{/* Draft events are flagged with `draft: true` in front matter. Hide them.
-           Split off date-to-be-confirmed events so they group at the end, and
-           split off already-past events so they collapse into the details box. */}}
-      {{ $now := now }}
-      {{ $dated := slice }}
-      {{ $past := slice }}
+           Split off date-to-be-confirmed events so they group at the end. */}}
+      {{ $live := slice }}
       {{ $tbc := slice }}
-      {{ range .Pages.ByDate }}
+      {{ range .Pages }}
         {{ if not .Draft }}
           {{ if .Params.dateTBC }}
             {{ $tbc = $tbc | append . }}
-          {{ else if .Date.Before $now }}
-            {{ $past = $past | append . }}
           {{ else }}
-            {{ $dated = $dated | append . }}
+            {{ $live = $live | append . }}
           {{ end }}
         {{ end }}
       {{ end }}
 
-      {{ if gt (len $past) 0 }}
+      {{/* One entry per event *date*, then split on today — an event running
+           today stays in Upcoming until the day is over. */}}
+      {{ $today := now.Format "2006-01-02" }}
+      {{ $dated := slice }}
+      {{ $past := slice }}
+      {{ range partial "programme/occurrences.html" $live }}
+        {{ if lt .day $today }}
+          {{ $past = $past | append . }}
+        {{ else }}
+          {{ $dated = $dated | append . }}
+        {{ end }}
+      {{ end }}
+      {{/* Both lists read oldest first, which is the order occurrences.html
+           already hands them over in. */}}
+
+      {{ $pastGroups := partial "programme/group-occurrences.html" $past }}
+      {{ $datedGroups := partial "programme/group-occurrences.html" $dated }}
+
+      {{ if gt (len $pastGroups) 0 }}
         <details class="prog-past prog-past--muted">
           <summary class="prog-past__summary">Past events ({{ len $past }})</summary>
           <div class="prog-past__list">
             {{ $pgi := 0 }}
-            {{ range $g := $past.GroupByDate "2 January 2006" "desc" }}
+            {{ range $g := $pastGroups }}
               <div class="prog-group">
                 {{ if gt $pgi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.png" alt="">{{ end }}
-                <h2 class="prog-group__date">{{ $g.Key }}</h2>
-                {{ range $p := $g.Pages }}{{ partial "programme/item.html" $p }}{{ end }}
+                <h2 class="prog-group__date">{{ $g.label }}</h2>
+                {{ range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
               </div>
               {{ $pgi = add $pgi 1 }}
             {{ end }}
@@ -56,16 +72,16 @@
         </details>
       {{ end }}
 
-      {{ if or (gt (len $dated) 0) (gt (len $tbc) 0) }}
+      {{ if or (gt (len $datedGroups) 0) (gt (len $tbc) 0) }}
         <details class="prog-past" open>
           <summary class="prog-past__summary">Upcoming Events</summary>
           <div class="prog-past__list">
             {{ $gi := 0 }}
-            {{ range $g := $dated.GroupByDate "2 January 2006" "asc" }}
+            {{ range $g := $datedGroups }}
               <div class="prog-group">
                 {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
-                <h2 class="prog-group__date">{{ $g.Key }}</h2>
-                {{ range $p := $g.Pages }}{{ partial "programme/item.html" $p }}{{ end }}
+                <h2 class="prog-group__date">{{ $g.label }}</h2>
+                {{ range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
               </div>
               {{ $gi = add $gi 1 }}
             {{ end }}

@@ -68,9 +68,26 @@
          in front matter). .Site.AllPages includes drafts regardless of the
          buildDrafts setting, so this must be checked explicitly. */}}
     {{ if and (strings.HasPrefix .RelPermalink "/programme/") (ne .Kind "section") (not .Draft) }}
+      {{ $page := . }}
+      {{ $dates := partial "programme/dates.html" . }}
+      {{/* `calendar_symbol:` in front matter marks an event with a single glyph
+           (e.g. "☕") on the day cell's top row, beside the date, instead of
+           listing its title. One character only — that row has room for a mark,
+           not a word — so anything longer is trimmed with a build warning.
+           A trailing variation selector doesn't count as a character. */}}
+      {{ $symbol := "" }}
+      {{ with .Params.calendar_symbol }}
+        {{ $chars := split (replace . "\uFE0F" "") "" }}
+        {{ if gt (len $chars) 1 }}
+          {{ warnf "calendar_symbol on %s must be a single character: got %q, using %q" $page.RelPermalink . (index $chars 0) }}
+          {{ $symbol = index $chars 0 }}
+        {{ else }}
+          {{ $symbol = . }}
+        {{ end }}
+      {{ end }}
       {{ $eventData := dict
         "title" .Title
-        "date" .Params.date
+        "date" ""
         "startTime" .Params.start_time
         "endTime" .Params.end_time
         "hosts" .Params.hosts
@@ -80,8 +97,18 @@
         "url" .RelPermalink
         "summary" .Summary
         "content" .Content
+        "calendarSymbol" $symbol
+        "dateCount" (len $dates)
       }}
-      {{ $events = $events | append $eventData }}
+      {{/* One entry per date — a recurring event (`dates:`) lands in the grid
+           on every day it runs. dateTBC events keep a single dateless entry. */}}
+      {{ if .Params.dateTBC }}
+        {{ $events = $events | append $eventData }}
+      {{ else }}
+        {{ range $dates }}
+          {{ $events = $events | append (merge $eventData (dict "date" (.Format "2006-01-02"))) }}
+        {{ end }}
+      {{ end }}
     {{ end }}
   {{ end }}
 

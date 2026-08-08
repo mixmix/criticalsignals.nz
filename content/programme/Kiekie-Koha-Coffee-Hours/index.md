@@ -2,7 +2,20 @@
 title: "Kiekie Koha Coffee Hours"
 hosts:
   - "Clay Joy Smith"
-date: 2026-08-07
+dates:
+  - 2026-08-07
+  - 2026-08-11
+  - 2026-08-12
+  - 2026-08-13
+  - 2026-08-14
+  - 2026-08-18
+  - 2026-08-19
+  - 2026-08-20
+  - 2026-08-25
+  - 2026-08-26
+  - 2026-08-27
+  - 2026-08-28
+calendar_symbol: "☕"
 start_time: "10:00"
 end_time: "14:00"
 sign_up_link: false # means no sign-up required

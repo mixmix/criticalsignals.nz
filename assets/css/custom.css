@@ -483,7 +483,7 @@ body:has(.cs-hero) .prog-h1{
 .prog-group .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(10px,1vw,16px);}
 body:has(.cs-hero) .prog-group__date{
   font-weight:400;text-transform:uppercase;letter-spacing:.02em;
-  font-size:1rem;margin:0 0 clamp(10px,1.2vw,16px);
+  font-size:.9rem;margin:0 0 clamp(10px,1.2vw,16px);
 }
 .prog-item{
   display:block;
@@ -531,6 +531,44 @@ body:has(.cs-hero) .prog-group__date{
 .event__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .45em;opacity:.6;}
 .event__meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 0 8px;}
 .event__sep{opacity:.4;}
+/* Recurring event (front matter `dates:`) — next few sessions, then the whole
+   run behind a toggle with the finished ones greyed back. */
+/* `.event`-scoped so these win over the column's generic `.col p` / `li` rules */
+.event__dates{margin:0 0 clamp(14px,1.6vw,22px);}
+.event .event__dates-label{
+  margin:0 0 4px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:.8rem;opacity:.7;
+}
+/* The rows are a single grid — date / separator / time each get their own
+   column, so the "|" lines up down the list however wide the dates run.
+   `display:contents` on the <li> lets its spans be the grid items. */
+.event .event__datelist{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:max-content max-content max-content;
+  align-items:baseline;column-gap:.5rem;row-gap:2px;
+}
+.event .event__dateitem{display:contents;}
+.event__dateitem.is-past > *{opacity:.45;}
+.event__dateitem.is-past > .event__sep{opacity:.2;}
+/* Dates outside the next three are in the list all along — the toggle below it
+   just uncovers them, so they land in the same grid as the visible rows. */
+.event__dateitem.is-extra{display:none;}
+.event__dates:has(.event__dates-all[open]) .event__dateitem.is-extra{display:contents;}
+.event__dates-all{margin-top:6px;}
+.event__dates-toggle{
+  cursor:pointer;list-style:none;user-select:none;
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:.8rem;
+}
+.event__dates-toggle::-webkit-details-marker{display:none;}
+.event__dates-toggle::before{
+  content:"";flex:0 0 auto;width:7px;height:7px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-45deg);transition:transform .18s ease;
+}
+.event__dates-all[open] .event__dates-toggle::before{transform:rotate(45deg);}
+.event__dates-toggle:hover{opacity:.7;}
+.event__dates-less,.event__dates-all[open] .event__dates-more{display:none;}
+.event__dates-all[open] .event__dates-less{display:inline;}
 .event__cat{font-weight:700;text-transform:uppercase;font-size:.8rem;margin:0 0 clamp(20px,2.2vw,32px);}
 .event__body{margin:0 0 clamp(22px,2.4vw,38px);}
 .event__body p{margin:0 0 1em;}
@@ -602,7 +640,10 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
 .cal-box .calendar-day.other-month:hover{background-color:#f4fdfb;}
 .cal-box .calendar-day.other-month .calendar-day-number{color:var(--ink);}
 .cal-box .calendar-day:hover{background-color:#eafcf9;}
-.cal-box .calendar-day-number{align-self:flex-end;color:var(--ink);opacity:.65;font-weight:400;font-size:.72rem;height:auto;margin-bottom:4px;}
+/* Top row of a day cell: `calendar_symbol` marks on the left, date on the right */
+.cal-box .calendar-day-head{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+.cal-box .calendar-day-symbols{display:flex;align-items:center;gap:3px;min-width:0;margin-right:auto;}
+.cal-box .calendar-day-number{align-self:auto;color:var(--ink);opacity:.65;font-weight:400;font-size:.72rem;height:auto;margin-bottom:0;}
 .cal-box .today-number{background:var(--ink);color:var(--white);opacity:1;border-radius:50%;width:20px;height:20px;justify-content:center;}
 .cal-box .event-item,
 .cal-box .event-item.event-workshop,
@@ -614,6 +655,20 @@ html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
   text-transform:uppercase;padding:4px 5px;margin-bottom:3px;
 }
 .cal-box .event-item:hover{background:var(--ink);color:var(--white);box-shadow:none;}
+/* The two event-item modifiers set by calendar.js. Both live here rather than
+   in calendar.css because the block above outranks that file — they need the
+   same `.cal-box .event-item.<modifier>` weight to land. */
+/* `calendar_symbol: "☕"` — a recurring event shows as a single glyph on the
+   cell's top row rather than repeating its title on every day it runs. Sized to
+   the glyph, and no bottom margin since it sits in a row, not the event list. */
+.cal-box .event-item.event-item--symbol{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:auto;min-height:0;margin-bottom:0;
+  font-size:.85rem;line-height:1;padding:1px 4px;
+}
+/* `sign_up_link: false` — drop in, no ticket needed. A white border in place of
+   the usual dark one reads as an open door. */
+.cal-box .event-item.event-item--no-signup{border-color:var(--white);}
 .cal-listview-title{font-weight:700;text-transform:uppercase;margin:clamp(24px,2.4vw,36px) 0 1rem;}
 
 /* Event pop-up modal — white panel with dark-teal text (per calendar_view.png).

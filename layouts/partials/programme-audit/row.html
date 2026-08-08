@@ -1,7 +1,23 @@
 {{- /* One <tr> for the /_programme/ audit table. Expects a row dict:
-       {page, hosts, ticketOk, editURL, editLabel, isDraft}. */ -}}
+       {page, hosts, ticketStatus, whenDates, whenTime, whenLines, editURL,
+       editLabel, isDraft}. */ -}}
 {{ $event := .page }}
 <tr{{ if .isDraft }} class="programme-audit__row--draft"{{ end }}>
+  <td class="programme-audit__when">
+    {{- if $event.Params.dateTBC -}}
+      <em>date TBC</em>
+    {{- else if not .whenDates -}}
+      <span class="programme-audit__tooltip" data-tooltip="No date set for this event">🔥</span>
+    {{- else -}}
+      {{ index .whenDates 0 }}
+      {{- with .whenTime }}<span class="programme-audit__time">{{ . }}</span>{{ end -}}
+      {{- if gt (len .whenDates) 1 -}}
+        {{/* Recurring — the rest are in the tooltip, see admin/programme-audit.html */}}
+        <span class="programme-audit__more programme-audit__tooltip"
+              data-tooltip="{{ delimit .whenLines "\n" }}">&hellip;</span>
+      {{- end -}}
+    {{- end -}}
+  </td>
   <td><a class="programme-audit__link" href="{{ $event.RelPermalink }}">{{ $event.Title | emojify }}</a></td>
   <td>
     {{ if .hosts }}
@@ -27,7 +43,15 @@
       <span class="programme-audit__tooltip" data-tooltip="No hosts listed for this event">❓❗</span>
     {{ end }}
   </td>
-  <td><span class="programme-audit__tooltip" data-tooltip="{{ if .ticketOk }}Ticket sign-up link set{{ else }}No ticket sign-up link{{ end }}">{{ if .ticketOk }}✅{{ else }}🔥{{ end }}</span></td>
+  <td>
+    {{- if eq .ticketStatus "ok" -}}
+      <span class="programme-audit__tooltip" data-tooltip="Ticket sign-up link set">✅</span>
+    {{- else if eq .ticketStatus "optout" -}}
+      <span class="programme-audit__tooltip" data-tooltip="This event has opted out of tickets, is 'just show up'">☑️</span>
+    {{- else -}}
+      <span class="programme-audit__tooltip" data-tooltip="No ticket sign-up link">🔥</span>
+    {{- end -}}
+  </td>
   <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--view" href="{{ $event.RelPermalink }}">View →</a></td>
   <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--edit programme-audit__tooltip" data-tooltip="Edit on {{ .editLabel }}" href="{{ .editURL }}" target="_blank" rel="noopener noreferrer">✏️ Edit</a></td>
 </tr>

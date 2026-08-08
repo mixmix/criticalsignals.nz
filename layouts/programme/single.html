@@ -32,17 +32,7 @@
             </p>
           {{ end }}
 
-          <p class="event__meta">
-            {{ if .Params.dateTBC }}
-              <em>Date to be confirmed</em>
-            {{ else }}
-              <span class="event__date">{{ .Date.Format "2 January 2006" }}</span>
-              {{ with .Params.start_time }}
-                <span class="event__sep">|</span>
-                <span class="event__time">{{ . }}{{ with $.Params.end_time }}&ndash;{{ . }}{{ end }}</span>
-              {{ end }}
-            {{ end }}
-          </p>
+          {{ partial "programme/event-dates.html" . }}
 
           {{ with .Params.categories }}
             <p class="event__cat">{{ index . 0 }}</p>
@@ -52,10 +42,15 @@
             {{ .Content }}
           </div>
 
-          {{/* Tickets / register link — disabled once the event is >2 days past */}}
+          {{/* Tickets / register link — disabled once the event is >2 days past.
+               For a recurring event that means 2 days past its *last* date. */}}
           {{ $currentDate := now }}
           {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
-          {{ $eventHasPassed := .Date.Before $twoDaysAgo }}
+          {{ $dates := partial "programme/dates.html" . }}
+          {{ $eventHasPassed := false }}
+          {{ if $dates }}
+            {{ $eventHasPassed = (index $dates (sub (len $dates) 1)).Before $twoDaysAgo }}
+          {{ end }}
           {{/* sign_up_link: false means the event needs no sign-up at all */}}
           {{ if eq .Params.sign_up_link false }}
             {{ if $eventHasPassed }}
