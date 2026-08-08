@@ -360,7 +360,12 @@ class Calendar {
 
     // Generate registration button based on event status
     let registerButton = '';
-    if (event.signUpLink) {
+    if (event.signUpLink === false) {
+      // sign_up_link: false means the event needs no sign-up at all
+      registerButton = eventHasPassed
+        ? '<span class="event-passed-text">this event has passed</span>'
+        : '<span class="registration-note">No Tickets Required</span>';
+    } else if (event.signUpLink) {
       if (eventHasPassed) {
         registerButton = `
           <a class="btn-register event-passed" style="cursor: not-allowed; opacity: 0.5;">Tickets</a>

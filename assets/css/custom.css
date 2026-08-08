@@ -541,7 +541,7 @@ body:has(.cs-hero) .prog-group__date{
    spacing as a paragraph. */
 .md-img{display:block;max-width:100%;height:auto;margin:0 0 1em;}
 .event__tickets{margin:0 0 clamp(28px,3vw,46px);}
-.event__tickets a{
+.event__tickets a,.event__tickets .event__no-signup{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   padding:12px 48px;min-height:54px;
   background:var(--ink);color:var(--white);border:2px solid var(--ink);

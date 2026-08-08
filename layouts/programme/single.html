@@ -56,14 +56,25 @@
           {{ $currentDate := now }}
           {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
           {{ $eventHasPassed := .Date.Before $twoDaysAgo }}
-          {{ with .Params.sign_up_link }}
+          {{/* sign_up_link: false means the event needs no sign-up at all */}}
+          {{ if eq .Params.sign_up_link false }}
             {{ if $eventHasPassed }}
               <p class="event__tickets is-passed">
                 <span class="event__passed-text">This event has passed</span>
               </p>
             {{ else }}
               <p class="event__tickets">
-                <a href="{{ . }}">Tickets <span aria-hidden="true">&rarr;</span></a>
+                <span class="event__no-signup">No Tickets Required</span>
+              </p>
+            {{ end }}
+          {{ else if .Params.sign_up_link }}
+            {{ if $eventHasPassed }}
+              <p class="event__tickets is-passed">
+                <span class="event__passed-text">This event has passed</span>
+              </p>
+            {{ else }}
+              <p class="event__tickets">
+                <a href="{{ .Params.sign_up_link }}">Tickets <span aria-hidden="true">&rarr;</span></a>
               </p>
             {{ end }}
           {{ else }}
