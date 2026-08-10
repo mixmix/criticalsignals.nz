@@ -154,10 +154,21 @@ In a desktop console, `SIGN.next()` advances the rotation by hand and
 
 ## Recurring events
 
-An event with several `dates:` produces one occurrence per date, and `collapse()`
-gives the whole series a single slide, the soonest date. Kiekie Koha Coffee
-Hours runs twelve dates this season; a slide each made it half the rotation,
-the same panel with a different date on it, twice in a row in four places.
+`collapse()` gives a repeating event a single slide, the soonest sitting.
+Kiekie Koha Coffee Hours runs twelve dates this season; a slide each made it
+half the rotation, the same panel with a different date on it, twice in a row
+in four places.
+
+**`series` is keyed on the event's title, not on its page**, because "the same
+event on again" takes two forms here and both have to count:
+
+- one page with several `dates:` — Kiekie Koha Coffee Hours;
+- **two pages with the same title** — Journaling is not a Luxury, an afternoon
+  session and an evening one, same day, different times. Keying on the page
+  missed this entirely and the board showed them as two unrelated events.
+
+`repeats` is therefore counted per title across the whole season (`$seriesCount`
+in the Hugo header), not from one page's date count.
 
 The other dates are not hidden, they are stated in the two places where they
 mean something:
@@ -172,7 +183,9 @@ mean something:
   kind of thing.
 - **The When block** — `otherDates()` adds a line under the date: "Also 26,
   27 & 28 Aug" when three or fewer remain in one month, otherwise "10 more
-  dates, through 28 Aug".
+  dates, through 28 Aug". When every remaining sitting is on the *same day* it
+  switches to times — "Also 18:00–20:00 the same day" — because that is what
+  actually differs between them.
 
 `series` is the event's `RelPermalink` and `repeats` is set at build time from
 the *whole season's* date count, not from what is left — so the final date of a
@@ -292,7 +305,9 @@ freely, and what you must preserve if you touch it.
 ## QR codes
 
 Each slide shows a QR pointing at that event's own page, plus the site address
-above the footer rule. **This is fully automatic** — `images.QR` generates the
+above the footer rule. Every code carries `?utm_source=window_sign` (`$signUTM`)
+so the analytics can tell what the sign is actually doing. The tag is static,
+which is what keeps the codes byte-identical regardless of baseURL. **This is fully automatic** — `images.QR` generates the
 code at build time from `$p.Permalink`, and `.Content | base64Encode` inlines
 it as a `data:` URI. Adding an event to `content/programme/` is all that is
 required; its QR appears on the next build. There is no external service, no

@@ -26,8 +26,12 @@
        network, so the code must always carry the public address regardless
        of where the page itself is being served from. */ -}}
 {{- $signBase := "https://criticalsignals.nz" -}}
+{{- /* Every code on this board is scanned off the window, so tag them all and
+       the analytics can tell what the sign is actually doing. Static, so the
+       codes stay byte-identical whatever baseURL the page is built with. */ -}}
+{{- $signUTM := "?utm_source=window_sign" -}}
 {{- $qrOpts := dict "level" "medium" "scale" 4 -}}
-{{- $siteQR := printf "data:image/png;base64,%s" ((images.QR (printf "%s/" $signBase) $qrOpts).Content | base64Encode) -}}
+{{- $siteQR := printf "data:image/png;base64,%s" ((images.QR (printf "%s/%s" $signBase $signUTM) $qrOpts).Content | base64Encode) -}}
 
 {{- /* Host photos. Same resolution rule as the rest of the site — hosts are
        written as names, `people/by-name.html` maps a name to that person's
@@ -57,6 +61,20 @@
 {{- $onSign := slice -}}
 {{- range $occurrences -}}
   {{- if ne .page.Params.showOnSign false -}}{{- $onSign = $onSign | append . -}}{{- end -}}
+{{- end -}}
+
+{{- /* How many times each thing runs this season, keyed on its title.
+
+       Title rather than page, because "the same event on again" takes two
+       forms here and both have to count. Kiekie Koha Coffee Hours is one page
+       with twelve `dates:`. Journaling is not a Luxury is *two pages* — an
+       afternoon session and an evening one, same title, same day, different
+       times — and keying on the page missed it entirely: the board showed the
+       two sessions as two unrelated events. Counting by title catches both. */ -}}
+{{- $seriesCount := dict -}}
+{{- range $onSign -}}
+  {{- $k := lower (replaceRE `\s+` " " (trim .page.Title " ")) -}}
+  {{- $seriesCount = merge $seriesCount (dict $k (add (int (index $seriesCount $k | default 0)) 1)) -}}
 {{- end -}}
 
 {{- /* The whole season, past dates included, so the board can say how far
@@ -96,7 +114,7 @@
     {{- $qrKey := $p.RelPermalink -}}
     {{- if not (isset $qrIdx $qrKey) -}}
       {{- $qrIdx  = merge $qrIdx (dict $qrKey (len $qrList)) -}}
-      {{- $qrList = $qrList | append (printf "data:image/png;base64,%s" ((images.QR (printf "%s%s" $signBase $qrKey) $qrOpts).Content | base64Encode)) -}}
+      {{- $qrList = $qrList | append (printf "data:image/png;base64,%s" ((images.QR (printf "%s%s%s" $signBase $qrKey $signUTM) $qrOpts).Content | base64Encode)) -}}
     {{- end -}}
 
     {{- /* One entry per host, in the same order as `hosts`, so the script can
@@ -120,17 +138,17 @@
       {{- end -}}
       {{- $faces = $faces | append $n -}}
     {{- end -}}
-    {{- /* `series` groups the dates of one recurring event, so the board can
-           show it once instead of once per date; `repeats` says whether it is
-           one at all. Counted over the whole season, not just what is left,
-           so the last date of a twelve-date series still says it recurs. */ -}}
-    {{- $dateCount := len (partial "programme/dates.html" $p) -}}
+    {{- /* `series` groups the sittings of one recurring event, so the board
+           can show it once instead of once per date; `repeats` says whether it
+           is one at all. Counted over the whole season, not just what is left,
+           so the last sitting of a twelve-date series still says it recurs. */ -}}
+    {{- $series := lower (replaceRE `\s+` " " (trim $p.Title " ")) -}}
     {{- $events = $events | append (dict
         "title"    $p.Title
         "speakers" ($p.Params.hosts | default slice)
         "faces"    $faces
-        "series"   $p.RelPermalink
-        "repeats"  (gt $dateCount 1)
+        "series"   $series
+        "repeats"  (gt (int (index $seriesCount $series | default 1)) 1)
         "start"    ((time.AsTime $start $tz).Format "2006-01-02T15:04:05-07:00")
         "end"      ((time.AsTime $end   $tz).Format "2006-01-02T15:04:05-07:00")
         "venue"    $venue
@@ -995,6 +1013,21 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     }
     if (!rest.length) { return ''; }
     rest.sort(function (a, b) { return a._s - b._s; });
+
+    /* Sittings on the same day differ by time, not by date — the afternoon
+       and evening Journaling workshops — so "Also 14 August" would be a lie
+       and "Also 13 August" would be nonsense. Say the time instead. */
+    var sameDay = true;
+    for (i = 0; i < rest.length; i++) {
+      if (ymd(rest[i]._sz) !== ymd(ev._sz)) { sameDay = false; }
+    }
+    if (sameDay) {
+      var times = [];
+      for (i = 0; i < rest.length; i++) {
+        times.push(hm24(rest[i]._sz) + '–' + hm24(rest[i]._ez));
+      }
+      return 'Also ' + times.join(', ') + ' the same day';
+    }
 
     var last = rest[rest.length - 1]._sz;
     var lastLabel = last.getUTCDate() + ' ' + MONTHS[last.getUTCMonth()].substr(0, 3);
