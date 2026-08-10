@@ -37,10 +37,12 @@
 
        Squared off and inlined as a data URI for the same reason as the QR
        codes: the panel cannot fetch anything, so a `<img src="/...">` would
-       be a hole on the wall. 112px is what the plate renders at; jpeg q72
-       keeps each face around 4KB before base64. */ -}}
+       be a hole on the wall. The size tracks what the circle renders at in
+       portrait — the panel is 1:1, so anything larger is bytes on the wire
+       for nothing, and anything smaller is a soft photo. jpeg q72 keeps each
+       face under 10KB before base64; they are deduplicated below. */ -}}
 {{- $people   := partialCached "people/by-name.html" . -}}
-{{- $faceSpec := "112x112 Center jpg q72" -}}
+{{- $faceSpec := "176x176 Center jpg q72" -}}
 
 {{- /* Emit generously and let the browser choose. Hugo's `now` freezes at
        build time, so picking the current-or-next event here would leave the
@@ -72,25 +74,51 @@
   {{- end -}}
 {{- end -}}
 
+{{- /* Every image on this page is inlined, so a duplicate is paid for in full
+       every time it appears. Kiekie Koha Coffee Hours has twelve dates: it was
+       carrying twelve copies of the same QR and twelve of the same host photo,
+       25 embedded images where 14 would do. Both now live in one table each
+       and the events hold indices into them. */ -}}
+{{- $qrList   := slice -}}
+{{- $qrIdx    := dict -}}
+{{- $faceList := slice -}}
+{{- $faceIdx  := dict -}}
+
 {{- $events := slice -}}
 {{- range $onSign -}}
   {{- $p := .page -}}
   {{- if ge .day $cutoff -}}
     {{- $start := printf "%sT%s:00" .day ($p.Params.start_time | default "18:00") -}}
     {{- $end   := printf "%sT%s:00" .day ($p.Params.end_time   | default "20:00") -}}
+
+    {{- /* One QR per event page — every date of a recurring event points at
+           the same page, so they share the code. */ -}}
+    {{- $qrKey := $p.RelPermalink -}}
+    {{- if not (isset $qrIdx $qrKey) -}}
+      {{- $qrIdx  = merge $qrIdx (dict $qrKey (len $qrList)) -}}
+      {{- $qrList = $qrList | append (printf "data:image/png;base64,%s" ((images.QR (printf "%s%s" $signBase $qrKey) $qrOpts).Content | base64Encode)) -}}
+    {{- end -}}
+
     {{- /* One entry per host, in the same order as `hosts`, so the script can
            index the two together. A host with no profile, or a profile with
-           no photo, contributes an empty string rather than being skipped —
-           skipping would slide every later photo onto the wrong name. */ -}}
+           no photo, contributes -1 rather than being skipped — skipping would
+           slide every later photo onto the wrong name. */ -}}
     {{- $faces := slice -}}
     {{- range $host := ($p.Params.hosts | default slice) -}}
-      {{- $face := "" -}}
+      {{- $n := -1 -}}
       {{- with index $people (partial "people/name-key.html" $host) -}}
-        {{- with partial "feature-image.html" . -}}
-          {{- $face = printf "data:image/jpeg;base64,%s" ((.Fill $faceSpec).Content | base64Encode) -}}
+        {{- $key := .RelPermalink -}}
+        {{- if isset $faceIdx $key -}}
+          {{- $n = index $faceIdx $key -}}
+        {{- else -}}
+          {{- with partial "feature-image.html" . -}}
+            {{- $n = len $faceList -}}
+            {{- $faceIdx  = merge $faceIdx (dict $key $n) -}}
+            {{- $faceList = $faceList | append (printf "data:image/jpeg;base64,%s" ((.Fill $faceSpec).Content | base64Encode)) -}}
+          {{- end -}}
         {{- end -}}
       {{- end -}}
-      {{- $faces = $faces | append $face -}}
+      {{- $faces = $faces | append $n -}}
     {{- end -}}
     {{- /* `series` groups the dates of one recurring event, so the board can
            show it once instead of once per date; `repeats` says whether it is
@@ -106,7 +134,7 @@
         "start"    ((time.AsTime $start $tz).Format "2006-01-02T15:04:05-07:00")
         "end"      ((time.AsTime $end   $tz).Format "2006-01-02T15:04:05-07:00")
         "venue"    $venue
-        "qr"       (printf "data:image/png;base64,%s" ((images.QR (printf "%s%s" $signBase $p.RelPermalink) $qrOpts).Content | base64Encode))) -}}
+        "qr"       (index $qrIdx $qrKey)) -}}
   {{- end -}}
 {{- end -}}
 <!DOCTYPE html>
@@ -337,7 +365,10 @@ body.portrait #spore {
 #title {
   font-size: 88px; line-height: 1.14; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.005em;
-  margin: 34px 0 0 0; max-width: 1180px;
+  /* The air goes above the title, not below it: the hosts belong to the
+     title, so they sit close under it, and the gap that separates the block
+     from the pill is the one that does the work. */
+  margin: 62px 0 0 0; max-width: 1180px;
 }
 
 /* Hosts: each one's photo immediately in front of their name, on the same
@@ -349,7 +380,7 @@ body.portrait #spore {
    a circle is the one frame they all survive. A host with no profile, or a
    profile with no photo, just shows the name — the row still reads. */
 #speakers {
-  margin-top: 60px; font-size: 44px; line-height: 1.2;
+  margin-top: 34px; font-size: 50px; line-height: 1.2;
   font-weight: 300; color: #F2F0E9; color: var(--paper);
   max-width: 1300px;
   display: -webkit-box; display: -webkit-flex; display: flex;
@@ -362,7 +393,7 @@ body.portrait #spore {
 #speakers .host {
   display: -webkit-box; display: -webkit-flex; display: flex;
   -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-  margin: 10px 56px 10px 0;
+  margin: 12px 48px 12px 0;
 }
 #speakers .host:last-child { margin-right: 0; }
 /* Sized to the space rather than to the type: #main centres in whatever slack
@@ -370,8 +401,8 @@ body.portrait #spore {
    beside the QR plate instead of being squeezed. */
 #speakers .face {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
-  width: 132px; height: 132px;
-  margin-right: 28px;
+  width: 156px; height: 156px;
+  margin-right: 30px;
   border-radius: 50%;
   overflow: hidden;
   /* A hairline keeps a dark photo from dissolving into a black board. */
@@ -457,8 +488,8 @@ body.portrait #inner { left: 80px; right: 80px; top: 90px; bottom: 90px; }
 body.portrait #brand      { font-size: 22px; letter-spacing: 0.34em; margin-bottom: 22px; }
 body.portrait #brand em   { letter-spacing: 0.34em; }
 body.portrait #status     { font-size: 27px; padding: 16px 34px 17px 34px; letter-spacing: 0.24em; }
-body.portrait #title      { font-size: 74px; margin-top: 46px; max-width: 100%; line-height: 1.03; }
-body.portrait #speakers   { font-size: 46px; margin-top: 80px; max-width: 100%; }
+body.portrait #title      { font-size: 74px; margin-top: 84px; max-width: 100%; line-height: 1.03; }
+body.portrait #speakers   { font-size: 54px; margin-top: 44px; max-width: 100%; }
 
 body.portrait #footrow {
   -webkit-box-orient: vertical;
@@ -481,7 +512,7 @@ body.portrait #qr     { width: 196px; height: 196px; }
 
 body.portrait #season     { margin-top: 34px; }
 body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; }
-body.portrait #speakers .face { width: 150px; height: 150px; margin-right: 30px; }
+body.portrait #speakers .face { width: 176px; height: 176px; margin-right: 32px; }
 
 body.portrait .label  { font-size: 20px; margin-bottom: 10px; }
 body.portrait .value  { font-size: 44px; }
@@ -630,6 +661,12 @@ var EVENTS = {{ jsonify (dict "indent" "  ") $events | safeJS }};
 
 var VENUE   = {{ jsonify $venue | safeJS }};
 var SITE_QR = {{ jsonify $siteQR | safeJS }};
+
+/* Inlined images, held once each and referenced by index from EVENTS — see
+   the header of this file. `qr` is an index into QRS; each entry of `faces`
+   is an index into FACES, or -1 for a host with no photo. */
+var QRS   = {{ jsonify $qrList   | safeJS }};
+var FACES = {{ jsonify $faceList | safeJS }};
 
 /* The season as a whole, past dates included, for the meter under the brand
    rule. EVENTS only carries what is still to come, so how many have already
@@ -1050,19 +1087,20 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
 
     put('title', esc(ev.title));
 
-    /* Each host as photo-then-name. `faces` is parallel to `speakers` only
-       where a photo was found, so it is indexed by position and an absent
-       entry just means "name on its own". */
-    var chips = [], i, face;
+    /* Each host as photo-then-name. `faces` runs parallel to `speakers` by
+       position, holding an index into FACES or -1 — tested against 0 rather
+       than for truthiness, because index 0 is a real photo. */
+    var chips = [], i, fi, face;
     for (i = 0; i < ev.speakers.length; i++) {
-      face = ev.faces && ev.faces[i]
-        ? '<span class="face"><img alt="" src="' + ev.faces[i] + '"></span>'
+      fi = ev.faces ? ev.faces[i] : -1;
+      face = (fi >= 0 && FACES[fi])
+        ? '<span class="face"><img alt="" src="' + FACES[fi] + '"></span>'
         : '';
       chips.push('<span class="host">' + face + esc(ev.speakers[i]) + '</span>');
     }
     put('speakers', chips.join(''));
     put('where', esc(ev.venue));
-    putSrc('qrimg', ev.qr || SITE_QR);
+    putSrc('qrimg', QRS[ev.qr] || SITE_QR);
 
     /* Computed every pass, not just when the event changes, so a board
        left up overnight starts saying "Today" at midnight instead of

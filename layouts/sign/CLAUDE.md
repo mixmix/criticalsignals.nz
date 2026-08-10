@@ -228,9 +228,25 @@ with no photo, renders as a name on its own and the row still reads.
 
 Photos are `Fill`ed square and inlined as `data:` URIs for the same reason as
 the QR codes: the panel cannot fetch anything, so an `<img src="/...">` is a
-hole on the wall. That is what `$faceSpec` is for — keep it small. Every face
-is roughly 4KB before base64, and they are the largest single thing on the
-page after the QR codes.
+hole on the wall. `$faceSpec` should track what the circle actually renders at
+in portrait — the panel is 1:1, so anything larger is bytes for nothing and
+anything smaller is a soft photo on a 65" screen.
+
+## One copy of each image
+
+Everything is inlined, so a duplicate is paid for in full every time it
+appears. Kiekie Koha Coffee Hours has twelve dates, and it was carrying twelve
+copies of the same QR and twelve of the same host photo — 25 embedded images
+where 14 would do.
+
+Hugo builds two tables, `QRS` and `FACES`, and the events hold indices into
+them: `qr` is an index, and each entry of `faces` is an index or `-1` for a
+host with no photo. **Index 0 is a real photo**, so the script tests `>= 0`,
+never truthiness.
+
+If you add another inlined image, put it in a table the same way. It is the
+difference between the page growing with the number of *dates* and growing
+with the number of *things*.
 
 ## Phones
 
