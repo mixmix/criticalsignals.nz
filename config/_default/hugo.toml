@@ -38,6 +38,28 @@ enableEmoji = true
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
+# The minifier rewrites `catch (e) {}` to `catch {}` when the binding is
+# unused. That is ES2019 optional catch binding, and the 2016 signage panel
+# at /sign/ throws a SyntaxError on it and shows a black screen — a failure
+# that appears only in the CI build, never under `hugo server`. Pinning the
+# target version stops the minifier introducing any post-ES5 syntax. It only
+# constrains what minification may emit; it does not transpile existing code,
+# so the theme's own JavaScript is unaffected.
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.js]
+      version = 5
+
+# Emits /sign/rev.json alongside /sign/index.html. The signage panel polls it
+# every 10s and reloads when the value changes, so a deploy reaches the screen
+# without anyone walking over to it. See layouts/sign/CLAUDE.md.
+[outputFormats]
+  [outputFormats.SIGNREV]
+    mediaType = "application/json"
+    baseName = "rev"
+    isPlainText = true
+    notAlternative = true
+
 [related]
   threshold = 0
   toLower = false

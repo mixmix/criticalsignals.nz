@@ -1,0 +1,3 @@
+{{- /* Build stamp polled by /sign/. Any change to this value makes the panel
+       reload, so it must change on every build and nothing else. */ -}}
+{{- dict "rev" (printf "%d" now.Unix) | jsonify -}}
