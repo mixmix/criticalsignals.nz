@@ -185,6 +185,13 @@ async function writeEvent (event, slug, collaborators) {
   const price = ticketPrice(event)
   if (price) frontMatter.price = price
 
+  // The event's currency, straight off the Ticket Tailor event object
+  // ("nzd", "usd", ...). Every event on the account should be NZD — the
+  // `money()` helper above hardcodes a "$" sign on that assumption — so this
+  // is kept in front matter purely so the /_admin/programme audit can flag
+  // any event that's drifted onto a different currency.
+  if (event.currency) frontMatter.currency = event.currency.toUpperCase()
+
   // How full the event is. A snapshot as of this run — the site is static, so
   // these numbers are only as fresh as the last build (the update-programme
   // workflow re-runs this script, see .github/workflows/).

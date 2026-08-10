@@ -56,6 +56,9 @@
     {{- if ne $price "" }} {{ $price }}
     {{- else }} <span class="programme-audit__tooltip" data-tooltip="No `price` set in front matter">❓</span>
     {{- end -}}
+    {{- $currency := $event.Params.currency | default "NZD" -}}
+    {{- if ne $currency "NZD" }} <span class="programme-audit__tooltip" data-tooltip="Invalid Currency: {{ $currency }}">🔥</span>
+    {{- end -}}
   </td>
   {{/* Sign-ups are only known for pages generated from Ticket Tailor — hand-authored
        ones (no ticket_tailor_id, see admin/programme-audit.html) carry none, and

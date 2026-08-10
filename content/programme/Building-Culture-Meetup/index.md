@@ -10,6 +10,7 @@ start_time: "18:00"
 end_time: "21:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2321619"
 price: "Free"
+currency: "NZD"
 attendees: 7
 capacity: 50
 ticket_tailor_id: "ev_8743536"

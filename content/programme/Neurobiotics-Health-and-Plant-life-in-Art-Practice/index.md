@@ -7,9 +7,10 @@ date: "2026-08-10"
 start_time: "18:00"
 end_time: "20:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2332933"
-price: "Koha"
-attendees: 23
-capacity: 50
+price: "$5–$10 or koha"
+currency: "NZD"
+attendees: 31
+capacity: 85
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_444,q_100,w_1400,x_0,y_1/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/whjerqvc4n3nkijcpvg3.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8773712"
 ---
