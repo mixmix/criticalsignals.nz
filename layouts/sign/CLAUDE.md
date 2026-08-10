@@ -162,10 +162,14 @@ the same panel with a different date on it, twice in a row in four places.
 The other dates are not hidden, they are stated in the two places where they
 mean something:
 
-- **The meter** — every date of a recurring event is a full-strength dot
-  (`.pip.repeat`), so the cadence reads across the season instead of
-  collapsing into one dot. Brightness, not a new hue: the board is one mint,
-  and a fourth colour would read as a fourth kind of thing.
+- **The meter** — while a recurring event is on screen, its other dates light
+  up full strength (`.pip.repeat`), so you can see where they fall across the
+  season instead of them collapsing into one dot. This is **per slide, not per
+  event**: a one-off showing lights nothing but its own dot. Marking every
+  recurring event all the time left the coffee-hour dates bright on slides
+  that had nothing to do with them, which reads as a fault. Brightness, not a
+  new hue: the board is one mint, and a fourth colour would read as a fourth
+  kind of thing.
 - **The When block** — `otherDates()` adds a line under the date: "Also 26,
   27 & 28 Aug" when three or fewer remain in one month, otherwise "10 more
   dates, through 28 Aug".

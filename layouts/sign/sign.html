@@ -292,9 +292,10 @@ body.portrait #spore {
   background: #94EEE5; background: var(--signal);
   opacity: 0.45;
 }
-/* A date of a recurring event, lit full strength. Brightness rather than a
-   new hue: the board's whole palette is one mint, and a fourth colour on it
-   would read as a fourth kind of thing rather than as emphasis. */
+/* Another date of the event currently on screen, lit full strength — set per
+   slide, not per event, so nothing is lit while a one-off is showing.
+   Brightness rather than a new hue: the board's whole palette is one mint,
+   and a fourth colour would read as a fourth kind of thing, not as emphasis. */
 .pip.repeat { opacity: 1; }
 /* The one on screen. Bigger and at full strength — that is the whole
    pointer; anything more competes with the pill. */
@@ -941,16 +942,21 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     var here  = sp.rank ? done + sp.rank - 1 : -1;
     var html  = '', i, cls, e;
 
+    /* Lit dots belong to the slide on screen, not to repeating events in
+       general. When a recurring event is showing, its other dates light up so
+       you can see where they fall across the season; when a one-off is
+       showing, nothing is lit but its own dot. Highlighting every recurring
+       event all the time meant the coffee-hour dates stayed bright on slides
+       that had nothing to do with them, which read as a fault. */
+    var series = (ev && ev.repeats) ? ev.series : null;
+
     for (i = 0; i < total; i++) {
       cls = 'pip';
       if (i >= done) {
         cls += ' left';
-        /* Every date of a recurring event is lit, even though only the first
-           of them gets a slide — so a twelve-date coffee hour reads on the
-           meter as the cadence it is rather than disappearing into one dot.
-           Past dots stay uniformly dim; EVENTS doesn't carry the past. */
         e = rest[i - done];
-        if (e && e.repeats) { cls += ' repeat'; }
+        /* Past dots stay uniformly dim — EVENTS doesn't carry the past. */
+        if (series && e && e.series === series) { cls += ' repeat'; }
       }
       if (i === here) { cls += ' here'; }
       html += '<div class="' + cls + '"></div>';
