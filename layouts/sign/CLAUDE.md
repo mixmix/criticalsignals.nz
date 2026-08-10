@@ -154,16 +154,21 @@ In a desktop console, `SIGN.next()` advances the rotation by hand and
 
 ## The season meter
 
-The row of dots above the pill is one dot per event in the whole season: the
-ones already run faded back, the ones still to come lit, and the one on screen
-picked out larger. Under it sits the season label, and under that the pill
-counts the same thing in words — "Coming up · 15 of 23 left".
+The row of dots under the brand rule is one dot per event in the whole season:
+the ones already run faded back, the ones still to come lit, and the one on
+screen picked out larger. Under it sits the season label, and nothing else.
+
+**No count is written anywhere on the board.** The dots are the count. The
+pill below says what the event is ("Starting soon", "Coming up", "Happening
+now") and nothing about position — it carried "15 of 23 left" for a while,
+which read as a number to be parsed rather than a shape to be glanced at,
+next to a meter already saying the same thing. Putting the figure back, in
+the pill or beside the label, has been tried and undone twice.
 
 Two counts are in play and they are deliberately different:
 
 - **`seasonPos()`** — where an event sits in what is *left of the season*.
-  This is what the pill and the meter both use. It doesn't move when an event
-  is featured.
+  This is what the meter points at. It doesn't move when an event is featured.
 - **`cycleIdx` / `view.total`** — where a slide sits in *this rotation*, which
   is a different number whenever a feature is interleaved into it. It drives
   the rotation, never the copy.

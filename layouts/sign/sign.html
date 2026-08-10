@@ -265,7 +265,7 @@ body.portrait #spore {
    Dots are a fixed size and sit left, so the strip grows with the season
    instead of stretching to fill — a short row genuinely means a short
    season. */
-#season { margin-bottom: 30px; }
+#season { margin-top: 30px; }
 
 #pips {
   display: -webkit-box; display: -webkit-flex; display: flex;
@@ -299,6 +299,7 @@ body.portrait #spore {
   font-weight: 700;
   color: #5E7C78; color: var(--muted);
 }
+#seasonnote b { color: #94EEE5; color: var(--signal); font-weight: 700; }
 
 /* status pill */
 #status {
@@ -352,10 +353,13 @@ body.portrait #spore {
   margin: 10px 56px 10px 0;
 }
 #speakers .host:last-child { margin-right: 0; }
+/* Sized to the space rather than to the type: #main centres in whatever slack
+   the slide leaves, so a four-host row simply grows down into the empty band
+   beside the QR plate instead of being squeezed. */
 #speakers .face {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
-  width: 104px; height: 104px;
-  margin-right: 24px;
+  width: 132px; height: 132px;
+  margin-right: 28px;
   border-radius: 50%;
   overflow: hidden;
   /* A hairline keeps a dark photo from dissolving into a black board. */
@@ -452,8 +456,9 @@ body.portrait #urlrow { margin-bottom: 16px; }
 body.portrait #weburl { font-size: 32px; }
 body.portrait #qr     { width: 196px; height: 196px; }
 
-body.portrait #season     { margin-bottom: 30px; }
-body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; margin-bottom: 24px; }
+body.portrait #season     { margin-top: 34px; }
+body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; }
+body.portrait #speakers .face { width: 150px; height: 150px; margin-right: 30px; }
 body.portrait .face       { width: 124px; height: 124px; margin-right: 20px; }
 
 body.portrait .label  { font-size: 20px; margin-bottom: 10px; }
@@ -511,17 +516,18 @@ html.handheld #spore { opacity: 0.26; }
     <div id="brand">Critical&nbsp;Signals <em>/ Programme</em></div>
     <div class="rule"></div>
 
-    <div id="main">
-      <!-- Season meter: one dot per event in the whole season, the ones
-           already run faded back, the ones still to come lit, and the one on
-           screen picked out. It sits directly above the pill so the dots and
-           the words underneath them ("Coming up · 15 of 23 left") read as one
-           statement. Built by renderSeason(); empty until then. -->
-      <div id="season">
-        <div id="pips"></div>
-        <div id="seasonnote">&nbsp;</div>
-      </div>
+    <!-- Season meter: one dot per event in the whole season, the ones already
+         run faded back, the ones still to come lit, and the one on screen
+         picked out. Sits at the top under the brand rule, where it reads as a
+         masthead for the year rather than as a caption on this one slide —
+         and where it carries the count, so the pill below doesn't have to.
+         Built by renderSeason(); empty until then. -->
+    <div id="season">
+      <div id="pips"></div>
+      <div id="seasonnote">&nbsp;</div>
+    </div>
 
+    <div id="main">
       <div id="status" class="later">&nbsp;</div>
       <h1 id="title">&nbsp;</h1>
       <div id="speakers"></div>
@@ -864,8 +870,8 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       html += '<div class="' + cls + '"></div>';
     }
     put('pips', html);
-    /* Just the label — the count is in the pill immediately below, and
-       saying it twice makes neither of them land. */
+    /* Label only. The dots already say how much of the year is left, and a
+       number next to them turns a glance back into a read. */
     put('seasonnote', left ? esc(SEASON_LABEL)
                            : esc(SEASON_LABEL) + ' &middot; that&rsquo;s a wrap');
   }
@@ -922,18 +928,18 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       put('clock', hm24(ev._ez) +
         ' <span id="count">&middot; ' + human(ev._e - now) + ' left</span>');
     } else {
+      /* The pill says what this event is, not where it sits in a list — the
+         meter at the top already answers "how many left", and saying it twice
+         made the pill long enough to stop being a glance. `pos` still marks a
+         rotation slide, which is the difference between "the next thing" and
+         "one of the things". */
       var untilMs = ev._s - now;
-      if (pos > 0) {
-        /* Deeper in the rotation the pill becomes a position marker, so a
-           passer-by can tell they are looking at a list, not one event. It
-           counts against the season rather than the rotation — "4 of 9 left"
-           says something about the year; "4 of 9 slides" says nothing. */
-        var sp = seasonPos(ev, now.getTime());
-        putClass('status', 'later');
-        put('status', 'Coming up &middot; ' + sp.rank + ' of ' + sp.left + ' left');
-      } else if (untilMs / 3600000 <= 12) {
+      if (untilMs / 3600000 <= 12) {
         putClass('status', 'soon');
         put('status', 'Starting soon');
+      } else if (pos > 0) {
+        putClass('status', 'later');
+        put('status', 'Coming up');
       } else {
         putClass('status', 'later');
         put('status', 'Next in the programme');
