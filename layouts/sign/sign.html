@@ -384,12 +384,13 @@ body.portrait #spore {
 }
 
 /* Address and QR share the band directly above the footer rule: address on
-   the left, code on the right, starting on the same line. Bottom-aligning
-   them instead hung the code off the address's baseline with a tall gap of
-   nothing above it, which read as a mistake. */
+   the left, code on the right, both sitting on the line. Top-aligning them
+   instead — so the address starts level with the plate — was tried and looked
+   worse: it left the address stranded mid-air with a gap of nothing between
+   it and the rule. The rule is what the address wants to sit on. */
 #urlrow {
   display: -webkit-box; display: -webkit-flex; display: flex;
-  -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start;
+  -webkit-box-align: end; -webkit-align-items: flex-end; align-items: flex-end;
   -webkit-justify-content: space-between; justify-content: space-between;
   margin-bottom: 18px;
 }
