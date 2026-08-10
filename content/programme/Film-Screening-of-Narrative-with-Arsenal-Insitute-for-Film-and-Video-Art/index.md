@@ -1,7 +1,7 @@
 ---
 title: "Film Screening of \"Narrative\" with Arsenal – Insitute for Film and Video Art"
 hosts:
-  - "Ulirich Ziemons"
+  - "Ulrich Ziemons"
 date: "2026-08-26"
 start_time: "18:00"
 end_time: "20:00"
