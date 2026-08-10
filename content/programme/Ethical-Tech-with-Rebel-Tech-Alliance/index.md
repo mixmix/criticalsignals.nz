@@ -6,6 +6,9 @@ date: "2026-08-20"
 start_time: "18:00"
 end_time: "20:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2321743"
+price: "$8 or koha"
+attendees: 2
+capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_323,q_100,w_1019,x_0,y_87/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/u3yh69f5orvv38tx7cx8.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8743662"
 ---

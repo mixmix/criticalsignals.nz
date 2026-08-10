@@ -70,6 +70,14 @@
             {{ else }}
               <p class="event__tickets">
                 <a href="{{ .Params.sign_up_link }}">Tickets <span aria-hidden="true">&rarr;</span></a>
+                {{/* Price in the organiser's own words — see ticketPrice() in
+                     scripts/build-programme.mjs. */}}
+                {{ with .Params.price }}<span class="event__price">{{ . }}</span>{{ end }}
+                {{/* Sign-ups as of the last build, not live. Nobody yet reads as
+                     "don't come", so an empty event says nothing at all. */}}
+                {{ if gt (.Params.attendees | default 0) 0 }}
+                  <span class="event__attending">{{ .Params.attendees }} attending</span>
+                {{ end }}
               </p>
             {{ end }}
           {{ else }}

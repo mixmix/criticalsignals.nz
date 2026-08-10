@@ -6,6 +6,7 @@
 {{ define "main" }}
   {{ $programmes := where .Site.RegularPages "Type" "programme" }}
 
+  {{ $today := now.Format "2006-01-02" }}
   {{ $rows := slice }}
   {{ range $programmes }}
     {{ $event := . }}
@@ -83,6 +84,10 @@
     {{ $firstDay := "" }}
     {{ if $dates }}{{ $firstDay = (index $dates 0).Format "2006-01-02" }}{{ end }}
     {{ $sortKey := printf "%s %s" $firstDay ($event.Params.start_time | default "") }}
+    {{/* dateTBC / no-date events have no $firstDay to compare, so they can't be
+         classed as past — they fall in with the future rows, at the top where
+         the empty sortKey already sorts them. */}}
+    {{ $isPast := and (ne $firstDay "") (lt $firstDay $today) }}
 
     {{/* Events regenerated from Ticket Tailor (see scripts/build-programme.mjs)
          always carry a ticket_tailor_id — hand-authored ("custom") events never
@@ -91,10 +96,10 @@
     {{ $ticketTailorID := $event.Params.ticket_tailor_id | default "" }}
     {{ if ne $ticketTailorID "" }}
       {{ $editURL := printf "https://app.tickettailor.com/event/%s" $ticketTailorID }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
     {{ else }}
       {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $event.File.Path }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
     {{ end }}
   {{ end }}
 
@@ -121,13 +126,27 @@
             <th>Event</th>
             <th>Hosts</th>
             <th>Ticket</th>
+            <th>Sign-ups</th>
             <th class="programme-audit__actions-col" colspan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {{ range $liveRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
+          {{/* $liveRows is sorted soonest-first, so past events (earlier dates)
+               all come before future ones — the transition happens at most once,
+               right where isPast flips from true to false. */}}
+          {{ $seenPast := false }}
+          {{ $pastDividerDone := false }}
+          {{ range $liveRows }}
+            {{ if .isPast }}
+              {{ $seenPast = true }}
+            {{ else if and $seenPast (not $pastDividerDone) }}
+              <tr class="programme-audit__past-divider"><td colspan="7"></td></tr>
+              {{ $pastDividerDone = true }}
+            {{ end }}
+            {{ partial "programme-audit/row.html" . }}
+          {{ end }}
           {{ if $draftRows }}
-            <tr class="programme-audit__drafts-divider"><td colspan="6">Drafts</td></tr>
+            <tr class="programme-audit__drafts-divider"><td colspan="7">Drafts</td></tr>
             {{ range $draftRows }}{{ partial "programme-audit/row.html" . }}{{ end }}
           {{ end }}
         </tbody>
@@ -203,18 +222,47 @@
     .programme-audit__hosts li {
       padding: 0;
     }
+    /* Both hold short, fixed-shape content — keep them to their contents so the
+       Event column isn't squeezed into one-word-per-line. */
+    .programme-audit__table td.programme-audit__ticket,
+    .programme-audit__table td.programme-audit__signups {
+      width: 1%;
+      white-space: nowrap;
+    }
+    /* How full the event is, as of the last build — a bar plus the raw count,
+       since "36/50" is the number you act on and the bar is just the shape of
+       it at a glance. */
+    .programme-audit__bar {
+      display: inline-block;
+      vertical-align: middle;
+      width: 5rem;
+      height: 0.6rem;
+      margin-right: 0.5rem;
+      background: rgba(128, 128, 128, 0.25);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .programme-audit__bar-fill {
+      display: block;
+      height: 100%;
+      background: var(--critical-green);
+    }
+    .programme-audit__count {
+      font-variant-numeric: tabular-nums;
+    }
     .programme-audit__link {
       text-decoration: underline;
       text-underline-offset: 2px;
     }
     .programme-audit__btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       white-space: nowrap;
-      font-family: Arial, sans-serif;
-      font-size: 0.8rem;
-      font-weight: 300;
+      font-size: 1rem;
       text-decoration: none;
-      padding: 0.3rem 0.6rem;
+      width: 1.8rem;
+      height: 1.8rem;
       border-radius: 4px;
       border: 1px solid rgba(0, 0, 0, 0.15);
       background: #fff;
@@ -228,9 +276,19 @@
       background: #f0f0f0;
       font-weight: 700;
     }
+    /* Splits past events from future ones within the live section — just a
+       heavier rule, not a labelled row, since which side is which is obvious
+       from the dates either side of it. */
+    .programme-audit__past-divider td {
+      padding: 0;
+      border-bottom: 1px solid #222;
+    }
     tr.programme-audit__row--draft {
       color: #999;
       opacity: 0.6;
+    }
+    tr.programme-audit__row--past {
+      opacity: 0.5;
     }
     .programme-audit__tooltip {
       cursor: help;

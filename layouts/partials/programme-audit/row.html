@@ -1,8 +1,9 @@
 {{- /* One <tr> for the /_programme/ audit table. Expects a row dict:
        {page, hosts, ticketStatus, whenDates, whenTime, whenLines, editURL,
-       editLabel, isDraft}. */ -}}
+       editLabel, isDraft}. Price and sign-ups come off the page's own front
+       matter, written by scripts/build-programme.mjs. */ -}}
 {{ $event := .page }}
-<tr{{ if .isDraft }} class="programme-audit__row--draft"{{ end }}>
+<tr{{ if .isDraft }} class="programme-audit__row--draft"{{ else if .isPast }} class="programme-audit__row--past"{{ end }}>
   <td class="programme-audit__when">
     {{- if $event.Params.dateTBC -}}
       <em>date TBC</em>
@@ -43,7 +44,8 @@
       <span class="programme-audit__tooltip" data-tooltip="No hosts listed for this event">❓❗</span>
     {{ end }}
   </td>
-  <td>
+  <td class="programme-audit__ticket">
+    {{- $price := $event.Params.price | default "" -}}
     {{- if eq .ticketStatus "ok" -}}
       <span class="programme-audit__tooltip" data-tooltip="Ticket sign-up link set">✅</span>
     {{- else if eq .ticketStatus "optout" -}}
@@ -51,7 +53,32 @@
     {{- else -}}
       <span class="programme-audit__tooltip" data-tooltip="No ticket sign-up link">🔥</span>
     {{- end -}}
+    {{- if ne $price "" }} {{ $price }}
+    {{- else }} <span class="programme-audit__tooltip" data-tooltip="No `price` set in front matter">❓</span>
+    {{- end -}}
   </td>
-  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--view" href="{{ $event.RelPermalink }}">View →</a></td>
-  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--edit programme-audit__tooltip" data-tooltip="Edit on {{ .editLabel }}" href="{{ .editURL }}" target="_blank" rel="noopener noreferrer">✏️ Edit</a></td>
+  {{/* Sign-ups are only known for pages generated from Ticket Tailor — hand-authored
+       ones (no ticket_tailor_id, see admin/programme-audit.html) carry none, and
+       printing a 0 there would read as "nobody has signed up" when the real number
+       is over in the Ticket Tailor dashboard. */}}
+  {{ $tracked := ne ($event.Params.ticket_tailor_id | default "") "" }}
+  <td class="programme-audit__signups">
+    {{- $going := $event.Params.attendees | default 0 -}}
+    {{- $capacity := $event.Params.capacity | default 0 -}}
+    {{- if not $tracked -}}
+      <span class="programme-audit__tooltip" data-tooltip="Hand-authored page — sign-ups aren't pulled from Ticket Tailor. Check the Ticket Tailor dashboard.">❓</span>
+    {{- else if $capacity -}}
+      {{/* Oversold is possible (door sales, held tickets), so the fill is
+           clamped even though the count keeps telling the truth. */}}
+      {{- $pct := math.Min 100 (math.Round (mul (div (float $going) $capacity) 100)) -}}
+      <span class="programme-audit__bar" aria-hidden="true">
+        <span class="programme-audit__bar-fill" style="width:{{ $pct }}%"></span>
+      </span>
+      <span class="programme-audit__count">{{ $going }}/{{ $capacity }}</span>
+    {{- else -}}
+      <span class="programme-audit__count">{{ $going }}</span>
+    {{- end -}}
+  </td>
+  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--view programme-audit__tooltip" data-tooltip="View page" aria-label="View page" href="{{ $event.RelPermalink }}">👁</a></td>
+  <td class="programme-audit__actions-col"><a class="programme-audit__btn programme-audit__btn--edit programme-audit__tooltip" data-tooltip="Edit on {{ .editLabel }}" aria-label="Edit on {{ .editLabel }}" href="{{ .editURL }}" target="_blank" rel="noopener noreferrer">✏️</a></td>
 </tr>

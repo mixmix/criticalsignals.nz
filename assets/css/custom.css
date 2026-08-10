@@ -578,15 +578,35 @@ body:has(.cs-hero) .prog-group__date{
    and sit in the text flow as bare block images, so they carry the same bottom
    spacing as a paragraph. */
 .md-img{display:block;max-width:100%;height:auto;margin:0 0 1em;}
-.event__tickets{margin:0 0 clamp(28px,3vw,46px);}
+.event__tickets{
+  display:grid;
+  grid-gap:0 1.2em;
+  grid-template-columns: auto 1fr;
+  margin:0 0 clamp(28px,3vw,46px);
+}
+.event__tickets a {
+  grid-row: 1 / 3;
+}
+.event__tickets .event__price {
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+  align-self: end;
+}
+.event__tickets .event__attending {
+  font-size: 0.8rem;
+  align-self: start;
+}
 .event__tickets a,.event__tickets .event__no-signup{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
-  padding:12px 48px;min-height:54px;
+  padding:12px 48px 12px 56px;min-height:54px;
   background:var(--ink);color:var(--white);border:2px solid var(--ink);
   font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;
 }
 .event__tickets a:hover{filter:brightness(0.9);text-decoration:none;}
 .event__tickets.is-soon{font-weight:700;text-transform:uppercase;}
+/* Price + sign-up count beside the Tickets button — quiet asides, never
+   competing with it. Sizes are set with the grid above. */
+.event__price,.event__attending{opacity:.6;}
 .event__passed-text{font-style:italic;opacity:.55;}
 
 .event__hosts{margin-top:clamp(38px,3.8vw,60px);}

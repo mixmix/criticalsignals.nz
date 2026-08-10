@@ -181,6 +181,17 @@ async function writeEvent (event, slug, collaborators) {
   // "Registration coming soon!". Published events link to their event page.
   if (!isDraft && event.url) frontMatter.sign_up_link = event.url
 
+  // Subtle price line next to the Tickets button, e.g. "Koha" or "$5 or koha".
+  const price = ticketPrice(event)
+  if (price) frontMatter.price = price
+
+  // How full the event is. A snapshot as of this run — the site is static, so
+  // these numbers are only as fresh as the last build (the update-programme
+  // workflow re-runs this script, see .github/workflows/).
+  frontMatter.attendees = event.total_issued_tickets ?? 0
+  const capacity = ticketCapacity(event)
+  if (capacity) frontMatter.capacity = capacity
+
   // The event's header image, rendered at the top of the page. `featureimage`
   // is the site-wide key for "this page's photo" (people use it too) and it
   // takes a remote URL as well as a bundled filename — see
@@ -229,6 +240,82 @@ async function writeEvent (event, slug, collaborators) {
     missing,
     complete: missing.length === 0 && hosts.length > 0
   }
+}
+
+/**
+ * A short price line for the event, shown beside the Tickets button:
+ *
+ *   "Free"          every ticket is $0
+ *   "Koha"          every ticket is $0, and that's what the organiser called it
+ *   "$10"           one price
+ *   "$120–250"      cheapest to dearest
+ *   "$5 or koha"    a paid ticket alongside a $0 "pay at the door" option
+ *
+ * Booking fees are left out — the price shown is the one on the ticket, same
+ * as Ticket Tailor's own listing headline.
+ *
+ * Returns null when there's nothing to say (an event with no ticket types yet),
+ * so the front matter key is simply omitted.
+ */
+function ticketPrice (event) {
+  // Hidden tickets are unlocked with a code, so they're not part of the public
+  // price. Sold-out ones still are: the price stands even when it's gone.
+  const types = (event.ticket_types ?? []).filter((t) => !t.access_code)
+  if (!types.length) return null
+
+  const paid = types.filter((t) => t.price > 0).map((t) => t.price)
+  const free = types.filter((t) => t.price === 0)
+
+  if (!paid.length) return capitalise(freeWord(free))
+
+  const min = Math.min(...paid)
+  const max = Math.max(...paid)
+  const range = min === max ? money(min) : `${money(min)}–${money(max)}`
+
+  return free.length ? `${range} or ${freeWord(free)}` : range
+}
+
+/**
+ * How many people the event can take.
+ *
+ * Two limits are in play and the smaller wins: the quantities on the ticket
+ * types (which are per-type, so they sum), and the event's own cap on tickets
+ * sold. They often disagree — "Detangling Yourself from Big Tech" offers 20
+ * waged + 15 door tickets but caps the room at 20 — and it's the cap that
+ * decides when the event is full.
+ */
+function ticketCapacity (event) {
+  const types = (event.ticket_types ?? []).filter((t) => !t.access_code)
+  const total = types.reduce((sum, t) => sum + (t.quantity_total ?? 0), 0)
+  const cap = event.max_tickets_sold_per_occurrence
+
+  if (!total) return cap || null
+  return cap ? Math.min(cap, total) : total
+}
+
+/**
+ * What to call a $0 ticket. Koha is a donation rather than a free ticket, and
+ * it's the organiser who decides which this is — so echo back the word they
+ * used on the ticket ("Koha", "Pay at the door (Koha)") rather than flattening
+ * everything to "Free". Ticket types with no such word (RSVP, General
+ * Admission) really are free.
+ */
+function freeWord (freeTypes) {
+  for (const type of freeTypes) {
+    const match = String(type.name ?? '').match(/koha|donation/i)
+    if (match) return match[0].toLowerCase()
+  }
+  return 'free'
+}
+
+/** Cents to dollars, dropping a trailing ".00": 25000 → "$250", 1250 → "$12.50". */
+function money (cents) {
+  const dollars = cents / 100
+  return `$${Number.isInteger(dollars) ? dollars : dollars.toFixed(2)}`
+}
+
+function capitalise (word) {
+  return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
 /**
