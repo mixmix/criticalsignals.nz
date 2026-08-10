@@ -61,7 +61,8 @@ If you find yourself adding `define`, stop.
 
 1920×1080 landscape / 1080×1920 portrait, scaled to fit by `fit()`. This is
 not a responsive layout in the usual sense. Don't add media queries expecting
-them to help.
+them to help. The one exception is phones — see "Phones" below, and note that
+it is not a media query either.
 
 ### 6. `hugo --minify` runs in CI, and it will happily break this page
 
@@ -101,10 +102,11 @@ homepage and programme list — out of scope here.
 
 ## Rotation
 
-An event is **featured** from `FEATURE_BEFORE_MS` before it starts until
-`FEATURE_AFTER_MS` after it started, or until it ends, whichever is later —
-the window in which people are arriving or already in the room. `FEATURE_MODE`
-decides what the board does about it:
+An event is **featured** from `FEATURE_BEFORE_MS` before it starts until it
+ends — doors open to lights up, the window in which people are either arriving
+or already in the room. The moment it finishes the board drops straight back
+to plain rotation. `FEATURE_MODE` decides what the board does about a featured
+event:
 
 - `'interleave'` (current) — the featured event takes every second panel:
   featured, coming up 2 of N, featured, coming up 3 of N, and so on. The
@@ -116,8 +118,14 @@ decides what the board does about it:
   original behaviour, kept working.
 - `'off'` — no special treatment.
 
-With no featured event the board pages through the next `CYCLE_MAX` upcoming
-events, or all of them if fewer remain.
+With no featured event the board pages through everything still to come. There
+is no cap on that, but there is one slide per event, not one per date — see
+"Recurring events" below.
+
+There is an earlier rule you may find traces of, in which a feature lingered
+for three hours after it started. That was wrong — it kept a finished event on
+the board with a stale "Happening now" long after everyone had left. Don't
+reintroduce it.
 
 `advance()` is what makes interleaving work: it alternates `featureTurn` and
 only steps `cycleIdx` when leaving a rotation panel, so every upcoming event
@@ -126,7 +134,8 @@ gets its own slot instead of every second one being skipped.
 Note that `upcoming()` only returns events that have not started. An event in
 progress therefore reaches the board *only* as the feature — under
 `FEATURE_MODE = 'off'` it would not appear at all and the "Happening now" pill
-would never render.
+would never render. `currentView()` puts its result through `collapse()`; the
+rest of the code works on the uncollapsed list.
 
 All the knobs are constants at the top of the display-loop section of
 `sign.html`. `CYCLE_HOLD_MS` is the *whole* slide including both fades, so if
@@ -143,10 +152,162 @@ competing `transform` values.
 In a desktop console, `SIGN.next()` advances the rotation by hand and
 `SIGN.state()` reports the current mode.
 
+## Recurring events
+
+`collapse()` gives a repeating event a single slide, the soonest sitting.
+Kiekie Koha Coffee Hours runs twelve dates this season; a slide each made it
+half the rotation, the same panel with a different date on it, twice in a row
+in four places.
+
+**`series` is keyed on the event's title, not on its page**, because "the same
+event on again" takes two forms here and both have to count:
+
+- one page with several `dates:` — Kiekie Koha Coffee Hours;
+- **two pages with the same title** — Journaling is not a Luxury, an afternoon
+  session and an evening one, same day, different times. Keying on the page
+  missed this entirely and the board showed them as two unrelated events.
+
+`repeats` is therefore counted per title across the whole season (`$seriesCount`
+in the Hugo header), not from one page's date count.
+
+The other dates are not hidden, they are stated in the two places where they
+mean something:
+
+- **The meter** — while a recurring event is on screen, its other dates light
+  up full strength (`.pip.repeat`), so you can see where they fall across the
+  season instead of them collapsing into one dot. This is **per slide, not per
+  event**: a one-off showing lights nothing but its own dot. Marking every
+  recurring event all the time left the coffee-hour dates bright on slides
+  that had nothing to do with them, which reads as a fault. Brightness, not a
+  new hue: the board is one mint, and a fourth colour would read as a fourth
+  kind of thing.
+- **The When block** — `otherDates()` adds a line under the date: "Also 26,
+  27 & 28 Aug" when three or fewer remain in one month, otherwise "10 more
+  dates, through 28 Aug". When every remaining sitting is on the *same day* it
+  switches to times — "Also 18:00–20:00 the same day" — because that is what
+  actually differs between them.
+
+`series` is the event's `RelPermalink` and `repeats` is set at build time from
+the *whole season's* date count, not from what is left — so the final date of a
+twelve-date series still says it recurs.
+
+Only the rotation is collapsed. `remaining()` and `SEASON_TOTAL` still count
+every occurrence, which is what keeps the meter's arithmetic (`done = total -
+left`) lined up with the dots.
+
+## The season meter
+
+The row of dots under the brand rule is one dot per event in the whole season:
+the ones already run faded back, the ones still to come lit, and the one on
+screen picked out larger. Under it sits the season label, and nothing else.
+
+**No count is written anywhere on the board.** The dots are the count. The
+pill below says what the event is ("Starting soon", "Coming up", "Happening
+now") and nothing about position — it carried "15 of 23 left" for a while,
+which read as a number to be parsed rather than a shape to be glanced at,
+next to a meter already saying the same thing. Putting the figure back, in
+the pill or beside the label, has been tried and undone twice.
+
+Two counts are in play and they are deliberately different:
+
+- **`seasonPos()`** — where an event sits in what is *left of the season*.
+  This is what the meter points at. It doesn't move when an event is featured.
+- **`cycleIdx` / `view.total`** — where a slide sits in *this rotation*, which
+  is a different number whenever a feature is interleaved into it. It drives
+  the rotation, never the copy.
+
+`remaining()` counts an event that has started but not finished as still left
+— it is on now, which is not the same as over — while `upcoming()` (which
+feeds the rotation) does not.
+
+`SEASON_TOTAL` and `SEASON_LABEL` come from Hugo and cover the whole season,
+past dates included. `EVENTS` does not: it starts two days back. So how many
+events have already run is `SEASON_TOTAL` minus what is left, which is all the
+meter needs — the past events themselves never reach the page.
+
+## Host photos
+
+Each host's photo sits immediately in front of their name, resolved at build
+time by the same rule the rest of the site uses: `people/by-name.html` maps
+the name in `hosts:` to that person's profile (honorific-insensitive, via
+`people/name-key.html`), and `feature-image.html` finds that page's photo.
+Nothing here is specific to the sign; adding a photo to someone's profile puts
+it on the board.
+
+The `faces` array is **positional** — one entry per host, in `hosts:` order,
+empty string where there is no photo. Skipping the empty ones would slide
+every later photo onto the wrong name. A host with no profile, or a profile
+with no photo, renders as a name on its own and the row still reads.
+
+Photos are `Fill`ed square and inlined as `data:` URIs for the same reason as
+the QR codes: the panel cannot fetch anything, so an `<img src="/...">` is a
+hole on the wall. `$faceSpec` should track what the circle actually renders at
+in portrait — the panel is 1:1, so anything larger is bytes for nothing and
+anything smaller is a soft photo on a 65" screen.
+
+## One copy of each image
+
+Everything is inlined, so a duplicate is paid for in full every time it
+appears. Kiekie Koha Coffee Hours has twelve dates, and it was carrying twelve
+copies of the same QR and twelve of the same host photo — 25 embedded images
+where 14 would do.
+
+Hugo builds two tables, `QRS` and `FACES`, and the events hold indices into
+them: `qr` is an index, and each entry of `faces` is an index or `-1` for a
+host with no photo. **Index 0 is a real photo**, so the script tests `>= 0`,
+never truthiness.
+
+If you add another inlined image, put it in a table the same way. It is the
+difference between the page growing with the number of *dates* and growing
+with the number of *things*.
+
+## Phones
+
+`/sign/` is a public URL, so people do open it on a phone. The fixed canvas
+alone doesn't survive that: `width=1920` in the viewport tag is what the panel
+needs, and a phone honouring it lays the page out 1920px wide and shows one
+corner of the board blown up to fill the screen.
+
+The small script in `<head>` narrows the viewport tag to `width=device-width`
+on phone-sized screens only, and puts `.handheld` on `<html>` for the CSS that
+draws the frame around the fitted canvas.
+
+`fit()` then treats a phone differently from the panel. The panel and the
+desktop get the whole canvas letterboxed and centred. A phone **fills the
+width and pins the bottom**, so the canvas hangs off the top when the screen
+is too short for it:
+
+- Fitting the height as well threw away a fifth of the type on a phone with
+  its address bar showing, on a board whose entire job is to be read.
+- Scale then depends only on the width, which doesn't change when the address
+  bar slides away — so the board holds still instead of resizing under your
+  thumb. Only how much of the top is cut changes.
+- What goes over the top is the brand line and the season meter. The title,
+  the hosts, the QR and the times are all anchored to the bottom and always
+  in view. That ordering is why the meter sits at the top: it is the part the
+  board can most afford to lose.
+
+When it does crop, `fit()` adds `.cropped`, which drops the frame (three sides
+of a box reads as a broken box) and shows `#topfade` — a shallow gradient that
+turns a line of type sliced mid-letter into an edge. Keep it shallow: at 58px
+it was greying out the title.
+
+`#topfade` sits outside `#stage` because `#stage` is scaled, and the fade wants
+a fixed depth in screen pixels rather than in canvas ones.
+
+It tests `screen`, not `window`, so a narrow desktop window is never mistaken
+for a phone. The threshold is 1000px on the **longer** screen dimension: the
+panel reports 1080×1920 and is comfortably clear of it, and desktop browsers
+ignore the viewport tag entirely. **Everything under `html.handheld` is
+therefore unreachable from the panel** — which is what makes it safe to change
+freely, and what you must preserve if you touch it.
+
 ## QR codes
 
 Each slide shows a QR pointing at that event's own page, plus the site address
-above the footer rule. **This is fully automatic** — `images.QR` generates the
+above the footer rule. Every code carries `?utm_source=window_sign` (`$signUTM`)
+so the analytics can tell what the sign is actually doing. The tag is static,
+which is what keeps the codes byte-identical regardless of baseURL. **This is fully automatic** — `images.QR` generates the
 code at build time from `$p.Permalink`, and `.Content | base64Encode` inlines
 it as a `data:` URI. Adding an event to `content/programme/` is all that is
 required; its QR appears on the next build. There is no external service, no
@@ -169,8 +330,20 @@ byte-identical.
 ## Keeping an event off the sign
 
 `showOnSign: false` in an event's front matter excludes it from the board
-while leaving it everywhere else on the site. Kiekie Koha Coffee Hours uses
-this: it runs most days, so it crowded the rotation out.
+while leaving it everywhere else on the site. Absent means shown, and so does
+`true`. It also removes the event from `SEASON_TOTAL`, so the meter counts
+the season the board actually shows.
+
+Nothing currently uses it. Kiekie Koha Coffee Hours and Volunteer Orientation
+both did — Kiekie runs most days and crowded the rotation out — and both are
+switched on now to see how the board reads with the whole programme in it.
+Kiekie is twelve of the season's dates on its own, so that is the thing to
+look at first if the rotation feels long.
+
+Ticket Tailor knows nothing about the sign, so `scripts/build-programme.mjs`
+reads any existing `showOnSign` off the page and writes it back out
+(`readShowOnSign`). Without that, the next sync rewrites the file without the
+key and the event quietly returns to the board.
 
 ## Where the data comes from
 
