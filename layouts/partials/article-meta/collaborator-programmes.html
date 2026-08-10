@@ -1,12 +1,10 @@
-{{ $name := .Params.Title }} <!-- Get the collaborator name from the current page -->
-{{ $programmes := where .Site.Pages "Type" "programme" }} <!-- Get all pages of type 'programme' -->
+{{ $key := partial "people/name-key.html" .Params.Title }} <!-- Match on the honorific-agnostic key, not the raw title -->
+{{ $programmes := index (partialCached "people/programmes-by-name.html" .) $key | default slice }} <!-- Events listing this person as a host -->
 
 {{ $matchingProgrammes := slice }} <!-- Initialize an empty slice to collect matching programmes -->
 {{ range $programmes }}
-  {{ if in .Params.hosts $name }} <!-- Check if the current collaborator is in the 'hosts' array -->
-    {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }} <!-- Combine date + start_time so events order chronologically -->
-    {{ $matchingProgrammes = $matchingProgrammes | append (dict "page" . "sortKey" $sortKey) }} <!-- Add matching programme to the collection -->
-  {{ end }}
+  {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }} <!-- Combine date + start_time so events order chronologically -->
+  {{ $matchingProgrammes = $matchingProgrammes | append (dict "page" . "sortKey" $sortKey) }} <!-- Add matching programme to the collection -->
 {{ end }}
 {{ $matchingProgrammes = sort $matchingProgrammes "sortKey" "asc" }} <!-- Order from first to last -->
 {{ $matchingProgrammes = apply $matchingProgrammes "index" "." "page" }} <!-- Unwrap back to pages -->

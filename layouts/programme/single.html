@@ -91,7 +91,7 @@
               <h2 class="event__hosts-title">{{ if eq (len .) 1 }}Host{{ else }}Hosts{{ end }}</h2>
               {{ range . }}
                 {{ $host := . }}
-                {{ $collab := index (where (where $.Site.RegularPages "Section" "people") "Title" $host) 0 }}
+                {{ $collab := index (partialCached "people/by-name.html" $) (partial "people/name-key.html" $host) }}
                 {{ if $collab }}
                   <a class="host" href="{{ $collab.RelPermalink }}">
                     <span class="host__name">{{ $collab.Title }}</span>

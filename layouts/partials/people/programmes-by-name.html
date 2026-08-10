@@ -1,0 +1,26 @@
+{{- /* Map of name key (see people/name-key.html) → the programme pages that
+       list that person in their `hosts`. The inverse of people/by-name.html,
+       for "what is this person hosting?" — and honorific-agnostic in the same
+       way, so a profile titled "Jessica Hutchings" still finds the event that
+       credits "Dr. Jessica Hutchings".
+
+       Walks every programme page, so call it through partialCached (the
+       context argument is ignored; there's only ever one index):
+
+         {{ $byHost := partialCached "people/programmes-by-name.html" . }}
+         {{ $events := index $byHost (partial "people/name-key.html" .Title) }}
+
+       Pages come back in site order — callers sort them. */ -}}
+{{- $index := dict -}}
+{{- range where site.Pages "Type" "programme" -}}
+  {{- $event := . -}}
+  {{- range .Params.hosts | default slice -}}
+    {{- $key := partial "people/name-key.html" . -}}
+    {{- $seen := index $index $key | default slice -}}
+    {{- /* An event that credits both "Dr X" and "X" would otherwise list twice. */ -}}
+    {{- if and (ne $key "") (not (in $seen $event)) -}}
+      {{- $index = merge $index (dict $key ($seen | append $event)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $index -}}

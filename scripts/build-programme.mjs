@@ -215,9 +215,9 @@ async function writeEvent (event, slug, collaborators) {
   if (!event.url) missing.push('sign-up link')
 
   // Hosts we found but who have no matching profile in content/people/.
-  // Names must match a person's Title exactly (that's how the
-  // programme-hosts partial links them).
-  const hostsWithoutProfile = hosts.filter((name) => !collaborators.has(name.trim()))
+  // Matched on the same key the templates use to link them, so an honorific
+  // on one side only isn't reported as a missing profile (see nameKey).
+  const hostsWithoutProfile = hosts.filter((name) => !collaborators.has(nameKey(name)))
 
   return {
     name: event.name,
@@ -232,7 +232,27 @@ async function writeEvent (event, slug, collaborators) {
 }
 
 /**
- * Build a set of people's names (their page Title) from
+ * Comparison key for a person's name: lowercased, whitespace collapsed, and a
+ * leading honorific ("Dr", "Dr.", "Prof", …) removed.
+ *
+ * Ticket Tailor descriptions and content/people/ profiles are written by
+ * different hands and don't agree on honorifics — the same person can be
+ * "Dr. Jessica Hutchings" on an event and "Jessica Hutchings" on their
+ * profile. Comparing raw names would report that as a missing profile.
+ *
+ * Mirrored in layouts/partials/people/name-key.html, which is what actually
+ * links hosts to profiles on the site — change both together.
+ */
+function nameKey (name) {
+  return String(name ?? '')
+    .toLowerCase()
+    .replace(/^\s*(?:dr|prof|professor|mr|mrs|ms|mx|sir|dame)\.?\s+/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * Build a set of people's name keys (from their page Title) out of
  * content/people/*\/index.md, used to check whether a host has a profile.
  */
 async function loadCollaboratorTitles () {
@@ -254,7 +274,7 @@ async function loadCollaboratorTitles () {
       continue
     }
     const match = text.match(/^title:\s*["']?(.+?)["']?\s*$/m)
-    if (match) titles.add(match[1].trim())
+    if (match) titles.add(nameKey(match[1]))
   }
 
   return titles

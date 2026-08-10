@@ -13,8 +13,9 @@
     {{ range $hosts }}
       {{ $host := . }} <!-- Loop through each host name in the array -->
 
-      <!-- Check for a person in the content/people/ directory that matches the host name -->
-      {{ $collaboratorPage :=  index (where (where $context.Site.RegularPages "Section" "people") "Title" $host) 0 }}
+      <!-- Check for a person in the content/people/ directory that matches the
+           host name, ignoring any honorific on either side (people/name-key.html) -->
+      {{ $collaboratorPage := index (partialCached "people/by-name.html" $context) (partial "people/name-key.html" $host) }}
 
       <!-- If a collaborator page is found, insert the name and image -->
       {{ if $collaboratorPage }}

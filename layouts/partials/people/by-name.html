@@ -1,0 +1,20 @@
+{{- /* Map of name key (see people/name-key.html) → person page, for resolving
+       a name written elsewhere on the site — most often an event's `hosts`
+       entry — to that person's profile.
+
+       It walks every people page, so call it through partialCached (the
+       context argument is ignored; there's only ever one index):
+
+         {{ $people := partialCached "people/by-name.html" . }}
+         {{ $person := index $people (partial "people/name-key.html" $host) }}
+
+       Where two profiles collapse to the same key, the first in page order
+       wins — matching what `index (where …) 0` used to do. */ -}}
+{{- $index := dict -}}
+{{- range where site.RegularPages "Section" "people" -}}
+  {{- $key := partial "people/name-key.html" .Title -}}
+  {{- if and (ne $key "") (not (index $index $key)) -}}
+    {{- $index = merge $index (dict $key .) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $index -}}

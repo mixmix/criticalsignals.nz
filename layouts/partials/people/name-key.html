@@ -1,0 +1,19 @@
+{{- /* Comparison key for a person's name.
+
+       Event hosts (from Ticket Tailor) and people profiles (hand-authored)
+       are two different sources that don't agree on honorifics: the same
+       person can be "Dr. Jessica Hutchings" on one side and "Jessica
+       Hutchings" on the other. Matching on the raw title silently drops
+       those links, so every name → profile lookup goes through this key
+       instead: lowercased, whitespace collapsed, and a leading honorific
+       ("Dr", "Dr.", "Prof", "Ms", …) removed.
+
+       Only the key is normalised — pages still display their own title, so
+       whoever wrote "Dr" keeps their "Dr".
+
+       Takes a name string, returns the key. Mirrored in
+       scripts/build-programme.mjs (nameKey) — change both together. */ -}}
+{{- $name := lower (printf "%v" (. | default "")) -}}
+{{- $name = replaceRE `^\s*(?:dr|prof|professor|mr|mrs|ms|mx|sir|dame)\.?\s+` "" $name -}}
+{{- $name = replaceRE `\s+` " " $name -}}
+{{- return (trim $name " ") -}}

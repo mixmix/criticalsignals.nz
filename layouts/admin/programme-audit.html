@@ -14,7 +14,8 @@
     {{ $hostInfos := slice }}
     {{ range $hostNames }}
       {{ $hostName := . }}
-      {{ $personPage := index (where (where $.Site.RegularPages "Section" "people") "Title" $hostName) 0 }}
+      {{/* Honorific-agnostic lookup — see partials/people/name-key.html. */}}
+      {{ $personPage := index (partialCached "people/by-name.html" $) (partial "people/name-key.html" $hostName) }}
 
       {{ $status := "missing" }}
       {{ $tooltip := "❓ no profile page" }}

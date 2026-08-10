@@ -5,7 +5,6 @@
        "not yet featured" section at the bottom. */ -}}
 {{ define "main" }}
   {{ $people := (.Site.GetPage "/people").Pages }}
-  {{ $programmes := where .Site.Pages "Type" "programme" }}
   {{ $sortedPeople := sort $people "Title" }}
 
   {{ $featuredRows := slice }}
@@ -17,7 +16,8 @@
     {{ $tags := $p.Params.tags | default slice }}
     {{ $isCore := in $tags "core-team" }}
 
-    {{ $hostedPages := where $programmes ".Params.hosts" "intersect" (slice $name) }}
+    {{/* Honorific-agnostic — see partials/people/name-key.html. */}}
+    {{ $hostedPages := index (partialCached "people/programmes-by-name.html" $) (partial "people/name-key.html" $name) | default slice }}
     {{ $eventRows := slice }}
     {{ range $hostedPages }}
       {{ $sortKey := printf "%s %s" (.Params.date | default "") (.Params.start_time | default "") }}
