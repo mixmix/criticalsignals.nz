@@ -152,6 +152,24 @@ competing `transform` values.
 In a desktop console, `SIGN.next()` advances the rotation by hand and
 `SIGN.state()` reports the current mode.
 
+## Landscape is not a scaled portrait
+
+The two orientations carry the same content in half the height, so every type
+size and gap has a `body.portrait` override and the two have to be tuned
+independently. **Changing one and not the other is the standing trap here** —
+enlarging the host photos for the panel pushed the whole footer 192px off the
+bottom of the landscape canvas, and because the panel is portrait, nothing on
+the wall showed it. It only appeared in a wide browser window.
+
+The season label is hidden in landscape (`#seasonnote` is `display: none`
+until `body.portrait` puts it back): with the label in, the dots, the label
+and the pill were stacked on top of each other and the label read as part of
+the pill.
+
+After changing anything in `#main` or `#foot`, measure rather than eyeball —
+`#foot`'s bottom must not sit below `#inner`'s. A three-line title with a host
+photo is the worst case; most slides have slack.
+
 ## Recurring events
 
 `collapse()` gives a repeating event a single slide, the soonest sitting.

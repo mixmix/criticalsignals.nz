@@ -268,7 +268,7 @@ body.portrait #spore {
 /* ---------- layout ---------- */
 #inner {
   position: absolute; z-index: 2;
-  left: 120px; right: 120px; top: 96px; bottom: 96px;
+  left: 120px; right: 120px; top: 76px; bottom: 76px;
   display: -webkit-box; display: -webkit-flex; display: flex;
   -webkit-box-orient: vertical;
   -webkit-flex-direction: column; flex-direction: column;
@@ -318,7 +318,9 @@ body.portrait #spore {
    Dots are a fixed size and sit left, so the strip grows with the season
    instead of stretching to fill — a short row genuinely means a short
    season. */
-#season { margin-top: 30px; }
+/* The bottom margin is doing the work the hidden label used to do in
+   landscape: keeping the dots off the pill. Portrait overrides it. */
+#season { margin-top: 30px; margin-bottom: 14px; }
 
 #pips {
   display: -webkit-box; display: -webkit-flex; display: flex;
@@ -351,7 +353,14 @@ body.portrait #spore {
   opacity: 1;
 }
 
-#seasonnote {
+/* Landscape has half the height and the same content, so the label between
+   the dots and the pill is the first thing to go — in a wide browser window
+   it was pressed right up against the pill and reading as part of it. The
+   dots stay; they are the part that says anything at a glance. Portrait —
+   which is the panel — puts it back. */
+#seasonnote { display: none; }
+body.portrait #seasonnote {
+  display: block;
   margin-top: 18px;
   font-size: 18px; letter-spacing: 0.3em; text-transform: uppercase;
   font-weight: 700;
@@ -381,12 +390,12 @@ body.portrait #spore {
 }
 
 #title {
-  font-size: 88px; line-height: 1.14; font-weight: 700;
+  font-size: 72px; line-height: 1.12; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.005em;
   /* The air goes above the title, not below it: the hosts belong to the
      title, so they sit close under it, and the gap that separates the block
      from the pill is the one that does the work. */
-  margin: 62px 0 0 0; max-width: 1180px;
+  margin: 40px 0 0 0; max-width: 1180px;
 }
 
 /* Hosts: each one's photo immediately in front of their name, on the same
@@ -398,7 +407,7 @@ body.portrait #spore {
    a circle is the one frame they all survive. A host with no profile, or a
    profile with no photo, just shows the name — the row still reads. */
 #speakers {
-  margin-top: 34px; font-size: 50px; line-height: 1.2;
+  margin-top: 26px; font-size: 40px; line-height: 1.2;
   font-weight: 300; color: #F2F0E9; color: var(--paper);
   max-width: 1300px;
   display: -webkit-box; display: -webkit-flex; display: flex;
@@ -419,8 +428,8 @@ body.portrait #spore {
    beside the QR plate instead of being squeezed. */
 #speakers .face {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
-  width: 156px; height: 156px;
-  margin-right: 30px;
+  width: 108px; height: 108px;
+  margin-right: 22px;
   border-radius: 50%;
   overflow: hidden;
   /* A hairline keeps a dark photo from dissolving into a black board. */
@@ -442,7 +451,7 @@ body.portrait #spore {
   display: -webkit-box; display: -webkit-flex; display: flex;
   -webkit-box-align: end; -webkit-align-items: flex-end; align-items: flex-end;
   -webkit-justify-content: space-between; justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 /* Mint rather than white so it reads as the one thing on the board you are
@@ -456,15 +465,15 @@ body.portrait #spore {
    codes scan badly on older phones, and this panel is black. */
 #qr {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
-  width: 176px; height: 176px;
-  padding: 13px;
+  width: 140px; height: 140px;
+  padding: 11px;
   background: #FFFFFF; background: var(--paper);
   border-radius: 10px;
   -webkit-box-sizing: content-box; box-sizing: content-box;
 }
 #qr img { display: block; width: 100%; height: 100%; }
 #footrow {
-  margin-top: 30px;
+  margin-top: 14px;
   display: -webkit-box; display: -webkit-flex; display: flex;
   /* Top-aligned so the WHEN / WHERE / STARTS IN labels sit on one line. */
   -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start;
@@ -475,7 +484,7 @@ body.portrait #spore {
   color: #7C8A80; color: var(--muted); font-weight: 700;
   margin-bottom: 12px;
 }
-.value { font-size: 42px; font-weight: 400; line-height: 1.15; }
+.value { font-size: 36px; font-weight: 400; line-height: 1.15; }
 .value b { font-weight: 700; }
 /* The "also 26, 27 & 28 Aug" line under a recurring event's date. Smaller and
    mint, so it reads as a note on the date above rather than a second date. */
@@ -489,7 +498,7 @@ body.portrait #spore {
 #wherebox { -webkit-flex: 1 1 auto; flex: 1 1 auto; padding-left: 110px; }
 #clockbox { -webkit-flex: 0 0 auto; flex: 0 0 auto; text-align: right; }
 #clock {
-  font-size: 60px; font-weight: 300; letter-spacing: -0.02em;
+  font-size: 50px; font-weight: 300; letter-spacing: -0.02em;
   color: #F2F0E9; color: var(--paper);
 }
 #count { color: #C6F24E; color: var(--signal); }
@@ -528,7 +537,7 @@ body.portrait #urlrow { margin-bottom: 16px; }
 body.portrait #weburl { font-size: 32px; }
 body.portrait #qr     { width: 196px; height: 196px; }
 
-body.portrait #season     { margin-top: 34px; }
+body.portrait #season     { margin-top: 34px; margin-bottom: 0; }
 body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; }
 body.portrait #speakers .face { width: 176px; height: 176px; margin-right: 32px; }
 
