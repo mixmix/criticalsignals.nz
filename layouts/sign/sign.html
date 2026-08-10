@@ -92,10 +92,17 @@
       {{- end -}}
       {{- $faces = $faces | append $face -}}
     {{- end -}}
+    {{- /* `series` groups the dates of one recurring event, so the board can
+           show it once instead of once per date; `repeats` says whether it is
+           one at all. Counted over the whole season, not just what is left,
+           so the last date of a twelve-date series still says it recurs. */ -}}
+    {{- $dateCount := len (partial "programme/dates.html" $p) -}}
     {{- $events = $events | append (dict
         "title"    $p.Title
         "speakers" ($p.Params.hosts | default slice)
         "faces"    $faces
+        "series"   $p.RelPermalink
+        "repeats"  (gt $dateCount 1)
         "start"    ((time.AsTime $start $tz).Format "2006-01-02T15:04:05-07:00")
         "end"      ((time.AsTime $end   $tz).Format "2006-01-02T15:04:05-07:00")
         "venue"    $venue
@@ -285,6 +292,10 @@ body.portrait #spore {
   background: #94EEE5; background: var(--signal);
   opacity: 0.45;
 }
+/* A date of a recurring event, lit full strength. Brightness rather than a
+   new hue: the board's whole palette is one mint, and a fourth colour on it
+   would read as a fourth kind of thing rather than as emphasis. */
+.pip.repeat { opacity: 1; }
 /* The one on screen. Bigger and at full strength — that is the whole
    pointer; anything more competes with the pill. */
 .pip.here {
@@ -337,7 +348,7 @@ body.portrait #spore {
    a circle is the one frame they all survive. A host with no profile, or a
    profile with no photo, just shows the name — the row still reads. */
 #speakers {
-  margin-top: 44px; font-size: 44px; line-height: 1.2;
+  margin-top: 60px; font-size: 44px; line-height: 1.2;
   font-weight: 300; color: #F2F0E9; color: var(--paper);
   max-width: 1300px;
   display: -webkit-box; display: -webkit-flex; display: flex;
@@ -373,10 +384,12 @@ body.portrait #spore {
 }
 
 /* Address and QR share the band directly above the footer rule: address on
-   the left, code on the right, both sitting on the line. */
+   the left, code on the right, starting on the same line. Bottom-aligning
+   them instead hung the code off the address's baseline with a tall gap of
+   nothing above it, which read as a mistake. */
 #urlrow {
   display: -webkit-box; display: -webkit-flex; display: flex;
-  -webkit-box-align: end; -webkit-align-items: flex-end; align-items: flex-end;
+  -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start;
   -webkit-justify-content: space-between; justify-content: space-between;
   margin-bottom: 18px;
 }
@@ -413,6 +426,14 @@ body.portrait #spore {
 }
 .value { font-size: 42px; font-weight: 400; line-height: 1.15; }
 .value b { font-weight: 700; }
+/* The "also 26, 27 & 28 Aug" line under a recurring event's date. Smaller and
+   mint, so it reads as a note on the date above rather than a second date. */
+.value .repeats {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 28px;
+  color: #94EEE5; color: var(--signal);
+}
 #whenbox  { -webkit-flex: 0 0 auto; flex: 0 0 auto; }
 #wherebox { -webkit-flex: 1 1 auto; flex: 1 1 auto; padding-left: 110px; }
 #clockbox { -webkit-flex: 0 0 auto; flex: 0 0 auto; text-align: right; }
@@ -435,7 +456,7 @@ body.portrait #brand      { font-size: 22px; letter-spacing: 0.34em; margin-bott
 body.portrait #brand em   { letter-spacing: 0.34em; }
 body.portrait #status     { font-size: 27px; padding: 16px 34px 17px 34px; letter-spacing: 0.24em; }
 body.portrait #title      { font-size: 74px; margin-top: 46px; max-width: 100%; line-height: 1.03; }
-body.portrait #speakers   { font-size: 46px; margin-top: 52px; max-width: 100%; }
+body.portrait #speakers   { font-size: 46px; margin-top: 80px; max-width: 100%; }
 
 body.portrait #footrow {
   -webkit-box-orient: vertical;
@@ -840,6 +861,61 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     return { rank: 0, left: list.length };
   }
 
+  /* One slide per recurring event, keeping the soonest date.
+
+     Kiekie Koha Coffee Hours runs twelve dates in this season. Given a slide
+     each, they were half the rotation — the same panel with a different date
+     on it, twice in a row in four places. It is one thing that happens often,
+     not twelve things, so it gets one slide. The other dates are still on the
+     board: every one of them is a bright dot on the meter, and the When block
+     names them.
+
+     Keys are prefixed so a series whose path is "constructor" or "toString"
+     can't collide with something on Object.prototype. */
+  function collapse(list) {
+    var i, out = [], seen = {}, k;
+    for (i = 0; i < list.length; i++) {
+      k = list[i].series ? 's:' + list[i].series : null;
+      if (k && seen[k]) { continue; }
+      if (k) { seen[k] = true; }
+      out.push(list[i]);
+    }
+    return out;
+  }
+
+  /* The other dates a recurring event still has to run. Without this line the
+     board says "25 August" and a passer-by reads that as the only one. */
+  function otherDates(ev, nowMs) {
+    if (!ev.repeats) { return ''; }
+    var i, e, rest = [];
+    for (i = 0; i < EVENTS.length; i++) {
+      e = EVENTS[i];
+      if (e !== ev && e.series === ev.series && e._e.getTime() > nowMs) {
+        rest.push(e);
+      }
+    }
+    if (!rest.length) { return ''; }
+    rest.sort(function (a, b) { return a._s - b._s; });
+
+    var last = rest[rest.length - 1]._sz;
+    var lastLabel = last.getUTCDate() + ' ' + MONTHS[last.getUTCMonth()].substr(0, 3);
+
+    /* Few enough to name them, and all in one month so a single month name
+       covers the lot. Past either bound, a count reads faster than a list. */
+    var days = [], sameMonth = true;
+    for (i = 0; i < rest.length; i++) {
+      if (rest[i]._sz.getUTCMonth() !== last.getUTCMonth()) { sameMonth = false; }
+      days.push(rest[i]._sz.getUTCDate());
+    }
+    if (rest.length <= 3 && sameMonth) {
+      var tail = days.length > 1
+        ? days.slice(0, days.length - 1).join(', ') + ' &amp; ' + days[days.length - 1]
+        : days[0];
+      return 'Also ' + tail + ' ' + MONTHS[last.getUTCMonth()].substr(0, 3);
+    }
+    return rest.length + ' more dates, through ' + lastLabel;
+  }
+
   function without(list, ev) {
     var i, out = [];
     for (i = 0; i < list.length; i++) {
@@ -856,16 +932,25 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      carries the future — the board never needs the past events themselves,
      only how many of them there were. */
   function renderSeason(ev, nowMs) {
+    var rest  = remaining(nowMs);
     var sp    = seasonPos(ev, nowMs);
     var left  = sp.left;
     var total = SEASON_TOTAL > left ? SEASON_TOTAL : left;
     var done  = total - left;
     var here  = sp.rank ? done + sp.rank - 1 : -1;
-    var html  = '', i, cls;
+    var html  = '', i, cls, e;
 
     for (i = 0; i < total; i++) {
       cls = 'pip';
-      if (i >= done)  { cls += ' left'; }
+      if (i >= done) {
+        cls += ' left';
+        /* Every date of a recurring event is lit, even though only the first
+           of them gets a slide — so a twelve-date coffee hour reads on the
+           meter as the cadence it is rather than disappearing into one dot.
+           Past dots stay uniformly dim; EVENTS doesn't carry the past. */
+        e = rest[i - done];
+        if (e && e.repeats) { cls += ' repeat'; }
+      }
       if (i === here) { cls += ' here'; }
       html += '<div class="' + cls + '"></div>';
     }
@@ -919,7 +1004,12 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       ? 'Today'
       : ev._sz.getUTCDate() + ' ' + MONTHS[ev._sz.getUTCMonth()] +
         ' ' + ev._sz.getUTCFullYear();
-    put('when', '<b>' + day + '</b><br>' + hm24(ev._sz) + '–' + hm24(ev._ez));
+    var when = '<b>' + day + '</b><br>' + hm24(ev._sz) + '–' + hm24(ev._ez);
+    /* A recurring event gets one slide, so this is where the other dates are
+       accounted for. Nothing is added for a one-off. */
+    var more = otherDates(ev, now.getTime());
+    if (more) { when += '<br><span class="repeats">' + more + '</span>'; }
+    put('when', when);
 
     if (now >= ev._s && now <= ev._e) {
       putClass('status', 'now');
@@ -963,10 +1053,11 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       return { ev: pick(now), pos: 0, total: 1, list: null };
     }
 
-    /* The whole rest of the season rotates — no cap. At six seconds a slide
-       even a thirty-event season comes round in three minutes, and the meter
-       under the brand rule shows where in that you are. */
-    var list = upcoming(nowMs);
+    /* The whole rest of the season rotates — no cap, but one slide per
+       recurring event. At six seconds a slide that comes round in about a
+       minute, and the meter under the brand rule shows where in the season
+       you have walked in. */
+    var list = collapse(upcoming(nowMs));
     /* Drop the featured event from the rotation — while it is still in the
        future it would otherwise appear both as the feature and as its own
        entry in the list, two panels apart. */
@@ -1089,6 +1180,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
         mode: f ? FEATURE_MODE : 'cycle',
         featured: f ? f.title : null,
         featureTurn: f ? featureTurn : null,
+        slides: collapse(upcoming(nowMs)).length,
         upcoming: upcoming(nowMs).length,
         left: remaining(nowMs).length,
         seasonTotal: SEASON_TOTAL,

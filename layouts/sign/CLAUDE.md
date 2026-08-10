@@ -119,9 +119,8 @@ event:
 - `'off'` — no special treatment.
 
 With no featured event the board pages through everything still to come. There
-is no cap on that: at `CYCLE_HOLD_MS` a slide, even a thirty-date season comes
-round in about three minutes, and the season meter tells a passer-by where in
-the list they've walked in.
+is no cap on that, but there is one slide per event, not one per date — see
+"Recurring events" below.
 
 There is an earlier rule you may find traces of, in which a feature lingered
 for three hours after it started. That was wrong — it kept a finished event on
@@ -135,7 +134,8 @@ gets its own slot instead of every second one being skipped.
 Note that `upcoming()` only returns events that have not started. An event in
 progress therefore reaches the board *only* as the feature — under
 `FEATURE_MODE = 'off'` it would not appear at all and the "Happening now" pill
-would never render.
+would never render. `currentView()` puts its result through `collapse()`; the
+rest of the code works on the uncollapsed list.
 
 All the knobs are constants at the top of the display-loop section of
 `sign.html`. `CYCLE_HOLD_MS` is the *whole* slide including both fades, so if
@@ -151,6 +151,32 @@ competing `transform` values.
 
 In a desktop console, `SIGN.next()` advances the rotation by hand and
 `SIGN.state()` reports the current mode.
+
+## Recurring events
+
+An event with several `dates:` produces one occurrence per date, and `collapse()`
+gives the whole series a single slide, the soonest date. Kiekie Koha Coffee
+Hours runs twelve dates this season; a slide each made it half the rotation,
+the same panel with a different date on it, twice in a row in four places.
+
+The other dates are not hidden, they are stated in the two places where they
+mean something:
+
+- **The meter** — every date of a recurring event is a full-strength dot
+  (`.pip.repeat`), so the cadence reads across the season instead of
+  collapsing into one dot. Brightness, not a new hue: the board is one mint,
+  and a fourth colour would read as a fourth kind of thing.
+- **The When block** — `otherDates()` adds a line under the date: "Also 26,
+  27 & 28 Aug" when three or fewer remain in one month, otherwise "10 more
+  dates, through 28 Aug".
+
+`series` is the event's `RelPermalink` and `repeats` is set at build time from
+the *whole season's* date count, not from what is left — so the final date of a
+twelve-date series still says it recurs.
+
+Only the rotation is collapsed. `remaining()` and `SEASON_TOTAL` still count
+every occurrence, which is what keeps the meter's arithmetic (`done = total -
+left`) lined up with the dots.
 
 ## The season meter
 
