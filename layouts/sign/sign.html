@@ -29,6 +29,19 @@
 {{- $qrOpts := dict "level" "medium" "scale" 4 -}}
 {{- $siteQR := printf "data:image/png;base64,%s" ((images.QR (printf "%s/" $signBase) $qrOpts).Content | base64Encode) -}}
 
+{{- /* Host photos. Same resolution rule as the rest of the site — hosts are
+       written as names, `people/by-name.html` maps a name to that person's
+       profile page (honorific-insensitive), and `feature-image.html` finds
+       that page's photo. A host with no profile, or a profile with no photo,
+       simply contributes nothing.
+
+       Squared off and inlined as a data URI for the same reason as the QR
+       codes: the panel cannot fetch anything, so a `<img src="/...">` would
+       be a hole on the wall. 112px is what the plate renders at; jpeg q72
+       keeps each face around 4KB before base64. */ -}}
+{{- $people   := partialCached "people/by-name.html" . -}}
+{{- $faceSpec := "112x112 Center jpg q72" -}}
+
 {{- /* Emit generously and let the browser choose. Hugo's `now` freezes at
        build time, so picking the current-or-next event here would leave the
        sign advertising a finished event until someone next pushes to main.
@@ -36,17 +49,53 @@
        client filters properly. */ -}}
 {{- $cutoff := (now.AddDate 0 0 -2).Format "2006-01-02" -}}
 
-{{- $events := slice -}}
 {{- /* `showOnSign: false` in an event's front matter keeps it off the board
        without hiding it from the rest of the site. Absent means shown. */ -}}
-{{- range partial "programme/occurrences.html" (where site.RegularPages "Section" "programme") -}}
+{{- $occurrences := partial "programme/occurrences.html" (where site.RegularPages "Section" "programme") -}}
+{{- $onSign := slice -}}
+{{- range $occurrences -}}
+  {{- if ne .page.Params.showOnSign false -}}{{- $onSign = $onSign | append . -}}{{- end -}}
+{{- end -}}
+
+{{- /* The whole season, past dates included, so the board can say how far
+       through it we are. The client only ever receives the two totals, not
+       the past events themselves. */ -}}
+{{- $seasonTotal := len $onSign -}}
+{{- $years := slice -}}
+{{- range $onSign -}}{{- $years = $years | append (substr .day 0 4) -}}{{- end -}}
+{{- $years = $years | uniq | sort -}}
+{{- $seasonLabel := "season" -}}
+{{- with $years -}}
+  {{- $seasonLabel = printf "%s season" (index . 0) -}}
+  {{- if gt (len .) 1 -}}
+    {{- $seasonLabel = printf "%s–%s season" (index . 0) (index . (sub (len .) 1)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $events := slice -}}
+{{- range $onSign -}}
   {{- $p := .page -}}
-  {{- if and (ge .day $cutoff) (ne $p.Params.showOnSign false) -}}
+  {{- if ge .day $cutoff -}}
     {{- $start := printf "%sT%s:00" .day ($p.Params.start_time | default "18:00") -}}
     {{- $end   := printf "%sT%s:00" .day ($p.Params.end_time   | default "20:00") -}}
+    {{- /* One entry per host, in the same order as `hosts`, so the script can
+           index the two together. A host with no profile, or a profile with
+           no photo, contributes an empty string rather than being skipped —
+           skipping would slide every later photo onto the wrong name. */ -}}
+    {{- $faces := slice -}}
+    {{- range $host := ($p.Params.hosts | default slice) -}}
+      {{- $face := "" -}}
+      {{- with index $people (partial "people/name-key.html" $host) -}}
+        {{- with partial "feature-image.html" . -}}
+          {{- $face = printf "data:image/jpeg;base64,%s" ((.Fill $faceSpec).Content | base64Encode) -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $faces = $faces | append $face -}}
+    {{- end -}}
     {{- $events = $events | append (dict
         "title"    $p.Title
         "speakers" ($p.Params.hosts | default slice)
+        "faces"    $faces
         "start"    ((time.AsTime $start $tz).Format "2006-01-02T15:04:05-07:00")
         "end"      ((time.AsTime $end   $tz).Format "2006-01-02T15:04:05-07:00")
         "venue"    $venue
@@ -57,7 +106,27 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1920,initial-scale=1">
+{{- /* width=1920 is what the panel needs and what desktop browsers ignore.
+       Phones honour it, and a 1920px layout viewport on a 390px screen shows
+       one corner of the board blown up — so the script below narrows this to
+       the device's own width on phone-sized screens, and only there. */ -}}
+<meta id="viewporttag" name="viewport" content="width=1920,initial-scale=1">
+<script>
+/* ES5. Runs before layout so the phone never paints the 1920px version.
+   `screen` is the physical panel/phone, not the window, so a small desktop
+   window is never mistaken for a phone. The signage panel reports 1080x1920,
+   comfortably above the threshold, and desktop browsers ignore the tag
+   either way — this is a phone-only change. */
+(function () {
+  var w = screen.width || 0, h = screen.height || 0;
+  var longest = w > h ? w : h;
+  if (longest > 0 && longest <= 1000) {
+    document.getElementById('viewporttag')
+      .setAttribute('content', 'width=device-width,initial-scale=1');
+    document.documentElement.className = 'handheld';
+  }
+})();
+</script>
 <title>Critical Signals — Now Showing</title>
 <style>
 /* ==================================================================
@@ -182,6 +251,55 @@ body.portrait #spore {
   letter-spacing: 0.42em;
 }
 
+/* ---------- season meter ----------
+   A pip per event in the season, so "three left" is something you take in at
+   a glance from across the room rather than something you read. Past events
+   are dimmed, the ones still to come are mint, and a caret marks whichever
+   one the board is showing. Pips flex, so a 12-event season and a 30-event
+   one both fill the same rule. */
+/* ---------- season meter ----------
+   One dot per event in the season, so how much of the year is left is
+   something you take in at a glance rather than something you read. Kept
+   deliberately quiet: it is context for the pill below it, not a headline.
+
+   Dots are a fixed size and sit left, so the strip grows with the season
+   instead of stretching to fill — a short row genuinely means a short
+   season. */
+#season { margin-bottom: 30px; }
+
+#pips {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  height: 14px;
+}
+.pip {
+  -webkit-flex: 0 0 auto; flex: 0 0 auto;
+  width: 7px; height: 7px;
+  margin-right: 11px;
+  border-radius: 50%;
+  background: #5E7C78; background: var(--muted);
+  opacity: 0.45;
+}
+/* Still to come. */
+.pip.left {
+  background: #94EEE5; background: var(--signal);
+  opacity: 0.45;
+}
+/* The one on screen. Bigger and at full strength — that is the whole
+   pointer; anything more competes with the pill. */
+.pip.here {
+  width: 13px; height: 13px;
+  margin-left: -3px; margin-right: 8px;
+  opacity: 1;
+}
+
+#seasonnote {
+  margin-top: 18px;
+  font-size: 18px; letter-spacing: 0.3em; text-transform: uppercase;
+  font-weight: 700;
+  color: #5E7C78; color: var(--muted);
+}
+
 /* status pill */
 #status {
   display: inline-block; margin: 0; -webkit-align-self: flex-start; align-self: flex-start;
@@ -209,12 +327,41 @@ body.portrait #spore {
   margin: 34px 0 0 0; max-width: 1180px;
 }
 
+/* Hosts: each one's photo immediately in front of their name, on the same
+   line, so a face and a name read as one thing rather than as two rows to
+   pair up by eye. The photos are inlined data URIs — see the header of this
+   file; the panel cannot fetch anything.
+
+   Circles because the source photos are every shape and crop there is, and
+   a circle is the one frame they all survive. A host with no profile, or a
+   profile with no photo, just shows the name — the row still reads. */
 #speakers {
-  margin-top: 44px; font-size: 44px; line-height: 1.35;
+  margin-top: 44px; font-size: 44px; line-height: 1.2;
   font-weight: 300; color: #F2F0E9; color: var(--paper);
   max-width: 1300px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-flex-wrap: wrap; flex-wrap: wrap;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
 }
-#speakers .sep { color: #7C8A80; color: var(--muted); }
+/* Hosts are separated by the gap rather than by a middot: with four of them
+   the row wraps, and a separator between chips strands itself at the end of
+   a line with nothing after it. */
+#speakers .host {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  margin: 10px 56px 10px 0;
+}
+#speakers .host:last-child { margin-right: 0; }
+#speakers .face {
+  -webkit-flex: 0 0 auto; flex: 0 0 auto;
+  width: 104px; height: 104px;
+  margin-right: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  /* A hairline keeps a dark photo from dissolving into a black board. */
+  border: 2px solid #5E7C78; border-color: var(--muted);
+}
+#speakers .face img { display: block; width: 100%; height: 100%; }
 
 /* bottom bar */
 #foot {
@@ -305,11 +452,46 @@ body.portrait #urlrow { margin-bottom: 16px; }
 body.portrait #weburl { font-size: 32px; }
 body.portrait #qr     { width: 196px; height: 196px; }
 
+body.portrait #season     { margin-bottom: 30px; }
+body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; margin-bottom: 24px; }
+body.portrait .face       { width: 124px; height: 124px; margin-right: 20px; }
+
 body.portrait .label  { font-size: 20px; margin-bottom: 10px; }
 body.portrait .value  { font-size: 44px; }
 /* The countdown is the thing people look for, so give it the big type. */
 body.portrait #clock  { font-size: 78px; }
 body.portrait #clockbox { margin-top: 46px; }
+
+/* ==================================================================
+   PHONES ONLY (html.handheld, set by the script in <head>)
+
+   The board is a fixed canvas scaled to fit, which needs the layout
+   viewport to be the device's own width — otherwise the phone lays the
+   page out at 1920px and shows one corner of it. The head script narrows
+   the viewport tag; the rules here draw the box the canvas now fits
+   inside, so the letterboxing left over from a 9:16 canvas on a taller
+   phone reads as a frame rather than as something missing.
+
+   Nothing in this block can reach the signage panel or a desktop
+   browser: neither ever gets the .handheld class.
+   ================================================================== */
+html.handheld, html.handheld body {
+  /* Fixed, so the canvas doesn't jump every time the phone's address bar
+     slides away and back. */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: auto; height: auto;
+  overflow: hidden;
+  cursor: auto;
+}
+html.handheld #stage {
+  /* The frame around the fitted canvas. */
+  border: 1px solid #5E7C78; border-color: var(--muted);
+  -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+/* The mark bleeds off a 1080px-wide canvas by design; on a phone that
+   same bleed is most of the screen, so pull it in and lighten it. */
+html.handheld #spore { opacity: 0.26; }
 
 /* subtle pulse on the live pill — 3s, easy to ignore, reads as "live" */
 @-webkit-keyframes breathe { 0%,100% { opacity: 1 } 50% { opacity: 0.72 } }
@@ -330,6 +512,16 @@ body.portrait #clockbox { margin-top: 46px; }
     <div class="rule"></div>
 
     <div id="main">
+      <!-- Season meter: one dot per event in the whole season, the ones
+           already run faded back, the ones still to come lit, and the one on
+           screen picked out. It sits directly above the pill so the dots and
+           the words underneath them ("Coming up · 15 of 23 left") read as one
+           statement. Built by renderSeason(); empty until then. -->
+      <div id="season">
+        <div id="pips"></div>
+        <div id="seasonnote">&nbsp;</div>
+      </div>
+
       <div id="status" class="later">&nbsp;</div>
       <h1 id="title">&nbsp;</h1>
       <div id="speakers"></div>
@@ -383,6 +575,12 @@ var EVENTS = {{ jsonify (dict "indent" "  ") $events | safeJS }};
 
 var VENUE   = {{ jsonify $venue | safeJS }};
 var SITE_QR = {{ jsonify $siteQR | safeJS }};
+
+/* The season as a whole, past dates included, for the meter under the brand
+   rule. EVENTS only carries what is still to come, so how many have already
+   run is SEASON_TOTAL minus what is left — which is all the meter needs. */
+var SEASON_TOTAL = {{ $seasonTotal }};
+var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
 
 (function () {
   'use strict';
@@ -567,10 +765,12 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
   /* ==================================================================
      Display loop.
 
-     An event is FEATURED from FEATURE_BEFORE_MS before it starts until
-     FEATURE_AFTER_MS after it started (or until it ends, whichever is
-     later) — the window in which people are arriving or already in the
-     room. FEATURE_MODE decides what the board does about it:
+     An event is FEATURED from FEATURE_BEFORE_MS before it starts until it
+     ends — doors open to lights up, the window in which people are either
+     arriving or already in the room. The moment it finishes the board goes
+     back to plain rotation; nothing lingers.
+
+     FEATURE_MODE decides what the board does with a featured event:
 
        'interleave'  the featured event takes every second panel, so the
                      board reads: featured, coming up 2 of N, featured,
@@ -579,27 +779,22 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
                      rotating. The original behaviour, still working.
        'off'         featured events get no special treatment.
 
-     With no featured event the board simply pages through the next
-     CYCLE_MAX events, or all of them if fewer remain, each holding for
-     CYCLE_HOLD_MS with a crossfade between.
+     With no featured event the board simply pages through everything still
+     to come, each slide holding for CYCLE_HOLD_MS with a crossfade between.
      ================================================================== */
   var FEATURE_MODE      = 'interleave';
-  var FEATURE_BEFORE_MS = 3600000;      /* 1h before it starts */
-  var FEATURE_AFTER_MS  = 3 * 3600000;  /* 3h after it started */
+  var FEATURE_BEFORE_MS = 3600000;  /* 1h before it starts */
   var CYCLE_HOLD_MS     = 6000;   /* whole slide, both fades included */
   var FADE_MS           = 400;    /* must match the #inner CSS transition */
   var FADE_SLOP_MS      = 60;     /* let the fade finish before swapping copy */
   var SPORE_IDLE_MS     = 20000;  /* move the mark anyway if the slide doesn't */
-  var CYCLE_MAX         = 10;
 
   function featuredEvent(nowMs) {
     var i, e, best = null;
     if (FEATURE_MODE === 'off') { return null; }
     for (i = 0; i < EVENTS.length; i++) {
       e = EVENTS[i];
-      var from = e._s.getTime() - FEATURE_BEFORE_MS;
-      var to   = Math.max(e._e.getTime(), e._s.getTime() + FEATURE_AFTER_MS);
-      if (nowMs >= from && nowMs <= to) {
+      if (nowMs >= e._s.getTime() - FEATURE_BEFORE_MS && nowMs <= e._e.getTime()) {
         if (!best || e._s < best._s) { best = e; }
       }
     }
@@ -615,6 +810,30 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
     return list;
   }
 
+  /* Everything left in the season, oldest first. Unlike upcoming(), an event
+     that has started but not finished still counts as left — it is on now,
+     which is very much not the same as over. */
+  function remaining(nowMs) {
+    var i, list = [];
+    for (i = 0; i < EVENTS.length; i++) {
+      if (EVENTS[i]._e.getTime() > nowMs) { list.push(EVENTS[i]); }
+    }
+    list.sort(function (a, b) { return a._s - b._s; });
+    return list;
+  }
+
+  /* Where an event sits in what is left: 1-based rank, and how many are left
+     in total. This is what the pill counts and what the meter points at —
+     deliberately not the rotation's own slide numbering, which changes shape
+     whenever an event is featured. rank 0 means "not in the list". */
+  function seasonPos(ev, nowMs) {
+    var list = remaining(nowMs), i;
+    for (i = 0; i < list.length; i++) {
+      if (list[i] === ev) { return { rank: i + 1, left: list.length }; }
+    }
+    return { rank: 0, left: list.length };
+  }
+
   function without(list, ev) {
     var i, out = [];
     for (i = 0; i < list.length; i++) {
@@ -625,7 +844,35 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
 
   var shown = null;
 
+  /* One pip per event in the season: the ones already run dimmed, the ones
+     still to come mint, and a pointer over whichever is on screen. The count
+     of past events is SEASON_TOTAL minus what is left, because EVENTS only
+     carries the future — the board never needs the past events themselves,
+     only how many of them there were. */
+  function renderSeason(ev, nowMs) {
+    var sp    = seasonPos(ev, nowMs);
+    var left  = sp.left;
+    var total = SEASON_TOTAL > left ? SEASON_TOTAL : left;
+    var done  = total - left;
+    var here  = sp.rank ? done + sp.rank - 1 : -1;
+    var html  = '', i, cls;
+
+    for (i = 0; i < total; i++) {
+      cls = 'pip';
+      if (i >= done)  { cls += ' left'; }
+      if (i === here) { cls += ' here'; }
+      html += '<div class="' + cls + '"></div>';
+    }
+    put('pips', html);
+    /* Just the label — the count is in the pill immediately below, and
+       saying it twice makes neither of them land. */
+    put('seasonnote', left ? esc(SEASON_LABEL)
+                           : esc(SEASON_LABEL) + ' &middot; that&rsquo;s a wrap');
+  }
+
   function renderEvent(ev, now, pos, total) {
+    renderSeason(ev, now.getTime());
+
     if (!ev) {
       shown = null;
       putClass('status', 'later');
@@ -644,9 +891,18 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
     shown = ev;
 
     put('title', esc(ev.title));
-    var names = [], i;
-    for (i = 0; i < ev.speakers.length; i++) { names.push(esc(ev.speakers[i])); }
-    put('speakers', names.join(' <span class="sep">&middot;</span> '));
+
+    /* Each host as photo-then-name. `faces` is parallel to `speakers` only
+       where a photo was found, so it is indexed by position and an absent
+       entry just means "name on its own". */
+    var chips = [], i, face;
+    for (i = 0; i < ev.speakers.length; i++) {
+      face = ev.faces && ev.faces[i]
+        ? '<span class="face"><img alt="" src="' + ev.faces[i] + '"></span>'
+        : '';
+      chips.push('<span class="host">' + face + esc(ev.speakers[i]) + '</span>');
+    }
+    put('speakers', chips.join(''));
     put('where', esc(ev.venue));
     putSrc('qrimg', ev.qr || SITE_QR);
 
@@ -669,9 +925,12 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
       var untilMs = ev._s - now;
       if (pos > 0) {
         /* Deeper in the rotation the pill becomes a position marker, so a
-           passer-by can tell they are looking at a list, not one event. */
+           passer-by can tell they are looking at a list, not one event. It
+           counts against the season rather than the rotation — "4 of 9 left"
+           says something about the year; "4 of 9 slides" says nothing. */
+        var sp = seasonPos(ev, now.getTime());
         putClass('status', 'later');
-        put('status', 'Coming up &middot; ' + (pos + 1) + ' of ' + total);
+        put('status', 'Coming up &middot; ' + sp.rank + ' of ' + sp.left + ' left');
       } else if (untilMs / 3600000 <= 12) {
         putClass('status', 'soon');
         put('status', 'Starting soon');
@@ -698,12 +957,14 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
       return { ev: pick(now), pos: 0, total: 1, list: null };
     }
 
+    /* The whole rest of the season rotates — no cap. At six seconds a slide
+       even a thirty-event season comes round in three minutes, and the meter
+       under the brand rule shows where in that you are. */
     var list = upcoming(nowMs);
     /* Drop the featured event from the rotation — while it is still in the
        future it would otherwise appear both as the feature and as its own
        entry in the list, two panels apart. */
     if (feat) { list = without(list, feat); }
-    list = list.slice(0, CYCLE_MAX);
 
     if (feat) {
       if (!list.length) { return { ev: feat, pos: 0, total: 1, list: null }; }
@@ -822,8 +1083,9 @@ var SITE_QR = {{ jsonify $siteQR | safeJS }};
         mode: f ? FEATURE_MODE : 'cycle',
         featured: f ? f.title : null,
         featureTurn: f ? featureTurn : null,
-        slides: Math.min(upcoming(nowMs).length, CYCLE_MAX),
         upcoming: upcoming(nowMs).length,
+        left: remaining(nowMs).length,
+        seasonTotal: SEASON_TOTAL,
         index: cycleIdx
       };
     }

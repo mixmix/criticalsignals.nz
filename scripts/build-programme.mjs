@@ -208,9 +208,16 @@ async function writeEvent (event, slug, collaborators) {
   // Kept for traceability + safe pruning on re-runs.
   frontMatter.ticket_tailor_id = event.id
 
-  const file = `${toYamlFrontMatter(frontMatter)}\n${body.trim()}\n`
-
   const dir = join(PROGRAMME_DIR, slug)
+
+  // `showOnSign` is set by hand — Ticket Tailor knows nothing about the venue
+  // sign — so carry whatever is already on the page across. Without this, a
+  // re-sync silently rewrites the file without it and the event reappears on
+  // the board. See layouts/sign/CLAUDE.md.
+  const showOnSign = await readShowOnSign(dir)
+  if (showOnSign !== null) frontMatter.showOnSign = showOnSign
+
+  const file = `${toYamlFrontMatter(frontMatter)}\n${body.trim()}\n`
 
   // A directory that already exists without our marker is a hand-authored
   // ("custom") page. Never overwrite it or drop a marker into it — we still
@@ -476,6 +483,29 @@ function yamlScalar (value) {
   if (typeof value !== 'string') return String(value)
   // Quote anything that could confuse the YAML parser; escape embedded quotes.
   return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+/**
+ * Read a generated event's existing `showOnSign` flag, so re-running the sync
+ * doesn't wipe a hand-made decision about the venue sign.
+ *
+ * Returns true/false, or null when the page doesn't exist yet or doesn't set
+ * the key — in which case the key is simply left out and the sign's default
+ * ("absent means shown") applies.
+ */
+async function readShowOnSign (dir) {
+  let text
+  try {
+    text = await readFile(join(dir, 'index.md'), 'utf8')
+  } catch {
+    return null
+  }
+  // Front matter only: the same key mentioned in the body is not a setting.
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)
+  if (!fm) return null
+
+  const match = /^showOnSign:\s*(true|false)\s*$/m.exec(fm[1])
+  return match ? match[1] === 'true' : null
 }
 
 async function exists (path) {
