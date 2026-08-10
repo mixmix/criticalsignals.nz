@@ -243,6 +243,29 @@ The small script in `<head>` narrows the viewport tag to `width=device-width`
 on phone-sized screens only, and puts `.handheld` on `<html>` for the CSS that
 draws the frame around the fitted canvas.
 
+`fit()` then treats a phone differently from the panel. The panel and the
+desktop get the whole canvas letterboxed and centred. A phone **fills the
+width and pins the bottom**, so the canvas hangs off the top when the screen
+is too short for it:
+
+- Fitting the height as well threw away a fifth of the type on a phone with
+  its address bar showing, on a board whose entire job is to be read.
+- Scale then depends only on the width, which doesn't change when the address
+  bar slides away — so the board holds still instead of resizing under your
+  thumb. Only how much of the top is cut changes.
+- What goes over the top is the brand line and the season meter. The title,
+  the hosts, the QR and the times are all anchored to the bottom and always
+  in view. That ordering is why the meter sits at the top: it is the part the
+  board can most afford to lose.
+
+When it does crop, `fit()` adds `.cropped`, which drops the frame (three sides
+of a box reads as a broken box) and shows `#topfade` — a shallow gradient that
+turns a line of type sliced mid-letter into an edge. Keep it shallow: at 58px
+it was greying out the title.
+
+`#topfade` sits outside `#stage` because `#stage` is scaled, and the fade wants
+a fixed depth in screen pixels rather than in canvas ones.
+
 It tests `screen`, not `window`, so a narrow desktop window is never mistaken
 for a phone. The threshold is 1000px on the **longer** screen dimension: the
 panel reports 1080×1920 and is comfortably clear of it, and desktop browsers
