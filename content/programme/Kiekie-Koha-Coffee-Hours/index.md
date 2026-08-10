@@ -18,6 +18,9 @@ dates:
 calendar_symbol: "☕"
 start_time: "10:00"
 end_time: "14:00"
+# Drop-in open hours rather than a programmed event, and it runs most days —
+# on the venue sign it crowded out everything else. Still shows everywhere else.
+showOnSign: false
 sign_up_link: false # means no sign-up required
 ---
 
