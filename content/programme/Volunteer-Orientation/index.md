@@ -1,5 +1,7 @@
 ---
 title: "Volunteer Orientation"
+hosts:
+  - "Clay Joy Smith"
 date: "2026-08-17"
 start_time: "16:00"
 end_time: "17:00"
