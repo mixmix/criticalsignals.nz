@@ -1,7 +1,8 @@
 ---
 title: "Build Sprint: Pōneke Climate Hub x Critical Signals x two/fiftyseven"
 hosts:
-  - "Ash Holwell + Ira Bailey"
+  - "Ash Holwell"
+  - "Ira Bailey"
 date: "2026-11-04"
 start_time: "17:30"
 end_time: "20:30"
