@@ -88,7 +88,7 @@ main().catch((err) => {
 })
 
 async function main () {
-  const events = await fetchAllEvents()
+  const events = mergeSeriesOccurrences(await fetchAllEvents())
   const collaborators = await loadCollaboratorTitles()
   console.log(`Fetched ${events.length} event(s) from Ticket Tailor.\n`)
 
@@ -162,6 +162,52 @@ async function fetchAllEvents () {
   return all
 }
 
+/**
+ * Ticket Tailor's `/events` endpoint returns one event object *per occurrence*
+ * of a recurring series (`event_series_id` set) — the Build Sprint's five
+ * Wednesday sessions come back as five separate events, all sharing the same
+ * name. Left alone, the loop in main() writes the same content/programme/
+ * page five times over, and only the last occurrence survives — which is why
+ * the Build Sprint page ended up with a single `date` of its final session.
+ *
+ * This collapses every series into one event, keyed by `event_series_id`,
+ * carrying an `occurrenceDates` list (oldest first) and a summed
+ * `totalIssuedTickets`. Non-series events pass through with a one-item list.
+ * Everything else (description, images, url, hosts, ticket types) is taken
+ * from the earliest occurrence — series occurrences only ever differ in
+ * start/end/id/ticket counts, never in content.
+ */
+function mergeSeriesOccurrences (events) {
+  const singles = []
+  const bySeries = new Map()
+
+  for (const event of events) {
+    if (!event.event_series_id) {
+      singles.push(event)
+      continue
+    }
+    if (!bySeries.has(event.event_series_id)) bySeries.set(event.event_series_id, [])
+    bySeries.get(event.event_series_id).push(event)
+  }
+
+  const merged = singles.map((event) => withOccurrences(event, [event]))
+
+  for (const occurrences of bySeries.values()) {
+    occurrences.sort((a, b) => a.start.unix - b.start.unix)
+    merged.push(withOccurrences(occurrences[0], occurrences))
+  }
+
+  return merged
+}
+
+function withOccurrences (base, occurrences) {
+  return {
+    ...base,
+    occurrenceDates: occurrences.map((e) => e.start.date),
+    totalIssuedTickets: occurrences.reduce((sum, e) => sum + (e.total_issued_tickets ?? 0), 0)
+  }
+}
+
 async function writeEvent (event, slug, collaborators) {
   const isDraft = event.status === 'draft'
 
@@ -173,7 +219,15 @@ async function writeEvent (event, slug, collaborators) {
   const frontMatter = { title: event.name }
   if (isDraft) frontMatter.draft = true
   if (hosts.length) frontMatter.hosts = hosts
-  frontMatter.date = event.start?.date
+  // A series (recurring event) gets a `dates:` list instead of a single
+  // `date:` — see mergeSeriesOccurrences. `dates:` wins over `date:` when a
+  // page has both (layouts/partials/programme/dates.html), so a series that
+  // drops to one remaining occurrence still reads correctly either way.
+  if (event.occurrenceDates.length > 1) {
+    frontMatter.dates = event.occurrenceDates
+  } else {
+    frontMatter.date = event.occurrenceDates[0]
+  }
   if (event.start?.time) frontMatter.start_time = event.start.time
   if (event.end?.time) frontMatter.end_time = event.end.time
 
@@ -194,8 +248,9 @@ async function writeEvent (event, slug, collaborators) {
 
   // How full the event is. A snapshot as of this run — the site is static, so
   // these numbers are only as fresh as the last build (the update-programme
-  // workflow re-runs this script, see .github/workflows/).
-  frontMatter.attendees = event.total_issued_tickets ?? 0
+  // workflow re-runs this script, see .github/workflows/). For a series this
+  // is summed across every occurrence; `capacity` below stays per-occurrence.
+  frontMatter.attendees = event.totalIssuedTickets
   const capacity = ticketCapacity(event)
   if (capacity) frontMatter.capacity = capacity
 

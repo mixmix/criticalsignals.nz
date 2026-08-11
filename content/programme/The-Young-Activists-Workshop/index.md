@@ -3,7 +3,9 @@ title: "The Young Activists Workshop"
 hosts:
   - "Emily Writes"
   - "Ash Holwell"
-date: "2026-09-22"
+dates:
+  - "2026-09-08"
+  - "2026-09-22"
 start_time: "16:00"
 end_time: "18:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2354705"
@@ -12,7 +14,7 @@ currency: "NZD"
 attendees: 0
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_476,q_100,w_1500,x_0,y_454/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/nlfohjhq8jsm37uaouos.jpg?_a=BAAHWXDQ"
-ticket_tailor_id: "ev_8854834"
+ticket_tailor_id: "ev_8854686"
 ---
 Being a teenager in Aotearoa right now is hard. You can't vote, you're watching the government try to dismantle Te Tiriti, you're being hurt by the government's racist, transphobic and misogynist rhetoric you're seeing everywhere, you are worried about your future, your parents might have lost work - you're worried about finding work. So what is there to do? 
 
