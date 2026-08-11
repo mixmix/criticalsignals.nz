@@ -50,10 +50,13 @@
 
 {{- /* Emit generously and let the browser choose. Hugo's `now` freezes at
        build time, so picking the current-or-next event here would leave the
-       sign advertising a finished event until someone next pushes to main.
-       The two-day lookback is slack for build-vs-venue timezone skew — the
-       client filters properly. */ -}}
-{{- $cutoff := (now.AddDate 0 0 -2).Format "2006-01-02" -}}
+       sign advertising a finished event until someone next pushes to main —
+       the two-day lookback is slack for that, so there's always something to
+       show, not for build-vs-venue timezone skew: `now-nzt.html` re-anchors
+       `now` to Pacific/Auckland, so this cutoff lines up with the venue's own
+       calendar regardless of what zone the build happens to run in. The
+       client still does the real picking. */ -}}
+{{- $cutoff := ((partial "now-nzt.html" .).AddDate 0 0 -2).Format "2006-01-02" -}}
 
 {{- /* `showOnSign: false` in an event's front matter keeps it off the board
        without hiding it from the rest of the site. Absent means shown. */ -}}

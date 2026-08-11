@@ -1,7 +1,11 @@
 /**
  * Interactive Calendar for Critical Signals Events
  * Auto-generates from Hugo programme content
- * All dates and times are displayed in NZST (Pacific/Auckland timezone)
+ * All dates and times are displayed in NZST (Pacific/Auckland timezone).
+ * "Today" is also *measured* in Pacific/Auckland (see nzTodayString()) even
+ * though this runs in the visitor's own browser — every event happens in
+ * Wellington, so that's the calendar a visitor elsewhere needs "today",
+ * "past" and "has this event passed" judged against, not their own.
  */
 
 console.log('Calendar script loading...');
@@ -12,6 +16,23 @@ function parseEventDate(dateStr) {
   const dateOnly = dateStr.split('T')[0];
   const parts = dateOnly.split('-');
   return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+}
+
+// "Today", in Wellington — not the visitor's own device clock/timezone. A
+// visitor browsing from anywhere east of NZ (most of the Pacific, the
+// Americas) can be a calendar day behind NZT at the same real instant;
+// reading `new Date()` directly would show the wrong day as "today" and
+// misjudge which events have passed. Returns "YYYY-MM-DD" so it composes
+// with parseEventDate() and toYearMonthDay() below.
+function nzTodayString() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Pacific/Auckland',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+  const get = (type) => parts.find((p) => p.type === type).value;
+  return `${get('year')}-${get('month')}-${get('day')}`;
 }
 
 class Calendar {
@@ -38,8 +59,7 @@ class Calendar {
 
   /** Month to open on: the earliest upcoming event's month, else the current month. */
   initialMonth() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = parseEventDate(nzTodayString());
     const upcoming = this.eventsData
       .filter(e => !e.dateTBC && e.date)
       .map(e => parseEventDate(e.date))
@@ -48,7 +68,7 @@ class Calendar {
     if (upcoming.length) {
       return new Date(upcoming[0].getFullYear(), upcoming[0].getMonth(), 1);
     }
-    return new Date();
+    return today;
   }
 
   bindEvents() {
@@ -274,22 +294,24 @@ class Calendar {
 
   /** Get all events for a specific date, in the order they start */
   getEventsForDate(date) {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toYearMonthDay(date);
     return this.eventsData.filter(event => {
       if (event.dateTBC || !event.date) return false;
       const eventDate = parseEventDate(event.date);
-      return eventDate.toISOString().split('T')[0] === dateStr;
+      return toYearMonthDay(eventDate) === dateStr;
     }).sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
   }
 
   isToday(date) {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
+    return toYearMonthDay(date) === nzTodayString();
   }
 
+  // Grid-cell "past" styling: any day strictly before today (in NZT), full
+  // stop. Not the same rule as eventHasPassed below, which gives ticket
+  // sales a 2-day grace period — that's about when to stop selling, this is
+  // about which calendar days already happened, so today's -1 must count.
   isPast(date) {
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
-    return toYearMonthDay(date) < toYearMonthDay(yesterday)
+    return toYearMonthDay(date) < nzTodayString();
   }
 
   showEventDetails(event) {
@@ -380,13 +402,13 @@ class Calendar {
       </div>`;
     }
     
-    // Check if event has passed (more than 2 days ago)
+    // Check if event has passed (more than 2 days ago, in NZT)
     let eventHasPassed = false;
     if (!event.dateTBC && event.date) {
       const eventDate = parseEventDate(event.date);
-      const currentDate = new Date();
-      const twoDaysAgo = new Date(currentDate);
-      twoDaysAgo.setDate(currentDate.getDate() - 2);
+      const today = parseEventDate(nzTodayString());
+      const twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(today.getDate() - 2);
       eventHasPassed = eventDate < twoDaysAgo;
     }
 
@@ -448,6 +470,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }); 
 
+// Reads the Date object's own local fields — not .toISOString(), which
+// reports in UTC and would shift the date for any local-midnight Date whose
+// timezone offset isn't 00:00 (which every Date in this file is: they're all
+// built by parseEventDate()/nzTodayString() as browser-local midnight).
 function toYearMonthDay (date) {
-  return date.toISOString().split('T')[0]
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }

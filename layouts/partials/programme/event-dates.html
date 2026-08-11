@@ -5,7 +5,7 @@
        and hides the rest — past and future — behind a "Show all dates" toggle,
        with the ones that have been and gone greyed out. */ -}}
 {{- $dates := partial "programme/dates.html" . -}}
-{{- $today := now.Format "2006-01-02" -}}
+{{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
 {{- /* start_time/end_time apply to every date, so the time is rendered once
        per row rather than being a property of any one date. */ -}}
 {{- $time := partial "programme/time.html" . -}}

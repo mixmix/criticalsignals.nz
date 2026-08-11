@@ -44,7 +44,7 @@
 
           {{/* Tickets / register link — disabled once the event is >2 days past.
                For a recurring event that means 2 days past its *last* date. */}}
-          {{ $currentDate := now }}
+          {{ $currentDate := partial "now-nzt.html" . }}
           {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
           {{ $dates := partial "programme/dates.html" . }}
           {{ $eventHasPassed := false }}

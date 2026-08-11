@@ -38,7 +38,7 @@
 
       {{/* One entry per event *date*, then split on today — an event running
            today stays in Upcoming until the day is over. */}}
-      {{ $today := now.Format "2006-01-02" }}
+      {{ $today := (partial "now-nzt.html" .).Format "2006-01-02" }}
       {{ $dated := slice }}
       {{ $past := slice }}
       {{ range partial "programme/occurrences.html" $live }}

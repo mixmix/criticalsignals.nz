@@ -84,21 +84,31 @@ optional catch binding, `?.`, `??` and `**` all need checking too.
 
 ## Timezone
 
-`Pacific/Auckland` is hardcoded, in two places, on purpose.
+`Pacific/Auckland` is hardcoded, in three places, on purpose.
 
-- **Build time** (`sign.html` header): Go formats each event's ISO timestamp
-  with a real offset for that specific date, so August events emit `+12:00`
-  and October events emit `+13:00` after NZDT begins on 27 September 2026.
-  Never hardcode the *offset* — only the zone.
+- **Build time, per-event offsets** (`sign.html` header): Go formats each
+  event's ISO timestamp with a real offset for that specific date, so August
+  events emit `+12:00` and October events emit `+13:00` after NZDT begins on
+  27 September 2026. Never hardcode the *offset* — only the zone.
+- **Build time, `now`** (`$cutoff`, and every other build-time "today"/"N
+  days ago" comparison sitewide): Hugo's `now` reflects the build machine's
+  own clock and zone, which is UTC in CI and whatever a developer's laptop is
+  set to locally — never Wellington's. `layouts/partials/now-nzt.html`
+  re-anchors it to Pacific/Auckland via `time.In` before anything compares
+  against it. Do not compare bare `now` against an event date anywhere;
+  go through that partial.
 - **Run time** (`nzOffset`): the NZST/NZDT rule is spelled out in ES5 because
   Chromium 47 has no usable IANA timezone data, and the panel's own timezone
   setting is not trustworthy. Displayed event times are derived from the
   offsets baked into the ISO strings, never from the panel's clock. Only the
   countdown depends on the panel clock being roughly right.
 
-There is no `timeZone` set in `config/_default/hugo.toml`, and this page does
-not need one. Adding one is a site-wide behaviour change affecting the
-homepage and programme list — out of scope here.
+`config/_default/hugo.toml` sets `timeZone = "Pacific/Auckland"`, which fixes
+how Hugo parses front-matter dates that carry no explicit offset (`date:`,
+`dates:` are plain `"2026-08-06"` strings) — it does **not** affect `now`,
+hence the separate partial above. This was a site-wide change (it also
+touches the homepage and programme list), made together with introducing
+`now-nzt.html`.
 
 ## Rotation
 

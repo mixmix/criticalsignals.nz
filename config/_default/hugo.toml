@@ -6,6 +6,14 @@ theme = "blowfish" # UNCOMMENT THIS LINE
 baseURL = "https://criticalsignals.nz/"
 defaultContentLanguage = "en"
 
+# Event dates (`date:`, `dates:`) are written as plain "2026-08-06" strings
+# with no offset — Ticket Tailor exports them that way, meaning Wellington
+# local time. Without this, Hugo parses them as UTC midnight, which silently
+# shifts every event's calendar day depending on nothing more than whether a
+# timezone happens to be set. This does not affect `now` (see
+# layouts/partials/now-nzt.html), only front-matter date parsing.
+timeZone = "Pacific/Auckland"
+
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
 enableRobotsTXT = true

@@ -1,7 +1,8 @@
 ---
 title: "The Young Activists Workshop"
 hosts:
-  - "Emily Writes + Ash Holwell"
+  - "Emily Writes"
+  - "Ash Holwell"
 date: "2026-09-22"
 start_time: "16:00"
 end_time: "18:00"

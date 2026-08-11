@@ -1,0 +1,13 @@
+{{- /* "Now", anchored to Pacific/Auckland rather than the machine doing the
+       build. Every event on this site runs in Wellington, so that is what
+       "today" and "N days ago" must be measured against — not whatever zone
+       the CI runner (UTC) or a developer's laptop happens to be in.
+
+       Hugo's `now` returns the correct instant but labelled in the build
+       machine's own zone, and setting `timeZone` in hugo.toml does not
+       change that (it only affects parsing of front-matter dates that lack
+       an explicit offset). `time.In` re-labels the same instant as NZT
+       without shifting it, so any .Format/.AddDate/day-string comparison
+       done against this value comes out in Wellington's calendar, wherever
+       the build actually runs. */ -}}
+{{- return (now | time.In "Pacific/Auckland") -}}

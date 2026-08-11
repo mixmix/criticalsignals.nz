@@ -9,7 +9,7 @@
        day it runs. */ -}}
 {{- $n := .Params.upcomingEventsCount | default 4 -}}
 {{- $events := where .Site.RegularPages "Section" "programme" -}}
-{{- $today := now.Format "2006-01-02" -}}
+{{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
 {{- $upcoming := slice -}}
 {{- $seen := slice -}}
 {{- range partial "programme/occurrences.html" $events -}}
