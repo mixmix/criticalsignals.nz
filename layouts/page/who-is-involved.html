@@ -7,7 +7,7 @@
 {{ define "main" }}
   {{ $core := where (.Site.GetPage "/people").Pages ".Params.tags" "intersect" (slice "core-team") }}
   <section class="hero hero--inner cs-hero">
-    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/07.jpeg" alt="" data-img-spot></div>
+    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">
@@ -20,7 +20,7 @@
             {{ $featured := partial "feature-image.html" $p }}
             {{ with $featured }}
               {{ $img := . }}
-              {{ if not (strings.HasSuffix $img.RelPermalink ".svg") }}{{ $img = $img.Resize "700x" }}{{ end }}
+              {{ if not (strings.HasSuffix $img.RelPermalink ".svg") }}{{ $img = $img.Resize "700x webp" }}{{ end }}
               <img class="person__photo" src="{{ $img.RelPermalink }}" alt="{{ $p.Title }}" loading="lazy">
             {{ else }}
               <div class="person__photo--empty" aria-hidden="true"></div>
@@ -36,7 +36,7 @@
 
   {{ if .Params.middleImage }}
     <section class="imgband">
-      <img class="imgband__photo" src="/images/backgrounds/09.jpeg" alt="" data-img-spot>
+      <img class="imgband__photo" alt="" loading="lazy" data-img-spot>
     </section>
   {{ end }}
 {{ end }}

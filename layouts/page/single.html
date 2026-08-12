@@ -3,7 +3,7 @@
        Set `middleImage: true` in front matter for the 3-image pages. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero">
-    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">
@@ -16,7 +16,7 @@
 
   {{ if .Params.middleImage }}
     <section class="imgband">
-      <img class="imgband__photo" src="/images/backgrounds/09.jpeg" alt="" data-img-spot>
+      <img class="imgband__photo" alt="" loading="lazy" data-img-spot>
     </section>
   {{ end }}
 {{ end }}

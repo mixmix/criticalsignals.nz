@@ -23,7 +23,7 @@
           {{ $image := partial "feature-image.html" $collaboratorPage }}
           {{ if $image }}
             <!-- scale image down to 120 wide -->
-            {{ $resizedImage := $image.Resize "120x" }}
+            {{ $resizedImage := $image.Resize "120x webp" }}
             <img
               src="{{ $resizedImage.RelPermalink }}"
               alt="{{ $collaboratorPage.Title }}"

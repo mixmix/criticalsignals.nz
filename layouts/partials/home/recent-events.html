@@ -29,9 +29,10 @@
 {{- range $recent -}}
   {{- $p := .page -}}
   {{- range partial "programme/gallery-images.html" $p -}}
-    {{- $thumb := cond (gt .Width 900) (.Resize "900x q80") . -}}
+    {{- $thumb := .Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width)) -}}
+    {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
     {{- $pool = $pool | append (dict
-          "src" .RelPermalink
+          "src" $full.RelPermalink
           "thumb" $thumb.RelPermalink
           "width" $thumb.Width
           "height" $thumb.Height

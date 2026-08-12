@@ -11,8 +11,9 @@
   <h2 class="gallery-title">Artefacts</h2>
   <div class="gallery-grid">
     {{ range . -}}
-      {{ $thumb := cond (gt .Width 900) (.Resize "900x q80") . -}}
-      <button type="button" class="gallery-item" data-lightbox-src="{{ .RelPermalink }}">
+      {{ $thumb := .Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width)) -}}
+      {{ $full := .Resize (printf "%dx webp q90" .Width) -}}
+      <button type="button" class="gallery-item" data-lightbox-src="{{ $full.RelPermalink }}">
         <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="">
       </button>
     {{ end }}

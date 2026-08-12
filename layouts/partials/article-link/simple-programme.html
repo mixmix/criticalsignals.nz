@@ -59,7 +59,7 @@
       {{ end }}
 
     {{ else }}
-      {{ with .Resize "600x" }}
+      {{ with .Resize "600x webp" }}
         <div class="{{ $articleImageClasses }}" style="background-image:url({{ .RelPermalink }});"></div>
       {{ end }}
 

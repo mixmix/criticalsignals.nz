@@ -5,14 +5,14 @@
 {{ define "main" }}
   {{ .Scratch.Set "scope" "single" }}
   <section class="hero hero--inner cs-hero">
-    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">
         <article class="person">
           {{ $img := partial "feature-image.html" . }}
           {{ with $img }}
-            {{ $r := .Resize "600x" }}
+            {{ $r := .Resize "600x webp" }}
             <img class="person__photo" src="{{ $r.RelPermalink }}" alt="{{ $.Title }}">
           {{ end }}
 

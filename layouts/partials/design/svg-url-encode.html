@@ -1,0 +1,14 @@
+{{- /* Minimal percent-encoding for embedding an SVG as an unquoted-charset
+       data-URI (data:image/svg+xml,...) instead of base64 — smaller, and
+       compresses better under gzip since base64's alphabet obscures the byte
+       patterns gzip relies on. Only characters that would otherwise break
+       data-URI/CSS parsing need escaping: %, ", #, <, > (order matters — %
+       must be escaped first so it doesn't double-escape the others' own
+       %XX). Pass the raw SVG markup (a string) as `.`; returns the encoded
+       string. */ -}}
+{{- $enc := replace . "%" "%25" -}}
+{{- $enc = replace $enc "\"" "%22" -}}
+{{- $enc = replace $enc "#" "%23" -}}
+{{- $enc = replace $enc "<" "%3C" -}}
+{{- $enc = replace $enc ">" "%3E" -}}
+{{- return $enc -}}

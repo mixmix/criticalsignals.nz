@@ -92,12 +92,13 @@ function buildLowpolyPlaceholder(wrap, svgText) {
   };
 }
 
-// Decodes an inlined base64 SVG data-URI synchronously (no request, so the
-// build-in can start on the same tick); falls back to fetching the on-disk
-// path for the rare case the inline array (window.CS_LOWPOLY) is absent.
+// Decodes an inlined URL-encoded SVG data-URI synchronously (no request, so
+// the build-in can start on the same tick); falls back to fetching the
+// on-disk path for the rare case the inline array (window.CS_LOWPOLY) is
+// absent.
 function loadSvgText(src, cb) {
-  const marker = "data:image/svg+xml;base64,";
-  if (src.indexOf(marker) === 0) { cb(atob(src.slice(marker.length))); return; }
+  const marker = "data:image/svg+xml,";
+  if (src.indexOf(marker) === 0) { cb(decodeURIComponent(src.slice(marker.length))); return; }
   fetch(src).then(function (res) { return res.text(); }).then(cb).catch(function () {});
 }
 
@@ -105,7 +106,7 @@ function loadSvgText(src, cb) {
 // dominant colour (see buildLowpolyPlaceholder). Pull it out with a cheap
 // regex rather than a full DOM parse, so a solid-colour placeholder can be
 // painted the instant the (usually inline, synchronously-decoded) SVG text is
-// available — no waiting on facets to build or the JPEG to load.
+// available — no waiting on facets to build or the photo to load.
 function svgBaseColor(svgText) {
   const m = /<path[^>]*\sfill="(#[0-9a-fA-F]{3,8})"/.exec(svgText);
   return m ? m[1] : null;
@@ -115,15 +116,18 @@ function svgBaseColor(svgText) {
 (function randomiseImages() {
   const spots = document.querySelectorAll("[data-img-spot]");
   if (!spots.length) return;
+  // These <img> tags carry no `src` in the template — this loop always
+  // assigns one, so a hardcoded src there would just be a wasted fetch of a
+  // photo that gets immediately replaced.
   const MIN_PLACEHOLDER_MS = 400;
-  // Low-poly placeholders are inlined as base64 data-URIs (window.CS_LOWPOLY,
+  // Low-poly placeholders are inlined as URL-encoded data-URIs (window.CS_LOWPOLY,
   // see design/lowpoly-data.html) so previewing any photo needs no request;
   // fall back to the on-disk SVG if the inline array is somehow absent.
   const inline = window.CS_LOWPOLY || [];
   const pool = Array.from({ length: 10 }, function (_, i) {
     const nn = String(i + 1).padStart(2, "0");
     return {
-      jpeg: "/images/backgrounds/" + nn + ".jpeg",
+      photo: "/images/backgrounds/" + nn + ".webp",
       svg: inline[i] || "/images/backgrounds/lowpoly/" + nn + ".svg",
     };
   });
@@ -134,21 +138,21 @@ function svgBaseColor(svgText) {
   spots.forEach(function (el, i) {
     const pick = pool[i % pool.length];
     if (el.tagName === "IMG") {
-      // The low-poly placeholder sits directly UNDER the JPEG, built live as an
+      // The low-poly placeholder sits directly UNDER the photo, built live as an
       // inline <svg> (see buildLowpolyPlaceholder) so it's guaranteed present in
-      // the DOM (no reliance on CSS background painting). Wrap the JPEG in a
-      // relative holder sized by the JPEG itself, and absolutely overlay the SVG
+      // the DOM (no reliance on CSS background painting). Wrap the photo in a
+      // relative holder sized by the photo itself, and absolutely overlay the SVG
       // behind it — exact alignment regardless of the outer container's size.
       const wrap = document.createElement("span");
       wrap.style.cssText = "position:relative;display:block;";
       el.parentNode.insertBefore(wrap, el);
-      wrap.appendChild(el);      // JPEG moves into the wrap, painting on top
+      wrap.appendChild(el);      // photo moves into the wrap, painting on top
       el.style.position = "relative";
       el.style.zIndex = "1";
-      // Fade the JPEG in over the SVG rather than letting it snap into place the
+      // Fade the photo in over the SVG rather than letting it snap into place the
       // instant it decodes — opacity 0 until `load` fires, then eased up to 1.
       // The placeholder stays on screen at least MIN_PLACEHOLDER_MS even if the
-      // JPEG loads (near-)instantly from cache, so it's never just a flicker.
+      // photo loads (near-)instantly from cache, so it's never just a flicker.
       el.style.opacity = "0";
       el.style.transition = "opacity .6s ease";
       const requestedAt = Date.now();
@@ -157,7 +161,7 @@ function svgBaseColor(svgText) {
         if (wait > 0) window.setTimeout(function () { el.style.opacity = "1"; }, wait);
         else el.style.opacity = "1";
       }, { once: true });
-      el.src = pick.jpeg;
+      el.src = pick.photo;
       loadSvgText(pick.svg, function (svgText) {
         // Paint the dominant colour on the wrap straight away — cheaper and
         // faster than waiting for the facets to build, and it still shows
@@ -168,8 +172,8 @@ function svgBaseColor(svgText) {
         if (placeholder) lowpolyControllers.push(placeholder);
       });
     } else {
-      // Layered background: JPEG on top, SVG beneath — SVG shows until JPEG loads.
-      el.style.backgroundImage = "url('" + pick.jpeg + "'),url('" + pick.svg + "')";
+      // Layered background: photo on top, SVG beneath — SVG shows until photo loads.
+      el.style.backgroundImage = "url('" + pick.photo + "'),url('" + pick.svg + "')";
       loadSvgText(pick.svg, function (svgText) {
         const bg = svgBaseColor(svgText);
         if (bg) el.style.backgroundColor = bg;
@@ -197,10 +201,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const PHOTO_SCALE = 1.14;
     // Transform the WRAP (span from section 1), not the <img> itself — the wrap
-    // is what holds both the JPEG and its low-poly SVG placeholder stacked
+    // is what holds both the photo and its low-poly SVG placeholder stacked
     // together, so scaling/panning it keeps the two in lockstep. Transforming
-    // the <img> alone would drift the JPEG away from the still-static SVG
-    // beneath it (or leave a visible seam once the JPEG has faded in).
+    // the <img> alone would drift the photo away from the still-static SVG
+    // beneath it (or leave a visible seam once the photo has faded in).
     const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo, .hero__photo")).map(function (el) { return el.parentElement; });
     photos.forEach(function (el) { el.style.willChange = "transform"; });
 

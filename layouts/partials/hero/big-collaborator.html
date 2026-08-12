@@ -57,7 +57,7 @@
       </figure>
     {{ end }}
   {{ else }}
-    {{ with .Resize (print ($.Site.Params.backgroundImageWidth | default "1200") "x") }}
+    {{ with .Resize (print ($.Site.Params.backgroundImageWidth | default "1200") "x webp") }}
       <figure>
         <!-- class="w-full rounded-lg single_hero_round nozoom" -->
         <img

@@ -4,7 +4,7 @@
        the events-data JSON emitted below. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero cal-hero">
-    <div class="hero__bg"><img class="hero__photo" src="/images/backgrounds/05.jpeg" alt="" data-img-spot></div>
+    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
     {{ partial "design/wordmark.html" . }}
 
     <div class="cal-box">
@@ -117,7 +117,7 @@
     {{ $image := .Resources.GetMatch "featured.*" }}
     {{ $imageURL := "" }}
     {{ if $image }}
-      {{ $resizedImage := $image.Resize "120x" }}
+      {{ $resizedImage := $image.Resize "120x webp" }}
       {{ $imageURL = $resizedImage.RelPermalink }}
     {{ end }}
     {{ $collaborators = merge $collaborators (dict .Title (dict "name" .Title "image" $imageURL "url" .RelPermalink)) }}
