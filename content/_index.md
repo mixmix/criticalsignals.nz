@@ -22,9 +22,13 @@ We collaborate with artists, academics, activists, scientists, technologists, ma
 
 <img class="divider" src="/images/design/divider2.png" alt="">
 
+{{< recent-events >}}
+
+<img class="divider" src="/images/design/divider1.png" alt="">
+
 <div class="theme">
 
-2026 Themes
+<h2 class="caps">2026 Themes</h2>
 
 <h3 class="caps">Democracy and Energy</h3>
 
