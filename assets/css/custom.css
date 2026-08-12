@@ -223,6 +223,10 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
   padding: 1rem;
   border: 2px solid black;
 }
+.upcoming .prog-group + .prog-group{margin-top:clamp(28px,2.8vw,44px);}
+.upcoming .prog-group .prog-group__date {margin-bottom: 0;}
+.upcoming .prog-group .prog-item {margin: 0 0 clamp(6px,.8vw,11px)}
+.upcoming .prog-group .prog-item .prog-item__subtitle {display:none;}
 .col .note{margin-top:16px;}
 
 /* middle image (home / who): pulled up so the column ends OVER its top */

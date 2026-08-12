@@ -1,8 +1,9 @@
 {{- /* Home — Upcoming Events: the next N events from the programme (soonest
-       first, dateTBC/past events excluded), each linking to its event page,
-       plus a link through to the full programme. N is read from the front
-       matter of the page calling this partial (`upcomingEventsCount`),
-       defaulting to 4.
+       first, dateTBC/past events excluded), grouped by date the same way the
+       programme list is (date heading, then each event on that day — no
+       dividers, unlike the programme list), plus a link through to the full
+       programme. N is read from the front matter of the page calling this
+       partial (`upcomingEventsCount`), defaulting to 4.
 
        A recurring event (front matter `dates:`) appears once here, dated by
        its next session — unlike the programme list, which shows it on every
@@ -19,20 +20,15 @@
   {{- end -}}
 {{- end -}}
 {{- with $upcoming -}}
+  {{- $groups := partial "programme/group-occurrences.html" (first $n .) -}}
   <div class="upcoming">
     <h2 class="caps">Upcoming Events</h2>
     <div class="prog-list">
-      {{- range first $n . }}
-        <a class="prog-item" href="{{ .page.RelPermalink }}">
-          <span class="prog-item__title">
-            {{ .page.Title | emojify }}
-            <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
-          </span>
-          <span class="prog-item__date">{{ .label }}</span>
-          {{- with .page.Params.categories }}
-            <span class="prog-item__cat">{{ index . 0 }}</span>
-          {{- end }}
-        </a>
+      {{- range $g := $groups }}
+        <div class="prog-group">
+          <h3 class="prog-group__date">{{ $g.label }}</h2>
+          {{- range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
+        </div>
       {{- end }}
     </div>
     <div class="cta-row see-programme">
