@@ -1,5 +1,5 @@
 ---
-title: "Film Screening of \"Narrative\" with Arsenal – Insitute for Film and Video Art"
+title: "Film Screening of \"Narrative\" with Arsenal Filminstitut"
 hosts:
   - "Ulrich Ziemons"
 date: "2026-08-26"

@@ -2,11 +2,12 @@
 title: "Yeah Nah What's Next?"
 draft: true
 hosts:
-  - "Ash Holwell + Emily Writes"
+  - "Ash Holwell"
+  - "Emily Writes"
 date: "2026-09-08"
 start_time: "18:30"
 end_time: "19:00"
-price: "Free"
+price: "Koha"
 currency: "USD"
 attendees: 0
 capacity: 30
