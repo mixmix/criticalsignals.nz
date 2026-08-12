@@ -398,4 +398,113 @@ document.addEventListener("DOMContentLoaded", function () {
       sync();
     });
   }
+
+  // 7. Home page "Recent Events" sampler — the full candidate pool of photos
+  //    (from the last 5 past events) is rendered server-side as a JSON data
+  //    island; here we shuffle it and build just the N shown thumbnails, so a
+  //    fresh random sample appears on every page load. Must run before
+  //    section 8 below, so those thumbnails are in the DOM by the time it
+  //    collects `.gallery-item`s. See partials/home/recent-events.html.
+  document.querySelectorAll(".gallery-grid[data-recent-events-pool]").forEach(function (grid) {
+    let pool;
+    try { pool = JSON.parse(grid.getAttribute("data-recent-events-pool")); } catch (e) { pool = []; }
+    const n = parseInt(grid.getAttribute("data-recent-events-count"), 10) || 6;
+    for (let i = pool.length - 1; i > 0; i--) {            // Fisher–Yates shuffle
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    pool.slice(0, n).forEach(function (item) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "gallery-item";
+      btn.setAttribute("data-lightbox-src", item.src);
+      btn.setAttribute("data-title", item.title);
+      btn.setAttribute("data-href", item.href);
+      const img = document.createElement("img");
+      img.src = item.thumb;
+      img.width = item.width;
+      img.height = item.height;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.alt = "";
+      btn.appendChild(img);
+      grid.appendChild(btn);
+    });
+  });
+
+  // 8. Photo lightbox — wires up any `.gallery-item` grid on the page (an
+  //    event's own Artefacts gallery, or the Recent Events sampler above) to
+  //    open the full-size photo in colour in an overlay (see
+  //    partials/design/lightbox.html). With 2+ photos, the overlay also
+  //    supports left/right navigation: the nav buttons, clicking the
+  //    left/right half of the photo, or the arrow keys. Items carrying
+  //    `data-title`/`data-href` (Recent Events only, since its grid mixes
+  //    photos from several events) get a caption naming the source event,
+  //    linking through to it.
+  const lightbox = document.querySelector(".lightbox");
+  if (lightbox) {
+    // .col (the white text column) is a stacking context (position:relative +
+    // z-index:55), which traps this fixed-position overlay's z-index:200
+    // inside it — so the sticky nav bar (z-index:70, but outside .col) was
+    // painting on top of the close/nav buttons. Hoist it to <body> so it
+    // competes in the root stacking context instead.
+    document.body.appendChild(lightbox);
+    const lightboxImg = lightbox.querySelector(".lightbox__img");
+    const captionTitle = lightbox.querySelector(".lightbox__caption-title");
+    const captionLink = lightbox.querySelector(".lightbox__caption-link");
+    const items = Array.from(document.querySelectorAll(".gallery-item"));
+    let index = 0;
+
+    const showImage = function (i) {
+      index = (i + items.length) % items.length;
+      const item = items[index];
+      lightboxImg.src = item.getAttribute("data-lightbox-src");
+      const title = item.getAttribute("data-title");
+      if (title) {
+        captionTitle.textContent = title;
+        captionLink.href = item.getAttribute("data-href") || "#";
+      }
+    };
+    const openLightbox = function (i) {
+      showImage(i);
+      lightbox.classList.add("is-open");
+      lightbox.setAttribute("aria-hidden", "false");
+    };
+    const closeLightbox = function () {
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImg.src = "";
+    };
+    const next = function () { showImage(index + 1); };
+    const prev = function () { showImage(index - 1); };
+
+    if (items.length > 1) lightbox.classList.add("has-nav");
+    if (items.some(function (el) { return el.getAttribute("data-title"); })) lightbox.classList.add("has-caption");
+
+    items.forEach(function (btn, i) {
+      btn.addEventListener("click", function () { openLightbox(i); });
+    });
+
+    const prevBtn = lightbox.querySelector(".lightbox__prev");
+    const nextBtn = lightbox.querySelector(".lightbox__next");
+    prevBtn.addEventListener("click", function (e) { e.stopPropagation(); prev(); });
+    nextBtn.addEventListener("click", function (e) { e.stopPropagation(); next(); });
+
+    // Clicking the photo itself: left half goes back, right half goes forward.
+    lightboxImg.addEventListener("click", function (e) {
+      if (items.length < 2) return;
+      const rect = lightboxImg.getBoundingClientRect();
+      const isLeftHalf = (e.clientX - rect.left) < rect.width / 2;
+      if (isLeftHalf) prev(); else next();
+    });
+
+    lightbox.querySelector(".lightbox__close").addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", function (e) { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener("keydown", function (e) {
+      if (!lightbox.classList.contains("is-open")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    });
+  }
 });

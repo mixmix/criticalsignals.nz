@@ -1,0 +1,49 @@
+{{- /* Home — Recent Events: a random sample of photos from the last 5 past
+       events (each event's "extra" photos — see programme/gallery-images.html
+       — not its header image). Every candidate photo is rendered into a JSON
+       data island on the grid element; design.js shuffles it and builds the
+       N visible thumbnails client-side, so the sample is different on every
+       page load. N is read from the front matter (`recentEventsCount`),
+       defaulting to 6. Renders nothing if there are no candidate photos. */ -}}
+{{- $n := .Params.recentEventsCount | default 6 -}}
+{{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
+{{- $events := where .Site.RegularPages "Section" "programme" -}}
+
+{{/* One entry per past event, keyed by page so a recurring event (multiple
+     occurrences) is only counted once, at its most recent occurrence. */}}
+{{- $byPage := dict -}}
+{{- range partial "programme/occurrences.html" $events -}}
+  {{- if and (not .page.Draft) (lt .day $today) -}}
+    {{- $key := .page.RelPermalink -}}
+    {{- $existing := index $byPage $key -}}
+    {{- if or (not $existing) (gt .day $existing.day) -}}
+      {{- $byPage = merge $byPage (dict $key .) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $recent := slice -}}
+{{- range $byPage -}}{{- $recent = $recent | append . -}}{{- end -}}
+{{- $recent = first 5 (sort $recent "day" "desc") -}}
+
+{{- $pool := slice -}}
+{{- range $recent -}}
+  {{- $p := .page -}}
+  {{- range partial "programme/gallery-images.html" $p -}}
+    {{- $thumb := cond (gt .Width 900) (.Resize "900x q80") . -}}
+    {{- $pool = $pool | append (dict
+          "src" .RelPermalink
+          "thumb" $thumb.RelPermalink
+          "width" $thumb.Width
+          "height" $thumb.Height
+          "title" $p.Title
+          "href" $p.RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $pool -}}
+<section class="recent-events">
+  <h2 class="gallery-title">Recent Events</h2>
+  <div class="gallery-grid" data-recent-events-pool="{{ . | jsonify }}" data-recent-events-count="{{ $n }}"></div>
+</section>
+{{ partial "design/lightbox.html" . }}
+{{- end -}}

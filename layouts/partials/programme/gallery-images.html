@@ -1,0 +1,21 @@
+{{- /* An event page's "extra" photos — any bundle image that ISN'T the page's
+       feature/header photo (front matter `featureimage`, or a bundle
+       `featured.*`) and isn't already embedded inline in the markdown body.
+       Context: the event Page. Returns a slice of image Resources (possibly
+       empty). Shared by partials/programme/gallery.html (the event page's own
+       gallery) and partials/home/recent-events.html (the homepage sampler). */ -}}
+{{- $page := . -}}
+{{- $featured := $page.Resources.GetMatch "featured.*" -}}
+{{- $featureimage := false -}}
+{{- with $page.Params.featureimage -}}{{- $featureimage = $page.Resources.GetMatch . -}}{{- end -}}
+{{- $raw := $page.RawContent -}}
+{{- $extras := slice -}}
+{{- range $page.Resources.ByType "image" -}}
+  {{- $isFeatured := or
+        (and $featured (eq .RelPermalink $featured.RelPermalink))
+        (and $featureimage (eq .RelPermalink $featureimage.RelPermalink)) -}}
+  {{- if not (or $isFeatured (in $raw .Name)) -}}
+    {{- $extras = $extras | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- return $extras -}}

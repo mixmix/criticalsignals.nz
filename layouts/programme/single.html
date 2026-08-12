@@ -42,21 +42,23 @@
             {{ .Content }}
           </div>
 
-          {{/* Tickets / register link — disabled once the event is >2 days past.
-               For a recurring event that means 2 days past its *last* date. */}}
-          {{ $currentDate := partial "now-nzt.html" . }}
-          {{ $twoDaysAgo := $currentDate.AddDate 0 0 -2 }}
+          {{/* Tickets / register link — disabled once the event's date (or, for
+               a recurring event, its *last* date) has passed, in NZ time. */}}
+          {{ $today := (partial "now-nzt.html" .).Format "2006-01-02" }}
           {{ $dates := partial "programme/dates.html" . }}
           {{ $eventHasPassed := false }}
           {{ if $dates }}
-            {{ $eventHasPassed = (index $dates (sub (len $dates) 1)).Before $twoDaysAgo }}
+            {{ $eventHasPassed = lt ((index $dates (sub (len $dates) 1)).Format "2006-01-02") $today }}
           {{ end }}
+          {{/* Once an event has passed, the ticket link/button is replaced by a
+               disabled-looking "Tickets" button (same slot, no href) plus the
+               "This event has passed" note — same treatment regardless of
+               which sign-up state the event was in. */}}
+          {{ $passedTickets := `<p class="event__tickets is-passed"><span class="event__tickets-btn" aria-disabled="true">Tickets</span><span class="event__passed-text">This event has passed</span></p>` }}
           {{/* sign_up_link: false means the event needs no sign-up at all */}}
           {{ if eq .Params.sign_up_link false }}
             {{ if $eventHasPassed }}
-              <p class="event__tickets is-passed">
-                <span class="event__passed-text">This event has passed</span>
-              </p>
+              {{ $passedTickets | safeHTML }}
             {{ else }}
               <p class="event__tickets">
                 <span class="event__no-signup">No Tickets Required</span>
@@ -64,9 +66,7 @@
             {{ end }}
           {{ else if .Params.sign_up_link }}
             {{ if $eventHasPassed }}
-              <p class="event__tickets is-passed">
-                <span class="event__passed-text">This event has passed</span>
-              </p>
+              {{ $passedTickets | safeHTML }}
             {{ else }}
               <p class="event__tickets">
                 <a href="{{ .Params.sign_up_link }}">Tickets <span aria-hidden="true">&rarr;</span></a>
@@ -83,9 +83,7 @@
           {{ else }}
             {{ if not .Params.no_link }}
               {{ if $eventHasPassed }}
-                <p class="event__tickets is-passed">
-                  <span class="event__passed-text">This event has passed</span>
-                </p>
+                {{ $passedTickets | safeHTML }}
               {{ else }}
                 <p class="event__tickets is-soon">Registration coming soon!</p>
               {{ end }}
@@ -121,6 +119,8 @@
           {{ end }}
 
           <img class="divider event__divider" src="/images/design/divider1.png" alt="">
+
+          {{ partial "programme/gallery.html" . }}
         </article>
       </div>
       {{ partial "design/rail.html" . }}

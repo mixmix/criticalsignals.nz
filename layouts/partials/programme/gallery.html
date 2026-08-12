@@ -1,0 +1,22 @@
+{{- /* Photo gallery for an event page — its "extra" photos (see
+       programme/gallery-images.html), below a heading iff there are any.
+
+       Grid: 2-up on desktop, 1-up on mobile (.gallery-grid). Clicking a
+       thumbnail opens the full-size image, in colour, in an overlay — see
+       partials/design/lightbox.html, wired up in design.js. */ -}}
+{{- $page := . -}}
+{{- $extras := partial "programme/gallery-images.html" $page -}}
+{{- with $extras -}}
+<section class="event__gallery">
+  <h2 class="gallery-title">Artefacts</h2>
+  <div class="gallery-grid">
+    {{ range . -}}
+      {{ $thumb := cond (gt .Width 900) (.Resize "900x q80") . -}}
+      <button type="button" class="gallery-item" data-lightbox-src="{{ .RelPermalink }}">
+        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="">
+      </button>
+    {{ end }}
+  </div>
+</section>
+{{ partial "design/lightbox.html" . }}
+{{- end -}}

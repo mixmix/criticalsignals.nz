@@ -197,7 +197,10 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .col h4{margin-top:clamp(22px,2vw,32px);}
 .col .intro{text-transform:uppercase;font-weight:400;line-height:1.34;margin:0 0 10px;}
 :where(.col) a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;}
-.theme h3{margin-top:6px;}
+.theme h3{
+  margin-top:6px;
+  font-size: clamp(20px, 1.45vw, 26px);;
+}
 .theme h4{margin-top:clamp(22px,2vw,32px);}
 .theme p{margin:0 0 4px;}
 
@@ -212,9 +215,14 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .hero--home .grid{margin-top:calc(17vw - 80px);}
 .hero--home .rail{margin-top:0;}
 .col .cta-row{margin:clamp(34px,3.4vw,56px) 0 clamp(38px,3.8vw,62px);}
+.col .cta-row.see-programme { margin-top: 0; }
+.col .cta-row.see-programme a { border-top: none; }
 .col .focus{margin-top:clamp(34px,3.2vw,52px);}
 .col .upcoming{margin-top:clamp(34px,3.2vw,52px);}
-.upcoming .prog-list{margin-top:clamp(14px,1.6vw,22px);}
+.upcoming .prog-list{
+  padding: 1rem;
+  border: 2px solid black;
+}
 .col .note{margin-top:16px;}
 
 /* middle image (home / who): pulled up so the column ends OVER its top */
@@ -489,7 +497,7 @@ body:has(.cs-hero) .prog-group__date{
   display:block;
   text-decoration:none;
   color:var(--ink);
-  margin:0 0 clamp(14px,1.6vw,22px) 1rem;
+  margin:0 0 clamp(14px,1.6vw,22px) 0;
 }
 .prog-item:last-child{margin-bottom:0;}
 .prog-item__title{
@@ -607,7 +615,23 @@ body:has(.cs-hero) .prog-group__date{
 /* Price + sign-up count beside the Tickets button — quiet asides, never
    competing with it. Sizes are set with the grid above. */
 .event__price,.event__attending{opacity:.6;}
-.event__passed-text{font-style:italic;opacity:.55;}
+/* Passed events keep the Tickets button's shape/slot so the layout doesn't
+   jump, but it's inverted (white fill, black outline), unclickable, and
+   greyed out to read as disabled. */
+.event__tickets.is-passed{opacity:.5;}
+.event__tickets-btn{
+  grid-row: 1 / -1;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  padding:12px 48px 12px 56px;min-height:54px;
+  background:var(--white);color:var(--ink);border:2px solid var(--ink);
+  font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  cursor:default;
+}
+.event__tickets.is-passed .event__passed-text{
+  grid-row: 1 / -1;
+  align-self:center;
+  font-style:italic;
+}
 
 .event__hosts{margin-top:clamp(38px,3.8vw,60px);}
 .event__hosts-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
@@ -619,10 +643,66 @@ body:has(.cs-hero) .prog-group__date{
 .host:hover .host__name{text-decoration:underline;text-underline-offset:3px;}
 .event__divider{margin-top:clamp(28px,3vw,46px);}
 
+/* Extra event photos not used as the header image — see partials/programme/gallery.html. */
+.event__gallery{margin-top:clamp(28px,3vw,46px);margin-bottom:clamp(28px,3vw,46px);}
+
+/* Home page — Recent Events: a random sample of past-event photos, see
+   partials/home/recent-events.html. Shares the .gallery-* grid below. */
+.col .recent-events{margin-top:clamp(34px,3.2vw,52px);}
+
+/* Photo grid — event Artefacts and the home page's Recent Events sampler. */
+.gallery-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
+.gallery-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media (min-width:640px){.gallery-grid{grid-template-columns:1fr 1fr;}}
+.gallery-item{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;}
+/* Fixed aspect box, cropped to fill — a portrait shot sits at the same
+   thumbnail height as its landscape neighbours instead of towering over them.
+   The full (untrimmed) photo still opens in the lightbox. */
+.gallery-item img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center;filter:grayscale(1);background:#3a3a3a;}
+.gallery-item:hover img{opacity:.85;}
+
+/* Full-size view of a gallery photo, opened on click — see design.js. */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:200;
+  align-items:center;justify-content:center;padding:clamp(24px,5vw,64px);
+  background:rgba(0,0,0,.9);
+}
+.lightbox.is-open{display:flex;}
+.lightbox__stage{display:flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%;}
+/* Full colour on the way in — only the grid thumbnails are greyed out. */
+.lightbox__img{display:block;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));width:auto;height:auto;cursor:pointer;}
+/* Names the photo's source event — only present on the home page's Recent
+   Events sampler, where a grid mixes photos from several different events. */
+.lightbox__caption{display:none;align-items:baseline;gap:12px;margin-top:16px;color:var(--white);font-size:1rem;}
+.lightbox.has-caption .lightbox__caption{display:flex;}
+.lightbox__caption-title{font-weight:700;text-transform:uppercase;}
+.lightbox__caption-link{color:var(--white);text-decoration:underline;text-underline-offset:3px;flex:0 0 auto;}
+.lightbox__caption-link:hover{opacity:.7;}
+.lightbox__close{
+  position:fixed;top:16px;right:16px;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:none;border:0;color:var(--white);font-size:2rem;line-height:1;cursor:pointer;
+}
+.lightbox__close:hover{opacity:.7;}
+/* Prev/next — only shown once the gallery has more than one photo. */
+.lightbox:not(.has-nav) .lightbox__nav{display:none;}
+.lightbox__nav{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:54px;height:54px;display:flex;align-items:center;justify-content:center;
+  background:none;border:0;color:var(--white);font-size:2rem;line-height:1;cursor:pointer;
+}
+.lightbox__prev{left:16px;}
+.lightbox__next{right:16px;}
+.lightbox__nav:hover{opacity:.7;}
+
 /* keep event/host photos reading correctly through the dark-mode body invert */
 html[data-theme="dark"] .event__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
+html[data-theme="dark"] .gallery-item img{filter:grayscale(1) invert(1);}
+/* the lightbox stays in full colour in dark mode too — a single invert
+   cancels the body's invert(1) instead of stacking grayscale on top of it */
+html[data-theme="dark"] .lightbox__img{filter:invert(1);}
 
 /* --- Calendar --- */
 /* Full-width white box (the calendar needs the width the narrow .col can't give) */

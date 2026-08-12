@@ -20,7 +20,7 @@
 {{- end -}}
 {{- with $upcoming -}}
   <div class="upcoming">
-    <h3>Upcoming Events</h3>
+    <h2 class="caps">Upcoming Events</h2>
     <div class="prog-list">
       {{- range first $n . }}
         <a class="prog-item" href="{{ .page.RelPermalink }}">
@@ -35,7 +35,7 @@
         </a>
       {{- end }}
     </div>
-    <div class="cta-row">
+    <div class="cta-row see-programme">
       <a class="cta cta--outline" href="/programme/">See the full programme</a>
     </div>
   </div>
