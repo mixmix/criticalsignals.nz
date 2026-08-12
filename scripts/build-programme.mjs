@@ -174,8 +174,8 @@ async function fetchAllEvents () {
  * carrying an `occurrenceDates` list (oldest first) and a summed
  * `totalIssuedTickets`. Non-series events pass through with a one-item list.
  * Everything else (description, images, url, hosts, ticket types) is taken
- * from the earliest occurrence — series occurrences only ever differ in
- * start/end/id/ticket counts, never in content.
+ * from the representative occurrence — see pickRepresentative — since series
+ * occurrences only ever differ in start/end/id/ticket counts, never content.
  */
 function mergeSeriesOccurrences (events) {
   const singles = []
@@ -190,22 +190,76 @@ function mergeSeriesOccurrences (events) {
     bySeries.get(event.event_series_id).push(event)
   }
 
-  const merged = singles.map((event) => withOccurrences(event, [event]))
+  const merged = singles.map((event) => withOccurrences([event]))
 
   for (const occurrences of bySeries.values()) {
     occurrences.sort((a, b) => a.start.unix - b.start.unix)
-    merged.push(withOccurrences(occurrences[0], occurrences))
+    merged.push(withOccurrences(occurrences))
   }
 
   return merged
 }
 
-function withOccurrences (base, occurrences) {
+/**
+ * Which occurrence's start/end/id stand in for the whole series (used only
+ * when occurrences disagree — see detectOccurrenceErrors). The soonest
+ * occurrence that hasn't happened yet, so a mismatch always resolves to the
+ * time someone about to attend actually needs, not whichever session
+ * happened to be created first. Once every occurrence is in the past, falls
+ * back to the last one rather than returning nothing.
+ */
+function pickRepresentative (occurrences) {
+  const today = new Date().toISOString().slice(0, 10)
+  return occurrences.find((e) => e.start.date >= today) ?? occurrences[occurrences.length - 1]
+}
+
+function withOccurrences (occurrences) {
+  const base = pickRepresentative(occurrences)
   return {
     ...base,
     occurrenceDates: occurrences.map((e) => e.start.date),
-    totalIssuedTickets: occurrences.reduce((sum, e) => sum + (e.total_issued_tickets ?? 0), 0)
+    totalIssuedTickets: occurrences.reduce((sum, e) => sum + (e.total_issued_tickets ?? 0), 0),
+    errors: detectOccurrenceErrors(occurrences, base)
   }
+}
+
+/**
+ * Ticket Tailor lets an organiser override an individual occurrence's time or
+ * price, so a "recurring" event can quietly stop recurring at the same time
+ * of day. That's invisible on the page (there's only one start_time/end_time
+ * in front matter, from the representative occurrence — see
+ * pickRepresentative) so it has to be surfaced somewhere: written into
+ * `errors:` front matter, which layouts/partials/programme-audit/error-flame.html
+ * turns into a 🔥 in /_admin/programme/. Each entry is a single-key object
+ * (`{start_time: "..."}`) so the audit can route it to the right column.
+ */
+function detectOccurrenceErrors (occurrences, base) {
+  if (occurrences.length < 2) return []
+
+  const errors = []
+
+  const startTimes = [...new Set(occurrences.map((e) => e.start?.time))]
+  if (startTimes.length > 1) {
+    errors.push({
+      start_time: `Occurrences start at different times of day (${startTimes.join(', ')}) — start_time has been set to that of the next upcoming occurrence (${base.start?.time}, ${base.start?.date}). Check Ticket Tailor.`
+    })
+  }
+
+  const endTimes = [...new Set(occurrences.map((e) => e.end?.time))]
+  if (endTimes.length > 1) {
+    errors.push({
+      end_time: `Occurrences end at different times of day (${endTimes.join(', ')}) — end_time has been set to that of the next upcoming occurrence (${base.end?.time}, ${base.start?.date}). Check Ticket Tailor.`
+    })
+  }
+
+  const currencies = [...new Set(occurrences.map((e) => e.currency))]
+  if (currencies.length > 1) {
+    errors.push({
+      currency: `Occurrences are priced in different currencies (${currencies.join(', ')}) — currency has been set to that of the next upcoming occurrence (${base.currency}). Check Ticket Tailor.`
+    })
+  }
+
+  return errors
 }
 
 async function writeEvent (event, slug, collaborators) {
@@ -230,6 +284,10 @@ async function writeEvent (event, slug, collaborators) {
   }
   if (event.start?.time) frontMatter.start_time = event.start.time
   if (event.end?.time) frontMatter.end_time = event.end.time
+
+  // Occurrences disagreeing on time/currency (see detectOccurrenceErrors) —
+  // surfaced as a 🔥 in /_admin/programme/ rather than silently papered over.
+  if (event.errors?.length) frontMatter.errors = event.errors
 
   // Draft events aren't on sale yet — omit the link so the template shows
   // "Registration coming soon!". Published events link to their event page.
@@ -525,7 +583,7 @@ function toYamlFrontMatter (obj) {
     if (value === undefined || value === null) continue
     if (Array.isArray(value)) {
       lines.push(`${key}:`)
-      for (const item of value) lines.push(`  - ${yamlScalar(item)}`)
+      for (const item of value) lines.push(`  - ${yamlListItem(item)}`)
     } else {
       lines.push(`${key}: ${yamlScalar(value)}`)
     }
@@ -538,6 +596,21 @@ function yamlScalar (value) {
   if (typeof value !== 'string') return String(value)
   // Quote anything that could confuse the YAML parser; escape embedded quotes.
   return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+/**
+ * A list item is usually a plain scalar (`dates:`, `hosts:`) but `errors:`
+ * entries are single-key objects, e.g. `{start_time: "..."}`, so the audit
+ * can tell which front-matter field each error is about — see
+ * detectOccurrenceErrors. Rendered as `key: "value"` instead of `"[object
+ * Object]"`.
+ */
+function yamlListItem (item) {
+  if (item !== null && typeof item === 'object' && !Array.isArray(item)) {
+    const [key, value] = Object.entries(item)[0]
+    return `${key}: ${yamlScalar(value)}`
+  }
+  return yamlScalar(item)
 }
 
 /**

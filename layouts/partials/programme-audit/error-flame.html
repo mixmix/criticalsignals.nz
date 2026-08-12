@@ -1,0 +1,24 @@
+{{- /* A 🔥 tooltip for front-matter `errors:` entries whose key is in the
+       given list — nothing renders when there are none.
+
+       `errors:` is written by scripts/build-programme.mjs when a recurring
+       event's occurrences disagree on something (start_time, end_time,
+       currency) that front matter can only hold one value of — see
+       detectOccurrenceErrors there. Each entry is a single-key object
+       (`{start_time: "..."}`) so a call site here can pick out only the
+       keys relevant to the column it's rendering into.
+
+       Context: dict "page" $event "keys" (slice "start_time" "end_time") */ -}}
+{{- $event := .page -}}
+{{- $keys := .keys -}}
+{{- $messages := slice -}}
+{{- range $err := ($event.Params.errors | default slice) -}}
+  {{- range $k, $v := $err -}}
+    {{- if in $keys $k -}}
+      {{- $messages = $messages | append $v -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $messages -}}
+  <span class="programme-audit__tooltip" data-tooltip="{{ delimit $messages "\n" }}">🔥</span>
+{{- end -}}

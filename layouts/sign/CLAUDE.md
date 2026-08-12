@@ -152,15 +152,35 @@ All the knobs are constants at the top of the display-loop section of
 you change `FADE_MS` you must change the `#inner` CSS transition to match.
 
 Motion is deliberately transform/opacity-only so the panel composites rather
-than repaints. Three layers: the crossfade on `#inner`; `#spore` translated by
+than repaints. Four layers: the crossfade on `#inner`; `#spore` translated by
 JS to a random spot in the upper area on every slide (and every
-`SPORE_IDLE_MS` when the copy is pinned), eased by a CSS transition; and
-`#sporespin` rotating underneath on its own animation. Translation and
-rotation are on separate elements on purpose — one element cannot hold two
-competing `transform` values.
+`SPORE_IDLE_MS` when the copy is pinned), eased by a CSS transition;
+`#sporespin` rotating underneath on its own animation; and `#timerbar`, a
+thin line flush with the very top of the canvas that shrinks via `scaleX`
+from full width at `slideAt` to nothing `CYCLE_HOLD_MS` later. Translation
+and rotation are on separate elements on purpose — one element cannot hold
+two competing `transform` values.
+
+`#timerbar` is hidden (`rotating = false`) whenever nothing is counting
+down — a pinned feature, or a season with only one slide — since there's
+nothing for it to say. `updateTimerBar()` runs unconditionally at the top of
+`step()`, *before* the `fading` early-return, so it keeps ticking smoothly
+through the ~460ms crossfade instead of freezing for the last slice of every
+slide. Its CSS transition is tied to the `setInterval(step, 250)` cadence,
+not to `FADE_MS` — change one, change the other.
 
 In a desktop console, `SIGN.next()` advances the rotation by hand and
-`SIGN.state()` reports the current mode.
+`SIGN.state()` reports the current mode (including `paused`).
+
+A keyboard listener gives the same two controls to whoever is standing at a
+laptop previewing the board: **space** toggles `paused`, which is checked
+first thing in `step()` — while paused, nothing updates, not the clock, not
+the timer bar, not the rotation. **Right arrow** calls `forceNext()`, the
+same advance-and-fade `step()` runs when the hold timer expires, just fired
+on demand; it works even while paused, so a presenter can single-step
+through slides by hand without ending the pause. Neither key is wired to
+click/tap — this is a desktop control, not something the panel (no touch)
+or a phone visitor should be able to trigger.
 
 ## Landscape is not a scaled portrait
 
@@ -209,11 +229,15 @@ mean something:
   that had nothing to do with them, which reads as a fault. Brightness, not a
   new hue: the board is one mint, and a fourth colour would read as a fourth
   kind of thing.
-- **The When block** — `otherDates()` adds a line under the date: "Also 26,
-  27 & 28 Aug" when three or fewer remain in one month, otherwise "10 more
-  dates, through 28 Aug". When every remaining sitting is on the *same day* it
-  switches to times — "Also 18:00–20:00 the same day" — because that is what
-  actually differs between them.
+- **The "More dates" box** — `otherDates()` fills the footer box that used to
+  show the venue (`#morebox`/`#more`): "Also 26, 27 & 28 Aug" when three or
+  fewer remain in one month, otherwise "10 more dates, through 28 Aug". When
+  every remaining sitting is on the *same day* it switches to times — "Also
+  18:00–20:00 the same day" — because that is what actually differs between
+  them. The venue itself was dropped from the footer: it's the same address
+  for every event on the board, so a dedicated box for it wasn't worth the
+  space, and this is what took its place. Empty for a one-off — no label, no
+  value — rather than showing a heading over nothing.
 
 `series` is the event's `RelPermalink` and `repeats` is set at build time from
 the *whole season's* date count, not from what is left — so the final date of a

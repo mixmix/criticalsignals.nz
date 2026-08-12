@@ -17,6 +17,7 @@
         <span class="programme-audit__more programme-audit__tooltip"
               data-tooltip="{{ delimit .whenLines "\n" }}">&hellip;</span>
       {{- end -}}
+      {{- partial "programme-audit/error-flame.html" (dict "page" $event "keys" (slice "start_time" "end_time")) -}}
     {{- end -}}
   </td>
   <td><a class="programme-audit__link" href="{{ $event.RelPermalink }}">{{ $event.Title | emojify }}</a></td>
@@ -59,6 +60,7 @@
     {{- $currency := $event.Params.currency | default "NZD" -}}
     {{- if ne $currency "NZD" }} <span class="programme-audit__tooltip" data-tooltip="Invalid Currency: {{ $currency }}">🔥</span>
     {{- end -}}
+    {{- " " -}}{{- partial "programme-audit/error-flame.html" (dict "page" $event "keys" (slice "currency")) -}}
   </td>
   {{/* Sign-ups are only known for pages generated from Ticket Tailor — hand-authored
        ones (no ticket_tailor_id, see admin/programme-audit.html) carry none, and
