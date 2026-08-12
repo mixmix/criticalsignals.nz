@@ -67,46 +67,58 @@ Cream: F8F4CE => rgb(248, 244, 206)
 
 ## Background photos
 
-The full-bleed photos (`static/images/backgrounds/NN.jpeg`, 1920x1080) are
-**progressive** JPEGs — they resolve coarse-to-sharp as they download. Every
-spot (heroes, image bands, footer) is an `<img>` so the browser renders those
-progressive passes in place; the heroes use a `.hero__bg`/`.hero__photo` layer
-(see `.hero` in `assets/css/custom.css`) rather than a CSS background, since
-CSS backgrounds don't render progressively.
+The full-bleed photos (`static/images/backgrounds/NN.webp`, 1920x1080) are
+plain files in `static/`, referenced by a hardcoded `/images/backgrounds/NN.webp`
+string built in `assets/js/design.js` (the `pool` array in `randomiseImages`) —
+unlike every other image on the site, they don't go through Hugo's
+`.Resize`/`.Fill` pipeline (see "WebP" below), so there's no automatic
+conversion or resizing here; whatever's in that folder is what ships.
+
+Every spot (heroes, image bands, footer) is an `<img>` rather than a CSS
+background, since that's what the low-poly SVG placeholder + JS fade-in (see
+"Low-poly placeholders" below) needs to layer against.
 
 They're built from the high-res originals in the
 [draft repo](https://github.com/mixmix/criticalsignalsdraft/tree/main/assets/img):
 
 ```bash
-./scripts/gen-backgrounds.sh          # all 10, progressive @ q90
+./scripts/gen-backgrounds.sh          # all 10, webp @ q85
 ./scripts/gen-backgrounds.sh 4 9      # just those
-# needs libjpeg-turbo:  brew install jpeg-turbo   (provides djpeg + cjpeg)
-# tune with BG_QUALITY (default 90)
+# needs webp:  brew install webp   (provides cwebp)
+# tune with BG_QUALITY (default 85)
 ```
+
+These used to be progressive JPEGs (coarse-to-sharp as they downloaded).
+WebP has no equivalent to that multi-scan decoding, so that specific
+resolve-in-place effect is gone — the low-poly SVG placeholder + fade-in is
+what now carries the "appearing" feel instead. Traded for meaningfully
+smaller files (~30% smaller across the ten, even at a high quality setting).
 
 ## Low-poly placeholders (LQIP)
 
 Each background has a tiny low-poly SVG twin in
-`static/images/backgrounds/lowpoly/NN.svg` (~6 KB vs ~400–900 KB) that shows an
-instant faceted preview while the JPEG loads. All ten are inlined as base64
-data-URIs into `window.CS_LOWPOLY` (partial `design/lowpoly-data.html`, emitted
+`static/images/backgrounds/lowpoly/NN.svg` (~6 KB vs ~200–750 KB) that shows an
+instant faceted preview while the photo loads. All ten are inlined as
+URL-encoded (not base64 — smaller, and compresses better under gzip; see
+`design/svg-url-encode.html`) data-URIs into `window.CS_LOWPOLY` (partial
+`design/lowpoly-data.html`, emitted
 on marketing pages via `extend-footer.html`), so **no placeholder request is
 made**. The randomiser in `assets/js/design.js` shuffles the pool per page load
-and assigns each `[data-img-spot]` element its JPEG plus the matching inline SVG
-(set as the element's `background-image`); the progressive JPEG then resolves
-over the facets.
+and assigns each `[data-img-spot]` element its photo plus the matching inline
+SVG (set as the element's `background-image`); the photo fades in over the
+facets once it decodes.
 
-To (re)generate the SVGs from the JPEGs:
+To (re)generate the SVGs from the backgrounds:
 
 ```bash
 ./scripts/gen-lowpoly.sh          # all backgrounds
-./scripts/gen-lowpoly.sh 02 07    # just 02.jpeg and 07.jpeg
+./scripts/gen-lowpoly.sh 02 07    # just 02.webp and 07.webp
 ```
 
 Requirements (macOS):
 
 ```bash
-brew install go librsvg   # librsvg provides rsvg-convert
+brew install go librsvg webp   # librsvg provides rsvg-convert, webp provides dwebp
 # Node.js (for npx/SVGO) — via nvm, brew, or nodejs.org
 # fogleman/primitive is auto-installed on first run via `go install`
 ```
