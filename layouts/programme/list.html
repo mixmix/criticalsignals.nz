@@ -61,13 +61,13 @@
             {{ $pgi := 0 }}
             {{ range $g := $pastGroups }}
               <div class="prog-group">
-                {{ if gt $pgi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.png" alt="">{{ end }}
+                {{ if gt $pgi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.webp" alt="">{{ end }}
                 <h2 class="prog-group__date">{{ $g.label }}</h2>
                 {{ range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
               </div>
               {{ $pgi = add $pgi 1 }}
             {{ end }}
-            <img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.png" alt="">
+            <img class="divider" src="/images/design/divider{{ add (mod $pgi 2) 1 }}.webp" alt="">
           </div>
         </details>
       {{ end }}
@@ -79,7 +79,7 @@
             {{ $gi := 0 }}
             {{ range $g := $datedGroups }}
               <div class="prog-group">
-                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.webp" alt="">{{ end }}
                 <h2 class="prog-group__date">{{ $g.label }}</h2>
                 {{ range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
               </div>
@@ -88,7 +88,7 @@
 
             {{ if gt (len $tbc) 0 }}
               <div class="prog-group">
-                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.png" alt="">{{ end }}
+                {{ if gt $gi 0 }}<img class="divider" src="/images/design/divider{{ add (mod $gi 2) 1 }}.webp" alt="">{{ end }}
                 <h2 class="prog-group__date">Date to be confirmed</h2>
                 {{ range $p := $tbc }}{{ partial "programme/item.html" $p }}{{ end }}
               </div>

@@ -14,7 +14,7 @@
         <h1 class="sr-only">{{ .Title }}</h1>
         {{ .Content }}
         {{ range $i, $p := $core.Reverse }}
-          {{ if $i }}<img class="divider" src="/images/design/divider{{ add (mod $i 2) 1 }}.png" alt="">{{ end }}
+          {{ if $i }}<img class="divider" src="/images/design/divider{{ add (mod $i 2) 1 }}.webp" alt="">{{ end }}
           <article class="person">
             <h2 class="person__name">{{ $p.Title }}</h2>
             {{ $featured := partial "feature-image.html" $p }}
