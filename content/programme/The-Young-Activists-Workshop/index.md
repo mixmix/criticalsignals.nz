@@ -24,8 +24,6 @@ Everyone is welcome - all ages - please register.
 
 BYO garment and ideas for tees and badges. And if you can, please bring koha for the tee shirt press.
 
-Thank you to our partners, the Make it 16 Youth Vote campaign
-
 **Session 1: Designing tees and badges while sharing stories and developing your activism**
 
 **Session 2: We'll come to this session with your designs ready to go, and you'll leave with your cool screen-printed garment, badges and stickers - and a new activist community!**
