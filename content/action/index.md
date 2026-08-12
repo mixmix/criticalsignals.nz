@@ -18,7 +18,7 @@ showHeadingAnchors: false
   <a class="cta cta--outline" href="#signup">Sign up for our newsletter</a>
 </div>
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 Critical Signals is a three month gathering, practicing community resilience in person based in Wellington, Aotearoa New Zealand, running 1 August – 31 October 2026.
 

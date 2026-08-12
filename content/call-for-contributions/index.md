@@ -19,7 +19,7 @@ Launched as a pilot in 2025, it returns in 2026 with an expanded edition and a d
 
 We are now welcoming contributions for the 2026 programme, which runs in Wellington, Aotearoa New Zealand, from 1 August to 31 October 2026.
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 ### Contributing
 
@@ -42,7 +42,7 @@ Please send a brief outline of your concept, together with a short biography of 
 
 <p class="note">We particularly value evidence-based, original material. Where ideas overlap, we will favour workshops that engage participants in more ways than words alone. We endeavour to respond to all proposals promptly.</p>
 
-<img class="divider" src="/images/design/divider2.png" alt="">
+<img class="divider" src="/images/design/divider2.webp" alt="">
 
 ### Contributing from outside Aotearoa NZ
 

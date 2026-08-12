@@ -16,15 +16,15 @@ Critical Signals is a three month gathering, practicing community resilience in 
 
 We collaborate with artists, academics, activists, scientists, technologists, makers and the public to explore crises, commons and community, stimulating critical discourse and action through trusted networks.
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 {{< upcoming-events >}}
 
-<img class="divider" src="/images/design/divider2.png" alt="">
+<img class="divider" src="/images/design/divider2.webp" alt="">
 
 {{< recent-events >}}
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 <div class="theme">
 
@@ -54,7 +54,7 @@ How we utilise the power of space and place in ways that enable us all.
 
 </div>
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 <div class="focus">
 

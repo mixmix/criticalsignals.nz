@@ -14,7 +14,7 @@ menu:
 
 <p class="intro">Critical Signals is a collective endeavour for creative resilience: a gathering place for people who believe communities shape their own futures.</p>
 
-<img class="divider" src="/images/design/divider1.png" alt="">
+<img class="divider" src="/images/design/divider1.webp" alt="">
 
 A bridge between the practical and the visionary, this space brings together artists, researchers, technologists, and communities to ask what changes we could make to our societies, infrastructure, food, and energy systems to ensure we survive disruption and potentially thrive through it.
 
