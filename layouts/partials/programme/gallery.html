@@ -1,9 +1,13 @@
 {{- /* Photo gallery for an event page — its "extra" photos (see
        programme/gallery-images.html), below a heading iff there are any.
 
-       Grid: 2-up on desktop, 1-up on mobile (.gallery-grid). Clicking a
-       thumbnail opens the full-size image, in colour, in an overlay — see
-       partials/design/lightbox.html, wired up in design.js. */ -}}
+       Grid: 2-up on desktop, 1-up on mobile (.gallery-grid). Thumbnails are
+       converted to actual greyscale pixels at build time (images.Grayscale)
+       rather than stored in colour and greyed out with a CSS filter. Clicking
+       a thumbnail opens the full-size image, in colour, in an overlay — see
+       partials/design/lightbox.html, wired up in design.js — which uses the
+       already-loaded thumbnail as a placeholder background while the
+       full-size image loads. */ -}}
 {{- $page := . -}}
 {{- $extras := partial "programme/gallery-images.html" $page -}}
 {{- with $extras -}}
@@ -11,7 +15,7 @@
   <h2 class="gallery-title">Artefacts</h2>
   <div class="gallery-grid">
     {{ range . -}}
-      {{ $thumb := .Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width)) -}}
+      {{ $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width))).Filter images.Grayscale -}}
       {{ $full := .Resize (printf "%dx webp q90" .Width) -}}
       <button type="button" class="gallery-item" data-lightbox-src="{{ $full.RelPermalink }}">
         <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="">

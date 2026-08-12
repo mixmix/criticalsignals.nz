@@ -657,12 +657,14 @@ body:has(.cs-hero) .prog-group__date{
 /* Photo grid — event Artefacts and the home page's Recent Events sampler. */
 .gallery-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
 .gallery-grid{display:grid;grid-template-columns:1fr;gap:12px;}
-@media (min-width:640px){.gallery-grid{grid-template-columns:1fr 1fr;}}
+@media (min-width:640px){.gallery-grid{grid-template-columns:repeat(3,1fr);}}
 .gallery-item{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;}
 /* Fixed aspect box, cropped to fill — a portrait shot sits at the same
    thumbnail height as its landscape neighbours instead of towering over them.
-   The full (untrimmed) photo still opens in the lightbox. */
-.gallery-item img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center;filter:grayscale(1);background:#3a3a3a;}
+   The full (untrimmed) photo still opens in the lightbox. Pixels are already
+   greyscale (baked in at build time via images.Grayscale), not coloured and
+   filtered here. */
+.gallery-item img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center;background:#3a3a3a;}
 .gallery-item:hover img{opacity:.85;}
 
 /* Full-size view of a gallery photo, opened on click — see design.js. */
@@ -673,8 +675,17 @@ body:has(.cs-hero) .prog-group__date{
 }
 .lightbox.is-open{display:flex;}
 .lightbox__stage{display:flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%;}
-/* Full colour on the way in — only the grid thumbnails are greyed out. */
-.lightbox__img{display:block;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));width:auto;height:auto;cursor:pointer;}
+/* Full colour on the way in — only the grid thumbnails are greyed out.
+   `.lightbox__frame` sizes itself to `.lightbox__img` (the full-colour
+   photo); `.lightbox__placeholder` is absolutely positioned to fill that
+   same box with the clicked item's already-loaded greyscale thumbnail
+   (width/height attributes set by design.js give the box its shape
+   immediately, before the full photo has loaded). The photo fades in on
+   top once loaded — see design.js's "load" handler. */
+.lightbox__frame{position:relative;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));}
+.lightbox__placeholder{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;}
+.lightbox__img{display:block;position:relative;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));width:auto;height:auto;cursor:pointer;opacity:0;transition:opacity .35s ease;}
+.lightbox__img.is-loaded{opacity:1;}
 /* Names the photo's source event — only present on the home page's Recent
    Events sampler, where a grid mixes photos from several different events. */
 .lightbox__caption{display:none;align-items:baseline;gap:12px;margin-top:16px;color:var(--white);font-size:1rem;}
@@ -703,10 +714,11 @@ body:has(.cs-hero) .prog-group__date{
 html[data-theme="dark"] .event__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
-html[data-theme="dark"] .gallery-item img{filter:grayscale(1) invert(1);}
+html[data-theme="dark"] .gallery-item img{filter:invert(1);}
 /* the lightbox stays in full colour in dark mode too — a single invert
    cancels the body's invert(1) instead of stacking grayscale on top of it */
 html[data-theme="dark"] .lightbox__img{filter:invert(1);}
+html[data-theme="dark"] .lightbox__placeholder{filter:invert(1);}
 
 /* --- Calendar --- */
 /* Full-width white box (the calendar needs the width the narrow .col can't give) */

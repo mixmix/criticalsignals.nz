@@ -454,14 +454,35 @@ document.addEventListener("DOMContentLoaded", function () {
     // competes in the root stacking context instead.
     document.body.appendChild(lightbox);
     const lightboxImg = lightbox.querySelector(".lightbox__img");
+    const lightboxPlaceholder = lightbox.querySelector(".lightbox__placeholder");
     const captionTitle = lightbox.querySelector(".lightbox__caption-title");
     const captionLink = lightbox.querySelector(".lightbox__caption-link");
     const items = Array.from(document.querySelectorAll(".gallery-item"));
     let index = 0;
 
+    // The full-colour photo fades in on top of the placeholder once it's
+    // actually loaded — one listener reused across every image, since it's
+    // the same <img> element throughout. A cached/instant load can fire
+    // before the browser has painted a single opacity:0 frame, collapsing
+    // the transition into a pop; a hair of delay guarantees that frame
+    // actually paints before flipping to opacity:1, so the fade always shows.
+    lightboxImg.addEventListener("load", function () {
+      if (!lightboxImg.src) return;
+      setTimeout(function () { lightboxImg.classList.add("is-loaded"); }, 20);
+    });
+
     const showImage = function (i) {
       index = (i + items.length) % items.length;
       const item = items[index];
+      // Use the already-loaded grid thumbnail as a placeholder — same source
+      // photo, so same aspect ratio — while the full-colour image loads.
+      const thumb = item.querySelector("img");
+      lightboxImg.classList.remove("is-loaded");
+      if (thumb) {
+        lightboxPlaceholder.src = thumb.src;
+        lightboxImg.setAttribute("width", thumb.getAttribute("width"));
+        lightboxImg.setAttribute("height", thumb.getAttribute("height"));
+      }
       lightboxImg.src = item.getAttribute("data-lightbox-src");
       const title = item.getAttribute("data-title");
       if (title) {
@@ -478,6 +499,10 @@ document.addEventListener("DOMContentLoaded", function () {
       lightbox.classList.remove("is-open");
       lightbox.setAttribute("aria-hidden", "true");
       lightboxImg.src = "";
+      lightboxImg.classList.remove("is-loaded");
+      lightboxImg.removeAttribute("width");
+      lightboxImg.removeAttribute("height");
+      lightboxPlaceholder.src = "";
     };
     const next = function () { showImage(index + 1); };
     const prev = function () { showImage(index - 1); };

@@ -3,12 +3,20 @@
        sampler). Supports left/right navigation between photos once there are
        2+, and — when an item carries `data-title`/`data-href` — a caption
        naming the photo's source event with a link through to it. Wired up in
-       design.js. */ -}}
+       design.js.
+
+       `.lightbox__frame` stacks two images: the grid's already-loaded
+       greyscale thumbnail (`.lightbox__placeholder`), sized to fill the frame
+       via object-fit, behind the full-colour photo (`.lightbox__img`), which
+       fades in on top once it finishes loading. */ -}}
 <div class="lightbox" aria-hidden="true">
   <button type="button" class="lightbox__close" aria-label="Close">&times;</button>
   <button type="button" class="lightbox__nav lightbox__prev" aria-label="Previous photo">&larr;</button>
   <div class="lightbox__stage">
-    <img class="lightbox__img" src="" alt="">
+    <div class="lightbox__frame">
+      <img class="lightbox__placeholder" src="" alt="" aria-hidden="true">
+      <img class="lightbox__img" src="" alt="">
+    </div>
     <div class="lightbox__caption">
       <span class="lightbox__caption-title"></span>
       <a class="lightbox__caption-link" href="">View <span aria-hidden="true">&rarr;</span></a>

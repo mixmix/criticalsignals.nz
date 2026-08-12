@@ -4,7 +4,10 @@
        data island on the grid element; design.js shuffles it and builds the
        N visible thumbnails client-side, so the sample is different on every
        page load. N is read from the front matter (`recentEventsCount`),
-       defaulting to 6. Renders nothing if there are no candidate photos. */ -}}
+       defaulting to 6. Renders nothing if there are no candidate photos.
+
+       Thumbnails are converted to actual greyscale pixels at build time
+       (images.Grayscale), matching partials/programme/gallery.html. */ -}}
 {{- $n := .Params.recentEventsCount | default 6 -}}
 {{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
 {{- $events := where .Site.RegularPages "Section" "programme" -}}
@@ -29,7 +32,7 @@
 {{- range $recent -}}
   {{- $p := .page -}}
   {{- range partial "programme/gallery-images.html" $p -}}
-    {{- $thumb := .Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width)) -}}
+    {{- $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width))).Filter images.Grayscale -}}
     {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
     {{- $pool = $pool | append (dict
           "src" $full.RelPermalink
