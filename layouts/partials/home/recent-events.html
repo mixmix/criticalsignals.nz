@@ -32,22 +32,33 @@
 {{- range $recent -}}
   {{- $p := .page -}}
   {{- range partial "programme/gallery-images.html" $p -}}
-    {{- $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 900) 900 .Width))).Filter images.Grayscale -}}
+    {{- $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 300) 300 .Width))).Filter images.Grayscale -}}
     {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
     {{- $pool = $pool | append (dict
           "src" $full.RelPermalink
           "thumb" $thumb.RelPermalink
           "width" $thumb.Width
           "height" $thumb.Height
+          "fullWidth" $full.Width
+          "fullHeight" $full.Height
           "title" $p.Title
           "href" $p.RelPermalink) -}}
   {{- end -}}
 {{- end -}}
 
 {{- with $pool -}}
+{{- /* However many slots will actually be filled — the pool can be smaller
+       than the requested count. Rendered as empty `.gallery-item`s so the
+       grid occupies its final size in the HTML itself, before design.js has
+       run: each one is the same fixed aspect-ratio box, with the same grey
+       noise backdrop, that a filled item occupies (see custom.css), so the
+       page doesn't change shape when the thumbnails are swapped in. */ -}}
+{{- $slots := cond (lt (len .) $n) (len .) $n -}}
 <section class="recent-events">
   <h2 class="gallery-title">Recent Events</h2>
-  <div class="gallery-grid" data-recent-events-pool="{{ . | jsonify }}" data-recent-events-count="{{ $n }}"></div>
+  <div class="gallery-grid" data-recent-events-pool="{{ . | jsonify }}" data-recent-events-count="{{ $n }}">
+    {{ range seq $slots }}<div class="gallery-item" aria-hidden="true"></div>{{ end }}
+  </div>
 </section>
 {{ partial "design/lightbox.html" . }}
 {{- end -}}

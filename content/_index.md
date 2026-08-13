@@ -2,7 +2,7 @@
 title: Critical Signals
 csDesign: true
 showHeadingAnchors: false
-upcomingEventsCount: 4
+upcomingEventsCount: 5
 ---
 
 <p class="intro">Critical Signals is a collective endeavour for creative resilience: a gathering place for people who believe communities shape their own futures.</p>

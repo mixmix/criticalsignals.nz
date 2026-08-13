@@ -5,16 +5,30 @@
        naming the photo's source event with a link through to it. Wired up in
        design.js.
 
-       `.lightbox__frame` stacks two images: the grid's already-loaded
-       greyscale thumbnail (`.lightbox__placeholder`), sized to fill the frame
-       via object-fit, behind the full-colour photo (`.lightbox__img`), which
-       fades in on top once it finishes loading. */ -}}
+       `.lightbox__frame` stacks the grid's already-loaded greyscale thumbnail
+       (`.lightbox__placeholder`), sized to fill the frame via object-fit —
+       decoding="sync" because its bytes are already cached from the grid, so
+       there's no reason to let the browser defer that decode to a later
+       task the way it would for a freshly-fetched image; chunky flickering
+       noise (`.lightbox__noise` — three wavelengths, each
+       its own layer moving at its own speed, composited together then
+       blended onto the placeholder via mix-blend-mode — see custom.css)
+       painted on top of that to read as "still loading"; and the
+       full-colour photo (`.lightbox__img`) on top of both, which fades in
+       once it finishes loading — at which point the noise is hidden by
+       custom.css's `:has(.lightbox__img.is-loaded)` rule, since there's
+       nothing left to indicate loading for. */ -}}
 <div class="lightbox" aria-hidden="true">
   <button type="button" class="lightbox__close" aria-label="Close">&times;</button>
   <button type="button" class="lightbox__nav lightbox__prev" aria-label="Previous photo">&larr;</button>
   <div class="lightbox__stage">
     <div class="lightbox__frame">
-      <img class="lightbox__placeholder" src="" alt="" aria-hidden="true">
+      <img class="lightbox__placeholder" src="" alt="" aria-hidden="true" decoding="sync">
+      <div class="lightbox__noise" aria-hidden="true">
+        <div class="lightbox__noise-layer lightbox__noise-layer--coarse"></div>
+        <div class="lightbox__noise-layer lightbox__noise-layer--medium"></div>
+        <div class="lightbox__noise-layer lightbox__noise-layer--fine"></div>
+      </div>
       <img class="lightbox__img" src="" alt="">
     </div>
     <div class="lightbox__caption">

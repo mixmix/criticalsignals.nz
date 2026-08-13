@@ -417,23 +417,34 @@ document.addEventListener("DOMContentLoaded", function () {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    pool.slice(0, n).forEach(function (item) {
+    // The grid already holds one empty `.gallery-item` per thumbnail we're
+    // about to show, rendered server-side so the section occupies its final
+    // size before this runs. Swap the real items in for those placeholders
+    // in a single replaceChildren, and keep the count the same, so the page
+    // never changes shape — appending to them instead would double the grid.
+    const built = pool.slice(0, n).map(function (item) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "gallery-item";
       btn.setAttribute("data-lightbox-src", item.src);
+      btn.setAttribute("data-full-width", item.fullWidth);
+      btn.setAttribute("data-full-height", item.fullHeight);
       btn.setAttribute("data-title", item.title);
       btn.setAttribute("data-href", item.href);
+      // Every attribute BEFORE src: setting src is what kicks off the load
+      // and fixes how the browser fetches it, so loading/decoding hints set
+      // afterwards can arrive too late to be honoured.
       const img = document.createElement("img");
-      img.src = item.thumb;
       img.width = item.width;
       img.height = item.height;
       img.loading = "lazy";
       img.decoding = "async";
       img.alt = "";
+      img.src = item.thumb;
       btn.appendChild(img);
-      grid.appendChild(btn);
+      return btn;
     });
+    grid.replaceChildren.apply(grid, built);
   });
 
   // 8. Photo lightbox — wires up any `.gallery-item` grid on the page (an
@@ -454,11 +465,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // competes in the root stacking context instead.
     document.body.appendChild(lightbox);
     const lightboxImg = lightbox.querySelector(".lightbox__img");
+    const lightboxFrame = lightbox.querySelector(".lightbox__frame");
     const lightboxPlaceholder = lightbox.querySelector(".lightbox__placeholder");
     const captionTitle = lightbox.querySelector(".lightbox__caption-title");
     const captionLink = lightbox.querySelector(".lightbox__caption-link");
     const items = Array.from(document.querySelectorAll(".gallery-item"));
     let index = 0;
+    // Photos this session has already displayed in full — see showImage's
+    // fast path below, which skips straight to is-loaded for these instead
+    // of replaying the placeholder/noise loading state for an image that's
+    // already sitting decoded in the browser's cache.
+    const loadedSrcs = new Set();
 
     // The full-colour photo fades in on top of the placeholder once it's
     // actually loaded — one listener reused across every image, since it's
@@ -468,8 +485,25 @@ document.addEventListener("DOMContentLoaded", function () {
     // actually paints before flipping to opacity:1, so the fade always shows.
     lightboxImg.addEventListener("load", function () {
       if (!lightboxImg.src) return;
+      loadedSrcs.add(lightboxImg.getAttribute("src"));
       setTimeout(function () { lightboxImg.classList.add("is-loaded"); }, 20);
     });
+
+    // The grid thumbnails are loading="lazy" — anything below the fold (or
+    // just not yet visible when the page loaded) has never actually been
+    // fetched. showImage's placeholder logic assumes the thumbnail is
+    // already loaded, which is only true for photos that have actually been
+    // seen in the grid; without this, clicking next/prev to one that hasn't
+    // starts its very first fetch right at the click, which is exactly why
+    // it's slow to appear on a bad connection. Warming next/prev's
+    // thumbnails as soon as the CURRENT photo is shown gives that fetch a
+    // head start — however long you spend looking at this photo — instead
+    // of only starting once you actually click.
+    const preloadThumb = function (i) {
+      const el = items[(i + items.length) % items.length];
+      const img = el && el.querySelector("img");
+      if (img && !img.complete) new Image().src = img.src;
+    };
 
     const showImage = function (i) {
       index = (i + items.length) % items.length;
@@ -480,10 +514,36 @@ document.addEventListener("DOMContentLoaded", function () {
       lightboxImg.classList.remove("is-loaded");
       if (thumb) {
         lightboxPlaceholder.src = thumb.src;
-        lightboxImg.setAttribute("width", thumb.getAttribute("width"));
-        lightboxImg.setAttribute("height", thumb.getAttribute("height"));
       }
-      lightboxImg.src = item.getAttribute("data-lightbox-src");
+      if (items.length > 1) {
+        preloadThumb(index + 1);
+        preloadThumb(index - 1);
+      }
+      // Drop the outgoing photo's bitmap: as long as lightboxImg still holds
+      // a decoded image it keeps painting THAT photo — which, now that it's
+      // stretched over the frame the placeholder sizes, would show the
+      // previous photo distorted into the new one's shape until the incoming
+      // bytes arrive.
+      lightboxImg.src = "";
+      // Hand the frame this photo's aspect ratio as a plain number; the
+      // frame's CSS does the rest of the sizing arithmetic from it (see
+      // custom.css). Every layer inside then fills that box absolutely, so
+      // the whole thing is sized without waiting on any image — which is
+      // the point: the placeholder needs a correctly-shaped box to appear
+      // in the instant you hit next, long before the full photo lands.
+      const fullWidth = parseInt(item.getAttribute("data-full-width"), 10);
+      const fullHeight = parseInt(item.getAttribute("data-full-height"), 10);
+      if (fullWidth && fullHeight) {
+        lightboxFrame.style.setProperty("--ar", fullWidth / fullHeight);
+      }
+      const dataSrc = item.getAttribute("data-lightbox-src");
+      lightboxImg.src = dataSrc;
+      // Already shown earlier this session — nothing left to wait for, so
+      // jump straight to is-loaded instead of showing the placeholder/noise
+      // loading state for an instant only to immediately cover it back up.
+      if (loadedSrcs.has(dataSrc)) {
+        lightboxImg.classList.add("is-loaded");
+      }
       const title = item.getAttribute("data-title");
       if (title) {
         captionTitle.textContent = title;
@@ -500,8 +560,7 @@ document.addEventListener("DOMContentLoaded", function () {
       lightbox.setAttribute("aria-hidden", "true");
       lightboxImg.src = "";
       lightboxImg.classList.remove("is-loaded");
-      lightboxImg.removeAttribute("width");
-      lightboxImg.removeAttribute("height");
+      lightboxFrame.style.removeProperty("--ar");
       lightboxPlaceholder.src = "";
     };
     const next = function () { showImage(index + 1); };
@@ -525,6 +584,36 @@ document.addEventListener("DOMContentLoaded", function () {
       const rect = lightboxImg.getBoundingClientRect();
       const isLeftHalf = (e.clientX - rect.left) < rect.width / 2;
       if (isLeftHalf) prev(); else next();
+    });
+
+    // Swipe left/right on mobile — same prev/next as the arrows. Tracked on
+    // the frame (placeholder + photo both sit inside it) rather than just
+    // the photo, so a swipe still works while the full photo is loading.
+    // Uses e.touches (total active contact points), not e.changedTouches
+    // (only the points that just changed), so a pinch-to-zoom — which lands
+    // its second finger in a later touchstart — is reliably told apart from
+    // a one-finger swipe, including if the pinch starts mid-drag.
+    let touchStartX = 0, touchStartY = 0, touchTracking = false;
+    lightboxFrame.addEventListener("touchstart", function (e) {
+      if (items.length < 2 || e.touches.length !== 1) { touchTracking = false; return; }
+      touchTracking = true;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+    lightboxFrame.addEventListener("touchmove", function (e) {
+      if (e.touches.length !== 1) touchTracking = false;
+    });
+    lightboxFrame.addEventListener("touchend", function (e) {
+      if (!touchTracking || e.touches.length !== 0) { touchTracking = false; return; }
+      touchTracking = false;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      // Require a mostly-horizontal, deliberate drag so a vertical scroll or
+      // a tap-to-navigate-halves gesture isn't mistaken for a swipe.
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        e.preventDefault(); // stop the browser's synthetic click firing too
+        if (dx < 0) next(); else prev();
+      }
     });
 
     lightbox.querySelector(".lightbox__close").addEventListener("click", closeLightbox);

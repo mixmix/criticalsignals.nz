@@ -104,7 +104,7 @@
                     {{ $img := partial "feature-image.html" $collab }}
                     {{ with $img }}
                       {{ $r := .Resize "300x webp" }}
-                      <img class="host__photo" src="{{ $r.RelPermalink }}" alt="{{ $collab.Title }}" loading="lazy">
+                      <img class="host__photo" src="{{ $r.RelPermalink }}" width="{{ $r.Width }}" height="{{ $r.Height }}" alt="{{ $collab.Title }}" loading="lazy" decoding="async">
                     {{ end }}
                     <span class="host__bio">{{ $collab.Content | plainify | truncate 220 }}</span>
                   </a>

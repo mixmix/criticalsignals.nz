@@ -215,7 +215,7 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .hero--home .grid{margin-top:calc(17vw - 80px);}
 .hero--home .rail{margin-top:0;}
 .col .cta-row{margin:clamp(34px,3.4vw,56px) 0 clamp(38px,3.8vw,62px);}
-.col .cta-row.see-programme { margin-top: 0; }
+.col .cta-row.see-programme { margin-top: 0; max-width: 100% }
 .col .cta-row.see-programme a { border-top: none; }
 .col .focus{margin-top:clamp(34px,3.2vw,52px);}
 .col .upcoming{margin-top:clamp(34px,3.2vw,52px);}
@@ -223,7 +223,7 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
   padding: 1rem;
   border: 2px solid black;
 }
-.upcoming .prog-group + .prog-group{margin-top:clamp(28px,2.8vw,44px);}
+.upcoming .prog-group + .prog-group{ margin-top: clamp(20px,2.0vw,34px); }
 .upcoming .prog-group .prog-group__date {margin-bottom: 0;}
 .upcoming .prog-group .prog-item {margin: 0 0 clamp(6px,.8vw,11px)}
 .upcoming .prog-group .prog-item .prog-item__subtitle {display:none;}
@@ -495,13 +495,13 @@ body:has(.cs-hero) .prog-h1{
 .prog-group .divider{margin:clamp(18px,1.8vw,28px) 0 clamp(10px,1vw,16px);}
 body:has(.cs-hero) .prog-group__date{
   font-weight:400;text-transform:uppercase;letter-spacing:.02em;
-  font-size:.9rem;margin:0 0 clamp(10px,1.2vw,16px);
+  font-size:.9rem;margin:0;
 }
 .prog-item{
   display:block;
   text-decoration:none;
   color:var(--ink);
-  margin:0 0 clamp(14px,1.6vw,22px) 0;
+  margin: 0 0 clamp(8px,1.0vw,14px);
 }
 .prog-item:last-child{margin-bottom:0;}
 .prog-item__title{
@@ -511,7 +511,7 @@ body:has(.cs-hero) .prog-group__date{
 .prog-item__arrow{flex:0 0 auto;}
 .prog-item:hover .prog-item__title{text-decoration:underline;text-underline-offset:3px;}
 .prog-item__cat{display:block;margin-top:4px;font-weight:700;text-transform:uppercase;font-size:.8rem;}
-.prog-item__subtitle{display:block;margin-top:2px;font-weight:700;text-transform:none;font-size:.85rem;opacity:.7;}
+.prog-item__subtitle{display:block;text-transform:none;font-size:.85rem;opacity:.7; margin-left: 14px;}
 .prog-item__subtitle-part:not(:first-child)::before{content:"\00b7";margin:0 .4em;opacity:.6;}
 .prog-item__date{display:block;margin-top:2px;font-weight:400;text-transform:uppercase;font-size:.85rem;opacity:.7;}
 
@@ -641,7 +641,16 @@ body:has(.cs-hero) .prog-group__date{
 .event__hosts-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
 .host{display:block;text-decoration:none;color:var(--ink);margin:0 0 clamp(24px,2.4vw,36px);max-width:600px;}
 .host__name{display:block;font-size:1rem;font-weight:300;text-transform:uppercase;margin:0 0 12px;}
-.host__photo{display:block;width:170px;max-width:60%;height:auto;filter:grayscale(1);background:#3a3a3a;margin:0 0 12px;}
+/* Fixed square box, cropped to fill — matches .host__photo--empty's shape so
+   the layout reads identically whether or not a host has a photo, and the
+   page never reflows as a photo loads in. Same grey-noise placeholder as the
+   gallery grid (see .gallery-item img) shows through until the photo loads. */
+.host__photo{
+  display:block;width:170px;max-width:60%;aspect-ratio:1/1;object-fit:cover;object-position:center;
+  filter:grayscale(1);margin:0 0 12px;
+  background-color:#d9d9d9;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 .host__photo--empty{display:block;width:170px;aspect-ratio:1/1;background:var(--critical-highlight);margin:0 0 12px;}
 .host__bio{display:block;font-size:1rem;line-height:1.5;}
 .host:hover .host__name{text-decoration:underline;text-underline-offset:3px;}
@@ -654,41 +663,156 @@ body:has(.cs-hero) .prog-group__date{
    partials/home/recent-events.html. Shares the .gallery-* grid below. */
 .col .recent-events{margin-top:clamp(34px,3.2vw,52px);}
 
-/* Photo grid — event Artefacts and the home page's Recent Events sampler. */
+/* Photo grid — event Artefacts and the home page's Recent Events sampler.
+   --gallery-noise: a light-grey fractal-noise tile (SVG feTurbulence, baked
+   to a data URI) used as the loading/letterbox backdrop wherever a photo
+   hasn't painted yet — a flat grey read as an obvious empty box; the grain
+   reads as "textured paper" instead. */
 .gallery-title{font-weight:700;text-transform:uppercase;margin:0 0 clamp(18px,1.8vw,28px);}
-.gallery-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 @media (min-width:640px){.gallery-grid{grid-template-columns:repeat(3,1fr);}}
-.gallery-item{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;}
-/* Fixed aspect box, cropped to fill — a portrait shot sits at the same
-   thumbnail height as its landscape neighbours instead of towering over them.
-   The full (untrimmed) photo still opens in the lightbox. Pixels are already
-   greyscale (baked in at build time via images.Grayscale), not coloured and
-   filtered here. */
-.gallery-item img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:center;background:#3a3a3a;}
+/* Fixed aspect box with the grey noise backdrop, both on the ITEM rather
+   than on the <img> inside it, so the box exists and is painted whether or
+   not there's an image in it yet — an empty slot (the Recent Events sampler
+   renders its thumbnails client-side, see design.js) reserves exactly the
+   same space a filled one occupies, and the grid's shape never depends on
+   any image's load state. The photo then just fills that box, cropped, so a
+   portrait shot sits at the same thumbnail height as its landscape
+   neighbours instead of towering over them; the full (untrimmed) photo
+   still opens in the lightbox. Pixels are already greyscale (baked in at
+   build time via images.Grayscale), not coloured and filtered here. */
+.gallery-item{
+  display:block;width:100%;padding:0;border:0;cursor:zoom-in;
+  aspect-ratio:4/3;overflow:hidden;
+  background-color:#d9d9d9;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.gallery-item img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
 .gallery-item:hover img{opacity:.85;}
 
-/* Full-size view of a gallery photo, opened on click — see design.js. */
+/* Full-size view of a gallery photo, opened on click — see design.js.
+   Mobile-first: the photo runs edge-to-edge at full device width (no
+   padding/max-height cap), with the overlay itself scrollable so a tall
+   portrait photo is reachable rather than clipped. Native pinch-to-zoom
+   works here same as anywhere else on the page — nothing sets
+   user-scalable=no or a blocking touch-action — `touch-action:pinch-zoom`
+   on the photo just makes that intent explicit. The desktop breakpoint
+   below restores the original padded, height-capped, centred box.
+   align-items is set twice: plain `center` first for browsers that don't
+   know `safe center` (invalid values are ignored, so that line just stays);
+   `safe center` on top centres the photo when it fits the screen but falls
+   back to top-alignment when it's taller than the viewport, so scrolling
+   still reaches every edge instead of clipping whatever's centred off top. */
 .lightbox{
   display:none;position:fixed;inset:0;z-index:200;
-  align-items:center;justify-content:center;padding:clamp(24px,5vw,64px);
+  align-items:center;align-items:safe center;justify-content:center;padding:0;overflow-y:auto;
   background:rgba(0,0,0,.9);
 }
 .lightbox.is-open{display:flex;}
-.lightbox__stage{display:flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%;}
+.lightbox__stage{display:flex;flex-direction:column;align-items:center;width:100%;max-width:100%;max-height:100%;}
 /* Full colour on the way in — only the grid thumbnails are greyed out.
-   `.lightbox__frame` sizes itself to `.lightbox__img` (the full-colour
-   photo); `.lightbox__placeholder` is absolutely positioned to fill that
-   same box with the clicked item's already-loaded greyscale thumbnail
-   (width/height attributes set by design.js give the box its shape
-   immediately, before the full photo has loaded). The photo fades in on
-   top once loaded — see design.js's "load" handler. */
-.lightbox__frame{position:relative;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));}
+   `.lightbox__frame` sizes itself from pure CSS arithmetic on `--ar` (the
+   photo's width/height as a unitless number, set inline by design.js), with
+   the placeholder, the noise and the full photo all absolutely filling that
+   box. Deliberately NOT sized from any child image: an <img> only has a box
+   once it has enough of an image to have one, so on `next` — where
+   design.js resets the photo's src — a frame that sized itself to its
+   children collapsed to nothing, leaving the placeholder no box to paint
+   into until the full photo arrived. That's the "nothing appears until it
+   loads" bug. Sizing off the already-loaded thumbnail instead avoids the
+   collapse but pins the frame to the thumbnail's own small dimensions.
+   Doing the arithmetic here depends on no image at all:
+     mobile  — width:100%, height from aspect-ratio (edge-to-edge, may
+               scroll; see the .lightbox comment above)
+     desktop — width is whichever is smaller, the available width or the
+               width this photo would need to stand at the full viewport
+               height, so it fills as much as it can without ever exceeding
+               the height cap. aspect-ratio then gives the height.
+   No background needed on the frame itself — the thumbnail is already
+   loaded (it's the same image the grid just painted) so it's there from the
+   first frame, with the noise overlay on top of it (see below). */
+.lightbox__frame{position:relative;width:100%;max-width:100%;aspect-ratio:var(--ar,3/2);}
 .lightbox__placeholder{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;}
-.lightbox__img{display:block;position:relative;max-width:100%;max-height:calc(100vh - clamp(48px,10vw,128px));width:auto;height:auto;cursor:pointer;opacity:0;transition:opacity .35s ease;}
+/* Loading noise — chunky, flickering static blended onto the layers beneath
+   it via mix-blend-mode (rather than sitting on top of them at fixed
+   opacity), so it reads as texture ON the photo, not a film over it. Sits
+   between the placeholder and `.lightbox__img` in the markup/paint order:
+   visible over the placeholder while loading, covered (and — via the
+   `:has()` rule — stopped outright) once the full photo fades in on top.
+   The placeholder and the full photo both fill this exact same box
+   (position:absolute;inset:0, both object-fit:cover to the full photo's
+   aspect ratio — see the frame-sizing comment above), so this overlay lines
+   up with both identically instead of drifting as one swaps for the other.
+
+   Three wavelengths — coarse/medium/fine — each get their OWN element
+   (`.lightbox__noise-layer--*`) with their own tile size and their own
+   animation-duration, rather than one shared keyframe animation: a single
+   CSS property (background-position, even as a comma-list) can only be
+   driven by one animation at a time, so genuinely independent per-layer
+   speeds need genuinely independent elements. `isolation:isolate` on the
+   `.lightbox__noise` wrapper scopes the layers' mix-blend-mode to each
+   other — compositing the three wavelengths together first — before the
+   wrapper's OWN mix-blend-mode:overlay blends that combined result onto the
+   photo/placeholder beneath; without it the layers would each blend
+   straight through to the photo individually instead of with each other. */
+.lightbox__noise{position:absolute;inset:0;pointer-events:none;isolation:isolate;mix-blend-mode:overlay;}
+.lightbox__noise-layer{position:absolute;inset:0;image-rendering:pixelated;}
+.lightbox__noise-layer--coarse{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:32px 32px;
+  animation:lightbox-noise-coarse 1.1s steps(1) infinite;
+}
+.lightbox__noise-layer--medium{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:15px 15px;
+  mix-blend-mode:overlay;
+  animation:lightbox-noise-medium .7s steps(1) infinite reverse;
+}
+.lightbox__noise-layer--fine{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:6px 6px;
+  mix-blend-mode:overlay;
+  animation:lightbox-noise-fine .45s steps(1) infinite;
+}
+@keyframes lightbox-noise-coarse{
+  0%{background-position:0 0;}
+  25%{background-position:16px 8px;}
+  50%{background-position:8px 24px;}
+  75%{background-position:24px 16px;}
+  100%{background-position:0 0;}
+}
+@keyframes lightbox-noise-medium{
+  0%{background-position:0 0;}
+  33%{background-position:10px 5px;}
+  66%{background-position:5px 10px;}
+  100%{background-position:0 0;}
+}
+@keyframes lightbox-noise-fine{
+  0%{background-position:0 0;}
+  20%{background-position:3px 4px;}
+  40%{background-position:4px 2px;}
+  60%{background-position:2px 5px;}
+  80%{background-position:5px 1px;}
+  100%{background-position:0 0;}
+}
+.lightbox__frame:has(.lightbox__img.is-loaded) .lightbox__noise{display:none;}
+.lightbox__img{
+  position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;
+  cursor:pointer;touch-action:pinch-zoom;opacity:0;transition:opacity .35s ease;
+}
 .lightbox__img.is-loaded{opacity:1;}
+@media (min-width:640px){
+  .lightbox{align-items:center;padding:clamp(24px,5vw,64px);overflow:visible;}
+  /* The stage keeps a definite width (it centres the frame within it via
+     align-items). Letting it shrink-to-fit instead makes the frame's own
+     `min(100%, …)` resolve against a width that depends on the frame —
+     circular, and both collapse to zero. */
+  .lightbox__frame{width:min(100%, calc((100vh - clamp(48px,10vw,128px)) * var(--ar,1.5)));}
+}
 /* Names the photo's source event — only present on the home page's Recent
    Events sampler, where a grid mixes photos from several different events. */
-.lightbox__caption{display:none;align-items:baseline;gap:12px;margin-top:16px;color:var(--white);font-size:1rem;}
+.lightbox__caption{display:none;align-items:baseline;gap:12px;margin-top:16px;padding:0 clamp(16px,4vw,24px);color:var(--white);font-size:1rem;}
+@media (min-width:640px){.lightbox__caption{padding:0;}}
 .lightbox.has-caption .lightbox__caption{display:flex;}
 .lightbox__caption-title{font-weight:700;text-transform:uppercase;}
 .lightbox__caption-link{color:var(--white);text-decoration:underline;text-underline-offset:3px;flex:0 0 auto;}
@@ -714,11 +838,14 @@ body:has(.cs-hero) .prog-group__date{
 html[data-theme="dark"] .event__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
 html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
-html[data-theme="dark"] .gallery-item img{filter:invert(1);}
+/* on the item, not the img inside it — the item now carries the grey noise
+   backdrop too, and both it and the photo want the body invert cancelled */
+html[data-theme="dark"] .gallery-item{filter:invert(1);}
 /* the lightbox stays in full colour in dark mode too — a single invert
    cancels the body's invert(1) instead of stacking grayscale on top of it */
 html[data-theme="dark"] .lightbox__img{filter:invert(1);}
 html[data-theme="dark"] .lightbox__placeholder{filter:invert(1);}
+html[data-theme="dark"] .lightbox__noise{filter:invert(1);}
 
 /* --- Calendar --- */
 /* Full-width white box (the calendar needs the width the narrow .col can't give) */
