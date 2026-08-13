@@ -21,13 +21,32 @@
       {{ if .Params.hideFeatureImage }}{{ $featured = false }}{{ end }}
       {{- with $featured -}}
 
+      {{- /* A real <img> rather than the theme's CSS background-image in an
+             inline style attribute. The background-image form made three things
+             impossible: `loading="lazy"` is not expressible in CSS, so all 27
+             photos on /people/ were fetched immediately; there was no intrinsic
+             size to reserve the box with; and the URL sat in an inline attribute
+             where no preload scanner or auditing tool could see it.
+
+             360x360 because the card is `--collaborator-square-size` wide, which
+             maxes out at 180 CSS px — so this is exactly 2x. The old
+             `.Resize "600x"` was ~1.7x wider than that, roughly 2.8x the pixel
+             area, for a box no bigger.
+
+             .Fill, not .Resize, because the box is square and the sources are
+             not. That reproduces what `background-size: cover` was doing before,
+             and Center matches the old `background-position: center` so the
+             framing does not change. alt is empty on purpose: the card's link
+             already carries the person's name as text immediately below, so a
+             description here would just be announced twice. */ -}}
       {{ if or $disableImageOptimization (strings.HasSuffix $featured ".svg")}}
         {{ with . }}
-        <div class="w-full thumbnail_card nozoom" style="background-image:url({{ .RelPermalink }});"></div>
+        <img class="collaborator-card__photo nozoom" src="{{ .RelPermalink }}" alt="" loading="lazy" decoding="async">
         {{ end }}
       {{ else }}
-        {{ with .Resize "600x webp" }}
-        <div class="w-full thumbnail_card nozoom" style="background-image:url({{ .RelPermalink }});"></div>
+        {{ with .Fill "360x360 Center webp q80" }}
+        <img class="collaborator-card__photo nozoom" src="{{ .RelPermalink }}" alt=""
+          width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
         {{ end }}
       {{ end }}
 

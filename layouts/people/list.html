@@ -146,9 +146,19 @@
     box-sizing: border-box;
   }
 
-  .core-team-container .collaborator-card .thumbnail_card {
-  .friends-container .collaborator-card .thumbnail_card {
+  {{- /* Was a single selector with a stray `{` where the comma belonged, which
+         browsers parse as CSS nesting -- the height landed on
+         `.core-team-container … .thumbnail_card & .friends-container …
+         .thumbnail_card`, a descendant chain that never matches, so the rule was
+         inert and the cards rendered 180x200 off the theme's
+         `.thumbnail_card { height: 200px }` instead of the intended square. */ -}}
+  .core-team-container .collaborator-card .collaborator-card__photo,
+  .friends-container .collaborator-card .collaborator-card__photo {
+    display: block;
+    width: 100%;
     height: var(--collaborator-square-size);
+    object-fit: cover;
+    margin: 0;
   }
 </style>
 {{ end }}
