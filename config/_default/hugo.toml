@@ -52,8 +52,18 @@ enableEmoji = true
   filename = 'sitemap.xml'
   priority = 0.5
 
+# taxonomy/term are HTML-only so Hugo stops emitting RSS for them. Six feeds
+# went away: /categories/, /authors/ and /series/ were feeds for taxonomies with
+# no content at all (nothing in content/ sets those terms), and /tags/index.xml
+# plus the per-tag /tags/core-team/ and /tags/organisation/ feeds are not
+# something anyone subscribes to.
+#
+# The section feeds are deliberately untouched — /index.xml (whole site),
+# /people/index.xml and /programme/index.xml are real, usable feeds.
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
 
 # The minifier rewrites `catch (e) {}` to `catch {}` when the binding is
 # unused. That is ES2019 optional catch binding, and the 2016 signage panel
