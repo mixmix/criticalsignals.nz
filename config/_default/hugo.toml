@@ -41,11 +41,16 @@ enableEmoji = true
   # above means 80 lands closer to the original than 75 did before.
   quality = 80
 
+# CRITICAL SIGNALS: `tag` only. category/author/series were Blowfish defaults
+# that no content ever used — verified: nothing in content/ sets any of them,
+# and the three listing pages Hugo built for them contained zero term links.
+# The RSS note below already recorded them as "taxonomies with no content at
+# all"; this stops building the empty HTML pages as well as the empty feeds.
+#
+# Three fewer pages, and three fewer pages depending on the theme's stylesheet.
+# `tag` stays: /tags/core-team/ and /tags/organisation/ are real and linked.
 [taxonomies]
   tag = "tags"
-  category = "categories"
-  author = "authors"
-  series = "series"
 
 [sitemap]
   changefreq = 'daily'
