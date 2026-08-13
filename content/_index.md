@@ -1,5 +1,10 @@
 ---
 title: Critical Signals
+# Explicit, because the fallback in partials/social-meta.html derives a
+# description from the page's own text — and on this page that runs the intro
+# sentence straight into the CTA button labels ("...their own futures. Call for
+# proposals Sign up for news..."). Everywhere else the derived text reads fine.
+description: "A collective endeavour for creative resilience: a gathering place for people who believe communities shape their own futures. Three months in Wellington, Aotearoa New Zealand."
 csDesign: true
 showHeadingAnchors: false
 upcomingEventsCount: 5

@@ -1,0 +1,95 @@
+{{- /* Open Graph + Twitter card tags. Replaces Hugo's _internal/opengraph.html
+       and _internal/twitter_cards.html, which between them left the site with
+       poor link previews:
+
+         - The homepage had NO og:image at all.
+         - Event pages had no og:image either: their photo arrives as a remote
+           Ticket Tailor URL in `featureimage`, and the internal template only
+           looks at page resources and the `images` param.
+         - People pages DID get one, but it was the untouched original — Anna's
+           card was a 3,100,570 byte 2880x3120 PNG. Browsers never fetch these;
+           every social and chat crawler does.
+         - Every page shared one description, the generic site blurb, so an event
+           link preview said nothing about the event.
+         - twitter:card was "summary" (small thumbnail) except where a page
+           resource happened to match.
+
+       Image handling. Everything is cropped to exactly 1200x630 — the 1.91:1
+       ratio large summary cards are designed around — so previews are never
+       letterboxed and never unpredictably re-cropped by the platform. Portrait
+       sources are anchored Top rather than Center, because centre-cropping a
+       2880x3120 portrait to 1.91:1 lands on somebody's chest; Top gives head and
+       shoulders. Output is capped webp at q82, which takes Anna's card from
+       3.0 MB to tens of KB.
+
+       Image source order:
+         1. partial "feature-image.html" — one rule, shared with the rest of the
+            site: front-matter `featureimage:` (bundle filename OR remote URL),
+            else the bundle's `featured.*`. This is what finally gives event pages
+            a card image.
+         2. .Site.Params.defaultSocialImage, resolved from assets/.
+
+       Description order: front-matter `description:` -> the page's own rendered
+       text -> the site description. Using .Plain rather than .Summary because
+       `summaryLength = 0` in config makes .Summary useless here. On events that
+       yields the opening hook; on the homepage, the intro sentence. */ -}}
+
+{{- $ctx := . -}}
+{{- $isHome := .IsHome -}}
+
+{{- /* ---- title ---- */ -}}
+{{- $title := cond $isHome .Site.Title (.Title | default .Site.Title) -}}
+
+{{- /* ---- description ---- */ -}}
+{{- $desc := "" -}}
+{{- with .Description -}}{{- $desc = . -}}{{- end -}}
+{{- if not $desc -}}
+  {{- with .Plain -}}
+    {{- $desc = . | htmlUnescape | chomp | replaceRE `\s+` " " | truncate 200 -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $desc -}}{{- $desc = .Site.Params.description | default .Site.Params.Description -}}{{- end -}}
+{{- if not $desc -}}{{- $desc = site.Language.Params.description -}}{{- end -}}
+
+{{- /* ---- image: resolve, then crop to a 1200x630 card ---- */ -}}
+{{- $img := partial "feature-image.html" . -}}
+{{- if not $img -}}
+  {{- with .Site.Params.defaultSocialImage -}}
+    {{- $img = resources.Get . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $card := false -}}
+{{- with $img -}}
+  {{- /* Only raster resources can be processed; an SVG has no .Width. */ -}}
+  {{- if and .MediaType (ne .MediaType.SubType "svg") -}}
+    {{- $anchor := cond (lt .Width .Height) "Top" "Center" -}}
+    {{- $spec := printf "1200x630 %s webp q82" $anchor -}}
+    {{- $card = .Fill $spec -}}
+  {{- end -}}
+{{- end -}}
+
+<meta property="og:site_name" content="{{ .Site.Title }}" />
+<meta property="og:title" content="{{ $title }}" />
+<meta property="og:description" content="{{ $desc }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:locale" content="{{ .Site.Language.Lang }}" />
+<meta property="og:type" content="{{ cond $isHome "website" "article" }}" />
+{{- with $card }}
+<meta property="og:image" content="{{ .Permalink }}" />
+<meta property="og:image:width" content="{{ .Width }}" />
+<meta property="og:image:height" content="{{ .Height }}" />
+<meta property="og:image:alt" content="{{ $title }}" />
+{{- end }}
+{{- if not $isHome }}
+{{- with $ctx.Date }}{{ if not .IsZero }}
+<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05-07:00" }}" />
+{{- end }}{{ end }}
+{{- end }}
+<meta name="twitter:card" content="{{ cond (not $card) "summary" "summary_large_image" }}" />
+<meta name="twitter:title" content="{{ $title }}" />
+<meta name="twitter:description" content="{{ $desc }}" />
+{{- with $card }}
+<meta name="twitter:image" content="{{ .Permalink }}" />
+<meta name="twitter:image:alt" content="{{ $title }}" />
+{{- end }}

@@ -116,16 +116,13 @@
   <meta name="fediverse:creator" content="{{ . }}" />
   {{ end }}
   {{/* Social */}}
-  {{ template "_internal/opengraph.html" . }}
-  {{ template "_internal/twitter_cards.html" . }}
-  {{- /* Main page always uses this; fallback elsewhere if no feature image */ -}}
-  {{- /* See https://gohugo.io/templates/embedded/#open-graph */ -}}
-  {{ if not ($.Resources.GetMatch "*feature*") }}
-    {{ with .Site.Params.defaultSocialImage }}
-    <meta name="twitter:image" content="{{ . | absURL }}" />
-    <meta property="og:image" content="{{ . | absURL }}" />
-    {{ end }}
-  {{ end }}
+  {{- /* CRITICAL SIGNALS: replaces Hugo's _internal/opengraph.html and
+         _internal/twitter_cards.html, plus the defaultSocialImage fallback that
+         used to sit here. They gave the homepage and every event page no
+         og:image at all, served people pages their untouched multi-megabyte
+         original, and reused the generic site blurb as every page's description.
+         See partials/social-meta.html. */ -}}
+  {{ partial "social-meta.html" . }}
   {{/* Schema */}}
   {{ partial "schema.html" . }}
   {{/* Me */}}

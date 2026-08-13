@@ -1,4 +1,17 @@
 colorScheme = "crit-sigs"
+# Link-preview image for pages that have no photo of their own — in practice the
+# homepage and the standalone marketing pages. Resolved from assets/ and cropped
+# to a 1200x630 card by partials/social-meta.html, so this can be any size.
+# Anything with its own `featureimage:` or bundled `featured.*` (events, people)
+# uses that instead. A purpose-made card carrying the wordmark would beat a bare
+# photograph here if one ever gets designed.
+#
+# 08 because it is the cheapest of the ten to encode as a card — measured at
+# 1200x630 q82, the ten range from 70 KB (08) to 257 KB (02), which is entirely
+# down to how much fine detail each photo carries. Since the hero randomiser
+# means no single photo is "the" brand image, byte size is a fair tiebreaker.
+# Swap the number for any of 01-10 if you'd rather a particular one.
+defaultSocialImage = "images/backgrounds/08.webp"
 defaultAppearance = "light"
 autoSwitchAppearance = false
 enableSearch = false
