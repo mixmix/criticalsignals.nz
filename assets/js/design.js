@@ -139,6 +139,9 @@ function svgBaseColor(svgText) {
     const v = rootStyle.getPropertyValue(name).trim();
     return v ? v.replace(/^["']|["']$/g, "") : null;
   };
+  // Falls back to 100vw only if the custom property is missing, which would mean
+  // the backgrounds stylesheet never made it into the bundle.
+  const BG_SIZES = cssString("--cs-bg-sizes") || "100vw";
   const pool = Array.from({ length: 10 }, function (_, i) {
     const nn = String(i + 1).padStart(2, "0");
     return {
@@ -200,10 +203,12 @@ function svgBaseColor(svgText) {
       };
       el.addEventListener("load", reveal, { once: true });
       // srcset before src, so the browser picks a width-appropriate rendition
-      // rather than starting the 1920px master and switching. These photos are
-      // full-bleed, hence sizes=100vw.
+      // rather than starting the 1920px master and switching. `sizes` comes from
+      // --cs-bg-sizes, alongside the ladder it selects from — see
+      // design/backgrounds-css.html for why it understates the mobile case
+      // (a plain 100vw let DPR-3 phones reach the 1920 master).
       if (pick.srcset) {
-        el.sizes = "100vw";
+        el.sizes = BG_SIZES;
         el.srcset = pick.srcset;
       }
       if (pick.photo) el.src = pick.photo;

@@ -23,7 +23,33 @@
        quality. The smaller widths are re-encoded at q80, slightly above Hugo's
        default 75, because these are full-bleed photographs. */ -}}
 
-{{- $widths := slice 640 960 1280 -}}
+{{- /* A dense ladder, because granularity is what actually controls mobile
+       weight here — not `sizes`.
+
+       srcset picks the smallest rung that is >= (layout width x DPR), so a
+       sparse ladder makes the browser overshoot. With rungs at only
+       640/960/1280 + the 1920 master, a 430px phone at DPR 3 needed 1290px,
+       missed the 1280 rung by 10px, and took the master: mean 409,879 B, up to
+       764,094 B, for a device that would have been fully served by ~170 KB.
+       Three spots on the homepage made that ~1.2 MB.
+
+       Understating `sizes` fixes the bytes but costs sharpness, and these are
+       full-bleed photographs — .hero__photo cover-crops a 16:9 source into a
+       much squarer box, which upscales it (at 390x360 the source is drawn at
+       ~640 CSS px), so any understatement shows. Filling the gaps instead is
+       strictly better: the browser still never picks below what it needs, so
+       sharpness is untouched, and the chosen rung is simply a closer fit.
+
+       Rungs are spaced to land just above the common (viewport x DPR) products:
+
+         360 x 2 =   720 ->  800w        390 x 3 = 1,170 -> 1280w
+         375 x 2 =   750 ->  800w        430 x 3 = 1,290 -> 1440w
+         390 x 2 =   780 ->  800w        480 x 3 = 1,440 -> 1440w
+         414 x 2 =   828 ->  960w        360 x 3 = 1,080 -> 1120w
+
+       The 1920 master stays the top rung for desktop and retina desktop, and is
+       now only reached by something that genuinely needs more than 1440px. */ -}}
+{{- $widths := slice 640 800 960 1120 1280 1440 -}}
 {{- $rules := slice -}}
 {{- range $i := (seq 1 10) -}}
   {{- $n := printf "%02d" $i -}}
@@ -45,5 +71,16 @@
     {{- warnf "backgrounds-css: images/backgrounds/%s.webp not found in assets/" $n -}}
   {{- end -}}
 {{- end -}}
+{{- /* The `sizes` design.js puts on each spot. Lives here, next to the ladder it
+       selects from, rather than as a literal in the JS.
+
+       A plain honest 100vw: the spots really are full-bleed, so the layout width
+       really is the viewport width, and the browser should get the true figure to
+       multiply by DPR. An earlier version understated this to 80vw on mobile to
+       keep phones off the 1920 master; that worked on bytes but softened the
+       photographs, which is the wrong trade for the one full-bleed image on the
+       page. The dense ladder above achieves the same byte reduction without
+       touching sharpness, so the understatement is gone. */ -}}
+{{- $rules = $rules | append `--cs-bg-sizes:"100vw"` -}}
 {{- $css := printf ":root{%s}" (delimit $rules ";") -}}
 {{- return resources.FromString "css/backgrounds.css" $css -}}
