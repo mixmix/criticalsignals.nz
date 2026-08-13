@@ -27,9 +27,11 @@
        1600px cap. src is only ever fetched by a browser with no srcset support,
        so reusing 1040w costs nothing and means the widest rendition we generate
        is one a real layout can actually ask for. Do NOT restore the original
-       here: before the cap existed, `src` was the untouched source and
-       /installations/ alone put 6,278,019 B on the fallback path (sam.jpeg
-       2,391,559 B, tanya_ruka1.jpg 2,009,181 B). */ -}}
+       here: before the cap existed, `src` was the untouched source, and the
+       since-deleted /installations/ page alone put 6,278,019 B on the fallback
+       path (sam.jpeg 2,391,559 B, tanya_ruka1.jpg 2,009,181 B). That page is
+       gone, but the hazard is a property of this hook, not of that page — it
+       returns the moment any markdown image lands on a large source. */ -}}
 {{ define "RenderImageSimple" -}}
   <img class="my-0 rounded-md" loading="lazy" alt="{{ .alt }}" src="{{ .src }}">
 {{- end }}

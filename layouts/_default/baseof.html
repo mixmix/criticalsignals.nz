@@ -20,10 +20,10 @@
        gate shared by this template, scroll-to-top.html, head.html and the
        heading render hook — see that file for why it is not simply
        `.Params.csDesign`. Verified page by page that it is true for precisely
-       the 90 pages that render `.cs-hero`. Pages where it is false — the people listing,
-       installations, mission-statement, sign, the taxonomy pages, 404 and the
-       three admin pages — still get the theme's shell and its stylesheet, byte
-       for byte as before, because they are still laid out by theme templates.
+       the 90 pages that render `.cs-hero`. Pages where it is false — the people
+       listing, mission-statement, sign, the tag pages, 404 and the three admin
+       pages — still get the theme's shell and its stylesheet, byte for byte as
+       before, because they are still laid out by theme templates.
 
        The class strings are hoisted into variables at the top rather than
        inlined as `{{ if }}` in each attribute, so the document structure below

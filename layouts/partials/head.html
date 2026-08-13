@@ -82,9 +82,9 @@
          every marketing page, people bio and programme event — which is every
          entry point the site has.
 
-         The 17 pages without the flag (the people listing, installations,
-         mission-statement, sign, the taxonomy pages, 404, the three admin pages)
-         still use theme layouts and still get it, unchanged.
+         The pages without the flag (the people listing, mission-statement,
+         sign, the tag pages, 404, the three admin pages) still use theme
+         layouts and still get it, unchanged.
 
          Sent through design/theme-css.html rather than `resources.Get
          "css/compiled/main.css"` directly: that partial strips the unparseable
@@ -156,7 +156,8 @@
          It was loading on 72 of 107 pages (9,637 B + a render-blocking request
          before `defer` was added) and binding 448 images via
          `img:not(.nozoom)`. Of those 448, only 6 were content photos, all on
-         /installations/. The other 442 were design furniture — spore.svg,
+         the /installations/ page that was deleted in the same change as this
+         one. The other 442 were design furniture — spore.svg,
          wordmark.svg, divider1.webp, .hero__photo, .person__photo — which the
          chrome partials emit without a `nozoom` class, so clicking the site's
          own logo opened it in a lightbox. That was the feature's entire
