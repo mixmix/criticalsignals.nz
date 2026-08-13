@@ -764,15 +764,23 @@ body:has(.cs-hero) .prog-group__date{
    but brightens above it and darkens below — so where two crests meet they
    reinforce, and where a crest meets a trough they cancel.
 
-   The set is a spectrum, not a grid. --a/--b are the short chop, --c/--d
-   the mid waves, --e a long swell the rest ride on; within each pair the
-   wavelengths are close but not equal, so they drift in and out of phase
-   and their reinforcement travels as broad cells far larger than either
-   wavelength. Two things keep it from reading as woven fabric, both learned
-   by looking at it: the angles have to be irregular — near-opposed
-   (8°/172°) or mirrored (64°/112°) pairs lock into a rigid plaid, so these
-   are spread unevenly around the circle — and the wavelengths have to be
-   long enough that only a handful of periods span the frame.
+   The set is a spectrum. --a/--b are the short chop, --c/--d the mid waves,
+   --e a long swell the rest ride on; within each pair the wavelengths are
+   close but not equal, so they drift in and out of phase and their
+   reinforcement travels as broad cells far larger than either wavelength.
+   The wavelengths have to stay long enough that only a handful of periods
+   span the frame — short ones tile into a visible weave.
+
+   The angles are deliberately split into two groups rather than spread
+   evenly. The two LONG waves (--d, --e) sit within 30° of the horizontal,
+   so the dominant motion sweeps along the x-axis. The three SHORT ones
+   (--a, --b, --c) are pitched steeply away from it — around +71, -62, +47 —
+   so they cross the long waves at a wide angle instead of running with
+   them. Pinning everything near horizontal was tried and the surface went
+   flat: near-parallel waves cannot break each other up, so it collapsed
+   into horizontal banding with beats sliding through. Keeping the short
+   waves off-axis is what supplies the crossing structure, while the long
+   pair still sets the overall horizontal grain.
 
    These waves alone are still recognisably periodic — a handful of pure
    sinusoids can only sum to a lattice, which on its own reads as a
@@ -826,21 +834,32 @@ body:has(.cs-hero) .prog-group__date{
   from{transform:rotate(var(--angle)) translateY(0);}
   to{transform:rotate(var(--angle)) translateY(var(--wl));}
 }
-/* Speeds started from deep-water dispersion — phase speed going with the
-   square root of wavelength, so the longer waves outrun the short chop
-   rather than everything sliding at one rate. Worth keeping them spread
-   whatever the exact values: picking durations by eye had accidentally
-   landed all five at ~15 px/s, which flattens the effect, since waves at
-   equal speed hold their relative phase far more stubbornly and it's the
-   phases sliding past each other that makes the reinforcement and
-   cancellation travel. */
-.lightbox__wave--a{--wl:400px;--angle:149deg;--speed:5.1s;--amp:.42;}
-.lightbox__wave--b{--wl:74px;--angle:47deg;--speed:5.6s;--amp:.30;}
-/* mid waves, crossing the chop at a wide angle */
-.lightbox__wave--c{--wl:139px;--angle:96deg;--speed:7.7s;--amp:.36;}
-.lightbox__wave--d{--wl:167px;--angle:319deg;--speed:2.4s;--amp:.26;}
-/* the long swell everything else rides on — biggest and quietest */
-.lightbox__wave--e{--wl:290px;--angle:63deg;--speed:20.1s;--amp:.42;}
+/* Speeds run long-and-fast against short-and-slow: 13, 13 and 32 px/s for
+   the short waves, 125 and 167 px/s for the two long ones. Real deep-water
+   dispersion does put the long waves ahead (speed goes with √wavelength),
+   but this is that effect pushed well past what the physics gives — a ~10×
+   spread where dispersion alone would give about 2×. The exaggeration is
+   the point: the long pair reads as the wave motion, the short ones as
+   texture it moves through, and the two groups never lock together.
+
+   What matters if these get retuned is that the five rates stay spread.
+   Durations picked by eye once landed all of them at the same rate and the
+   effect went flat, because waves at equal speed hold their relative phase
+   and it's phases sliding past each other that makes the reinforcement and
+   cancellation travel. To rescale the whole set without losing that,
+   multiply every --wl by k and every --speed by √k; to change the overall
+   pace, multiply every --speed by the same factor. */
+/* short chop — the closest pair, so the fastest beating */
+/* The small waves — steep, varied angles, and slow (13-32 px/s). They read
+   as fine detail sitting on the surface rather than as travelling waves. */
+.lightbox__wave--a{--wl:92px;--angle:71deg;--speed:7.2s;--amp:.42;}
+.lightbox__wave--b{--wl:111px;--angle:118deg;--speed:8.4s;--amp:.30;}
+.lightbox__wave--c{--wl:209px;--angle:47deg;--speed:6.5s;--amp:.36;}
+/* The two long waves — both within 30° of horizontal and much faster
+   (125 and 167 px/s), so they sweep along the x-axis as the dominant
+   motion while everything above drifts slowly underneath them. */
+.lightbox__wave--d{--wl:251px;--angle:341deg;--speed:2s;--amp:.26;}
+.lightbox__wave--e{--wl:435px;--angle:14deg;--speed:2.6s;--amp:.42;}
 
 /* --- Noise layers: the grain over the waves -------------------------------
    Chunky static drifting vertically over the interference — the outer two
