@@ -1,5 +1,5 @@
 ---
-title: "Melting Moments: Energy, Policy and Building - in association with the NZ Institute of Architects"
+title: "Melting Moments: Energy, Policy and Building"
 hosts:
   - "Mike Anthony"
   - "Guy Shaw"
@@ -15,6 +15,8 @@ capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1777,x_0,y_218/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/s7frubjxwixgai55xeld.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8854817"
 ---
+**In association with Te Kāhui Whaihanga, New Zealand Institute of Architects Wellington Branch.**
+
 **Part of the Wellington NZIA Melting Moments sustainability series & presented in collaboration with the Critical Signals programme. Join us for a thought-provoking conversation about energy where together, we'll explore how energy sufficiency, healthy buildings and community resilience come together as the interconnected signals of a changing future.**
 
 Energy is often discussed in terms of technology and efficiency, but the deeper questions are about how much is enough, how our buildings support wellbeing, and how communities can thrive within environmental limits. Bringing together voices from across the energy, policy and building sectors, this facilitated discussion will examine the challenges, opportunities and emerging signals shaping Aotearoa's energy future.
