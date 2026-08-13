@@ -37,15 +37,6 @@ html{font-family:var(--cs-sans);scroll-behavior:smooth;}
 /* the "Sign up for news" CTA links here; keep the target clear of the sticky nav */
 #signup{scroll-margin-top:calc(var(--navh) + 20px);}
 
-/* ---- DARK = a full photographic negative of the light site ----
-   A single invert filter flips everything: surfaces, text, photos, logos, and
-   the teal (which becomes its true negative). data-theme lives on <html>. */
-html[data-theme="dark"]{background:#000;}
-html[data-theme="dark"] body{filter:invert(1);background:#fff;}
-/* keep the people portraits reading correctly through the page invert */
-html[data-theme="dark"] .person__photo{filter:grayscale(1) invert(1);}
-html[data-theme="dark"] .person__photo--empty{filter:invert(1);}
-
 /* ============================================================================
    MARKETING PAGES — full bleed
    The Blowfish <body> is normally a centred, padded max-w-7xl column. Any page
@@ -94,21 +85,7 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 }
 .menubar .menu-link a:hover,.menubar .menu-link a.is-active{text-decoration:underline;text-underline-offset:4px;}
 
-/* dark-mode toggle — floated out of flex flow on desktop, centred in the gap
-   just left of the home spore */
 .menu-home-li{position:relative;flex:0 0 auto;display:flex;align-items:center;}
-.theme-toggle{
-  position:absolute;top:50%;right:100%;transform:translate(50%,-50%);
-  margin-right:calc(clamp(40px,4vw,82px) - 30px);
-  display:flex;align-items:center;justify-content:center;line-height:0;
-  background:none;border:none;padding:0;cursor:pointer;color:var(--ink);
-}
-/* vertical stacked pair: filled square over an outlined square (lo-fi pixels) */
-.theme-toggle__px{display:flex;flex-direction:column;gap:clamp(2.5px,0.28vw,3.5px);}
-.theme-toggle__px span{display:block;width:clamp(5px,0.48vw,6.5px);height:clamp(5px,0.48vw,6.5px);}
-.theme-toggle__px .f{background:currentColor;}
-.theme-toggle__px .e{box-shadow:inset 0 0 0 1px currentColor;}
-.theme-toggle:hover{opacity:.65;}
 
 /* burger — hidden on desktop, shown on mobile (see responsive block) */
 .menu-burger{
@@ -361,7 +338,6 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
   /* swap the desktop links for the burger */
   .menubar .menu-link{display:none;}
   .menu-burger{display:flex;}
-  .theme-toggle{position:static;transform:none;margin-right:clamp(14px,3vw,22px);}
   .menu-home-li{gap:0;}
   /* nudge the whole nav bar's contents 6px toward the right edge on mobile */
   .menubar{padding-right:calc(var(--pad) - 6px);}
@@ -948,19 +924,6 @@ body:has(.cs-hero) .prog-group__date{
 .lightbox__prev{left:16px;}
 .lightbox__next{right:16px;}
 .lightbox__nav:hover{opacity:.7;}
-
-/* keep event/host photos reading correctly through the dark-mode body invert */
-html[data-theme="dark"] .event__photo{filter:grayscale(1) invert(1);}
-html[data-theme="dark"] .host__photo{filter:grayscale(1) invert(1);}
-html[data-theme="dark"] .host__photo--empty{filter:invert(1);}
-/* on the item, not the img inside it — the item now carries the grey noise
-   backdrop too, and both it and the photo want the body invert cancelled */
-html[data-theme="dark"] .gallery-item{filter:invert(1);}
-/* the lightbox stays in full colour in dark mode too — a single invert
-   cancels the body's invert(1) instead of stacking grayscale on top of it */
-html[data-theme="dark"] .lightbox__img{filter:invert(1);}
-html[data-theme="dark"] .lightbox__placeholder{filter:invert(1);}
-html[data-theme="dark"] .lightbox__waves{filter:invert(1);}
 
 /* --- Calendar --- */
 /* Full-width white box (the calendar needs the width the narrow .col can't give) */

@@ -12,8 +12,6 @@ colorScheme = "crit-sigs"
 # means no single photo is "the" brand image, byte size is a fair tiebreaker.
 # Swap the number for any of 01-10 if you'd rather a particular one.
 defaultSocialImage = "images/backgrounds/08.webp"
-defaultAppearance = "light"
-autoSwitchAppearance = false
 enableSearch = false
 enableCodeCopy = false
 replyByEmail = false

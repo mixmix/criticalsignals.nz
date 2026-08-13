@@ -91,9 +91,13 @@
   (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <link type="text/css" rel="stylesheet" href="{{ $bundleCSS.RelPermalink }}"
     integrity="{{ $bundleCSS.Data.Integrity }}" />
+  {{- /* CRITICAL SIGNALS: `defer` added. This resolves to the project's
+         assets/js/appearance.js, which shadows the theme's 3,692 B of dark-mode
+         machinery (see that file). What's left runs inside a DOMContentLoaded
+         listener, so deferring it is safe and stops it blocking the parser. */ -}}
   {{ $jsAppearance := resources.Get "js/appearance.js" }}
   {{ $jsAppearance = $jsAppearance | resources.ExecuteAsTemplate "js/appearance.js" . | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script type="text/javascript" src="{{ $jsAppearance.RelPermalink }}"
+  <script defer type="text/javascript" src="{{ $jsAppearance.RelPermalink }}"
     integrity="{{ $jsAppearance.Data.Integrity }}"></script>
   {{ if .Site.Params.enableSearch | default false }}
   {{ $jsFuse := resources.Get "lib/fuse/fuse.min.js" }}
@@ -117,28 +121,28 @@
     integrity="{{ $bundleJS.Data.Integrity }}" data-copy="{{ i18n "code.copy" }}" data-copied="{{ i18n "code.copied"
     }}"></script>
   {{ end }}
-  {{- /* CRITICAL SIGNALS: three fixes to the theme's zoom gate.
+  {{- /* CRITICAL SIGNALS: the theme's medium-zoom (click-an-image-to-lightbox)
+         is removed, not merely disabled — the <script> that loaded
+         assets/lib/zoom/zoom.min.js used to sit here.
 
-         1. The condition was `not .Site.Params.disableImageZoom | default true`,
-            which Go parses as `default true (not …)` — true whatever the param
-            says, so the flag did nothing. Parenthesised so `disableImageZoom`
-            can actually turn it off.
-         2. Added the csDesign and admin tests, so the load sites now match the
-            call sites exactly. mediumZoom() is only ever CALLED from
-            partials/footer.html: csDesign pages get design/footer.html instead
-            and never call it, and layouts/admin/baseof.html skips the footer
-            altogether (`cascade: type: admin` covers all three /_admin/ pages).
-            Between them, 35 pages were loading 9,637 B of library to invoke
-            nothing.
-         3. Added `defer`. This was the last render-blocking <script> on content
-            pages. Safe because the call site is now inside a DOMContentLoaded
-            listener, and deferred scripts all execute before that event fires —
-            without that change the inline footer call would run first and throw
-            on an undefined mediumZoom. */ -}}
-  {{ if and (not (.Site.Params.disableImageZoom | default false)) (not .Params.csDesign) (ne .Type "admin") }}
-  {{ $zoomJS := resources.Get "lib/zoom/zoom.min.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script defer src="{{ $zoomJS.RelPermalink }}" integrity="{{ $zoomJS.Data.Integrity }}"></script>
-  {{ end }}
+         It was loading on 72 of 107 pages (9,637 B + a render-blocking request
+         before `defer` was added) and binding 448 images via
+         `img:not(.nozoom)`. Of those 448, only 6 were content photos, all on
+         /installations/. The other 442 were design furniture — spore.svg,
+         wordmark.svg, divider1.webp, .hero__photo, .person__photo — which the
+         chrome partials emit without a `nozoom` class, so clicking the site's
+         own logo opened it in a lightbox. That was the feature's entire
+         observable effect on 71 of the 72 pages.
+
+         Removed rather than gated behind `disableImageZoom` so no page pays for
+         it and there is no dormant switch to flip back on by accident. The
+         matching call site is gone from partials/footer.html, and
+         data-zoom-src from _markup/render-image.html. The surviving `nozoom`
+         classes scattered through the article-link/hero partials are now inert
+         — harmless, and left in place as the seam to re-attach a lightbox to if
+         one is ever wanted. Note the gallery lightbox on the design pages is
+         unrelated hand-rolled code (assets/js/design.js + `.lightbox` in
+         custom.css) and is untouched by this. */ -}}
   {{/* Icons */}}
   {{ if templates.Exists "partials/favicons.html" }}
   {{ partialCached "favicons.html" .Site }}
@@ -197,7 +201,12 @@
   {{ if templates.Exists "partials/extend-head-uncached.html" }}
   {{ partial "extend-head-uncached.html" . }}
   {{ end }}
-  <meta name="theme-color"/>
+  {{- /* CRITICAL SIGNALS: was an empty `<meta name="theme-color"/>` that the
+         theme's appearance.js filled in from the computed body background, so it
+         could re-point it at the dark surface on every toggle. With no dark mode
+         there is one surface, so state it here and drop the getComputedStyle
+         call (a forced style recalc) that used to do it. */ -}}
+  <meta name="theme-color" content="#ffffff" />
   {{/* Firebase */}}
   {{ with $.Site.Params.firebase }}
   {{ if isset $.Site.Params "firebase" }}

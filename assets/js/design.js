@@ -1,5 +1,5 @@
 // Critical Signals — image randomiser, spore/dates parallax, burger menu,
-// dark-mode toggle, and Loops.so sign-up handling.
+// and Loops.so sign-up handling.
 
 var PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 // Off for now — the cross-dissolve on the way OUT to another page (section 4).
@@ -455,33 +455,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then(function (res) { if (!res.ok) throw new Error("bad status"); });
   }
 
-  // 6. Dark-mode toggle. Saved theme is applied pre-paint by an inline <head>
-  //    script (see extend-head.html); here we flip it and remember the choice.
-  const root = document.documentElement;
-  const toggle = document.querySelector(".theme-toggle");
-  if (toggle) {
-    const sync = function () {
-      toggle.setAttribute("aria-pressed", root.getAttribute("data-theme") === "dark" ? "true" : "false");
-    };
-    sync();
-    toggle.addEventListener("click", function () {
-      const dark = root.getAttribute("data-theme") === "dark";
-      try {
-        if (dark) { root.removeAttribute("data-theme"); localStorage.setItem("theme", "light"); }
-        else { root.setAttribute("data-theme", "dark"); localStorage.setItem("theme", "dark"); }
-      } catch (e) {
-        if (dark) root.removeAttribute("data-theme"); else root.setAttribute("data-theme", "dark");
-      }
-      sync();
-    });
-  }
-
-  // 7. Home page "Recent Events" sampler — the full candidate pool of photos
+  // 6. Home page "Recent Events" sampler — the full candidate pool of photos
   //    (from the last 5 past events) is rendered server-side as a JSON data
   //    island; here we shuffle it and build just the N shown thumbnails, so a
   //    fresh random sample appears on every page load. Must run before
-  //    section 8 below, so those thumbnails are in the DOM by the time it
+  //    section 7 below, so those thumbnails are in the DOM by the time it
   //    collects `.gallery-item`s. See partials/home/recent-events.html.
+  // `loading="lazy"` alone does NOT defer these, which is easy to miss: it is a
+  // hint with a DISTANCE threshold, not a strict gate, and Chrome's threshold is
+  // generous — on a 4g connection it fetches anything within roughly 1250-3000px
+  // of the viewport. The Recent Events grid sits about 326px below the fold on a
+  // desktop homepage, so every thumbnail was being fetched during initial load
+  // despite carrying the attribute.
+  //
+  // So hold `src` back and set it from an IntersectionObserver, which is an
+  // explicit gate. rootMargin gives one viewport of lead-in, so the images are
+  // already there by the time you scroll to them. The server-rendered empty
+  // `.gallery-item` boxes reserve the grid's final size, so nothing moves when
+  // they arrive. `loading="lazy"` is still set: it costs nothing, still applies
+  // once src lands, and covers the no-IntersectionObserver fallback below.
+  const thumbObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          obs.unobserve(entry.target);
+          revealThumb(entry.target);
+        });
+      }, { rootMargin: "100% 0px" })
+    : null;
+  function revealThumb(img) {
+    const src = img.getAttribute("data-thumb");
+    if (!src) return;
+    img.removeAttribute("data-thumb");
+    img.src = src;
+  }
   document.querySelectorAll(".gallery-grid[data-recent-events-pool]").forEach(function (grid) {
     let pool;
     try { pool = JSON.parse(grid.getAttribute("data-recent-events-pool")); } catch (e) { pool = []; }
@@ -506,21 +513,26 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.setAttribute("data-href", item.href);
       // Every attribute BEFORE src: setting src is what kicks off the load
       // and fixes how the browser fetches it, so loading/decoding hints set
-      // afterwards can arrive too late to be honoured.
+      // afterwards can arrive too late to be honoured. src itself is not set
+      // here at all — it waits on the observer above, keyed off data-thumb.
       const img = document.createElement("img");
       img.width = item.width;
       img.height = item.height;
       img.loading = "lazy";
       img.decoding = "async";
       img.alt = "";
-      img.src = item.thumb;
+      img.setAttribute("data-thumb", item.thumb);
       btn.appendChild(img);
       return btn;
     });
     grid.replaceChildren.apply(grid, built);
+    grid.querySelectorAll("img[data-thumb]").forEach(function (img) {
+      if (thumbObserver) thumbObserver.observe(img);
+      else revealThumb(img);   // no IntersectionObserver: load immediately
+    });
   });
 
-  // 8. Photo lightbox — wires up any `.gallery-item` grid on the page (an
+  // 7. Photo lightbox — wires up any `.gallery-item` grid on the page (an
   //    event's own Artefacts gallery, or the Recent Events sampler above) to
   //    open the full-size photo in colour in an overlay (see
   //    partials/design/lightbox.html). With 2+ photos, the overlay also
@@ -575,7 +587,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const preloadThumb = function (i) {
       const el = items[(i + items.length) % items.length];
       const img = el && el.querySelector("img");
-      if (img && !img.complete) new Image().src = img.src;
+      if (!img) return;
+      // An <img> with no src reports complete === true, so testing that alone
+      // would silently skip every Recent Events thumbnail still waiting on the
+      // observer in section 7 — exactly the neighbours worth preloading.
+      const pending = img.getAttribute("data-thumb");
+      if (pending) { new Image().src = pending; return; }
+      if (!img.complete) new Image().src = img.src;
     };
 
     const showImage = function (i) {
@@ -586,7 +604,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const thumb = item.querySelector("img");
       lightboxImg.classList.remove("is-loaded");
       if (thumb) {
-        lightboxPlaceholder.src = thumb.src;
+        // Recent Events thumbnails defer their own src until they scroll into
+        // view (section 7), so fall back to the pending data-thumb — otherwise
+        // opening a photo via keyboard navigation, which can reach an item that
+        // has not been revealed yet, would set the placeholder to "".
+        lightboxPlaceholder.src = thumb.src || thumb.getAttribute("data-thumb") || "";
       }
       if (items.length > 1) {
         preloadThumb(index + 1);
