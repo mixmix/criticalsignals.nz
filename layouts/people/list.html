@@ -54,10 +54,18 @@
     {{ $orderByWeight := .Params.orderByWeight | default ($.Site.Params.list.orderByWeight | default false) }}
 
     {{ $coreTeamPages := where .Pages ".Params.tags" "intersect" (slice "core-team") }}
+
+    {{- /* Collaborators are the non-core-team people who actually host something
+           in the programme. Profiles exist for other reasons too (speakers we
+           credit, people carried over from an earlier year), and listing those
+           here reads as if they're part of this year's line-up. Matching goes
+           through the honorific-agnostic key, same as programme-hosts.html. */ -}}
+    {{ $programmesByName := partialCached "people/programmes-by-name.html" . }}
     {{ $friendsPages := slice }}
     {{ range .Pages }}
       {{ $tags := .Params.tags | default (slice) }}
-      {{ if not (in $tags "core-team") }}
+      {{ $hostedProgrammes := index $programmesByName (partial "people/name-key.html" .Title) | default slice }}
+      {{ if and (not (in $tags "core-team")) $hostedProgrammes }}
         {{ $friendsPages = $friendsPages | append . }}
       {{ end }}
     {{ end }}
@@ -94,7 +102,7 @@
           {{ end }}
         {{ end }}
       {{ else }}
-        <p>No core team members found.</p>
+        <p>No collaborators found.</p>
       {{ end }}
     </section>
 

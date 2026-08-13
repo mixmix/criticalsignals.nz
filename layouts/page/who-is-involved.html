@@ -10,7 +10,7 @@
     {{ partial "design/hero-bg.html" . }}
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
-      <div class="col">
+      <div class="col" data-shuffle-people>
         <h1 class="sr-only">{{ .Title }}</h1>
         {{ .Content }}
         {{ range $i, $p := $core.Reverse }}
@@ -29,6 +29,37 @@
             <div class="person__body">{{ $p.Content }}</div>
           </article>
         {{ end }}
+        {{- /* Shuffle per page load, not per build: nobody is permanently top
+               of the page. Hugo's own `shuffle` would bake one order into the
+               HTML and hold it there until the next deploy. Inline and placed
+               right after the people so it runs before first paint — no flash
+               of the build order. Without JS the build order just stands. */ -}}
+        <script>
+          (function () {
+            var col = document.querySelector("[data-shuffle-people]");
+            if (!col) return;
+            var people = Array.prototype.filter.call(col.children, function (el) {
+              return el.classList.contains("person");
+            });
+            if (people.length < 2) return;
+            /* Swap the people between the slots they already occupy, so the
+               alternating hand-drawn dividers stay put and keep alternating. */
+            var slots = people.map(function (person) {
+              var slot = document.createComment("");
+              col.replaceChild(slot, person);
+              return slot;
+            });
+            for (var i = people.length - 1; i > 0; i--) {
+              var j = Math.floor(Math.random() * (i + 1));
+              var swap = people[i];
+              people[i] = people[j];
+              people[j] = swap;
+            }
+            slots.forEach(function (slot, i) {
+              col.replaceChild(people[i], slot);
+            });
+          })();
+        </script>
       </div>
       {{ partial "design/rail.html" . }}
     </div>
