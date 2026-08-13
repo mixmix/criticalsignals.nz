@@ -17,7 +17,7 @@ between posthuman methods and Indigenous knowledges, developed as part of a
 research program led by philosopher Professor Rosi Braidotti (Utrecht) and
 Boonwurrung Elder N’arweet Professor Carolyn Briggs AM.
 
-![](./sensing-the-quary.jpg)
+![](sensing-the-quary.jpg)
 
 This work emerged from an eight-day [laboratory situating posthuman
 methods](https://www.posthuman.au/) at the Cape Otway Quarry on Gadubanad

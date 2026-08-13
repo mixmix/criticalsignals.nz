@@ -126,17 +126,15 @@
   <script type="application/json" id="events-data">{{ $events | jsonify | safeJS }}</script>
   <script type="application/json" id="collaborators-data">{{ $collaborators | jsonify | safeJS }}</script>
 
-  {{ $calendarJS := resources.Get "js/calendar.js" }}
-  {{ if $calendarJS }}
-    <script src="{{ ($calendarJS | minify).RelPermalink }}" defer></script>
+  {{- /* Fingerprinted, so this gets a content hash and an integrity attribute
+         like every other asset on the site. The stylesheet that used to sit here
+         has moved to partials/extend-head-uncached.html — a render-blocking
+         <link> discovered halfway down <body> let the calendar paint unstyled
+         and then reflow. */ -}}
+  {{ with resources.Get "js/calendar.js" }}
+  {{ $js := . | minify | resources.Fingerprint (site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
   {{ else }}
-    <script src="/js/calendar.js" defer></script>
-  {{ end }}
-
-  {{ $calendarCSS := resources.Get "css/calendar.css" }}
-  {{ if $calendarCSS }}
-    <link rel="stylesheet" href="{{ ($calendarCSS | minify).RelPermalink }}">
-  {{ else }}
-    <link rel="stylesheet" href="/css/calendar.css">
+  <script defer src="/js/calendar.js"></script>
   {{ end }}
 {{ end }}

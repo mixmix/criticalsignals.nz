@@ -8,8 +8,6 @@
  * "past" and "has this event passed" judged against, not their own.
  */
 
-console.log('Calendar script loading...');
-
 // Helper function to parse dates consistently in NZST
 function parseEventDate(dateStr) {
   // Handle both "2025-06-10" and "2025-06-10T00:00:00Z" formats

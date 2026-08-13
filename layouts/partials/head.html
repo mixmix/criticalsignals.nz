@@ -86,9 +86,27 @@
     integrity="{{ $bundleJS.Data.Integrity }}" data-copy="{{ i18n "code.copy" }}" data-copied="{{ i18n "code.copied"
     }}"></script>
   {{ end }}
-  {{ if not .Site.Params.disableImageZoom | default true }}
+  {{- /* CRITICAL SIGNALS: three fixes to the theme's zoom gate.
+
+         1. The condition was `not .Site.Params.disableImageZoom | default true`,
+            which Go parses as `default true (not …)` — true whatever the param
+            says, so the flag did nothing. Parenthesised so `disableImageZoom`
+            can actually turn it off.
+         2. Added the csDesign and admin tests, so the load sites now match the
+            call sites exactly. mediumZoom() is only ever CALLED from
+            partials/footer.html: csDesign pages get design/footer.html instead
+            and never call it, and layouts/admin/baseof.html skips the footer
+            altogether (`cascade: type: admin` covers all three /_admin/ pages).
+            Between them, 35 pages were loading 9,637 B of library to invoke
+            nothing.
+         3. Added `defer`. This was the last render-blocking <script> on content
+            pages. Safe because the call site is now inside a DOMContentLoaded
+            listener, and deferred scripts all execute before that event fires —
+            without that change the inline footer call would run first and throw
+            on an undefined mediumZoom. */ -}}
+  {{ if and (not (.Site.Params.disableImageZoom | default false)) (not .Params.csDesign) (ne .Type "admin") }}
   {{ $zoomJS := resources.Get "lib/zoom/zoom.min.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script src="{{ $zoomJS.RelPermalink }}" integrity="{{ $zoomJS.Data.Integrity }}"></script>
+  <script defer src="{{ $zoomJS.RelPermalink }}" integrity="{{ $zoomJS.Data.Integrity }}"></script>
   {{ end }}
   {{/* Icons */}}
   {{ if templates.Exists "partials/favicons.html" }}

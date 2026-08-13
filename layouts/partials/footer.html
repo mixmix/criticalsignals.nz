@@ -25,11 +25,21 @@
       #site-footer{text-align:left;}
       #site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}
     </style>
+    {{- /* Same precedence fix as in head.html: the theme wrote
+           `not .Site.Params.disableImageZoom | default true`, which Go parses as
+           `default true (not …)` and is therefore true regardless of the param.
+
+           The DOMContentLoaded wrapper is what lets head.html load zoom.min.js
+           with `defer` instead of render-blocking: deferred scripts all run
+           before this event fires, whereas a bare inline call here would execute
+           during parsing and throw on an undefined mediumZoom. */ -}}
+    {{ if not (.Site.Params.disableImageZoom | default false) }}
     <script>
-      {{ if not .Site.Params.disableImageZoom | default true }}
-      mediumZoom(document.querySelectorAll("img:not(.nozoom)"), { margin: 24, background: 'rgba(0,0,0,0.5)', scrollOffset: 0 })
-      {{ end }}
+      document.addEventListener("DOMContentLoaded", function () {
+        mediumZoom(document.querySelectorAll("img:not(.nozoom)"), { margin: 24, background: 'rgba(0,0,0,0.5)', scrollOffset: 0 })
+      })
     </script>
+    {{ end }}
     {{- /* The theme's js/process.js (Firebase view/like counters) used to load
            here — render-blocking, on all 72 non-csDesign pages. Its entire body
            is wrapped in `if (typeof auth !== "undefined")`, and `auth` is only

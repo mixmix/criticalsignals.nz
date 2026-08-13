@@ -1,3 +1,23 @@
+{{- /* The calendar stylesheet. It used to be emitted from inside
+       layouts/_default/calendar.html, which puts a <link rel="stylesheet"> in
+       the middle of <body> — legal, but it means the browser discovers a
+       render-blocking stylesheet only after it has already begun laying out the
+       page, so the calendar can paint unstyled and then reflow. It also went out
+       unfingerprinted, the only asset on the site without a content hash, so it
+       had no SRI and could not be cached beyond GitHub Pages' 600s even in
+       principle.
+
+       This partial is the right home because it is called per-page and uncached,
+       so the `.Layout` test works; extend-head.html is partialCached on .Site
+       and would leak the link onto every page. Only content/calendar.md sets
+       `layout: "calendar"`. */ -}}
+{{ if eq .Layout "calendar" }}
+{{ with resources.Get "css/calendar.css" }}
+{{ $css := . | minify | resources.Fingerprint (site.Params.fingerprintAlgorithm | default "sha512") }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" />
+{{ end }}
+{{ end }}
+
 {{/* Analytics only in production — `hugo server` and any non-production
      build (hugo.Environment != "production") emit no mixpanel snippet, so
      local browsing never pollutes the real project's events. */}}
