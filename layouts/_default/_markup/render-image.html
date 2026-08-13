@@ -17,24 +17,30 @@
        actual pixels and costing everybody's bytes. 1040w covers DPR 2 exactly
        (513 x 2 = 1026), which is what retina laptops and most phones are.
 
-       ZOOM TARGET. data-zoom-src used to be the untouched original, so
-       /installations/ alone had 6,278,019 B reachable by click (sam.jpeg
-       2,391,559 B, tanya_ruka1.jpg 2,009,181 B). 1600px webp is generous for a
-       lightbox that fits the image inside the viewport. `src` points at the
-       same capped rendition so the no-srcset fallback path stops shipping
-       originals too. Images narrower than the cap are passed through by the
-       `cond` rather than upscaled. */ -}}
+       NO ZOOM TARGET. There used to be a data-zoom-src here, pointing at a
+       1600px webp for medium-zoom to swap in on click. medium-zoom is gone (see
+       partials/head.html), so the attribute had no reader and the 1600px
+       rendition it named was encoded into the build for nobody — it was never
+       referenced by srcset, only by the lightbox.
+
+       `src` now points at the top of the ladder rather than at that dropped
+       1600px cap. src is only ever fetched by a browser with no srcset support,
+       so reusing 1040w costs nothing and means the widest rendition we generate
+       is one a real layout can actually ask for. Do NOT restore the original
+       here: before the cap existed, `src` was the untouched source and
+       /installations/ alone put 6,278,019 B on the fallback path (sam.jpeg
+       2,391,559 B, tanya_ruka1.jpg 2,009,181 B). */ -}}
 {{ define "RenderImageSimple" -}}
   <img class="my-0 rounded-md" loading="lazy" alt="{{ .alt }}" src="{{ .src }}">
 {{- end }}
 
 {{ define "RenderImageResponsive" -}}
-  {{- /* Always re-encode as webp, and cap the width at 1600 without ever
-         upscaling. Passing narrow sources straight through was leaving real
-         weight on the table: sensing-the-quary.jpg is 1024x1180, so it sat under
-         the cap and shipped as a 258,480 B JPEG. */ -}}
-  {{- $zoomWidth := cond (gt .resource.Width 1600) 1600 .resource.Width -}}
-  {{- $zoom := .resource.Resize (printf "%dx webp" $zoomWidth) -}}
+  {{- /* Always re-encode as webp. Hugo's Resize never upscales, so a source
+         narrower than a rung is passed through at its own width rather than
+         blown up, and re-encoding still earns its keep on those:
+         sensing-the-quary.jpg is 1024x1180, under the old cap, and shipped as a
+         258,480 B JPEG until it was forced through webp. */ -}}
+  {{- $w1040 := .resource.Resize "1040x webp" -}}
   <img
     class="my-0 rounded-md"
     loading="lazy"
@@ -45,10 +51,9 @@
     srcset="
       {{ (.resource.Resize "330x webp").RelPermalink }}  330w,
       {{ (.resource.Resize "660x webp").RelPermalink }}  660w,
-      {{ (.resource.Resize "1040x webp").RelPermalink }} 1040w
+      {{ $w1040.RelPermalink }} 1040w
     "
-    data-zoom-src="{{ $zoom.RelPermalink }}"
-    src="{{ $zoom.RelPermalink }}">
+    src="{{ $w1040.RelPermalink }}">
 {{- end }}
 
 {{ define "RenderImageCaption" -}}

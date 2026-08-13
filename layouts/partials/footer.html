@@ -4,30 +4,32 @@
 {{- if .Params.csDesign -}}
   {{ partial "design/footer.html" . }}
 {{- else -}}
-  <footer id="site-footer" class="py-10 print:hidden text-sm text-neutral-500 dark:text-neutral-400">
+  {{- /* CRITICAL SIGNALS: was `py-10 print:hidden text-sm text-neutral-500
+         dark:text-neutral-400`, with `hover:underline` on the link.
+
+         This footer is emitted on every page that is not csDesign — which
+         includes the 62 people bios, and those no longer load the theme's
+         stylesheet (see partials/design/own-shell.html). Those five utilities
+         were the only theme CSS left on a bio, and without it the footer lost
+         its padding, its size and its grey.
+
+         So they move to custom.css beside the #site-footer rules that were
+         already there, and the markup carries our own names. Same rendering,
+         and it now works under either bundle. The dark: variant is gone with
+         dark mode. */ -}}
+  <footer id="site-footer" class="site-footer">
     <p class="site-footer__line">&copy; {{ now.Format "2006" }} Critical Signals. Wellington, Aotearoa New Zealand.</p>
     <p class="site-footer__line">This site is served from donated e-waste in a cupboard at
-      <a class="hover:underline" href="https://www.twofiftyseven.co/">two/fiftyseven</a>.</p>
+      <a class="site-footer__link" href="https://www.twofiftyseven.co/">two/fiftyseven</a>.</p>
     {{- /* The #site-footer rules moved to assets/css/custom.css. Unlike the
            style blocks in the article-meta partials, this one is unconditional —
            it shipped identically on all 72 non-csDesign pages, 23,400 B of
            byte-identical CSS across the build, re-sent per page instead of
            fetched once. In the bundle it is cached for the whole site. */ -}}
-    {{- /* Same precedence fix as in head.html: the theme wrote
-           `not .Site.Params.disableImageZoom | default true`, which Go parses as
-           `default true (not …)` and is therefore true regardless of the param.
-
-           The DOMContentLoaded wrapper is what lets head.html load zoom.min.js
-           with `defer` instead of render-blocking: deferred scripts all run
-           before this event fires, whereas a bare inline call here would execute
-           during parsing and throw on an undefined mediumZoom. */ -}}
-    {{ if not (.Site.Params.disableImageZoom | default false) }}
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        mediumZoom(document.querySelectorAll("img:not(.nozoom)"), { margin: 24, background: 'rgba(0,0,0,0.5)', scrollOffset: 0 })
-      })
-    </script>
-    {{ end }}
+    {{- /* The theme's mediumZoom() call used to sit here, inside a
+           DOMContentLoaded listener, binding `img:not(.nozoom)`. Removed along
+           with its <script> load in partials/head.html — see the note there for
+           why (it lightboxed the site logo on 71 of the 72 pages it ran on). */ -}}
     {{- /* The theme's js/process.js (Firebase view/like counters) used to load
            here — render-blocking, on all 72 non-csDesign pages. Its entire body
            is wrapped in `if (typeof auth !== "undefined")`, and `auth` is only

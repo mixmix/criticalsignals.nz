@@ -1,0 +1,103 @@
+{{- /* CRITICAL SIGNALS: overrides themes/blowfish/layouts/_default/baseof.html.
+
+       Why this file exists: to let the 90 pages laid out by this site's own
+       design system stop downloading Blowfish's Tailwind stylesheet.
+
+       The theme's shell is where nearly all of the Tailwind on a marketing page
+       came from. Its <body> carries a dozen utilities, the skip link and the
+       scroll-to-top button carry two dozen more, and the wrapper divs a handful
+       — and that was the whole list. Measured across all 90: eleven elements,
+       about fifty distinct utilities, all of them emitted from this template or
+       partials/scroll-to-top.html. Nothing in the site's own partials needed the
+       theme's CSS at all.
+
+       So rather than shipping a 94 KB stylesheet to style eleven elements, those
+       pages now get a shell classed with our own names, styled in custom.css
+       under "MARKETING SHELL", and head.html skips the theme stylesheet for
+       them entirely.
+
+       `$lean` comes from partials/design/own-shell.html, which is the single
+       gate shared by this template, scroll-to-top.html, head.html and the
+       heading render hook — see that file for why it is not simply
+       `.Params.csDesign`. Verified page by page that it is true for precisely
+       the 90 pages that render `.cs-hero`. Pages where it is false — the people listing,
+       installations, mission-statement, sign, the taxonomy pages, 404 and the
+       three admin pages — still get the theme's shell and its stylesheet, byte
+       for byte as before, because they are still laid out by theme templates.
+
+       The class strings are hoisted into variables at the top rather than
+       inlined as `{{ if }}` in each attribute, so the document structure below
+       stays readable as HTML and the two shells can be compared side by side.
+
+       Differences from the theme's original, for the non-lean branch:
+         - `data-default-appearance` / `data-auto-appearance` are gone; nothing
+           reads them since dark mode was removed.
+         - the `dark:`, `rtl:` and `scrollbar-*` classes are gone from <body>,
+           the skip link and the footer's span. Their rules were pruned in
+           design/theme-css.html and they are inert markup — no dark mode, and
+           `rtl = false`. Dropping them keeps the HTML honest about what can
+           actually apply.
+       Everything else about that branch is the theme's markup unchanged, so the
+       17 theme-laid-out pages render identically. */ -}}
+
+{{- $lean := partial "design/own-shell.html" . -}}
+
+{{- /* body: the theme's is a centred, screen-height flex column. Note that on
+       marketing pages custom.css already overrode almost all of it via
+       `body:has(.cs-hero)` — block flow, no max-width, no padding — so the lean
+       body class is not a new design, it is the design that was already winning,
+       now stated directly instead of by override. */ -}}
+{{- $bodyClass := cond $lean
+      "cs-body"
+      "flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 sm:px-14 md:px-24 lg:px-32" -}}
+{{- /* The wrapper's `relative` is load-bearing on both branches: it is the
+       positioning context for #top-scroller, which is absolutely positioned. */ -}}
+{{- $shellClass := cond $lean "cs-shell" "relative flex flex-col grow" -}}
+{{- $mainClass := cond $lean "cs-main" "grow" -}}
+{{- $skipWrapClass := cond $lean "cs-skip" "absolute flex self-center" -}}
+{{- $skipLinkClass := cond $lean "cs-skip__link" "px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0" -}}
+{{- $skipArrowClass := cond $lean "cs-skip__arrow" "font-bold text-primary-600 ltr:pr-2" -}}
+
+<!doctype html>
+<html
+  lang="{{ with .Site.Params.isoCode | default (.Site.Language.Locale | default "en") }}{{- . -}}{{ end }}"
+  {{- /* dir is load-bearing for the theme's `ltr:` utilities, which compile to
+         `:where(:dir(ltr), [dir=ltr], [dir=ltr] *)`. Kept on both branches: the
+         lean pages have no such utilities, but it is still correct HTML. */ -}}
+  {{- /* `scroll-smooth` is the theme's utility for `scroll-behavior:smooth`.
+         custom.css sets that on the bare `html` element for every page anyway,
+         so on lean pages the class would be an unstyled leftover naming a rule
+         that is already applied. Kept only where the theme's stylesheet defines
+         it. */ -}}
+  {{ if not $lean }}class="scroll-smooth"{{ end }}>
+  {{- partial "head.html" . -}}
+  <body class="{{ $bodyClass }}">
+    <div id="the-top" class="{{ $skipWrapClass }}">
+      <a class="{{ $skipLinkClass }}" href="#main-content"
+        ><span class="{{ $skipArrowClass }}" aria-hidden="true">&darr;</span>{{ i18n "nav.skip_to_main" }}</a
+      >
+    </div>
+    {{ $header := print "header/" .Site.Params.header.layout ".html" }}
+    {{ if templates.Exists (printf "partials/%s" $header) }}
+      {{ partial $header . }}
+    {{ else }}
+      {{ partial "header/basic.html" . }}
+    {{ end }}
+    <div class="{{ $shellClass }}">
+      <main id="main-content" class="{{ $mainClass }}">
+        {{ block "main" . }}{{ end }}
+        {{ if and (.Site.Params.footer.showScrollToTop | default true) (gt .WordCount 1) }}
+          {{- partial "scroll-to-top.html" . -}}
+        {{ end }}
+      </main>
+      {{- partial "footer.html" . -}}
+      {{ if .Site.Params.enableSearch | default false }}
+        {{- partial "search.html" . -}}
+      {{ end }}
+    </div>
+  </body>
+  {{- /* The theme's Buy-me-a-coffee global widget block used to sit here. It is
+         gated on .Site.Params.buymeacoffee.globalWidget, and params.toml sets
+         `buymeacoffee = { }`, so it could never render. Dropped rather than
+         carried; restore from the theme's baseof if that ever gets configured. */ -}}
+</html>

@@ -1,0 +1,38 @@
+{{- /* CRITICAL SIGNALS: overrides themes/blowfish/layouts/partials/scroll-to-top.html.
+
+       Same reason as layouts/_default/baseof.html: this partial was the other
+       source of Tailwind utilities on the site's own pages. The theme's version
+       puts fifteen of them on two elements — the tall invisible rail that parks
+       the button, and the round sticky button itself.
+
+       On own-shell pages those become two of our own class names, styled in
+       custom.css under "MARKETING SHELL". Everything else — the ids, the sticky
+       positioning trick, the aria-label — is the theme's behaviour kept intact,
+       because #the-top is the anchor target emitted by baseof and #top-scroller
+       is what appearance.js hides when it would overlap the footer.
+
+       Theme-laid-out pages get the theme's markup unchanged (minus the inert
+       `dark:` and `rtl:` classes, whose rules design/theme-css.html prunes), so
+       the 17 theme-laid-out pages are unaffected. */ -}}
+
+{{- if partial "design/own-shell.html" . -}}
+  <div id="top-scroller" class="cs-totop">
+    <a
+      href="#the-top"
+      class="cs-totop__btn"
+      aria-label="{{ i18n "nav.scroll_to_top_title" }}"
+      title="{{ i18n "nav.scroll_to_top_title" }}">
+      &uarr;
+    </a>
+  </div>
+{{- else -}}
+  <div id="top-scroller" class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0">
+    <a
+      href="#the-top"
+      class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 hover:text-primary-600"
+      aria-label="{{ i18n "nav.scroll_to_top_title" }}"
+      title="{{ i18n "nav.scroll_to_top_title" }}">
+      &uarr;
+    </a>
+  </div>
+{{- end -}}

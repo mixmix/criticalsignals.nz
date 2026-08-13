@@ -38,22 +38,210 @@ html{font-family:var(--cs-sans);scroll-behavior:smooth;}
 #signup{scroll-margin-top:calc(var(--navh) + 20px);}
 
 /* ============================================================================
-   MARKETING PAGES — full bleed
-   The Blowfish <body> is normally a centred, padded max-w-7xl column. Any page
-   whose main content includes a `.cs-hero` opts out of that so the hero photo,
-   sticky bar and footer can run edge to edge.
+   MARKETING SHELL — the document frame for csDesign pages
+   These pages no longer load Blowfish's Tailwind stylesheet at all (see
+   layouts/_default/baseof.html), so everything the theme's shell used to
+   provide has to be stated here: the reset that Tailwind's preflight was
+   doing, the <body>, and the three small components baseof and
+   scroll-to-top.html emit.
+
+   Scoped to `.cs-body` — the class the lean shell puts on <body> — so nothing
+   in here can reach the 17 pages still laid out by theme templates, which
+   still get preflight from the theme stylesheet as before.
+
+   RESET. This is Tailwind preflight, narrowed to the elements these pages
+   actually contain (checked against the built output: a, span, div, img, li, p,
+   br, button, section, ul, svg, h1-h4, article, nav, main, aside, footer, form,
+   input, strong, em, table/tr/td/th, details/summary, blockquote). It is not a
+   general-purpose reset and should not be treated as one — if a new element
+   shows up in a marketing template, check it here first.
+
+   The two that matter most, because dropping them changes visible rendering
+   rather than just spacing:
+     - `a{text-decoration:none}`. Without it every link sprouts the UA underline.
+     - `ul,ol{list-style:none}`. Without it bullets appear on the nav, the menu
+       overlay and the programme lists.
+
+   IT IS IN `@layer base`, AND THAT IS LOAD-BEARING.
+
+   Tailwind puts preflight in a layer, and unlayered author rules beat layered
+   ones no matter how weak their selectors are. That is the only reason a rule
+   like `:where(.col) a{text-decoration:underline}` further down this file —
+   specificity (0,0,1), about as weak as a rule can be — was able to underline
+   the programme links on a bio page while preflight's `a { … }` sat there
+   saying otherwise.
+
+   Written unlayered, the reset below wins on specificity ((0,1,0) beats
+   (0,0,1)) and silently strips those underlines site-wide. Caught by measuring
+   getComputedStyle on a bio before and after: `underline` became `none`. The
+   layer restores the original relationship — this is a floor, and every rule in
+   the rest of the file overrides it.
    ============================================================================ */
-body:has(.cs-hero){
-  /* Blowfish's <body> is a flex column with a fixed screen height; that shrinks
-     the sticky white nav strip to 0 and breaks the hero/wordmark overlap.
-     Marketing pages need plain block flow (as the original design assumed). */
+@layer base {
+  /* `.cs-body` itself, not just its descendants: preflight's `*` matches the
+     body element too, and leaving it out computed body as content-box where it
+     had been border-box. */
+  .cs-body,
+  .cs-body *,
+  .cs-body *::before,
+  .cs-body *::after{box-sizing:border-box;}
+  .cs-body :where(blockquote,dl,dd,figure,fieldset,hr,pre){margin:0;}
+  .cs-body :where(ul,ol){list-style:none;margin:0;padding:0;}
+  .cs-body :where(a){text-decoration:none;}
+  /* Preflight makes replaced elements block so they do not sit on the text
+     baseline and leave a phantom descender gap under every image. */
+  .cs-body :where(img,svg,video,canvas,iframe){display:block;vertical-align:middle;}
+  .cs-body :where(img,video){max-width:100%;height:auto;}
+  /* Buttons: the design's own (.menu-burger, .cta, .lightbox__nav) each set
+     these too, but the bare-element reset is what keeps a UA's grey chrome from
+     showing through on anything that does not. */
+  /* No `text-align:inherit` here, tempting as it looks: preflight does not set
+     it, so buttons keep the UA's `text-align:center`. Adding it silently
+     left-aligned the burger and the menu overlay's close button. */
+  .cs-body :where(button){
+    appearance:none;background:none;border:0;padding:0;margin:0;
+    font:inherit;color:inherit;cursor:pointer;
+  }
+  .cs-body :where(input,textarea,select){font:inherit;color:inherit;margin:0;}
+  .cs-body :where(table){border-collapse:collapse;text-indent:0;border-color:inherit;}
+  .cs-body :where(summary){display:list-item;cursor:pointer;}
+  /* Preflight normalises the UA's monospace stack and its 0.8em shrink. */
+  .cs-body :where(code,kbd,samp,pre){font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1em;}
+}
+
+/* Deliberately OUTSIDE the layer above, unlike the rest of the reset.
+
+   This is not preflight — it is the old `body:has(.cs-hero) img{max-width:100%}`
+   from this file, which was unlayered and at specificity (0,1,1) beat component
+   rules like `.person__photo{max-width:600px}` (0,1,0). Folding it into the
+   layer handed those components the win instead, and the bio portrait jumped
+   from `max-width:100%` to `600px`. Keeping it unlayered preserves the
+   relationship it always had. */
+.cs-body img{max-width:100%;}
+
+/* ---- <body> --------------------------------------------------------------
+   Formerly `body:has(.cs-hero)`, which existed to OVERRIDE the theme's
+   centred screen-height flex column. With the theme's classes gone from the
+   lean shell there is nothing left to override, so these are now simply the
+   rules — same declarations, stated positively.
+
+   Kept as `.cs-body` rather than `body` because the 17 theme-laid-out pages
+   share this stylesheet and must keep the theme's body layout. */
+.cs-body{
   display:block;height:auto;min-height:100vh;
   max-width:none;padding:0;margin:0;
   background:var(--white);color:var(--ink);
   font-size:clamp(20px,1.45vw,26px);line-height:1.42;letter-spacing:0;
 }
-body:has(.cs-hero) *{box-sizing:border-box;}
-body:has(.cs-hero) img{max-width:100%;}
+
+/* ---- shell components ----------------------------------------------------
+   The three things baseof.html and scroll-to-top.html emit around the page
+   content. Each replaces a run of theme utilities; the Tailwind equivalent is
+   named in a comment so the two can be checked against each other, and the
+   lengths are Tailwind's own scale (0.25rem per step, root-relative) so they
+   match what these pages rendered before.
+
+   Colours come from the scheme file (assets/css/schemes/crit-sigs.css), which
+   these pages DO still load — it is separate from the theme's stylesheet. That
+   keeps the skip link and the to-top button following the palette rather than
+   freezing hex values that would silently drift out of step with it. */
+
+/* .cs-shell — was `relative flex flex-col grow`.
+
+   `relative` is the positioning context for the absolutely-positioned
+   #top-scroller below, and the flex pair is kept because it is NOT inert: the
+   assumption that a block container would stack main and footer identically was
+   wrong, and measuring caught it — dropping them made the shell 60px taller,
+   because a block container lets the footer's child margins collapse through it
+   where a flex container does not.
+
+   `grow` really is dropped: it needed the theme's flex <body>, which
+   `body:has(.cs-hero)` had already turned into block flow long before this. */
+.cs-shell{position:relative;display:flex;flex-direction:column;}
+
+/* .cs-main — was `grow`, which likewise needed the flex body. Nothing to do,
+   but the class stays as the hook `#main-content` styling would attach to. */
+
+/* .cs-skip — the keyboard skip link. Was `absolute flex self-center` on the
+   wrapper and `px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200
+   focus:translate-y-0` on the link: parked one notch above the top edge, and
+   sliding down into view only when focused.
+
+   `self-center` centred it because the theme's body was a flex container; with
+   block flow that does nothing, so the centring is explicit here. */
+.cs-skip{
+  position:absolute;left:50%;transform:translateX(-50%);
+  z-index:100;display:flex;
+}
+.cs-skip__link{
+  display:inline-block;
+  padding:0.25rem 0.75rem;
+  font-size:0.875rem;line-height:1.25rem;
+  border-bottom-left-radius:0.5rem;border-bottom-right-radius:0.5rem;
+  background:rgba(var(--color-primary-200),1);color:var(--ink);
+  transform:translateY(-2rem);
+}
+/* :focus-visible as well as :focus — the theme used the blunt `focus:` variant,
+   but this only ever needs to appear for keyboard users. */
+.cs-skip__link:focus,
+.cs-skip__link:focus-visible{transform:translateY(0);}
+.cs-skip__arrow{font-weight:700;color:rgba(var(--color-primary-600),1);padding-right:0.5rem;}
+
+/* .cs-totop — the round back-to-top button. The rail is a tall invisible strip
+   starting one viewport down (`top-[110vh] bottom-0 w-12 right-0`), inside
+   which the button is `sticky` at `calc(100vh - 5.5rem)`. That is the theme's
+   trick for "appear only after the first screen, then follow the scroll", and
+   it is reproduced rather than redesigned.
+
+   The pointer-events pair matters: the rail spans most of the document height
+   and would otherwise swallow clicks meant for the content behind it. */
+.cs-totop{
+  position:absolute;top:110vh;bottom:0;right:0;width:3rem;
+  pointer-events:none;
+}
+.cs-totop__btn{
+  position:sticky;top:calc(100vh - 5.5rem);
+  display:flex;align-items:center;justify-content:center;
+  width:3rem;height:3rem;margin-bottom:4rem;
+  border-radius:9999px;
+  background:rgba(var(--color-neutral),0.5);
+  /* NOT the theme's `text-neutral-700`. That utility was a class, so it lost to
+     the unlayered `:where(body:has(.cs-hero)) a{color:var(--ink)}` further down
+     this file, and the arrow rendered at --ink rather than neutral-700.
+     Reproducing the utility literally would have been a change (#111 -> #333),
+     so this states what actually rendered. */
+  color:var(--ink);
+  font-size:1.25rem;line-height:1.75rem;
+  pointer-events:auto;
+}
+.cs-totop__btn:hover{color:rgba(var(--color-primary-600),1);}
+
+/* Two Tailwind names the site's OWN templates use (layouts/page/single.html,
+   people/single.html, programme/single.html, partials/home/custom.html), so
+   they have to keep working without the theme's stylesheet. Defined globally
+   rather than under .cs-body: `sr-only` is also emitted on theme-laid-out
+   pages, where a second identical definition is harmless. */
+/* Markdown headings on csDesign pages carry their own anchor id (see
+   layouts/_default/_markup/render-heading.html), so a link to #some-heading
+   must clear the sticky nav rather than scrolling the heading underneath it —
+   the same offset #signup already uses. */
+.cs-heading{scroll-margin-top:calc(var(--navh) + 20px);}
+
+/* `.hidden` keeps the calendar's #listView collapsed. It is the one place the
+   site's own markup relies on a Tailwind utility for BEHAVIOUR rather than
+   looks, so losing it does not shift a layout, it reveals a hidden element —
+   an empty "Upcoming Events" heading on /calendar/. (Nothing currently
+   un-hides it: the comment on that div says calendar.js drives it on small
+   screens, but no script references #listView any more. Defined here to keep
+   the page rendering exactly as it did; whether the block should still exist
+   at all is a separate question for layouts/_default/calendar.html.) */
+.hidden{display:none;}
+
+.grid{display:grid;}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip-path:inset(50%);white-space:nowrap;border-width:0;
+}
 /* base link colour at zero-ish specificity so component classes (.cta, .menubar a…) win */
 :where(body:has(.cs-hero)) a{color:var(--ink);}
 /* uniform type on marketing pages: everything body size; only bold + caps differ */
@@ -1079,6 +1267,19 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
 }
 #site-footer{text-align:left;}
 #site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}
+/* Formerly the Tailwind utilities `py-10 text-sm text-neutral-500` on the
+   <footer> and `hover:underline` on its link. Moved here when the people bios
+   stopped loading the theme's stylesheet — they still render this footer, so
+   these had to come from a sheet they actually receive. Values are Tailwind's,
+   so the rendering is unchanged on both bundles. */
+#site-footer{
+  padding-top:2.5rem;padding-bottom:2.5rem;
+  font-size:0.875rem;line-height:1.25rem;
+  color:rgba(var(--color-neutral-500),1);
+}
+#site-footer .site-footer__link:hover{text-decoration:underline;}
+/* was `print:hidden` */
+@media print{#site-footer{display:none;}}
 
 /* ----------------------------------------------------------------------------
    .min-h-screen — used at layouts/admin/baseof.html:11 but absent from the

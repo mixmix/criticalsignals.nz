@@ -1,0 +1,40 @@
+{{- /* Does this page use the site's own document shell?
+
+       True for the 90 pages laid out by this site's templates — the ones that
+       render `.cs-hero` — and false for the 17 still laid out by Blowfish. It is
+       the single gate behind:
+
+         layouts/_default/baseof.html          which shell markup to emit
+         layouts/partials/scroll-to-top.html   which button markup to emit
+         layouts/partials/head.html            whether to send the theme stylesheet
+         layouts/_default/_markup/render-heading.html   plain vs theme headings
+
+       They must all agree: emitting the lean shell while still linking the theme
+       stylesheet just wastes bytes, and the reverse renders unstyled markup.
+
+       WHY THIS IS NOT SIMPLY `.Params.csDesign`
+
+       csDesign very nearly answers the question, but it already means something
+       else as well: partials/footer.html uses it to pick the full design footer
+       over the theme's small print. The 62 people bios are laid out entirely by
+       layouts/people/single.html — own hero, own imgspot, `.cs-hero` and all —
+       yet they are not flagged csDesign, and so they get the theme's footer.
+
+       Setting csDesign on them to gate the stylesheet therefore ALSO swapped
+       their footer, on all 62 pages. That is a visible design change, and a
+       performance change has no business making it, so the two meanings are
+       separated here rather than conflated:
+
+         csDesign   unchanged — "gets the full design footer, and the rest of the
+                    csDesign behaviour that already keys off it"
+         csShell    "is laid out by our templates, so needs no theme CSS"
+
+       Every csDesign page is also a csShell page; the bios are csShell without
+       being csDesign. Whether they SHOULD also be csDesign — i.e. whether the
+       theme footer on a fully site-designed bio was ever intended — is a real
+       question, but it is a design decision, not this one.
+
+       Verified page by page that this returns true for exactly the 90 pages
+       that render `.cs-hero`, and false for exactly the other 17. */ -}}
+
+{{- return (or .Params.csDesign .Params.csShell) -}}

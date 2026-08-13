@@ -1,0 +1,37 @@
+{{- /* CRITICAL SIGNALS: overrides themes/blowfish/layouts/_default/_markup/render-heading.html.
+
+       The theme's hook wraps every markdown heading in `relative group` and hangs
+       a hover-revealed `#` link off it with eight more Tailwind utilities. That
+       is fine on the pages Blowfish lays out, but own-shell pages no longer load
+       the theme's stylesheet, so there it rendered as an always-visible stray
+       `#` floating beside the heading with none of its positioning applied.
+
+       Found by scripts/css-coverage.mjs, not by looking: only markdown headings
+       trigger it, so it showed up on exactly one programme event page. That is
+       the whole argument for the harness.
+
+       For own-shell pages this emits a plain heading. The anchor id moves onto
+       the heading element itself rather than sitting on a nested empty <div>,
+       which is where it belongs anyway — `#some-heading` resolves the same, and
+       it gives the sticky nav something to apply scroll-margin-top to (see
+       custom.css). The hover-# affordance is dropped rather than restyled: these
+       pages have no table of contents to pair it with, and the design's headings
+       are uniform body-size text where a hanging marker would read as a mistake.
+
+       Theme-laid-out pages get the theme's markup verbatim, minus the `dark:`
+       class whose rule is pruned. */ -}}
+
+{{- $anchor := anchorize .Anchor -}}
+{{- if partial "design/own-shell.html" .Page -}}
+  <h{{ .Level }} id="{{ $anchor }}" class="cs-heading">{{ .Text | safeHTML }}</h{{ .Level }}>
+{{- else -}}
+  <h{{ .Level }} class="relative group">{{ .Text | safeHTML }}
+    <div id="{{ $anchor }}" class="anchor"></div>
+    {{ if .Page.Params.showHeadingAnchors | default (.Page.Site.Params.article.showHeadingAnchors | default true) }}
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 !no-underline" href="#{{ $anchor }}" aria-label="{{ i18n "article.anchor_label" }}">#</a>
+    </span>
+    {{ end }}
+  </h{{ .Level }}>
+{{- end -}}
