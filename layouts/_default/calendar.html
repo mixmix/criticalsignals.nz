@@ -4,7 +4,7 @@
        the events-data JSON emitted below. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero cal-hero">
-    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
+    {{ partial "design/hero-bg.html" . }}
     {{ partial "design/wordmark.html" . }}
 
     <div class="cal-box">

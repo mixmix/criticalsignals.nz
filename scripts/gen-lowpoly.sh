@@ -3,7 +3,7 @@
 # gen-lowpoly.sh — (re)generate the low-poly SVG placeholders for the site's
 # background photos, used as instant LQIP previews while the full photo loads.
 #
-# For each static/images/backgrounds/NN.webp it runs fogleman/primitive several
+# For each assets/images/backgrounds/NN.webp it runs fogleman/primitive several
 # times (it's stochastic), keeps the closest match by RMSE, then compresses the
 # winner with SVGO — writing static/images/backgrounds/lowpoly/NN.svg.
 #
@@ -26,8 +26,13 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-SRC="$ROOT/static/images/backgrounds"
-OUT="$SRC/lowpoly"
+# The 1920x1080 masters live in assets/ so Hugo can build the responsive width
+# ladder from them. The low-poly placeholders stay in static/: they are read at
+# build time by layouts/partials/design/lowpoly-css.html (which inlines them into
+# the CSS bundle as custom properties) and served verbatim as design.js's
+# fallback, so they need a stable public path and no processing.
+SRC="$ROOT/assets/images/backgrounds"
+OUT="$ROOT/static/images/backgrounds/lowpoly"
 
 N="${LOWPOLY_N:-100}"
 ITERS="${LOWPOLY_ITERS:-20}"

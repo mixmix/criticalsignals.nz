@@ -4,7 +4,7 @@
 {{ define "main" }}
   {{ .Scratch.Set "scope" "single" }}
   <section class="hero hero--inner cs-hero">
-    <div class="hero__bg"><img class="hero__photo" alt="" data-img-spot></div>
+    {{ partial "design/hero-bg.html" . }}
     {{ partial "design/wordmark.html" . }}
     <div class="grid">
       <div class="col">

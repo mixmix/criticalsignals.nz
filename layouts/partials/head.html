@@ -45,6 +45,17 @@
   {{ if $cssCustom }}
   {{ $assets.Add "css" (slice $cssCustom) }}
   {{ end }}
+  {{- /* CRITICAL SIGNALS: the ten background low-poly placeholders, as :root
+         custom properties, plus the rules that paint the picked one. Rides in
+         the render-blocking bundle deliberately, so a placeholder is on screen
+         at first paint rather than waiting for the deferred design.js. Replaces
+         a 75 KB inline <script> that was re-sent in every page's HTML — see
+         design/lowpoly-css.html for the full rationale. */ -}}
+  {{ $assets.Add "css" (slice (partial "design/lowpoly-css.html" .)) }}
+  {{ $assets.Add "css" (slice (partial "design/lowpoly-paint.html" .)) }}
+  {{- /* Responsive srcset ladders for the ten background photos, so a phone
+         fetches a ~640px rendition instead of the 1920x1080 master. */ -}}
+  {{ $assets.Add "css" (slice (partial "design/backgrounds-css.html" .)) }}
   {{ $bundleCSS := $assets.Get "css" | resources.Concat "css/main.bundle.css" | resources.Minify | resources.Fingerprint
   (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <link type="text/css" rel="stylesheet" href="{{ $bundleCSS.RelPermalink }}"

@@ -31,6 +31,15 @@ enableEmoji = true
 
 [imaging]
   anchor = 'Center'
+  # Hugo's default resampleFilter is Box, the cheapest and softest option. Nearly
+  # every image on this site is downscaled hard — people photos go from ~2880px
+  # or 3812px wide down to 600, and the background masters from 1920 to 640 — and
+  # at those ratios Box visibly smears detail. CatmullRom is sharp without the
+  # ringing Lanczos can add on high-contrast edges, and costs only build time.
+  resampleFilter = 'CatmullRom'
+  # Default is 75. These are photographs shown large, and the sharper resampler
+  # above means 80 lands closer to the original than 75 did before.
+  quality = 80
 
 [taxonomies]
   tag = "tags"

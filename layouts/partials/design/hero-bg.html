@@ -1,0 +1,33 @@
+{{- /* The hero background: a randomised full-bleed photo with a low-poly
+       placeholder that assembles out of its own facets while the photo loads.
+
+       Replaces the bare `<div class="hero__bg"><img class="hero__photo" alt=""
+       data-img-spot></div>` that was repeated across seven templates.
+
+       Three things live here and each one matters for how fast the hero appears:
+
+       1. The wrapper (.imgspot) is emitted HERE rather than created by design.js
+          at runtime. That gives CSS a stable element to paint, so the placeholder
+          is on screen at first paint instead of waiting for a deferred script,
+          and it removes a DOM mutation that used to reflow the hero after load.
+          design.js §2's parallax still finds it as `.hero__photo`'s
+          parentElement, unchanged.
+
+       2. The inline script injects the picked low-poly SVG into the holder. This
+          is the one thing CSS cannot do: the facets have to be real nodes for
+          :nth-child to address them, and an SVG referenced from CSS renders in
+          "secure static mode" where its own animation never runs. Being inline
+          and in the body, it executes during parse — so the facets exist for
+          first paint. It reads --lp, which the render-blocking stylesheet has
+          already resolved, so there is nothing to wait on. Everything after this
+          (the staggered build-in) is pure CSS animation-delay; see
+          design/lowpoly-paint.html.
+
+       3. `data-img-spot="css"` tells design.js this spot's placeholder is already
+          handled, so it only loads the photo and fades it in — no wrapping, no
+          inline <svg> to build, no SVG text to decode.
+
+       Written in ES5 on purpose — see the [minify.tdewolff.js] version pin in
+       config/_default/hugo.toml. */ -}}
+
+<div class="hero__bg"><span class="imgspot"><span class="imgspot__lp" aria-hidden="true"></span><script>(function(){try{var s=document.currentScript,h=s.previousElementSibling,m="data:image/svg+xml,",v=getComputedStyle(h).getPropertyValue("--lp").trim().replace(/^url\((['"]?)(.*)\1\)$/,"$2");if(v.indexOf(m)===0){h.innerHTML=decodeURIComponent(v.slice(m.length))}}catch(e){}})()</script><img class="hero__photo" alt="" data-img-spot="css"></span></div>

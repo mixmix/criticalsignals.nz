@@ -1,0 +1,105 @@
+{{- /* Paints the picked low-poly placeholder behind the hero photo and assembles
+       it out of its own triangular facets — with all the animation in CSS and a
+       single one-line inline script doing the injection.
+
+       How the pieces fit:
+
+       1. The inline script in extend-head.html shuffles during head parse,
+          stamps `lp-h<N>` on <html>, and adds `cs-js`. That runs before the body
+          is painted, so the rules below already know which of the ten photos was
+          picked by the time anything is composited.
+       2. `.lp-h<N> .imgspot__lp` sets --lp / --lpc. Everything else reads those,
+          which is why there are only 10 per-photo rules rather than
+          10 × (rules per facet).
+       3. design/hero-bg.html emits the holder plus a tiny inline script that
+          reads --lp and injects the SVG markup into it. That has to happen in
+          JS because CSS cannot put nodes in the DOM — and the facets must BE
+          nodes for :nth-child to address them. SVG referenced from CSS is
+          rendered in "secure static mode", so a background-image cannot animate
+          its own contents (verified: the same SVG animates inline but not as a
+          background-image).
+       4. The facets then fade in in batches purely from the rules below. No
+          timer, no rAF, no per-tick class swapping — the stagger is
+          animation-delay, so the browser owns it and it cannot jank.
+
+       First paint shows the flat dominant colour (--cs-lp-cN) with the facets at
+       opacity 0, so the assembly reads as assembly. Painting the finished
+       low-poly first and then animating over it would be animating over a
+       complete image.
+
+       No-JS: nothing injects the SVG, so `html:not(.cs-js)` gets the finished
+       low-poly as a plain background instead — still never a blank box, just
+       without the build-in. */ -}}
+
+{{- $cfg := partial "design/lowpoly-config.html" . -}}
+{{- $facets := $cfg.facets -}}
+{{- $batches := $cfg.batches -}}
+{{- $step := $cfg.step -}}
+{{- $fade := $cfg.fade -}}
+{{- $per := div $facets $batches -}}
+
+{{- $r := slice -}}
+
+{{- /* Per-photo indirection, set by the head script's class. */ -}}
+{{- range $i := (seq 1 10) -}}
+  {{- $r = $r | append (printf ".lp-h%d .imgspot__lp{--lp:var(--cs-lp-%d);--lpc:var(--cs-lp-c%d)}" $i $i $i) -}}
+{{- end -}}
+
+{{- /* The holder is the photo's sibling inside .imgspot, which design.js
+       parallaxes as one unit, so the placeholder and the photo stay in lockstep. */ -}}
+{{- $r = $r | append ".imgspot{position:relative;display:block}" -}}
+
+{{- /* The hero's resting parallax transform, declared in CSS so first paint
+       already matches what design.js §2 will set.
+
+       Without this the hero visibly jumps: the wrapper now exists in the
+       template and paints at scale 1, then the deferred design.js applies
+       scale(1.14) — a 14% pop, a few hundred ms after load. (It never happened
+       before because design.js used to CREATE the wrapper and transform it in
+       the same task, so an unscaled state was never rendered.)
+
+       The resting translate is only ~3px at scroll 0, so matching the scale
+       removes effectively all of the movement.
+
+       Scoped to `.hero__bg .imgspot` on purpose: design.js parallaxes only
+       `.hero__photo` and `.imgband__photo`. `.endband__photo` gets no transform
+       at all, so scaling every .imgspot would silently enlarge it by 14%.
+
+       Mirrors design.js's own <=880px cutoff, where parallax is switched off
+       entirely and the wrap carries no transform. */ -}}
+{{- $r = $r | append ":root{--cs-photo-scale:1.14}" -}}
+{{- $r = $r | append ".hero__bg .imgspot{transform:scale(var(--cs-photo-scale))}" -}}
+{{- $r = $r | append "@media (max-width:880px){.hero__bg .imgspot{transform:none}}" -}}
+{{- $r = $r | append ".imgspot__lp{position:absolute;inset:0;overflow:hidden;background-color:var(--lpc,var(--cs-lp-c1));background-size:cover;background-position:center}" -}}
+{{- $r = $r | append ".imgspot>img{position:relative;z-index:1}" -}}
+
+{{- /* No-JS fallback: the finished placeholder as a background, no build-in. */ -}}
+{{- $r = $r | append "html:not(.cs-js) .imgspot__lp{background-image:var(--lp,var(--cs-lp-1))}" -}}
+
+{{- /* The injected SVG fills the holder. It carries viewBox +
+       preserveAspectRatio="slice" (added in lowpoly-css.html) so it covers. */ -}}
+{{- $r = $r | append ".imgspot__lp svg{position:absolute;inset:0;display:block;width:100%;height:100%}" -}}
+
+{{- /* Facets start hidden and fade in on their batch's delay. The base rect is
+       the SVG's only direct-child <path> and stays visible — it is the same
+       colour as the holder's background, so it costs nothing visually. */ -}}
+{{- $r = $r | append (printf ".imgspot__lp svg>g>path{opacity:0;animation:cs-lp-facet %dms linear forwards}" $fade) -}}
+
+{{- range $b := (seq 0 (sub $batches 1)) -}}
+  {{- $from := add (mul $b $per) 1 -}}
+  {{- $to := mul (add $b 1) $per -}}
+  {{- $delay := mul $b $step -}}
+  {{- if eq $b 0 -}}
+    {{- $r = $r | append (printf ".imgspot__lp svg>g>path:nth-child(-n+%d){animation-delay:%dms}" $to $delay) -}}
+  {{- else -}}
+    {{- $r = $r | append (printf ".imgspot__lp svg>g>path:nth-child(n+%d):nth-child(-n+%d){animation-delay:%dms}" $from $to $delay) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $r = $r | append "@keyframes cs-lp-facet{from{opacity:0}to{opacity:1}}" -}}
+
+{{- /* Reduced motion: show the finished placeholder at once rather than staging
+       it in. design.js makes the same check for its own effects. */ -}}
+{{- $r = $r | append "@media (prefers-reduced-motion:reduce){.imgspot__lp svg>g>path{animation:none;opacity:1}}" -}}
+
+{{- return resources.FromString "css/lowpoly-paint.css" (delimit $r "") -}}

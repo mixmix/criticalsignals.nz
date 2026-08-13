@@ -1,0 +1,49 @@
+{{- /* Emits a responsive srcset for each of the ten background photos as a
+       :root custom property, returned as a resource for head.html to concat
+       into the CSS bundle.
+
+       The problem this solves: gen-backgrounds.sh produces exactly one
+       1920x1080 rendition per photo (mean 400 KB, up to 764 KB), and
+       design.js assigned it to every spot regardless of viewport. A phone
+       downloaded the full 1920px file — three of them on the homepage, ~1.2 MB.
+
+       Why the URLs have to travel through CSS: Hugo's processed filenames carry
+       a content hash (01_hu_<hash>.webp), so the client cannot construct them.
+       They have to be passed in. Putting them in the CSS bundle means they are
+       fetched once for the whole site and cached, rather than re-serialised into
+       every page's HTML the way the old inline lowpoly array was.
+
+       The value is a quoted string, not a url() token, because it is a srcset
+       list rather than a single image — design.js reads it and assigns it to the
+       hero's srcset. Quoted so the commas and spaces inside cannot be mistaken
+       for CSS syntax.
+
+       The 1920 entry is the untouched master rather than a .Resize to the same
+       width: re-encoding an already-lossy webp at the same size only costs
+       quality. The smaller widths are re-encoded at q80, slightly above Hugo's
+       default 75, because these are full-bleed photographs. */ -}}
+
+{{- $widths := slice 640 960 1280 -}}
+{{- $rules := slice -}}
+{{- range $i := (seq 1 10) -}}
+  {{- $n := printf "%02d" $i -}}
+  {{- $src := resources.Get (printf "images/backgrounds/%s.webp" $n) -}}
+  {{- if $src -}}
+    {{- $entries := slice -}}
+    {{- range $w := $widths -}}
+      {{- if lt $w $src.Width -}}
+        {{- with $src.Resize (printf "%dx webp q80" $w) -}}
+          {{- $entries = $entries | append (printf "%s %dw" .RelPermalink .Width) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $entries = $entries | append (printf "%s %dw" $src.RelPermalink $src.Width) -}}
+    {{- $rules = $rules | append (printf "--cs-bg-%d:\"%s\"" $i (delimit $entries ", ")) -}}
+    {{- /* Largest rendition, used as the plain `src` fallback. */ -}}
+    {{- $rules = $rules | append (printf "--cs-bg-src-%d:\"%s\"" $i $src.RelPermalink) -}}
+  {{- else -}}
+    {{- warnf "backgrounds-css: images/backgrounds/%s.webp not found in assets/" $n -}}
+  {{- end -}}
+{{- end -}}
+{{- $css := printf ":root{%s}" (delimit $rules ";") -}}
+{{- return resources.FromString "css/backgrounds.css" $css -}}

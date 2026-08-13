@@ -6,7 +6,10 @@
 # Source images are the untouched 1920x1080 originals — we don't re-compress
 # the already-shipped files.
 #
-# Writes static/images/backgrounds/NN.webp (01..10).
+# Writes assets/images/backgrounds/NN.webp (01..10). These live in assets/ (not
+# static/) so Hugo can generate the responsive width ladder from them — see
+# layouts/partials/design/backgrounds-css.html. Only the derivatives are served;
+# these originals are the 1920x1080 masters.
 #
 # Usage:
 #   ./scripts/gen-backgrounds.sh              # all 10
@@ -23,7 +26,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-OUT="$ROOT/static/images/backgrounds"
+OUT="$ROOT/assets/images/backgrounds"
 
 QUALITY="${BG_QUALITY:-85}"
 REPO="${BG_SRC_REPO:-https://raw.githubusercontent.com/mixmix/criticalsignalsdraft/main/assets/img}"

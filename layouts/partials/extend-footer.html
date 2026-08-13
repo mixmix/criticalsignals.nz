@@ -1,7 +1,18 @@
 {{- /* Load the Critical Signals design behaviours (randomiser, parallax,
        burger, theme toggle, sign-up). */ -}}
-{{- /* Inline the low-poly SVG placeholders (marketing pages only) so the
-       randomiser can preview any photo without a request. */ -}}
-{{ if .Params.csDesign }}{{ partial "design/lowpoly-data.html" . }}{{ end }}
+{{- /* The low-poly SVG placeholders used to be inlined here as
+       window.CS_LOWPOLY — all ten, in every marketing page's HTML: 75,532 B
+       raw / 18,193 B gzip per page, 2.11 MB across the build, 47% of all the
+       HTML bytes this site shipped, to serve at most three placeholders.
+
+       They now ride in the render-blocking CSS bundle as :root custom
+       properties, so they are fetched once for the whole site and cached rather
+       than re-sent inside every document — and CSS can paint the hero's
+       placeholder at first paint instead of waiting for the deferred bundle
+       below. See design/lowpoly-css.html and design/lowpoly-paint.html.
+
+       This also fixed an asymmetry: the old block was gated on `.Params.csDesign`
+       (28 pages) while 90 pages carry `data-img-spot`, so every people bio fell
+       through to a needless network request for a ~6 KB SVG. */ -}}
 {{ $js := resources.Get "js/design.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script type="text/javascript" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

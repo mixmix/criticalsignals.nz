@@ -1,2 +1,25 @@
 {{- /* Apply the visitor's saved theme before first paint (no flash). */ -}}
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
+{{- /* Pick the randomised background photos, before first paint.
+
+       This has to happen here rather than in design.js because the low-poly
+       placeholder is painted by CSS (see design/lowpoly-paint.html), and CSS
+       can only know which of the ten photos was picked if a class is on <html>
+       by the time the body is composited. Stamping it here means the placeholder
+       is on screen at first paint; doing it in the deferred bundle would mean
+       waiting for a parse and an execute first.
+
+       design.js reads window.CS_PICKS rather than shuffling again — if it drew
+       its own order, the photo it loaded would not be the one CSS had already
+       painted a placeholder for, and you would see the wrong low-poly under the
+       wrong photo.
+
+       Cost is execution time, not network time: no request is made, and a
+       Fisher-Yates over ten items plus a className write is well under a
+       millisecond. That is the whole reason this is inline and not a file.
+       It deliberately does NOT touch getComputedStyle or the CSSOM, which would
+       make it block on the stylesheet arriving.
+
+       Written in ES5 on purpose — see the [minify.tdewolff.js] version pin in
+       config/_default/hugo.toml. */ -}}
+<script>(function(){try{var o=[],i,j,t;for(i=1;i<=10;i++){o.push(i)}for(i=o.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=o[i];o[i]=o[j];o[j]=t}window.CS_PICKS=o;document.documentElement.className+=" cs-js lp-h"+o[0]}catch(e){}})()</script>

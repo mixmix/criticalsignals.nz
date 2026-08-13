@@ -1,0 +1,58 @@
+{{- /* Emits the ten background low-poly placeholders as CSS custom properties
+       on :root, returned as a resource so head.html can concat it into
+       main.bundle.css.
+
+       Why CSS rather than an inline <script> (which is what this replaced):
+
+       The old layouts/partials/design/lowpoly-data.html inlined all ten as
+       window.CS_LOWPOLY in every marketing page's HTML — 75,532 B raw /
+       18,193 B gzip per page, 2.11 MB across the build, 47% of all the HTML
+       bytes this site shipped, to serve at most three placeholders per load.
+       Worse, it was gated on `.Params.csDesign` (28 pages) while 90 pages
+       carry `data-img-spot`, so the other 62 — every people bio — fell through
+       to design.js's fallback and made an extra network request for a ~6 KB SVG.
+
+       In the CSS bundle the data is fetched once for the whole site and cached,
+       instead of re-sent inside every document. The bundle is already
+       render-blocking in <head>, which is the point: the placeholder can be
+       painted by CSS at first paint, before design.js has even been parsed.
+       See design/lowpoly-paint.html for the rules that do that.
+
+       Why this is safe to drop into a CSS declaration unescaped:
+       svg-url-encode.html percent-encodes %, ", #, < and >, and the generated
+       SVGs contain none of ; { } , ( ) ' or \ — every character that could
+       terminate a declaration early or unbalance the url() token. Verified
+       against all ten. The url() is quoted because path data contains spaces. */ -}}
+
+{{- /* Two custom properties per background:
+         --cs-lp-N   the full low-poly SVG as a data-URI (~7.5 KB each)
+         --cs-lp-cN  its dominant colour (7 bytes each)
+
+       The colour is the fill of the SVG's first <path>, which gen-lowpoly.sh
+       always emits as a full-canvas rect (see design.js svgBaseColor, which
+       pulls the same value the same way). It is what gets painted at first
+       paint, before any of the facet blocks fade in — so the hero is never an
+       empty box, even for the instant before the first block lands. */ -}}
+
+{{- $rules := slice -}}
+{{- range $i := (seq 1 10) -}}
+  {{- $n := printf "%02d" $i -}}
+  {{- $raw := os.ReadFile (printf "static/images/backgrounds/lowpoly/%s.svg" $n) -}}
+  {{- /* gen-lowpoly.sh emits `width="1024" height="576"` and no viewBox, which is
+         fine for a CSS background but means the SVG cannot scale when inlined
+         into the DOM — without a viewBox, CSS width/height just crops it. Add
+         one, plus `slice` so it covers its box (the SVG equivalent of
+         object-fit:cover) rather than letterboxing when the hero is not 16:9.
+         Done here rather than in the generator so existing SVGs don't need
+         regenerating. */ -}}
+  {{- /* NB the ${1} braces: Go's regexp expansion reads `$1width` as a group
+         NAMED "1width", which doesn't exist and silently expands to nothing —
+         quietly corrupting the SVG into `<svg="1024"...`. */ -}}
+  {{- $raw = replaceRE `<svg([^>]*?)width="(\d+)" height="(\d+)"` `<svg${1}width="${2}" height="${3}" viewBox="0 0 ${2} ${3}" preserveAspectRatio="xMidYMid slice"` $raw 1 -}}
+  {{- $enc := partial "design/svg-url-encode.html" $raw -}}
+  {{- $rules = $rules | append (printf "--cs-lp-%d:url(\"data:image/svg+xml,%s\")" $i $enc) -}}
+  {{- $colour := replaceRE `(?s)^.*?<path fill="(#[0-9a-fA-F]{3,8})".*$` "$1" $raw -}}
+  {{- $rules = $rules | append (printf "--cs-lp-c%d:%s" $i $colour) -}}
+{{- end -}}
+{{- $css := printf ":root{%s}" (delimit $rules ";") -}}
+{{- return resources.FromString "css/lowpoly.css" $css -}}

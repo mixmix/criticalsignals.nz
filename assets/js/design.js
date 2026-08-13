@@ -120,57 +120,108 @@ function svgBaseColor(svgText) {
   // assigns one, so a hardcoded src there would just be a wasted fetch of a
   // photo that gets immediately replaced.
   const MIN_PLACEHOLDER_MS = 400;
-  // Low-poly placeholders are inlined as URL-encoded data-URIs (window.CS_LOWPOLY,
-  // see design/lowpoly-data.html) so previewing any photo needs no request;
-  // fall back to the on-disk SVG if the inline array is somehow absent.
-  const inline = window.CS_LOWPOLY || [];
+  // Low-poly placeholders live in the CSS bundle as :root custom properties
+  // (--cs-lp-1 … --cs-lp-10, see design/lowpoly-css.html), not as an inline
+  // per-page script any more. Reading them costs one getComputedStyle: this
+  // runs from a deferred bundle, so the stylesheet has long since arrived and
+  // there is nothing to block on. Values arrive wrapped as url("data:…").
+  const rootStyle = getComputedStyle(document.documentElement);
+  const lowpolyURI = function (n) {
+    const v = rootStyle.getPropertyValue("--cs-lp-" + n).trim();
+    const m = /^url\(\s*(['"]?)(.*?)\1\s*\)$/.exec(v);
+    return m ? m[2] : null;
+  };
+  // Background photo URLs also come from the stylesheet (--cs-bg-N is the srcset
+  // ladder, --cs-bg-src-N the largest rendition for a plain `src`). They have to
+  // be passed in rather than constructed: Hugo fingerprints processed images, so
+  // the filenames aren't predictable. See design/backgrounds-css.html.
+  const cssString = function (name) {
+    const v = rootStyle.getPropertyValue(name).trim();
+    return v ? v.replace(/^["']|["']$/g, "") : null;
+  };
   const pool = Array.from({ length: 10 }, function (_, i) {
     const nn = String(i + 1).padStart(2, "0");
     return {
-      photo: "/images/backgrounds/" + nn + ".webp",
-      svg: inline[i] || "/images/backgrounds/lowpoly/" + nn + ".svg",
+      photo: cssString("--cs-bg-src-" + (i + 1)),
+      srcset: cssString("--cs-bg-" + (i + 1)),
+      // On-disk fallback only if the custom property is somehow missing.
+      svg: lowpolyURI(i + 1) || "/images/backgrounds/lowpoly/" + nn + ".svg",
     };
   });
-  for (let i = pool.length - 1; i > 0; i--) {            // Fisher–Yates shuffle
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+  // The shuffle happens in the <head> (see partials/extend-head.html) so that
+  // CSS can paint the hero's placeholder at first paint. Reuse that order —
+  // re-shuffling here would load a photo that doesn't match the low-poly CSS
+  // has already painted underneath it. Fall back to shuffling locally only if
+  // the head script didn't run.
+  const picks = Array.isArray(window.CS_PICKS) && window.CS_PICKS.length === 10
+    ? window.CS_PICKS.map(function (n) { return pool[n - 1]; })
+    : pool;
+  if (picks === pool) {
+    for (let i = pool.length - 1; i > 0; i--) {           // Fisher–Yates shuffle
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
   }
   spots.forEach(function (el, i) {
-    const pick = pool[i % pool.length];
+    const pick = picks[i % picks.length];
     if (el.tagName === "IMG") {
-      // The low-poly placeholder sits directly UNDER the photo, built live as an
-      // inline <svg> (see buildLowpolyPlaceholder) so it's guaranteed present in
-      // the DOM (no reliance on CSS background painting). Wrap the photo in a
-      // relative holder sized by the photo itself, and absolutely overlay the SVG
-      // behind it — exact alignment regardless of the outer container's size.
-      const wrap = document.createElement("span");
-      wrap.style.cssText = "position:relative;display:block;";
-      el.parentNode.insertBefore(wrap, el);
-      wrap.appendChild(el);      // photo moves into the wrap, painting on top
-      el.style.position = "relative";
-      el.style.zIndex = "1";
-      // Fade the photo in over the SVG rather than letting it snap into place the
-      // instant it decodes — opacity 0 until `load` fires, then eased up to 1.
-      // The placeholder stays on screen at least MIN_PLACEHOLDER_MS even if the
-      // photo loads (near-)instantly from cache, so it's never just a flicker.
+      // `data-img-spot="css"` marks a spot whose placeholder is already handled
+      // in CSS and whose wrapper is already in the template (see
+      // design/hero-bg.html). Nothing to build here: the low-poly is on screen
+      // from first paint, assembling out of blocks on its own. All this needs to
+      // do is load the photo and fade it in over the top.
+      const cssPainted = el.dataset.imgSpot === "css";
+      let wrap;
+      if (cssPainted) {
+        wrap = el.parentNode;
+      } else {
+        // Older spots (imgband/endband) still get their placeholder built live as
+        // an inline <svg> by buildLowpolyPlaceholder. Wrap the photo in a relative
+        // holder sized by the photo itself, and absolutely overlay the SVG behind
+        // it — exact alignment regardless of the outer container's size. Both
+        // paths share the .imgspot styling, so parallax (section 2, which
+        // transforms the wrap) treats them identically.
+        wrap = document.createElement("span");
+        wrap.className = "imgspot";
+        el.parentNode.insertBefore(wrap, el);
+        wrap.appendChild(el);    // photo moves into the wrap, painting on top
+      }
+      // Fade the photo in over the placeholder rather than letting it snap into
+      // place the instant it decodes — opacity 0 until `load` fires, then eased
+      // up to 1. The placeholder stays on screen at least MIN_PLACEHOLDER_MS even
+      // if the photo loads (near-)instantly from cache, so it's never a flicker.
       el.style.opacity = "0";
       el.style.transition = "opacity .6s ease";
       const requestedAt = Date.now();
-      el.addEventListener("load", function () {
+      const reveal = function () {
         const wait = MIN_PLACEHOLDER_MS - (Date.now() - requestedAt);
         if (wait > 0) window.setTimeout(function () { el.style.opacity = "1"; }, wait);
         else el.style.opacity = "1";
-      }, { once: true });
-      el.src = pick.photo;
-      loadSvgText(pick.svg, function (svgText) {
-        // Paint the dominant colour on the wrap straight away — cheaper and
-        // faster than waiting for the facets to build, and it still shows
-        // through their translucent edges once they do.
-        const bg = svgBaseColor(svgText);
-        if (bg) wrap.style.backgroundColor = bg;
-        const placeholder = buildLowpolyPlaceholder(wrap, svgText);
-        if (placeholder) lowpolyControllers.push(placeholder);
-      });
+      };
+      el.addEventListener("load", reveal, { once: true });
+      // srcset before src, so the browser picks a width-appropriate rendition
+      // rather than starting the 1920px master and switching. These photos are
+      // full-bleed, hence sizes=100vw.
+      if (pick.srcset) {
+        el.sizes = "100vw";
+        el.srcset = pick.srcset;
+      }
+      if (pick.photo) el.src = pick.photo;
+      // If the photo was already complete when the listener attached (cache hit
+      // on a src set earlier in the document), `load` will never fire again and
+      // the photo would sit at opacity 0 forever.
+      if (el.complete && el.naturalWidth) reveal();
+      if (!cssPainted) {
+        loadSvgText(pick.svg, function (svgText) {
+          // Paint the dominant colour on the wrap straight away — cheaper and
+          // faster than waiting for the facets to build, and it still shows
+          // through their translucent edges once they do.
+          const bg = svgBaseColor(svgText);
+          if (bg) wrap.style.backgroundColor = bg;
+          const placeholder = buildLowpolyPlaceholder(wrap, svgText);
+          if (placeholder) lowpolyControllers.push(placeholder);
+        });
+      }
     } else {
       // Layered background: photo on top, SVG beneath — SVG shows until photo loads.
       el.style.backgroundImage = "url('" + pick.photo + "'),url('" + pick.svg + "')";
@@ -199,7 +250,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".rail .spore").forEach(function (el) { drifters.push({ el: el, rate: 0.34 }); });
     document.querySelectorAll(".bigdates").forEach(function (el) { drifters.push({ el: el, rate: 0.20 }); });
 
-    const PHOTO_SCALE = 1.14;
+    // Read from CSS rather than hardcoding: the hero's resting transform is
+    // declared in design/lowpoly-paint.html so that first paint already matches
+    // this scale (otherwise the hero pops 14% larger when this runs). One source
+    // of truth, so the two cannot drift apart.
+    const PHOTO_SCALE = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--cs-photo-scale")
+    ) || 1.14;
     // Transform the WRAP (span from section 1), not the <img> itself — the wrap
     // is what holds both the photo and its low-poly SVG placeholder stacked
     // together, so scaling/panning it keeps the two in lockstep. Transforming
@@ -207,6 +264,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // beneath it (or leave a visible seam once the photo has faded in).
     const photos = Array.prototype.slice.call(document.querySelectorAll(".imgband__photo, .hero__photo")).map(function (el) { return el.parentElement; });
     photos.forEach(function (el) { el.style.willChange = "transform"; });
+    // Resting parallax offset per wrap, captured on the first apply — see below.
+    const parallaxBase = new WeakMap();
 
     let ticking = false;
     const apply = function () {
@@ -223,6 +282,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const r = wrap.getBoundingClientRect();
         const slack = (r.height * (PHOTO_SCALE - 1)) / 2;
         let t = -((r.top + r.height / 2) - vh / 2) * 0.09;
+        // Zero the drift at wherever the photo sat when this first ran, so
+        // applying the transform doesn't visibly shove it. The hero's wrapper is
+        // now in the template and painted before this script is even parsed, so
+        // any non-zero resting offset lands as a jump a few hundred ms after load
+        // (it was ~22px on the homepage). Subtracting a constant per wrap
+        // re-centres the parallax without changing how far it drifts per pixel
+        // scrolled. Baseline is kept across resizes so a resize can't jump either.
+        if (!parallaxBase.has(wrap)) parallaxBase.set(wrap, t);
+        t -= parallaxBase.get(wrap);
         if (t > slack) t = slack; else if (t < -slack) t = -slack;
         wrap.style.transform = "translate3d(0," + t.toFixed(1) + "px,0) scale(" + PHOTO_SCALE + ")";
       });
