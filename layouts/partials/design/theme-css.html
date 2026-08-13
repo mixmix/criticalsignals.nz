@@ -39,9 +39,144 @@
        this partial becomes a no-op rather than a problem — the regex simply
        stops matching. */ -}}
 
+{{- /* SECOND PASS: drop the rules for features this site does not have.
+
+       The theme's compiled/main.css was purged against Blowfish's own
+       exampleSite, not against this site, so it carries whole feature families
+       nothing here renders. Each pattern below was checked against the built
+       output (all 107 pages) before being added — these are measured-dead, not
+       assumed-dead:
+
+         dark:… variants     8,539 B, 43 rules ─┐ The site has no dark mode at
+         .dark descendants   3,996 B, 21 rules ─┘ all, and never had a Tailwind
+                             one: Blowfish toggles a `.dark` class on <html> from
+                             appearance.js, driven by the #appearance-switcher
+                             buttons in the theme's header/basic.html — which this
+                             site's own header partial replaced, so nothing could
+                             ever add the class. (assets/js/appearance.js now
+                             shadows the theme's script for the same reason.) The
+                             site's own separate `html[data-theme="dark"]` invert
+                             is gone too, in this same commit.
+         rtl:… variants      2,235 B, 17 rules — `rtl = false` in params.toml. The
+                             theme emits each `rtl:` utility next to the `ltr:`
+                             one it actually uses; `ltr:` is kept.
+         .prose-invert       2,074 B, 2 rules — the dark-mode typography variant.
+                             Same reason as dark: above. `.prose` itself is kept,
+                             but its `--tw-prose-invert-*` custom properties are
+                             then dead: another 1,039 B, stripped separately below
+                             because they are declarations inside a live rule.
+         .chroma…            1,896 B, 24 rules — Hugo's syntax-highlighting
+                             classes. Not one page in the build contains the
+                             string "chroma"; there is no fenced code block on the
+                             site, and `enableCodeCopy = false`.
+         .scrollbar…         1,598 B, 4 rules — tailwind-scrollbar utilities, used
+                             only by the theme's search overlay, and
+                             `enableSearch = false`. Note this is the utility
+                             CLASSES only; the `scrollbar-color`/`scrollbar-width`
+                             properties in Tailwind's base reset are real CSS and
+                             stay.
+         .katex…               112 B, 2 rules — the theme's KaTeX overrides. Math
+                             is off and vendor.html never loads the library.
+
+       21,489 B in 113 rules, on top of the 9,353 B of @screen above: together
+       30,842 B, or 25% of the theme's stylesheet, render-blocking on all 107
+       pages. Because the bundle is minified and served gzipped the wire saving is
+       much smaller than the raw figure — see the commit message for the measured
+       before/after. Removing rules is still worth it beyond bytes: it is that
+       much less for the browser to parse and match on every page.
+
+       The bigger prize is deliberately NOT attempted here: another ~29 KB raw is
+       utilities for classes that appear in no rendered page. Those are individual
+       utilities rather than whole families, so picking them off by regex would be
+       a long list of guesses that silently breaks the moment any markup changes.
+       Getting them safely needs a real Tailwind pass, which was measured before
+       being ruled out: `@tailwindcss/cli` with the theme's own
+       tailwind.config.js, content globs pointed at this site's rendered HTML
+       under public/, gives 65,476 B raw / 10,141 B gzip against the 94,396 B /
+       13,479 B this partial produces. So ~3.3 KB gzip, for five npm dev deps and
+       a two-pass build (hugo, then tailwind, then hugo again — the purge needs
+       the rendered HTML, which does not exist until after the first pass).
+       Judged not worth it; revisit if the theme is ever upgraded, since that is
+       the point where these regexes need re-checking anyway.
+
+       Note the fresh Tailwind build ALSO emits `@screen` blocks, so the strip
+       above is not a symptom of a botched theme release — `@screen` was a v3
+       authoring directive that v4 passes through untouched.
+
+       Run the @screen strip first, so these patterns are not matching inside
+       blocks that are about to be deleted anyway. */ -}}
+
 {{- $css := resources.Get "css/compiled/main.css" -}}
 {{- if $css -}}
-  {{- $stripped := replaceRE `@screen\s+\S+\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}` "" $css.Content -}}
-  {{- $css = resources.FromString "css/compiled/main.screenless.css" $stripped -}}
+  {{- $out := replaceRE `@screen\s+\S+\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}` "" $css.Content -}}
+  {{- /* Build a regex that matches one whole `{…}` rule body, including nested
+         ones. Tailwind v4 emits CSS nesting rather than flat rules — a variant
+         utility looks like
+
+           .dark\:group-hover\:text-neutral-700{&:is(.dark *){&:is(:where(.group):hover *){color:…}}}
+
+         so a flat `\{[^{}]*\}` body pattern only ever matched the LEAF block and
+         left the rule behind. That is what an earlier flat version got wrong.
+
+         RE2 has no recursion, so nest the pattern by hand to a fixed depth:
+
+           body(0) = \{[^{}]*\}
+           body(n) = \{(?:[^{}]*body(n-1))*[^{}]*\}
+
+         The deepest body in this file measures 4; build to 5 for one level of
+         headroom, and the balance assertion below catches it if the theme is ever
+         rebuilt deeper than that. RE2 is linear-time, so the nested stars carry
+         no backtracking risk. */ -}}
+  {{- $body := `\{[^{}]*\}` -}}
+  {{- range seq 5 -}}
+    {{- $body = printf `\{(?:[^{}]*%s)*[^{}]*\}` $body -}}
+  {{- end -}}
+  {{- /* A rule = selector text (never contains a brace) then one body.
+
+         The leading `[^{}]*?` swallows the selector text in front of the matched
+         token, and is what keeps this safe WITHOUT an explicit rule-boundary
+         anchor: since `[^{}]` matches neither brace, a match can only begin after
+         the nearest preceding `{` or `}`, and leftmost-match makes the engine
+         start exactly there. An earlier version DID anchor on `(^|\}|\{)` and was
+         wrong — the match consumed the very `}` that the next rule needed as its
+         own anchor, so in any run of adjacent rules to delete, only every second
+         one went.
+
+         Two things make swallowing the leading selector text safe:
+           - No rule in this file has a selector list mixing a to-delete selector
+             with a to-keep one, so there is never a live selector sitting in
+             front of a matched token. Checked across all 202 rules; if the theme
+             is rebuilt and that stops holding, the coverage script in the commit
+             message is how to notice.
+           - The token must be followed by a `{`, and a declaration block cannot
+             contain one, so a token appearing in a VALUE rather than a selector
+             can never complete a match. `prefers-color-scheme:dark` is untouched.
+
+         Balanced braces in the output are asserted below the loop. */ -}}
+  {{- range $tok := slice
+        `dark\\?:`
+        `\.dark\b`
+        `\.chroma\b`
+        `rtl\\?:`
+        `\.prose-invert\b`
+        `\.scrollbar[\w\\:.\/-]*`
+        `\.katex[\w\\:.\/-]*` -}}
+    {{- $out = replaceRE (printf `[^{}]*?%s[^{}]*%s` $tok $body) "" $out -}}
+  {{- end -}}
+  {{- /* With both prose-invert rules gone, the `--tw-prose-invert-*` custom
+         properties they read are dead — but they are declarations inside the
+         live `.prose` rule, so rule-level deletion cannot reach them. ~2 KB of
+         colour values for a variant that no longer exists. Matching to `;` or to
+         the closing `}` means this is still correct for the last declaration in
+         a block. */ -}}
+  {{- $out = replaceRE `--tw-prose-invert-[\w-]*:[^;{}]*;?` "" $out -}}
+  {{- /* Fail the build rather than ship a stylesheet with a stray brace: an
+         unbalanced one would silently swallow every rule after it. */ -}}
+  {{- $opens := len (findRE `\{` $out) -}}
+  {{- $closes := len (findRE `\}` $out) -}}
+  {{- if ne $opens $closes -}}
+    {{- errorf "design/theme-css.html: pruning unbalanced the theme CSS (%d { vs %d }) — a pattern matched across a rule boundary" $opens $closes -}}
+  {{- end -}}
+  {{- $css = resources.FromString "css/compiled/main.pruned.css" $out -}}
 {{- end -}}
 {{- return $css -}}
