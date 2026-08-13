@@ -1,0 +1,47 @@
+{{- /* Returns the theme's compiled Tailwind stylesheet with its 12 unprocessed
+       `@screen` blocks stripped — 9,195 B of invalid CSS that shipped in the
+       render-blocking bundle on all 107 pages.
+
+       `@screen` is a Tailwind AUTHORING directive; a real build compiles it to
+       `@media (min-width: …)`. The committed themes/blowfish/assets/css/compiled/
+       main.css still contains it, which means whatever produced that file did not
+       finish the job. No browser understands `@screen`, so every one of those
+       blocks parses as an unknown at-rule and is discarded. Verified in the
+       browser: the bundle really does contain the literal string "@screen".
+
+       Why strip rather than repair. Repairing looked like the obvious move, but
+       the evidence says otherwise on both counts:
+
+         - 8,974 B of the 9,195 B is `.{bp}:grid-w10` … `.{bp}:grid-w100` (105
+           utilities across 5 breakpoints) and `.{bp}:ratio-16-9` and friends.
+           Nothing in this site's built output uses a single one of them; inside
+           the theme they appear only in shortcodes/carousel.html, which no page
+           calls. Converting them to valid CSS would turn dead bytes into
+           live-but-unused bytes and save nothing.
+
+         - The remaining 221 B is `.thumbnail` and `.article`, which DO appear on
+           /tags/core-team/ and /tags/organisation/. But the theme's own markup
+           carries `class="w-full md:w-auto h-full thumbnail …"` and
+           `class="flex flex-wrap md:flex-nowrap article"`, and those md: variants
+           ARE compiled correctly. The @screen rules only restate what the
+           utilities already do, so repairing them is redundant at best and risks
+           disturbing a layout that currently renders correctly.
+
+       So the whole lot is inert, and 97% of it is for classes nobody uses. It
+       goes. Stripping is also the safe direction: removing rules a browser was
+       already discarding cannot change rendering.
+
+       The regex handles one level of nesting, which is all these blocks have
+       (an at-rule wrapping flat declaration blocks). Go's RE2 is fine with it.
+
+       Call this through partialCached so the 125 KB rewrite happens once per
+       build rather than once per page. If the theme is ever rebuilt properly,
+       this partial becomes a no-op rather than a problem — the regex simply
+       stops matching. */ -}}
+
+{{- $css := resources.Get "css/compiled/main.css" -}}
+{{- if $css -}}
+  {{- $stripped := replaceRE `@screen\s+\S+\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}` "" $css.Content -}}
+  {{- $css = resources.FromString "css/compiled/main.screenless.css" $stripped -}}
+{{- end -}}
+{{- return $css -}}

@@ -1116,3 +1116,13 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
 }
 #site-footer{text-align:left;}
 #site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}
+
+/* ----------------------------------------------------------------------------
+   .min-h-screen — used at layouts/admin/baseof.html:11 but absent from the
+   theme's committed Tailwind build, so the /_admin/ shell had no minimum height
+   at all. Not a purge artefact: that class only appears in OUR layout, and the
+   compiled CSS was purged against the theme's templates, never ours. Defined
+   here rather than chased upstream because no CSS build runs in this project
+   (module.toml has extended = false, and there is no PostCSS/ToCSS step).
+   ---------------------------------------------------------------------------- */
+.min-h-screen{min-height:100vh;}

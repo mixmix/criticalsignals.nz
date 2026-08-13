@@ -25,7 +25,10 @@
              call a profile complete on the strength of an image the site will
              never load — see partials/feature-image.html. */}}
         {{ $img := partial "feature-image.html" $personPage }}
-        {{ $plain := strings.TrimSpace ($personPage.Plain | default "") }}
+        {{- /* htmlUnescape for the same reason as in people-audit/card.html:
+               .Plain keeps character entities, so "&rsquo;" would be written out
+               as "&amp;rsquo;" and read as literal text. */ -}}
+        {{ $plain := strings.TrimSpace ($personPage.Plain | htmlUnescape | default "") }}
         {{ $hasDesc := or (ne $personPage.Description "") (ne $plain "") }}
 
         {{ $missing := slice }}

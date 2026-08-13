@@ -12,7 +12,13 @@
   {{ if or (not $img) (ne .Name $img.Name) }}{{ $orphans = $orphans | append .Name }}{{ end }}
 {{ end }}
 
-{{ $plain := strings.TrimSpace ($p.Plain | default "") }}
+{{- /* htmlUnescape because .Plain strips tags but leaves character entities
+       intact, so a curly apostrophe in the source arrived here as the literal
+       text "&rsquo;" and Go's auto-escaping then wrote it out as "&amp;rsquo;" —
+       the reader saw "I&rsquo;m a technologist". Unescaping first yields the real
+       character; anything that genuinely looks like markup is still escaped on
+       output, since this interpolates into a text context. */ -}}
+{{ $plain := strings.TrimSpace ($p.Plain | htmlUnescape | default "") }}
 
 <article class="audit-card">
   <div class="audit-card__media">

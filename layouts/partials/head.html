@@ -67,7 +67,10 @@
   {{ $cssScheme = resources.Get "css/schemes/blowfish.css" }}
   {{ end }}
   {{ $assets.Add "css" (slice $cssScheme) }}
-  {{ $cssMain := resources.Get "css/compiled/main.css" }}
+  {{- /* CRITICAL SIGNALS: was `resources.Get "css/compiled/main.css"`. The theme's
+         committed Tailwind build still contains 12 unprocessed `@screen` blocks —
+         9,195 B of CSS no browser can parse. See design/theme-css.html. */ -}}
+  {{ $cssMain := partialCached "design/theme-css.html" . }}
   {{ $assets.Add "css" (slice $cssMain) }}
   {{ $cssCustom := resources.Get "css/custom.css" }}
   {{ if $cssCustom }}
