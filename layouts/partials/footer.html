@@ -30,9 +30,13 @@
       mediumZoom(document.querySelectorAll("img:not(.nozoom)"), { margin: 24, background: 'rgba(0,0,0,0.5)', scrollOffset: 0 })
       {{ end }}
     </script>
-    {{ $jsProcess := resources.Get "js/process.js" }}
-    {{ $jsProcess = $jsProcess | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-    <script type="text/javascript" src="{{ $jsProcess.RelPermalink }}" integrity="{{ $jsProcess.Data.Integrity }}"></script>
+    {{- /* The theme's js/process.js (Firebase view/like counters) used to load
+           here — render-blocking, on all 72 non-csDesign pages. Its entire body
+           is wrapped in `if (typeof auth !== "undefined")`, and `auth` is only
+           defined by the Firebase block in the theme's head.html, which is
+           gated on `.Site.Params.firebase` being non-empty. Ours is `{ }`, so
+           no page ever loads the Firebase SDK and the file could never do
+           anything. Restore it only if Firebase is actually configured. */ -}}
   </footer>
 {{- end -}}
 

@@ -1,0 +1,117 @@
+{{- /* Override of the theme's vendor.html for one reason: jQuery was loaded
+       unconditionally, render-blocking, in <head>, on every page — 70 KB raw /
+       24 KB gzip, which was 28% of the homepage's subresource transfer.
+
+       Nothing on this site uses it. Checked: assets/js/design.js (0 uses),
+       assets/js/calendar.js (0), all twelve non-lib files in the theme's
+       assets/js/ (0), and every inline <script> in the built HTML (0). The
+       theme's *only* jQuery dependant is assets/js/shortcodes/gallery.js,
+       which needs `$(window).on("load", …)` — and that file is already gated
+       behind the `gallery` shortcode below. Our own galleries
+       (partials/programme/gallery.html + design.js §8 lightbox) are vanilla.
+
+       The other vendored libs only *optionally* touch jQuery and work without
+       it: packery.pkgd installs the standard jQueryBridget behind an
+       `a && (…)` guard and is driven here via `new Packery(el, opts)`;
+       tw-elements guards a Bootstrap-style `static jQueryInterface` on
+       `window.jQuery` being present.
+
+       So: jQuery moves inside the gallery gate rather than being deleted. It
+       costs nothing today, and it comes back automatically the moment anyone
+       writes {{`{{< gallery >}}`}}. Everything else below is the theme's file
+       verbatim — keep it that way so theme updates stay easy to diff. */ -}}
+
+{{/* Mermaid */}}
+{{ if .Page.HasShortcode "mermaid" }}
+  {{ $mermaidLib := resources.Get "lib/mermaid/mermaid.min.js" }}
+  {{ $mermaidConfig := resources.Get "js/mermaid.js" }}
+  {{ $mermaidConfig := $mermaidConfig | resources.Minify }}
+  {{ $mermaidJS := slice $mermaidLib $mermaidConfig | resources.Concat "js/mermaid.bundle.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    defer
+    type="text/javascript"
+    src="{{ $mermaidJS.RelPermalink }}"
+    integrity="{{ $mermaidJS.Data.Integrity }}"></script>
+{{ end }}
+
+{{/* Chart */}}
+{{ if .Page.HasShortcode "chart" }}
+  {{ $chartLib := resources.Get "lib/chart/chart.min.js" }}
+  {{ $chartConfig := resources.Get "js/chart.js" }}
+  {{ $chartConfig := $chartConfig | resources.Minify }}
+  {{ $chartJS := slice $chartLib $chartConfig | resources.Concat "js/chart.bundle.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    defer
+    type="text/javascript"
+    src="{{ $chartJS.RelPermalink }}"
+    integrity="{{ $chartJS.Data.Integrity }}"></script>
+{{ end }}
+
+{{/* Katex */}}
+{{ if .Page.HasShortcode "katex" }}
+  {{ $katexCSS := resources.Get "lib/katex/katex.min.css" }}
+  {{ $katexCSS := $katexCSS | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <link
+    type="text/css"
+    rel="stylesheet"
+    href="{{ $katexCSS.RelPermalink }}"
+    integrity="{{ $katexCSS.Data.Integrity }}">
+  {{ $katexJS := resources.Get "lib/katex/katex.min.js" }}
+  {{ $katexJS := $katexJS | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script defer src="{{ $katexJS.RelPermalink }}" integrity="{{ $katexJS.Data.Integrity }}"></script>
+  {{ $katexRenderJS := resources.Get "lib/katex/auto-render.min.js" }}
+  {{ $katexRenderJS := $katexRenderJS | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    defer
+    src="{{ $katexRenderJS.RelPermalink }}"
+    integrity="{{ $katexRenderJS.Data.Integrity }}"
+    onload="renderMathInElement(document.body);"></script>
+  {{ $katexFonts := resources.Match "lib/katex/fonts/*" }}
+  {{ range $katexFonts }}
+    <!-- {{ .RelPermalink }} -->
+  {{ end }}
+{{ end }}
+
+{{/* TypeIt */}}
+{{ if .Page.HasShortcode "typeit" }}
+  {{ $typeitLib := resources.Get "lib/typeit/typeit.umd.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script defer src="{{ $typeitLib.RelPermalink }}" integrity="{{ $typeitLib.Data.Integrity }}"></script>
+{{ end }}
+
+{{/* Packery */}}
+{{ if .Page.HasShortcode "gallery" }}
+  {{/* jQuery — required by js/shortcodes/gallery.js below, and by nothing else
+       on this site. Must load before it, hence the position here. */}}
+  {{ $jqueryLib := resources.Get "lib/jquery/jquery.slim.min.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script src="{{ $jqueryLib.RelPermalink }}" integrity="{{ $jqueryLib.Data.Integrity }}"></script>
+
+  {{ $packeryLib := resources.Get "lib/packery/packery.pkgd.min.js" }}
+  <script defer src="{{ $packeryLib.RelPermalink }}" integrity="{{ $packeryLib.Data.Integrity }}"></script>
+
+  {{ $jsShortcodeGallery := resources.Get "js/shortcodes/gallery.js" }}
+  {{ $jsShortcodeGallery = $jsShortcodeGallery | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    type="text/javascript"
+    src="{{ $jsShortcodeGallery.RelPermalink }}"
+    integrity="{{ $jsShortcodeGallery.Data.Integrity }}"></script>
+{{ end }}
+
+{{/* tw-elements */}}
+{{ if or (.Page.HasShortcode "carousel") (.Page.HasShortcode "timeline") }}
+  {{ $twelementsLib := resources.Get "lib/tw-elements/index.min.js" }}
+  <script
+    defer
+    src="{{ $twelementsLib.RelPermalink }}"
+    integrity="{{ $twelementsLib.Data.Integrity }}"></script>
+{{ end }}
+
+{{/* youtubeLite */}}
+{{ if .Page.HasShortcode "youtubeLite" }}
+  {{ $youtubeLiteJS := resources.Get "lib/lite-youtube-embed/lite-yt-embed.js" | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  {{ $youtubeLiteCSS := resources.Get "lib/lite-youtube-embed/lite-yt-embed.css" }}
+  <link
+    rel="stylesheet"
+    href="{{ $youtubeLiteCSS.RelPermalink }}"
+    integrity="{{ $youtubeLiteCSS.Data.Integrity }}">
+  <script src="{{ $youtubeLiteJS.RelPermalink }}" integrity="{{ $youtubeLiteJS.Data.Integrity }}"></script>
+{{ end }}

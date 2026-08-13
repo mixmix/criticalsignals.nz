@@ -19,17 +19,13 @@
   <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
     {{ partial "article-meta/list.html" (dict "context" . "scope" "single") }}
   </div>
-  {{ $translations := .AllTranslations }}
-  {{ with .File }}
-    {{ $path := .Path }}
-    {{range $translations}}
-      {{ $lang := print "."  .Lang  ".md" }}
-      {{ $path = replace $path $lang ".md" }}
-    {{end}}
-  {{ $jsPage := resources.Get "js/page.js" }}
-  {{ $jsPage = $jsPage | resources.Minify | resources.Fingerprint ($.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script type="text/javascript" src="{{ $jsPage.RelPermalink }}" integrity="{{ $jsPage.Data.Integrity }}" data-oid="views_{{ $path }}" data-oid-likes="likes_{{ $path }}"></script>
-  {{ end }}
+  {{- /* The theme's js/page.js (Firebase view/like counters) used to load here,
+         render-blocking, along with the $translations/$path dance that existed
+         only to build its data-oid attributes. Everything from page.js:14 to
+         the end is wrapped in `if (typeof auth !== "undefined")`, and `auth` is
+         only defined by the Firebase block in the theme's head.html, gated on
+         `.Site.Params.firebase` being non-empty. Ours is `{ }`, so no page
+         loads the Firebase SDK and the file could never do anything. */ -}}
   </header>
   <section class="{{ if $toc -}}
       mt-12
