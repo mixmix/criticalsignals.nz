@@ -79,5 +79,150 @@
       flex-wrap: wrap;
       gap: 1.25rem;
     }
+    /* ---- audit card (partials/people-audit/card.html) --------------------
+       Hoisted out of that partial: it is called once per person inside a
+       range, so a <style> there shipped 62 identical copies -- 133,346 B,
+       66% of this page's bytes, and 62 stylesheets to parse. */
+    .audit-card {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 260px;
+      max-width: 260px;
+      background: var(--critical-cream, #f4f1ea);
+      color: #1a1a1a;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    .audit-card__media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+    }
+    .audit-card__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      margin: 0;
+    }
+    .audit-card__photo--empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #555;
+      font-size: 2.5rem;
+    }
+    .audit-card__body {
+      flex: 1 1 auto;
+      padding: 0.75rem 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .audit-card__name {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .audit-card__name a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .audit-card__name a:hover {
+      text-decoration: underline;
+    }
+    .audit-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+    }
+    .audit-badge--core {
+      background: var(--critical-highlight, #d6f7f1);
+      color: #1a1a1a;
+    }
+    .audit-badge--warn {
+      background: #b3261e;
+      color: #fff;
+    }
+    .audit-badge--overlay,
+    .audit-badge--overlay-left {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    }
+    .audit-badge--overlay-left {
+      right: auto;
+      left: 0.4rem;
+    }
+    .audit-card__imgwarn {
+      font-size: 0.78rem;
+      line-height: 1.35;
+      margin: 0;
+      color: #b3261e;
+      font-weight: 700;
+    }
+    .audit-card__imgwarn code {
+      font-weight: 400;
+      word-break: break-all;
+    }
+    html[data-theme="dark"] .audit-card__imgwarn,
+    html[data-theme="dark"] .audit-card__todo {
+      color: #ff8a80;
+    }
+    .audit-card__desc {
+      font-size: 0.85rem;
+      line-height: 1.4;
+      margin: 0;
+    }
+    .audit-card__todo {
+      color: #b3261e;
+      font-weight: 700;
+    }
+    .audit-card__events {
+      font-size: 0.8rem;
+    }
+    .audit-card__events ul {
+      list-style: disc;
+      margin: 0.2rem 0 0;
+      padding-left: 1.1rem;
+    }
+    .audit-card__events li {
+      padding: 0;
+      margin: 0.1rem 0;
+    }
+    .audit-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      padding: 0.4rem 0.5rem;
+      background: lightgrey;
+    }
+    .audit-card__btn {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.22rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      color: #333;
+      background: #fff;
+    }
+    .audit-card__btn:hover {
+      background: #e6e6e6;
+    }
+    html[data-theme="dark"] .audit-card {
+      background: #2a2a2a;
+      color: #f4f1ea;
+    }
   </style>
 {{ end }}

@@ -5,6 +5,34 @@
   {{ end }}
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  {{- /* CRITICAL SIGNALS: resource hints. These sit here, above the stylesheet
+         <link> further down, on purpose — a hint placed after it would not start
+         any earlier than the discovery it is meant to pre-empt.
+
+         The two D-DIN faces are declared in assets/css/custom.css, which is
+         concatenated into the fingerprinted CSS bundle. That means the browser
+         only learns the fonts exist after downloading and parsing ~132 KB of
+         CSS, so every first view showed a flash of fallback text and then
+         reflowed when the real faces landed (`font-display: swap`). Preloading
+         both puts them in flight alongside the bundle instead of after it.
+
+         Both weights, not just the regular: headings are 700 and appear above
+         the fold on every page, so deferring the bold face would just move the
+         reflow rather than remove it. crossorigin is required even same-origin —
+         fonts are always fetched in CORS mode, and without it the preload is
+         discarded and fetched a second time. `as=font` sets the right priority.
+
+         The Mixpanel hosts are production-only, matching the snippet in
+         extend-head-uncached.html, so `hugo server` opens no third-party
+         connections at all. cdn.mxpnl.com serves the library, api-eu.mixpanel.com
+         receives the event; both otherwise pay a cold DNS + TLS handshake at the
+         moment they are first needed. */ -}}
+  <link rel="preload" href="{{ "fonts/D-DIN.woff2" | relURL }}" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="{{ "fonts/D-DIN-Bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin />
+  {{ if hugo.IsProduction }}
+  <link rel="preconnect" href="https://cdn.mxpnl.com" crossorigin />
+  <link rel="preconnect" href="https://api-eu.mixpanel.com" crossorigin />
+  {{ end }}
   {{/* Title */}}
   {{ if .IsHome -}}
   <title>{{ .Site.Title | emojify }}</title>

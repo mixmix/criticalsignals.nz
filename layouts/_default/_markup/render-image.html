@@ -1,25 +1,54 @@
-{{- /* Override of themes/blowfish/layouts/_default/_markup/render-image.html —
-       identical except the responsive srcset renditions are encoded as webp
-       (smaller, same visual quality). The full-size zoom target
-       (data-zoom-src / plain src) is left as the original resource. */ -}}
+{{- /* Override of themes/blowfish/layouts/_default/_markup/render-image.html.
+       The renditions are webp rather than the source format, the srcset carries
+       a `sizes`, the ladder is matched to the column it renders into, and the
+       zoom target is capped.
+
+       SIZES. Measured, not guessed. These images live in
+       `.article-content.max-w-prose`, whose max-width computes to 512.72px
+       (65ch). The body carries the theme's `px-6 sm:px-14 md:px-24 lg:px-32`,
+       so the column is `100vw - 3rem` until the viewport is wide enough for
+       65ch to bind, which happens at about 561px. Above that it is a flat
+       513px no matter how wide the window gets. With no `sizes` at all the
+       browser assumed 100vw, so a 1481px window asked for a 1481px image to
+       fill a 513px box.
+
+       LADDER. Was 330/660/1280. Since the box tops out at 513 CSS px, 1280w
+       only ever gets chosen at DPR 2.5 or higher -- it was serving nobody's
+       actual pixels and costing everybody's bytes. 1040w covers DPR 2 exactly
+       (513 x 2 = 1026), which is what retina laptops and most phones are.
+
+       ZOOM TARGET. data-zoom-src used to be the untouched original, so
+       /installations/ alone had 6,278,019 B reachable by click (sam.jpeg
+       2,391,559 B, tanya_ruka1.jpg 2,009,181 B). 1600px webp is generous for a
+       lightbox that fits the image inside the viewport. `src` points at the
+       same capped rendition so the no-srcset fallback path stops shipping
+       originals too. Images narrower than the cap are passed through by the
+       `cond` rather than upscaled. */ -}}
 {{ define "RenderImageSimple" -}}
   <img class="my-0 rounded-md" loading="lazy" alt="{{ .alt }}" src="{{ .src }}">
 {{- end }}
 
 {{ define "RenderImageResponsive" -}}
+  {{- /* Always re-encode as webp, and cap the width at 1600 without ever
+         upscaling. Passing narrow sources straight through was leaving real
+         weight on the table: sensing-the-quary.jpg is 1024x1180, so it sat under
+         the cap and shipped as a 258,480 B JPEG. */ -}}
+  {{- $zoomWidth := cond (gt .resource.Width 1600) 1600 .resource.Width -}}
+  {{- $zoom := .resource.Resize (printf "%dx webp" $zoomWidth) -}}
   <img
     class="my-0 rounded-md"
     loading="lazy"
     decoding="async"
     fetchpriority="low"
     alt="{{ .alt }}"
+    sizes="(min-width: 561px) 513px, calc(100vw - 3rem)"
     srcset="
       {{ (.resource.Resize "330x webp").RelPermalink }}  330w,
       {{ (.resource.Resize "660x webp").RelPermalink }}  660w,
-      {{ (.resource.Resize "1280x webp").RelPermalink }} 1280w
+      {{ (.resource.Resize "1040x webp").RelPermalink }} 1040w
     "
-    data-zoom-src="{{ .resource.RelPermalink }}"
-    src="{{ .resource.RelPermalink }}">
+    data-zoom-src="{{ $zoom.RelPermalink }}"
+    src="{{ $zoom.RelPermalink }}">
 {{- end }}
 
 {{ define "RenderImageCaption" -}}

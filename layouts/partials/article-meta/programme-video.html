@@ -192,8 +192,11 @@
     </script>
 
 </section>
-{{ end }}
 
+{{- /* This <style> used to sit OUTSIDE the `with video_magnet_link` guard, so
+       all 21 programme pages shipped 1,188 B of video-player CSS whether or not
+       they had a video. Inside the guard it ships only where there is a player
+       to style. */ -}}
 <style>
   .programme-video-container {
     margin: 2rem 0;
@@ -275,3 +278,5 @@
     opacity: 0.9;
   }
 </style>
+
+{{ end }}

@@ -1092,3 +1092,27 @@ html[data-theme="dark"] .lightbox__waves{filter:invert(1);}
   .cal-hero .rail .spore,
   .prog-hero .rail .spore{width:80%;margin:1rem auto 0;}
 }
+
+/* ============================================================================
+   Blowfish content-page footer (#site-footer, rendered by partials/footer.html)
+
+   Hoisted out of an inline <style> in that partial. It is emitted on every
+   non-csDesign page and is not conditional on anything, so it was shipping 72
+   byte-identical copies across the build (23,400 B) instead of riding in this
+   bundle and being cached once for the whole site.
+
+   Pages with a `.cs-hero` (e.g. people profiles) zero out the body's own padding
+   for the full-bleed marketing shell — restore a matching horizontal inset
+   directly on the footer so this text lines up with the text block above it
+   instead of sitting flush against the edge. On desktop the bio text sits at
+   `.hero`'s own `--pad` PLUS `.col`'s inner `--tpad` (the site's "text line =
+   pad + tpad" convention); on mobile (<=880px, matching the site's own
+   breakpoint) `.col` cancels the hero's pad with a negative margin and reapplies
+   just `--pad`, so the footer needs to switch to `--pad` alone there too.
+   ============================================================================ */
+body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padding-right:calc(var(--pad) + var(--tpad));}
+@media (max-width:880px){
+  body:has(.cs-hero) #site-footer{padding-left:var(--pad);padding-right:var(--pad);}
+}
+#site-footer{text-align:left;}
+#site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}

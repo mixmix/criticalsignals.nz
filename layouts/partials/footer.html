@@ -8,23 +8,11 @@
     <p class="site-footer__line">&copy; {{ now.Format "2006" }} Critical Signals. Wellington, Aotearoa New Zealand.</p>
     <p class="site-footer__line">This site is served from donated e-waste in a cupboard at
       <a class="hover:underline" href="https://www.twofiftyseven.co/">two/fiftyseven</a>.</p>
-    <style>
-      /* Pages with a `.cs-hero` (e.g. people profiles) zero out the body's own
-         padding for the full-bleed marketing shell — restore a matching
-         horizontal inset directly on the footer so this text lines up with
-         the text block above it instead of sitting flush against the edge.
-         On desktop the bio text sits at `.hero`'s own `--pad` PLUS `.col`'s
-         inner `--tpad` (the site's "text line = pad + tpad" convention); on
-         mobile (<=880px, matching the site's own breakpoint) `.col` cancels
-         the hero's pad with a negative margin and reapplies just `--pad`, so
-         the footer needs to switch to `--pad` alone there too. */
-      body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padding-right:calc(var(--pad) + var(--tpad));}
-      @media (max-width:880px){
-        body:has(.cs-hero) #site-footer{padding-left:var(--pad);padding-right:var(--pad);}
-      }
-      #site-footer{text-align:left;}
-      #site-footer .site-footer__line{margin-bottom:.75rem;line-height:1.6;}
-    </style>
+    {{- /* The #site-footer rules moved to assets/css/custom.css. Unlike the
+           style blocks in the article-meta partials, this one is unconditional —
+           it shipped identically on all 72 non-csDesign pages, 23,400 B of
+           byte-identical CSS across the build, re-sent per page instead of
+           fetched once. In the bundle it is cached for the whole site. */ -}}
     {{- /* Same precedence fix as in head.html: the theme wrote
            `not .Site.Params.disableImageZoom | default true`, which Go parses as
            `default true (not …)` and is therefore true regardless of the param.
