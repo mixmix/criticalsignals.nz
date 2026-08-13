@@ -9,13 +9,14 @@
        (`.lightbox__placeholder`), sized to fill the frame via object-fit —
        decoding="sync" because its bytes are already cached from the grid, so
        there's no reason to let the browser defer that decode to a later
-       task the way it would for a freshly-fetched image; chunky flickering
-       noise (`.lightbox__noise` — three wavelengths, each
-       its own layer moving at its own speed, composited together then
-       blended onto the placeholder via mix-blend-mode — see custom.css)
-       painted on top of that to read as "still loading"; and the
+       task the way it would for a freshly-fetched image; a drifting
+       loading surface (`.lightbox__waves` — five wave components of
+       differing wavelength and direction interfering with each other, with
+       three layers of chunky noise drifting over the top, all blended onto
+       the placeholder via mix-blend-mode, see custom.css) painted on top of
+       that to read as "still loading"; and the
        full-colour photo (`.lightbox__img`) on top of both, which fades in
-       once it finishes loading — at which point the noise is hidden by
+       once it finishes loading — at which point the waves are hidden by
        custom.css's `:has(.lightbox__img.is-loaded)` rule, since there's
        nothing left to indicate loading for. */ -}}
 <div class="lightbox" aria-hidden="true">
@@ -24,7 +25,12 @@
   <div class="lightbox__stage">
     <div class="lightbox__frame">
       <img class="lightbox__placeholder" src="" alt="" aria-hidden="true" decoding="sync">
-      <div class="lightbox__noise" aria-hidden="true">
+      <div class="lightbox__waves" aria-hidden="true">
+        <div class="lightbox__wave lightbox__wave--a"></div>
+        <div class="lightbox__wave lightbox__wave--b"></div>
+        <div class="lightbox__wave lightbox__wave--c"></div>
+        <div class="lightbox__wave lightbox__wave--d"></div>
+        <div class="lightbox__wave lightbox__wave--e"></div>
         <div class="lightbox__noise-layer lightbox__noise-layer--coarse"></div>
         <div class="lightbox__noise-layer lightbox__noise-layer--medium"></div>
         <div class="lightbox__noise-layer lightbox__noise-layer--fine"></div>

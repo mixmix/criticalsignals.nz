@@ -733,69 +733,165 @@ body:has(.cs-hero) .prog-group__date{
    first frame, with the noise overlay on top of it (see below). */
 .lightbox__frame{position:relative;width:100%;max-width:100%;aspect-ratio:var(--ar,3/2);}
 .lightbox__placeholder{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;}
-/* Loading noise — chunky, flickering static blended onto the layers beneath
-   it via mix-blend-mode (rather than sitting on top of them at fixed
-   opacity), so it reads as texture ON the photo, not a film over it. Sits
-   between the placeholder and `.lightbox__img` in the markup/paint order:
-   visible over the placeholder while loading, covered (and — via the
-   `:has()` rule — stopped outright) once the full photo fades in on top.
-   The placeholder and the full photo both fill this exact same box
-   (position:absolute;inset:0, both object-fit:cover to the full photo's
-   aspect ratio — see the frame-sizing comment above), so this overlay lines
-   up with both identically instead of drifting as one swaps for the other.
+/* Loading surface — interfering waves, blended onto the layers beneath via
+   mix-blend-mode (rather than sitting on top of them at fixed opacity), so
+   it reads as texture ON the photo, not a film over it. Sits between the
+   placeholder and `.lightbox__img` in the markup/paint order: visible over
+   the placeholder while loading, covered (and — via the `:has()` rule —
+   stopped outright) once the full photo fades in on top. The placeholder
+   and the full photo both fill this exact same box (position:absolute;
+   inset:0, both object-fit:cover to the full photo's aspect ratio — see the
+   frame-sizing comment above), so this overlay lines up with both
+   identically instead of shifting as one swaps for the other.
 
-   Three wavelengths — coarse/medium/fine — each get their OWN element
-   (`.lightbox__noise-layer--*`) with their own tile size and their own
-   animation-duration, rather than one shared keyframe animation: a single
-   CSS property (background-position, even as a comma-list) can only be
-   driven by one animation at a time, so genuinely independent per-layer
-   speeds need genuinely independent elements. `isolation:isolate` on the
-   `.lightbox__noise` wrapper scopes the layers' mix-blend-mode to each
-   other — compositing the three wavelengths together first — before the
-   wrapper's OWN mix-blend-mode:overlay blends that combined result onto the
-   photo/placeholder beneath; without it the layers would each blend
-   straight through to the photo individually instead of with each other. */
-.lightbox__noise{position:absolute;inset:0;pointer-events:none;isolation:isolate;mix-blend-mode:overlay;}
-.lightbox__noise-layer{position:absolute;inset:0;image-rendering:pixelated;}
+   Two things this wrapper does for the waves inside it. `isolation:isolate`
+   makes them blend against the GROUP rather than straight through to the
+   photo — that's what lets them interfere with each OTHER, compositing into
+   one summed surface first. And the mid-grey base is the level they
+   interfere around: with a transparent group there's nothing for them to
+   push either side of and they only ever washed out pale, but against
+   mid-grey a crest lifts above it, a trough drops below it, and the two
+   meeting at opposite phase land back on it exactly. The group's own
+   `overlay` then applies that summed deviation to the photo, where mid-grey
+   is the no-op — so cancelled regions leave the photo alone and only the
+   interference reads. */
+.lightbox__waves{position:absolute;inset:0;pointer-events:none;isolation:isolate;mix-blend-mode:overlay;overflow:hidden;background-color:#808080;}
+
+/* --- Wave layers: the interference ---------------------------------------
+   Each is a repeating gradient: one wave component, a single wavelength
+   travelling in a single direction. Each oscillates dark→light→dark around
+   the midpoint and blends with `overlay`, which leaves mid-grey untouched
+   but brightens above it and darkens below — so where two crests meet they
+   reinforce, and where a crest meets a trough they cancel.
+
+   The set is a spectrum, not a grid. --a/--b are the short chop, --c/--d
+   the mid waves, --e a long swell the rest ride on; within each pair the
+   wavelengths are close but not equal, so they drift in and out of phase
+   and their reinforcement travels as broad cells far larger than either
+   wavelength. Two things keep it from reading as woven fabric, both learned
+   by looking at it: the angles have to be irregular — near-opposed
+   (8°/172°) or mirrored (64°/112°) pairs lock into a rigid plaid, so these
+   are spread unevenly around the circle — and the wavelengths have to be
+   long enough that only a handful of periods span the frame.
+
+   These waves alone are still recognisably periodic — a handful of pure
+   sinusoids can only sum to a lattice, which on its own reads as a
+   checkerboard. The noise layers below are what break that up: broadband
+   grain over the top scatters the regularity and the two together give the
+   surface its texture. They are a pair; neither half looks right alone.
+
+   Mechanically: the gradient is always vertical (0deg) and the ELEMENT is
+   rotated, so translateY(--wl) always moves the pattern exactly one full
+   wavelength along its own normal — a seamless loop whatever the angle,
+   with no per-angle trigonometry. Tuning: --wl wavelength, --angle
+   direction, --speed time per wavelength, --amp how hard it pushes
+   light/dark. */
+/* Animation set as longhands rather than the `animation:` shorthand: the
+   CSS minifier drops the space after a var() inside a shorthand, emitting
+   `var(--speed)linear`, which is at best fragile to rely on. Keeping the
+   duration in its own declaration means each layer's rate survives
+   minification intact. */
+.lightbox__wave{
+  /* -100% (three times the frame each way) so a rotated layer, which is
+     also translated by up to --wl, still covers the frame at its worst
+     angle without its own corners drifting into view as straight seams. */
+  position:absolute;inset:-100%;
+  /* A sine, sampled every eighth of a wavelength. Three stops (dark → light
+     → dark) is a TRIANGLE wave: it ramps linearly, so its slope reverses
+     instantly at every crest and trough and each one shows up as a hard
+     ridge line. Colour stops only interpolate linearly between neighbours,
+     so the way to bend those ramps into a curve is to give it more points
+     to follow — these are 0.5 - 0.5·cos(2π·p) evaluated at each eighth,
+     which is why the values run 0, 37, 128, 218, 255 rather than in equal
+     steps. Alpha stays at --amp throughout; only the grey level moves, so
+     the wave crosses mid-grey (the neutral point for `overlay`) exactly at
+     the quarter and three-quarter marks, as a real sine does. */
+  background-image:repeating-linear-gradient(0deg,
+    rgba(0,0,0,var(--amp)) 0,
+    rgba(37,37,37,var(--amp)) calc(var(--wl) * .125),
+    rgba(128,128,128,var(--amp)) calc(var(--wl) * .25),
+    rgba(218,218,218,var(--amp)) calc(var(--wl) * .375),
+    rgba(255,255,255,var(--amp)) calc(var(--wl) * .5),
+    rgba(218,218,218,var(--amp)) calc(var(--wl) * .625),
+    rgba(128,128,128,var(--amp)) calc(var(--wl) * .75),
+    rgba(37,37,37,var(--amp)) calc(var(--wl) * .875),
+    rgba(0,0,0,var(--amp)) var(--wl));
+  mix-blend-mode:overlay;will-change:transform;
+  animation-name:lightbox-wave-drift;
+  animation-duration:var(--speed);
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+@keyframes lightbox-wave-drift{
+  from{transform:rotate(var(--angle)) translateY(0);}
+  to{transform:rotate(var(--angle)) translateY(var(--wl));}
+}
+/* Speeds started from deep-water dispersion — phase speed going with the
+   square root of wavelength, so the longer waves outrun the short chop
+   rather than everything sliding at one rate. Worth keeping them spread
+   whatever the exact values: picking durations by eye had accidentally
+   landed all five at ~15 px/s, which flattens the effect, since waves at
+   equal speed hold their relative phase far more stubbornly and it's the
+   phases sliding past each other that makes the reinforcement and
+   cancellation travel. */
+.lightbox__wave--a{--wl:400px;--angle:149deg;--speed:5.1s;--amp:.42;}
+.lightbox__wave--b{--wl:74px;--angle:47deg;--speed:5.6s;--amp:.30;}
+/* mid waves, crossing the chop at a wide angle */
+.lightbox__wave--c{--wl:139px;--angle:96deg;--speed:7.7s;--amp:.36;}
+.lightbox__wave--d{--wl:167px;--angle:319deg;--speed:2.4s;--amp:.26;}
+/* the long swell everything else rides on — biggest and quietest */
+.lightbox__wave--e{--wl:290px;--angle:63deg;--speed:20.1s;--amp:.42;}
+
+/* --- Noise layers: the grain over the waves -------------------------------
+   Chunky static drifting vertically over the interference — the outer two
+   down, the middle one up against them (see its animation-direction), so it
+   reads as a separate depth rather than part of the same sheet. One shared
+   keyframe moves each layer by exactly `--tile`, its own background tile
+   height, so the moment it has travelled a full tile the repeating pattern
+   lines up with where it started and the loop is seamless; per-layer
+   `--tile` and duration are what make the three grain sizes travel at
+   different rates (about 1 : 2.5 : 5, or 4, 10 and 20 px/s). Each layer is
+   extended one tile ABOVE the frame (top:calc(-1 * var(--tile))) and its
+   transform only ranges between 0 and one tile, so it covers the frame at
+   every point in the cycle whichever way it's running. */
+.lightbox__noise-layer{
+  position:absolute;left:0;right:0;top:calc(-1 * var(--tile));bottom:0;
+  image-rendering:pixelated;will-change:transform;
+  animation-name:lightbox-noise-drift;
+  animation-duration:var(--speed);
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+@keyframes lightbox-noise-drift{
+  from{transform:translateY(0);}
+  to{transform:translateY(var(--tile));}
+}
 .lightbox__noise-layer--coarse{
+  --tile:32px;--speed:8s;          /* 4 px/s  ↓ slowest, furthest back */
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:32px 32px;
-  animation:lightbox-noise-coarse 1.1s steps(1) infinite;
+  mix-blend-mode:overlay;
 }
 .lightbox__noise-layer--medium{
+  /* Runs the same keyframe backwards, so this one travels bottom-to-top
+     against the other two — counter-motion, which separates it from them
+     far more clearly than a difference in speed alone can. */
+  --tile:15px;--speed:1.5s;        /* 10 px/s ↑ counter to the others */
+  animation-direction:reverse;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:15px 15px;
   mix-blend-mode:overlay;
-  animation:lightbox-noise-medium .7s steps(1) infinite reverse;
 }
 .lightbox__noise-layer--fine{
+  --tile:6px;--speed:.3s;          /* 20 px/s ↓ fastest, closest */
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:6px 6px;
   mix-blend-mode:overlay;
-  animation:lightbox-noise-fine .45s steps(1) infinite;
 }
-@keyframes lightbox-noise-coarse{
-  0%{background-position:0 0;}
-  25%{background-position:16px 8px;}
-  50%{background-position:8px 24px;}
-  75%{background-position:24px 16px;}
-  100%{background-position:0 0;}
-}
-@keyframes lightbox-noise-medium{
-  0%{background-position:0 0;}
-  33%{background-position:10px 5px;}
-  66%{background-position:5px 10px;}
-  100%{background-position:0 0;}
-}
-@keyframes lightbox-noise-fine{
-  0%{background-position:0 0;}
-  20%{background-position:3px 4px;}
-  40%{background-position:4px 2px;}
-  60%{background-position:2px 5px;}
-  80%{background-position:5px 1px;}
-  100%{background-position:0 0;}
-}
-.lightbox__frame:has(.lightbox__img.is-loaded) .lightbox__noise{display:none;}
+/* Everything still renders, it just holds still — the interference pattern
+   is as much a still texture as a moving one. */
+@media (prefers-reduced-motion:reduce){.lightbox__wave,.lightbox__noise-layer{animation:none;}}
+.lightbox__frame:has(.lightbox__img.is-loaded) .lightbox__waves{display:none;}
 .lightbox__img{
   position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;
   cursor:pointer;touch-action:pinch-zoom;opacity:0;transition:opacity .35s ease;
@@ -845,7 +941,7 @@ html[data-theme="dark"] .gallery-item{filter:invert(1);}
    cancels the body's invert(1) instead of stacking grayscale on top of it */
 html[data-theme="dark"] .lightbox__img{filter:invert(1);}
 html[data-theme="dark"] .lightbox__placeholder{filter:invert(1);}
-html[data-theme="dark"] .lightbox__noise{filter:invert(1);}
+html[data-theme="dark"] .lightbox__waves{filter:invert(1);}
 
 /* --- Calendar --- */
 /* Full-width white box (the calendar needs the width the narrow .col can't give) */
