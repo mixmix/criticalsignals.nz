@@ -16,10 +16,20 @@
 
 <article class="audit-card">
   <div class="audit-card__media">
+    {{- /* .Fill, not .Resize. `.Resize "400x400"` scales to exactly 400x400
+           without preserving the aspect ratio, so Anna's 2880x3120 portrait came
+           out squashed — and .audit-card__media is already `aspect-ratio: 1/1`
+           with `object-fit: cover`, so .Fill does the crop the layout wants.
+           The missing format token also meant PNG/JPEG sources stayed PNG/JPEG:
+           59 derivatives, 3,271,289 B of deploy weight for a 260px card. Top
+           anchor on portraits for the same reason as the social cards — a centre
+           crop of a tall photo lands on somebody's chest. */ -}}
     {{ with $img }}
       {{ $r := . }}
-      {{ if not (strings.HasSuffix .RelPermalink ".svg") }}{{ $r = .Resize "400x400" }}{{ end }}
-      <img class="audit-card__photo" src="{{ $r.RelPermalink }}" alt="{{ $p.Title }}" loading="lazy">
+      {{ if not (strings.HasSuffix .RelPermalink ".svg") }}
+        {{ $r = .Fill (printf "400x400 %s webp q80" (cond (lt .Width .Height) "Top" "Center")) }}
+      {{ end }}
+      <img class="audit-card__photo" src="{{ $r.RelPermalink }}" alt="{{ $p.Title }}" width="400" height="400" loading="lazy">
     {{ else }}
       <div class="audit-card__photo audit-card__photo--empty" aria-hidden="true">🔥</div>
     {{ end }}
