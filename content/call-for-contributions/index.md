@@ -23,13 +23,19 @@ We are now welcoming contributions for the 2026 programme, which runs in Welling
 
 ### Contributing
 
-If our project and themes resonate with you, we would be glad to hear from you, whether to offer an existing piece of work or to create something new as part of Critical Signals 2026.
+If our project and themes resonate with you, we would be glad to hear from you, fill in this form
 
-Please send a brief outline of your concept, together with a short biography of those involved, to [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz)
+<p style="margin-top: 1.5rem">
+  <a href="https://cloud.criticalsignals.nz/apps/formvox/public/9097/bnH5NaQb2bdw9M2HAdBNL30fii4UwhDo" class="homepage-programme-link">
+    Proposal Form
+  </a>
+</p>
+
+or send us an email: [contact@criticalsignals.nz](mailto:contact@criticalsignals.nz)
 
 ### We welcome contributions in any of the following formats:
 
-<div class="focus">
+<div class="focus" style="margin-top: 1rem;">
 
 - Workshops
 - Talks
