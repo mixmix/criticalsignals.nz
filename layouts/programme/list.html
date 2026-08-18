@@ -98,6 +98,27 @@
       {{ else }}
         <p><em>{{ i18n "list.no_articles" | emojify }}</em></p>
       {{ end }}
+
+
+      <img class="divider" src="/images/design/divider2.webp" alt="">
+
+      <div class='previous-years'>
+        <h2 style="font-size: 2rem; margin: 3rem 0 1rem;">
+          Previous Years
+        </h2>
+        <ul style="font-size: 2rem;">
+          <li>
+            <a href="https://2025.criticalsignals.nz/programme/">
+              Critical Signals 2025
+            </a>
+          </li>
+          <li>
+            <a href="https://beautiful-signals-website-f8baf0.gitlab.io/workshops/">
+              Beautiful Signals 2024
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
 
     {{ partial "design/rail.html" . }}
