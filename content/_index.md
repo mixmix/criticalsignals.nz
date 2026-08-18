@@ -85,7 +85,7 @@ How we utilise the power of space and place in ways that enable us all.
 <h2 class="caps">Prior art</h2>
 
 - [Critical Signals 2025](https://2025.criticalsignals.nz)
-- [Beautiful Signals (2024)](https://beautiful-signals-website-f8baf0.gitlab.io/)
+- [Beautiful Signals 2024](https://beautiful-signals-website-f8baf0.gitlab.io/)
 <!-- TODO: move this to be hosted at beautiful.criticalsignals.nz -->
 
 
