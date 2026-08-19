@@ -316,6 +316,12 @@ body.portrait #spore {
   -webkit-flex-direction: column; flex-direction: column;
   -webkit-justify-content: center; justify-content: center;
 }
+/* fitSpeakers() decides how big the hosts may be by measuring these, so none
+   of them may be quietly squashed by the flex algorithm first: a shrunk item
+   measures as fitting, and the hosts would then never step down. They keep
+   their content height and overflow instead, which is what the measurement
+   is there to notice. */
+#main > * { -webkit-flex: 0 0 auto; flex: 0 0 auto; }
 
 .rule {
   height: 1px; width: 100%;
@@ -466,19 +472,31 @@ body.portrait #seasonnote {
 #speakers .host {
   display: -webkit-box; display: -webkit-flex; display: flex;
   -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-  margin: 12px 48px 12px 0;
+  margin: 0.3em 1.2em 0.3em 0;
 }
 #speakers .host:last-child { margin-right: 0; }
 /* Sized to the space rather than to the type: #main centres in whatever slack
    the slide leaves, so a four-host row simply grows down into the empty band
    beside the QR plate instead of being squeezed. */
+/* Everything here is in `em` off #speakers' own font-size, so fitSpeakers()
+   has a single knob: step the font-size down and the photos, the gaps and
+   the names all shrink together instead of the names shrinking away from
+   photos that stay put. The em figures are the old pixel ones divided by
+   the base size, so an unshrunk row measures exactly as it did before. */
 #speakers .face {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
-  width: 140px; height: 140px;
-  margin-right: 22px;
+  width: 3.5em; height: 3.5em;
+  margin-right: 0.55em;
+  border-radius: 50%;
   overflow: hidden;
 }
-#speakers .face img { display: block; width: 100%; height: 100%; }
+/* The radius is on the image as well as on the frame: clipping a child to a
+   rounded parent is the part old WebKit is least reliable about, and this
+   costs nothing on an engine that gets it right. */
+#speakers .face img {
+  display: block; width: 100%; height: 100%;
+  border-radius: 50%;
+}
 
 /* bottom bar */
 #foot {
@@ -605,7 +623,11 @@ body.portrait #qr     { width: 235px; height: 235px; }
 
 body.portrait #season     { margin-top: 34px; margin-bottom: 0; }
 body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; }
-body.portrait #speakers .face { width: 229px; height: 229px; margin-right: 32px; }
+/* Portrait's photos are proportionally bigger against their names than
+   landscape's, so the ratio is set again here rather than inherited. Same
+   pixel sizes as before at full scale: 4.24em of 54px is 229px. */
+body.portrait #speakers .face { width: 4.24em; height: 4.24em; margin-right: 0.6em; }
+body.portrait #speakers .host { margin: 0.22em 0.89em 0.22em 0; }
 
 body.portrait .label  { font-size: 20px; margin-bottom: 10px; }
 body.portrait .value  { font-size: 44px; }
@@ -825,7 +847,71 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     stage.style.left = Math.round((vw - W * s) / 2) + 'px';
     stage.style.top  = Math.round(top) + 'px';
   }
-  window.onresize = fit;
+  /* ------------------------------------------------------------------
+     Hosts shrink to fit.
+
+     A slide with six hosts is three times the block a slide with two is,
+     and the board has no scrollbar and nowhere to put the overflow: past a
+     certain number of names the row grew straight down through the footer.
+     There is nothing in this engine to say "fit this in that space" —
+     no clamp(), no container queries, nothing that sizes type to its box —
+     so it is measured here.
+
+     One knob: #speakers' font-size. The photos, the gaps between hosts and
+     the names are all sized in `em` off it, so stepping it down takes the
+     whole block with it and a face never drifts out of scale with the name
+     beside it.
+
+     The budget is what #inner has left once everything that is not #main has
+     taken its share. Measured off those siblings rather than off #main
+     itself on purpose: #main's own height grows with the very content being
+     measured, so asking it how much room there is would always get "exactly
+     enough".
+     ------------------------------------------------------------------ */
+
+  /* Below this the names stop being readable from the footpath, which is
+     worse than an overfull board. Nothing on the current programme comes
+     close to needing it. */
+  var SPEAKERS_MIN_SCALE = 0.5;
+  var SPEAKERS_STEP      = 0.05;
+
+  function outerH(el) {
+    var cs = window.getComputedStyle(el, null);
+    return el.offsetHeight +
+           (parseFloat(cs.marginTop) || 0) +
+           (parseFloat(cs.marginBottom) || 0);
+  }
+
+  function fitSpeakers() {
+    var sp    = document.getElementById('speakers');
+    var main  = document.getElementById('main');
+    var inner = document.getElementById('inner');
+    if (!sp || !main || !inner) { return; }
+
+    /* Back to the stylesheet size first: the previous slide may have left it
+       shrunk, and this one is measured on its own terms. */
+    sp.style.fontSize = '';
+    var base = parseFloat(window.getComputedStyle(sp, null).fontSize);
+    if (!base) { return; }
+
+    var kids = inner.children, i;
+    var budget = inner.clientHeight;
+    for (i = 0; i < kids.length; i++) {
+      if (kids[i] !== main) { budget -= outerH(kids[i]); }
+    }
+    if (budget <= 0) { return; }
+
+    var parts = main.children, scale = 1, used, pass;
+    for (pass = 0; pass < 16; pass++) {
+      used = 0;
+      for (i = 0; i < parts.length; i++) { used += outerH(parts[i]); }
+      if (used <= budget || scale <= SPEAKERS_MIN_SCALE) { break; }
+      scale = Math.max(SPEAKERS_MIN_SCALE, scale - SPEAKERS_STEP);
+      sp.style.fontSize = (base * scale) + 'px';
+    }
+  }
+
+  window.onresize = function () { fit(); fitSpeakers(); };
   fit();
 
   var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -978,11 +1064,15 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   /* The loop runs every second, so every DOM write goes through this
      cache and only strings that actually changed touch the document. */
   var domCache = {};
+  /* Returns true when it actually wrote, so a caller can hang work off the
+     change rather than repeating it every second — see fitSpeakers(). */
   function put(id, html) {
     if (domCache[id] !== html) {
       domCache[id] = html;
       document.getElementById(id).innerHTML = html;
+      return true;
     }
+    return false;
   }
   function putClass(id, cls) {
     if (domCache['class:' + id] !== cls) {
@@ -1261,13 +1351,17 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       /* nowNZ(), not new Date(): hhmm reads getUTC* accessors, so a raw
          Date would print UTC on a clock meant to read Wellington time. */
       put('clock', hhmm(nowNZ()));
+      fitSpeakers();
       return;
     }
     shown = ev;
 
+    /* The three writes below are everything fitSpeakers() measures, so
+       whether any of them landed is exactly the condition for re-measuring.
+       renderEvent() runs every second; the layout pass must not. */
     var titleParts = splitLongTitle(ev.title);
-    put('title', titleParts.main);
-    put('titlesub', titleParts.sub);
+    var mainChanged = put('title', titleParts.main);
+    if (put('titlesub', titleParts.sub)) { mainChanged = true; }
 
     /* Each host as photo-then-name. `faces` runs parallel to `speakers` by
        position, holding an index into FACES or -1 — tested against 0 rather
@@ -1280,7 +1374,8 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
         : '';
       chips.push('<span class="host">' + face + esc(ev.speakers[i]) + '</span>');
     }
-    put('speakers', chips.join(''));
+    if (put('speakers', chips.join(''))) { mainChanged = true; }
+    if (mainChanged) { fitSpeakers(); }
     putSrc('qrimg', QRS[ev.qr] || SITE_QR);
 
     /* Computed every pass, not just when the event changes, so a board

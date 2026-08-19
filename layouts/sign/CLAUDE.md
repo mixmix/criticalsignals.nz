@@ -297,6 +297,39 @@ hole on the wall. `$faceSpec` should track what the circle actually renders at
 in portrait — the panel is 1:1, so anything larger is bytes for nothing and
 anything smaller is a soft photo on a 65" screen.
 
+### The hosts block shrinks to fit
+
+A slide with eight hosts is four times the block a slide with two is, and the
+board has no scrollbar and nowhere to put the overflow — past a certain number
+of names the row grew straight down through the footer. `fitSpeakers()`
+measures and steps it down.
+
+**There is one knob: `#speakers`' `font-size`.** The photos, the gaps between
+hosts and the names are all sized in `em` off it, so shrinking the type takes
+the photos with it and a face never drifts out of scale with the name beside
+it. The em figures are the old pixel ones divided by the base size, so an
+unshrunk row measures exactly as it did before — if you change a base
+font-size, the `em` ratios have to be redivided against it.
+
+The budget is what `#inner` has left once every one of its children *except*
+`#main` has taken its share. Measured off the siblings rather than off `#main`
+on purpose: `#main`'s own height grows with the very content being measured,
+so asking it how much room there is always gets back "exactly enough".
+
+`#main > *` is pinned to `flex: 0 0 auto` for the same reason. A flex item
+that has been quietly squashed by the flex algorithm measures as fitting, and
+the hosts would then never step down; they keep their content height and
+overflow instead, which is what the measurement is there to notice.
+
+It runs off a *change*, not off the clock. `renderEvent()` runs every second;
+`put()` returns whether it actually wrote, and only a write to `#title`,
+`#titlesub` or `#speakers` triggers a re-measure. A layout pass a second on
+this panel is not free.
+
+`SPEAKERS_MIN_SCALE` (0.5) is the floor — below that the names stop being
+readable from the footpath, which is worse than an overfull board. Nothing on
+the current programme comes close: eight hosts land around 0.7 in landscape.
+
 ## One copy of each image
 
 Everything is inlined, so a duplicate is paid for in full every time it
