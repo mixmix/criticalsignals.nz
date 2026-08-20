@@ -22,6 +22,6 @@ currency: "NZD"
 attendees: 0
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1778,x_0,y_218/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/lquscecqgbzwjsvajbu8.jpg?_a=BAAHWXDQ"
-ticket_tailor_id: "ev_8897760"
+ticket_tailor_id: "ev_8897761"
 ---
 A regular 3hr co-working session over the 3 months for community-minded techies and tech-adjacent creatives to explore and build. Each session will kick off with a quick 'show and tell' round.  Whether you’re building open source protocols, local mesh networks or hosting a tech repair cafe feel free to come along!  It’s also a space for community groups to share their tech issues and dreams. Come along and bring some tough problems techies can sink their teeth into - we love them!
