@@ -34,10 +34,14 @@ In collaboration with two/fiftyseven and the Pōneke Climate Hub.
 Time:
 Wednesdays 5:30-8:30pm 
 
-Dates:
+Dates + Locations:
 
 23 September - two/fiftyseven
+
 7 October - Critical Signals
+
 21 October - Critical Signals
+
 4 November - Critical Signals
+
 11 November - two/fiftyseven
