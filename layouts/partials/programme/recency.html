@@ -1,0 +1,23 @@
+{{- /* All past programme events (Pages) that have already happened, each
+       paired with its most-recent occurrence day (a recurring event's many
+       occurrences collapse to just the latest one), sorted most-recent-first.
+       Returns a slice of the dicts produced by programme/occurrences.html
+       (`day`, `label`, `sort`, `page`) — one per event Page. Context: any
+       Page (only used to resolve .Site). Shared by home/recent-events.html
+       (last 5 events WITH photos) and programme/all-photos.html (the
+       /gallery wall — every past event's photos). */ -}}
+{{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
+{{- $events := where .Site.RegularPages "Section" "programme" -}}
+{{- $byPage := dict -}}
+{{- range partial "programme/occurrences.html" $events -}}
+  {{- if and (not .page.Draft) (lt .day $today) -}}
+    {{- $key := .page.RelPermalink -}}
+    {{- $existing := index $byPage $key -}}
+    {{- if or (not $existing) (gt .day $existing.day) -}}
+      {{- $byPage = merge $byPage (dict $key .) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $all := slice -}}
+{{- range $byPage -}}{{- $all = $all | append . -}}{{- end -}}
+{{- return (sort $all "day" "desc") -}}

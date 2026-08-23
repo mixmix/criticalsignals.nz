@@ -1,0 +1,15 @@
+{{- /* /gallery — full photo wall: every past event's gallery photos, lazily
+       loaded, in one big grid inside the full-width box the calendar page
+       also uses (a narrow `.col` can't give a photo wall enough width). */ -}}
+{{ define "main" }}
+  <section class="hero hero--inner cs-hero gallery-hero">
+    {{ partial "design/hero-bg.html" . }}
+    {{ partial "design/wordmark.html" . }}
+    <div class="gallery-box">
+      <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+      {{ partial "programme/photo-wall.html" . }}
+    </div>
+
+    {{ partial "design/rail.html" . }}
+  </section>
+{{ end }}

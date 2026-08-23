@@ -1,0 +1,33 @@
+{{- /* Full pool of past-event photos for the /gallery wall page (every past
+       event's "extra" photos — see programme/gallery-images.html — not each
+       event's header image), most-recent event first. Shares the same
+       per-photo dict shape as home/recent-events.html's JSON pool (src,
+       thumb, width, height, fullWidth, fullHeight, title, href), but every
+       photo is rendered server-side rather than sampled — the wall page
+       shows everything, lazily. Context: any Page (only used to resolve
+       .Site via programme/recency.html). Returns a slice of dicts, possibly
+       empty.
+
+       Thumbnails are resized larger than the home/event galleries (900px,
+       not 600px) since the wall's grid cells run roughly twice as wide —
+       see custom.css .gallery-box — and greyscaled at build time, matching
+       partials/programme/gallery.html. */ -}}
+{{- $all := partial "programme/recency.html" . -}}
+{{- $pool := slice -}}
+{{- range $all -}}
+  {{- $p := .page -}}
+  {{- range partial "programme/gallery-images.html" $p -}}
+    {{- $thumb := (.Resize (printf "%dx webp q90" (cond (gt .Width 900) 900 .Width))).Filter images.Grayscale -}}
+    {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
+    {{- $pool = $pool | append (dict
+          "src" $full.RelPermalink
+          "thumb" $thumb.RelPermalink
+          "width" $thumb.Width
+          "height" $thumb.Height
+          "fullWidth" $full.Width
+          "fullHeight" $full.Height
+          "title" $p.Title
+          "href" $p.RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $pool -}}

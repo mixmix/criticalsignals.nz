@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
   //    (from the last 5 past events) is rendered server-side as a JSON data
   //    island; here we shuffle it and build just the N shown thumbnails, so a
   //    fresh random sample appears on every page load. Must run before
-  //    section 7 below, so those thumbnails are in the DOM by the time it
+  //    section 8 below, so those thumbnails are in the DOM by the time it
   //    collects `.gallery-item`s. See partials/home/recent-events.html.
   // `loading="lazy"` alone does NOT defer these, which is easy to miss: it is a
   // hint with a DISTANCE threshold, not a strict gate, and Chrome's threshold is
@@ -532,15 +532,47 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // 7. Photo lightbox — wires up any `.gallery-item` grid on the page (an
-  //    event's own Artefacts gallery, or the Recent Events sampler above) to
-  //    open the full-size photo in colour in an overlay (see
-  //    partials/design/lightbox.html). With 2+ photos, the overlay also
-  //    supports left/right navigation: the nav buttons, clicking the
-  //    left/right half of the photo, or the arrow keys. Items carrying
-  //    `data-title`/`data-href` (Recent Events only, since its grid mixes
-  //    photos from several events) get a caption naming the source event,
-  //    linking through to it.
+  // 7. /gallery photo wall — every past-event photo is already in the DOM
+  //    (server-rendered, see partials/programme/photo-wall.html), so unlike
+  //    section 6 there's nothing to build here. Two things left to wire up:
+  //    lazy-loading the currently-visible batch's thumbnails (same
+  //    IntersectionObserver/data-thumb gate as the Recent Events sampler
+  //    above — reused via `thumbObserver`/`revealThumb`, not duplicated),
+  //    and revealing the next `hidden` batch when "Show more" is clicked.
+  document.querySelectorAll(".gallery-wall").forEach(function (wall) {
+    const grid = wall.querySelector(".gallery-grid");
+    const moreBtn = wall.querySelector(".gallery-wall__more");
+    const batchSize = parseInt(wall.getAttribute("data-batch-size"), 10) || 30;
+    if (!grid) return;
+    // Only ever queries items NOT `hidden` — a hidden item's image never
+    // intersects the viewport anyway, so observing it before it's revealed
+    // would just be dead weight on the observer.
+    const observeVisible = function () {
+      grid.querySelectorAll(".gallery-item:not([hidden]) img[data-thumb]").forEach(function (img) {
+        if (thumbObserver) thumbObserver.observe(img);
+        else revealThumb(img);
+      });
+    };
+    observeVisible();
+    if (moreBtn) {
+      moreBtn.addEventListener("click", function () {
+        const hidden = Array.prototype.slice.call(grid.querySelectorAll(".gallery-item[hidden]"));
+        hidden.slice(0, batchSize).forEach(function (item) { item.hidden = false; });
+        observeVisible();
+        if (!grid.querySelector(".gallery-item[hidden]")) moreBtn.hidden = true;
+      });
+    }
+  });
+
+  // 8. Photo lightbox — wires up any `.gallery-item` grid on the page (an
+  //    event's own Artefacts gallery, the Recent Events sampler, or the
+  //    /gallery photo wall below) to open the full-size photo in colour in
+  //    an overlay (see partials/design/lightbox.html). With 2+ photos, the
+  //    overlay also supports left/right navigation: the nav buttons,
+  //    clicking the left/right half of the photo, or the arrow keys. Items
+  //    carrying `data-title`/`data-href` (Recent Events and the photo wall,
+  //    since both mix photos from several events) get a caption naming the
+  //    source event, linking through to it.
   const lightbox = document.querySelector(".lightbox");
   if (lightbox) {
     // .col (the white text column) is a stacking context (position:relative +
@@ -554,7 +586,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const lightboxPlaceholder = lightbox.querySelector(".lightbox__placeholder");
     const captionTitle = lightbox.querySelector(".lightbox__caption-title");
     const captionLink = lightbox.querySelector(".lightbox__caption-link");
-    const items = Array.from(document.querySelectorAll(".gallery-item"));
+    // Re-queried on every open (not captured once) — the /gallery wall's
+    // "Show more" button reveals additional `.gallery-item`s after this runs,
+    // and a stale array would leave those un-navigable and their clicks dead.
+    let items = Array.from(document.querySelectorAll(".gallery-item"));
     let index = 0;
     // Photos this session has already displayed in full — see showImage's
     // fast path below, which skips straight to is-loaded for these instead
@@ -589,8 +624,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const img = el && el.querySelector("img");
       if (!img) return;
       // An <img> with no src reports complete === true, so testing that alone
-      // would silently skip every Recent Events thumbnail still waiting on the
-      // observer in section 7 — exactly the neighbours worth preloading.
+      // would silently skip every Recent Events/photo-wall thumbnail still
+      // waiting on the observer in section 6 — exactly the neighbours worth
+      // preloading.
       const pending = img.getAttribute("data-thumb");
       if (pending) { new Image().src = pending; return; }
       if (!img.complete) new Image().src = img.src;
@@ -604,10 +640,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const thumb = item.querySelector("img");
       lightboxImg.classList.remove("is-loaded");
       if (thumb) {
-        // Recent Events thumbnails defer their own src until they scroll into
-        // view (section 7), so fall back to the pending data-thumb — otherwise
-        // opening a photo via keyboard navigation, which can reach an item that
-        // has not been revealed yet, would set the placeholder to "".
+        // Recent Events/photo-wall thumbnails defer their own src until they
+        // scroll into view (section 6), so fall back to the pending
+        // data-thumb — otherwise opening a photo via keyboard navigation,
+        // which can reach an item that has not been revealed yet, would set
+        // the placeholder to "".
         lightboxPlaceholder.src = thumb.src || thumb.getAttribute("data-thumb") || "";
       }
       if (items.length > 1) {
@@ -646,6 +683,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
     const openLightbox = function (i) {
+      // Recomputed on every open rather than once at setup, so has-nav/
+      // has-caption reflect whatever's in the DOM right now — e.g. the
+      // photo wall right after "Show more" has added a caption-bearing item.
+      lightbox.classList.toggle("has-nav", items.length > 1);
+      lightbox.classList.toggle("has-caption", items.some(function (el) { return el.getAttribute("data-title"); }));
       showImage(i);
       lightbox.classList.add("is-open");
       lightbox.setAttribute("aria-hidden", "false");
@@ -661,11 +703,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const next = function () { showImage(index + 1); };
     const prev = function () { showImage(index - 1); };
 
-    if (items.length > 1) lightbox.classList.add("has-nav");
-    if (items.some(function (el) { return el.getAttribute("data-title"); })) lightbox.classList.add("has-caption");
-
-    items.forEach(function (btn, i) {
-      btn.addEventListener("click", function () { openLightbox(i); });
+    // Delegated (rather than one listener per item bound at setup) so a
+    // `.gallery-item` added to the page later — the photo wall's "Show
+    // more" batches — opens the lightbox too, with no extra wiring.
+    document.addEventListener("click", function (e) {
+      const btn = e.target.closest(".gallery-item");
+      if (!btn) return;
+      items = Array.from(document.querySelectorAll(".gallery-item"));
+      const i = items.indexOf(btn);
+      if (i < 0) return;
+      openLightbox(i);
     });
 
     const prevBtn = lightbox.querySelector(".lightbox__prev");

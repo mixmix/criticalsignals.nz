@@ -826,6 +826,7 @@ body:has(.cs-hero) .prog-group__date{
 /* Home page — Recent Events: a random sample of past-event photos, see
    partials/home/recent-events.html. Shares the .gallery-* grid below. */
 .col .recent-events{margin-top:clamp(34px,3.2vw,52px);}
+.recent-events__more{display:flex;justify-content:center;margin-top:clamp(18px,1.8vw,28px);}
 
 /* Photo grid — event Artefacts and the home page's Recent Events sampler.
    --gallery-noise: a light-grey fractal-noise tile (SVG feTurbulence, baked
@@ -1217,22 +1218,28 @@ body:has(.cs-hero) .prog-group__date{
 #eventModal .btn-register{background:transparent;color:var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.03em;box-shadow:none;transform:none;}
 #eventModal .btn-register:hover{text-decoration:underline;text-underline-offset:3px;transform:none;box-shadow:none;}
 
-/* Calendar/list rail: spore only (the dates rail belongs beside the narrow
-   column, not under a full-width box), dropped in at lower-right per the design. */
+/* Calendar/list/gallery rail: spore only (the dates rail belongs beside the
+   narrow column, not under a full-width box), dropped in at lower-right per
+   the design. */
 .cal-hero .bigdates,
-.prog-hero .bigdates{display:none;}
+.prog-hero .bigdates,
+.gallery-hero .bigdates{display:none;}
 .cal-hero .rail,
-.prog-hero .rail{padding-top:0;margin-top:clamp(24px,3vw,48px);}
+.prog-hero .rail,
+.gallery-hero .rail{padding-top:0;margin-top:clamp(24px,3vw,48px);}
 .cal-hero .rail .spore,
-.prog-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
+.prog-hero .rail .spore,
+.gallery-hero .rail .spore{width:min(58%,520px);margin:0 0 0 auto;}
 
 @media (max-width:880px){
-  /* Programme/calendar: a slightly shorter hero reveal than the rest of the
-     site (smaller photo + smaller drop), kept in sync between the two pages
-     so the view-picker sits at the same height on both. */
+  /* Programme/calendar/gallery: a slightly shorter hero reveal than the rest
+     of the site (smaller photo + smaller drop), kept in sync across the
+     three pages so the content below sits at the same height on each. */
   .cal-hero .hero__photo,
-  .prog-hero .hero__photo{height:clamp(220px,58vw,350px);}
-  .cal-box{
+  .prog-hero .hero__photo,
+  .gallery-hero .hero__photo{height:clamp(220px,58vw,350px);}
+  .cal-box,
+  .gallery-box{
     margin-top:clamp(90px,30vw,180px);
     margin-inline:calc(-1 * var(--pad));
     padding:clamp(18px,5vw,28px) var(--pad) clamp(20px,4vw,32px);
@@ -1241,8 +1248,21 @@ body:has(.cs-hero) .prog-group__date{
   .cal-box .calendar-day{min-height:64px;padding:2px 2px;}
   .cal-box .event-item{padding:4px 3px;}
   .cal-hero .rail .spore,
-  .prog-hero .rail .spore{width:80%;margin:1rem auto 0;}
+  .prog-hero .rail .spore,
+  .gallery-hero .rail .spore{width:80%;margin:1rem auto 0;}
 }
+
+/* --- Gallery (/gallery — full photo wall) --- */
+/* Full-width white box, same shape as .cal-box (the wall needs the width the
+   narrow .col can't give). */
+.gallery-box{
+  position:relative;z-index:55;background:var(--white);
+  margin-top:-7vw;max-width:1200px;
+  padding:clamp(24px,2.4vw,44px) var(--tpad) clamp(40px,4vw,72px);
+}
+.gallery-wall{margin-top:clamp(18px,1.8vw,28px);}
+.gallery-wall-empty{margin-top:clamp(18px,1.8vw,28px);}
+.gallery-wall__more{display:block;margin:clamp(24px,2.4vw,36px) auto 0;}
 
 /* ============================================================================
    Blowfish content-page footer (#site-footer, rendered by partials/footer.html)

@@ -10,7 +10,9 @@
        full-size image loads. data-full-width/height (the full photo's actual
        dimensions, not the thumbnail's) let design.js size the lightbox frame
        correctly from the first frame, so it doesn't resize once the full
-       photo finishes loading. */ -}}
+       photo finishes loading. Thumbnails are resized to 600px, not the
+       ~190px the grid cell actually renders at, so high-DPI/retina screens
+       get a sharp image rather than an upscaled, soft one. */ -}}
 {{- $page := . -}}
 {{- $extras := partial "programme/gallery-images.html" $page -}}
 {{- with $extras -}}
@@ -18,7 +20,7 @@
   <h2 class="gallery-title">Artefacts</h2>
   <div class="gallery-grid">
     {{ range . -}}
-      {{ $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 300) 300 .Width))).Filter images.Grayscale -}}
+      {{ $thumb := (.Resize (printf "%dx webp q90" (cond (gt .Width 600) 600 .Width))).Filter images.Grayscale -}}
       {{ $full := .Resize (printf "%dx webp q90" .Width) -}}
       <button type="button" class="gallery-item" data-lightbox-src="{{ $full.RelPermalink }}" data-full-width="{{ $full.Width }}" data-full-height="{{ $full.Height }}">
         <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="">

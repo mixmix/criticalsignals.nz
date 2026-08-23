@@ -1,0 +1,40 @@
+{{- /* The /gallery page's photo wall — every past event's gallery photo (see
+       programme/all-photos.html), rendered as one big `.gallery-grid`. Every
+       thumbnail is deferred behind `data-thumb` — the same IntersectionObserver
+       gate design.js uses for the home page's Recent Events sampler — so only
+       photos actually scrolled near the viewport are ever fetched, not just
+       the ones `loading="lazy"`'s generous distance threshold would let
+       through on a fast connection.
+
+       Beyond the first `$batch`, items start `hidden`; a "Show more" button
+       (wired in design.js) reveals the next batch at a time, so the initial
+       page load doesn't have to lazily queue the entire photo history at
+       once. Clicking any thumbnail — including ones revealed later — opens
+       the shared lightbox (partials/design/lightbox.html), same as
+       everywhere else; design.js's click handling is delegated so newly
+       revealed items are wired up for free. */ -}}
+{{- $pool := partial "programme/all-photos.html" . -}}
+{{- $batch := 30 -}}
+{{- with $pool -}}
+<div class="gallery-wall" data-batch-size="{{ $batch }}">
+  <div class="gallery-grid">
+    {{- range $i, $item := . }}
+      <button type="button" class="gallery-item"
+        data-lightbox-src="{{ $item.src }}"
+        data-full-width="{{ $item.fullWidth }}"
+        data-full-height="{{ $item.fullHeight }}"
+        data-title="{{ $item.title }}"
+        data-href="{{ $item.href }}"
+        {{- if ge $i $batch }} hidden{{ end }}>
+        <img data-thumb="{{ $item.thumb }}" width="{{ $item.width }}" height="{{ $item.height }}" loading="lazy" decoding="async" alt="">
+      </button>
+    {{- end }}
+  </div>
+  {{- if gt (len .) $batch }}
+  <button type="button" class="gallery-wall__more cta cta--outline">Show more</button>
+  {{- end }}
+</div>
+{{ partial "design/lightbox.html" . }}
+{{- else -}}
+<p class="gallery-wall-empty">No photos yet — check back after the next event.</p>
+{{- end -}}

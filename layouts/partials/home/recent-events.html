@@ -2,34 +2,21 @@
        events that actually have gallery photos (each event's "extra" photos
        — see programme/gallery-images.html — not its header image). Events
        without any gallery photos are skipped over, scanning further back in
-       time as needed, so a run of photo-less events (e.g. recurring drop-ins)
-       can't leave the gallery empty. Every candidate photo is rendered into a
-       JSON data island on the grid element; design.js shuffles it and builds
-       the N visible thumbnails client-side, so the sample is different on
-       every page load. N is read from the front matter (`recentEventsCount`),
-       defaulting to 6. Renders nothing if there are no candidate photos at all.
+       time as needed (via programme/recency.html), so a run of photo-less
+       events (e.g. recurring drop-ins) can't leave the gallery empty. Every
+       candidate photo is rendered into a JSON data island on the grid
+       element; design.js shuffles it and builds the N visible thumbnails
+       client-side, so the sample is different on every page load. N is read
+       from the front matter (`recentEventsCount`), defaulting to 6. Renders
+       nothing if there are no candidate photos at all.
 
        Thumbnails are converted to actual greyscale pixels at build time
-       (images.Grayscale), matching partials/programme/gallery.html. */ -}}
+       (images.Grayscale), matching partials/programme/gallery.html — resized
+       to 600px, not the ~190px the grid cell actually renders at, so
+       high-DPI/retina screens get a sharp image rather than an upscaled,
+       soft one. */ -}}
 {{- $n := .Params.recentEventsCount | default 6 -}}
-{{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
-{{- $events := where .Site.RegularPages "Section" "programme" -}}
-
-{{/* One entry per past event, keyed by page so a recurring event (multiple
-     occurrences) is only counted once, at its most recent occurrence. */}}
-{{- $byPage := dict -}}
-{{- range partial "programme/occurrences.html" $events -}}
-  {{- if and (not .page.Draft) (lt .day $today) -}}
-    {{- $key := .page.RelPermalink -}}
-    {{- $existing := index $byPage $key -}}
-    {{- if or (not $existing) (gt .day $existing.day) -}}
-      {{- $byPage = merge $byPage (dict $key .) -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- $allRecent := slice -}}
-{{- range $byPage -}}{{- $allRecent = $allRecent | append . -}}{{- end -}}
-{{- $allRecent = sort $allRecent "day" "desc" -}}
+{{- $allRecent := partial "programme/recency.html" . -}}
 
 {{/* Walk back through past events, skipping any with no gallery photos,
      until 5 photo-bearing events are found (or the history runs out). */}}
@@ -48,7 +35,7 @@
 {{- range $withPhotos -}}
   {{- $p := .page -}}
   {{- range .images -}}
-    {{- $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 300) 300 .Width))).Filter images.Grayscale -}}
+    {{- $thumb := (.Resize (printf "%dx webp q90" (cond (gt .Width 600) 600 .Width))).Filter images.Grayscale -}}
     {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
     {{- $pool = $pool | append (dict
           "src" $full.RelPermalink
@@ -74,6 +61,9 @@
   <h2 class="gallery-title">Recent Events</h2>
   <div class="gallery-grid" data-recent-events-pool="{{ . | jsonify }}" data-recent-events-count="{{ $n }}">
     {{ range seq $slots }}<div class="gallery-item" aria-hidden="true"></div>{{ end }}
+  </div>
+  <div class="recent-events__more">
+    <a class="cta cta--outline" href="/gallery/">See more photos</a>
   </div>
 </section>
 {{ partial "design/lightbox.html" . }}
