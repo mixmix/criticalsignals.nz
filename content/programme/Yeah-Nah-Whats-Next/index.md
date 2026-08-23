@@ -1,14 +1,14 @@
 ---
 title: "Yeah Nah What's Next?"
+draft: true
 hosts:
   - "Ash Holwell"
   - "Emily Writes"
 date: "2026-09-08"
 start_time: "18:30"
 end_time: "19:00"
-sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2354852"
 price: "Koha"
-currency: "USD"
+currency: "NZD"
 attendees: 0
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_635,q_100,w_2000,x_0,y_1/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/d6kcnkh1zirln0x7wu9t.jpg?_a=BAAHWXDQ"
