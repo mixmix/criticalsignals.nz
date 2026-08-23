@@ -1,10 +1,13 @@
 {{- /* Home — Recent Events: a random sample of photos from the last 5 past
-       events (each event's "extra" photos — see programme/gallery-images.html
-       — not its header image). Every candidate photo is rendered into a JSON
-       data island on the grid element; design.js shuffles it and builds the
-       N visible thumbnails client-side, so the sample is different on every
-       page load. N is read from the front matter (`recentEventsCount`),
-       defaulting to 6. Renders nothing if there are no candidate photos.
+       events that actually have gallery photos (each event's "extra" photos
+       — see programme/gallery-images.html — not its header image). Events
+       without any gallery photos are skipped over, scanning further back in
+       time as needed, so a run of photo-less events (e.g. recurring drop-ins)
+       can't leave the gallery empty. Every candidate photo is rendered into a
+       JSON data island on the grid element; design.js shuffles it and builds
+       the N visible thumbnails client-side, so the sample is different on
+       every page load. N is read from the front matter (`recentEventsCount`),
+       defaulting to 6. Renders nothing if there are no candidate photos at all.
 
        Thumbnails are converted to actual greyscale pixels at build time
        (images.Grayscale), matching partials/programme/gallery.html. */ -}}
@@ -24,14 +27,27 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- $recent := slice -}}
-{{- range $byPage -}}{{- $recent = $recent | append . -}}{{- end -}}
-{{- $recent = first 5 (sort $recent "day" "desc") -}}
+{{- $allRecent := slice -}}
+{{- range $byPage -}}{{- $allRecent = $allRecent | append . -}}{{- end -}}
+{{- $allRecent = sort $allRecent "day" "desc" -}}
+
+{{/* Walk back through past events, skipping any with no gallery photos,
+     until 5 photo-bearing events are found (or the history runs out). */}}
+{{- $withPhotos := slice -}}
+{{- range $allRecent -}}
+  {{- if lt (len $withPhotos) 5 -}}
+    {{- $p := .page -}}
+    {{- $imgs := partial "programme/gallery-images.html" $p -}}
+    {{- if gt (len $imgs) 0 -}}
+      {{- $withPhotos = $withPhotos | append (dict "page" $p "images" $imgs) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
 
 {{- $pool := slice -}}
-{{- range $recent -}}
+{{- range $withPhotos -}}
   {{- $p := .page -}}
-  {{- range partial "programme/gallery-images.html" $p -}}
+  {{- range .images -}}
     {{- $thumb := (.Resize (printf "%dx webp q80" (cond (gt .Width 300) 300 .Width))).Filter images.Grayscale -}}
     {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
     {{- $pool = $pool | append (dict
