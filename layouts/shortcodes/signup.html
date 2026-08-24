@@ -1,0 +1,10 @@
+{{- /* Drops the sign-up form (see partials/design/signup.html) into page
+       markdown, e.g. content/_index.md, so its position on the page is
+       controlled by the author rather than baked into a layout. Gets its
+       own id ("signup-top") since the footer already renders the same
+       form with id="signup" on every page. Defaults to the minimal
+       (form + button only) variant; pass minimal="false" for the full
+       heading/blurb/contact version. */ -}}
+{{- $minimal := true -}}
+{{- if in (slice "false" "0" "no") (.Get "minimal") -}}{{- $minimal = false -}}{{- end -}}
+{{- partial "design/signup.html" (dict "page" .Page "id" "signup-top" "minimal" $minimal) -}}

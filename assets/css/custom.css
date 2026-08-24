@@ -480,10 +480,10 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
 .endband__photo{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;}
 
 /* sign-up + support typography */
-.signup h2{margin:0 0 clamp(22px,2.2vw,38px);}
+.signup h2{margin:0 0 14px;}
 .signup>p{margin:0 0 clamp(30px,3.2vw,56px);}
 .signup form{display:flex;gap:14px;flex-wrap:wrap;margin:0;}
-.signup .direct{margin:clamp(40px,4.2vw,74px) 0 0;}
+.signup .direct{margin:18px 0 0;}
 .signup .direct a{display:inline-block;margin-top:6px;text-decoration:underline;}
 .signup input[type=email]{
   flex:1;min-width:200px;padding:15px 16px;border:1px solid var(--field-border);font:inherit;font-size:.9rem;
