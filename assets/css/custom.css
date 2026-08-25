@@ -864,6 +864,12 @@ body:has(.cs-hero) .prog-group__date{
 .gallery-item img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
 .gallery-item:hover img{opacity:.85;}
 
+/* A single photo dropped into page prose via the {{< gallery-photo >}}
+   shortcode — same treatment as the multi-photo grid above, but running the
+   full content-column width instead of sitting in a 2/3-up grid cell. */
+.gallery-grid--single{grid-template-columns:1fr;margin:0 0 8px;}
+.gallery-item-caption{margin-top:0;}
+
 /* Full-size view of a gallery photo, opened on click — see design.js.
    Mobile-first: the photo runs edge-to-edge at full device width (no
    padding/max-height cap), with the overlay itself scrollable so a tall

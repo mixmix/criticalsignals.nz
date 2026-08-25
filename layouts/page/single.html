@@ -19,4 +19,8 @@
       <img class="imgband__photo" alt="" loading="lazy" data-img-spot>
     </section>
   {{ end }}
+
+  {{ if .HasShortcode "gallery-photo" }}
+    {{ partial "design/lightbox.html" . }}
+  {{ end }}
 {{ end }}

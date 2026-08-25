@@ -26,6 +26,8 @@ No prior experience is needed, just a sense of our tikanga and a few hours to sp
 
 <p class="note">Email us at <a href="mailto:contact@criticalsignals.nz">contact@criticalsignals.nz</a> to find out what's needed and when.</p>
 
+{{< gallery-photo src="picnic-governance.jpg" caption="Members of the 2025 team planning over a picnic early in 2026" >}}
+
 <img class="divider" src="/images/design/divider1.webp" alt="">
 
 ## Donate

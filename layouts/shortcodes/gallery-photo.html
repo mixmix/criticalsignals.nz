@@ -1,0 +1,29 @@
+{{- /* A single photo dropped into page prose, given the same treatment as the
+       event/home photo grids (partials/programme/gallery.html): a greyscale
+       thumbnail (images.Grayscale, baked in at build time) that opens the
+       full-colour photo in the shared lightbox on click. Relies on
+       layouts/page/single.html including partials/design/lightbox.html and
+       design.js's generic `.gallery-item` wiring, which finds this button
+       whether or not it's part of a partial-rendered grid.
+
+       Usage: {{< gallery-photo src="photo.jpg" caption="..." >}}
+       `src` resolves against the page's own bundle resources. */ -}}
+{{- $page := .Page -}}
+{{- $src := .Get "src" -}}
+{{- $caption := .Get "caption" -}}
+{{- $resource := $page.Resources.GetMatch $src -}}
+{{- with $resource -}}
+  {{- /* 1040w matches render-image.html's DPR-2 cap for this same content
+         column (measured there at 513px CSS-wide), since this photo runs
+         the full column width rather than a small grid cell. */ -}}
+  {{- $thumb := (.Resize (printf "%dx webp q90" (cond (gt .Width 1040) 1040 .Width))).Filter images.Grayscale -}}
+  {{- $full := .Resize (printf "%dx webp q90" .Width) -}}
+  <div class="gallery-grid gallery-grid--single">
+    <button type="button" class="gallery-item" data-lightbox-src="{{ $full.RelPermalink }}" data-full-width="{{ $full.Width }}" data-full-height="{{ $full.Height }}">
+      <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="{{ $caption }}">
+    </button>
+  </div>
+  {{- with $caption }}
+    <p class="note gallery-item-caption">{{ . }}</p>
+  {{- end }}
+{{- end -}}
