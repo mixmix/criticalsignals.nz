@@ -35,8 +35,10 @@ No prior experience is needed, just a sense of our tikanga and a few hours to sp
 Donations directly fund venues, materials, and the practical work of running the programme.
 
 
-<p style="margin-top: 2rem; margin-left: 0rem; max-width: 260px;">
-  <img src="/images/design/donate-qr.png" alt="QR code linking to the Critical Signals donation page" style="width: 100%; height: auto; display: block;">
+<p class="donate-qr-code">
+  <a href="https://app.volley.nz/pay/TI7KYzottyY6VooH5lUd6" target="_blank">
+    <img src="donate-qr.png" alt="QR code linking to the Critical Signals donation page" style="width: 100%; height: auto; display: block;">
+  </a>
 </p>
 
 [https://app.volley.nz/pay/TI7KYzottyY6VooH5lUd6](https://app.volley.nz/pay/TI7KYzottyY6VooH5lUd6)
@@ -100,6 +102,16 @@ Our events take place in person in Wellington, and we warmly welcome internation
 <img class="divider" src="/images/design/divider1.webp" alt="">
 
 <style>
+  .donate-qr-code {
+    margin-top: 2rem;
+    margin-left: 0rem;
+    max-width: 260px;
+    filter: grayscale(1);
+    transition: filter 0.5s ease-in-out;
+  }
+  .donate-qr-code:hover {
+    filter: grayscale(0);
+  }
   h2.cs-heading {
       font-size: 1.5rem;
       margin: 0;
