@@ -1,6 +1,6 @@
 {{- /* One <tr> for the /_programme/ audit table. Expects a row dict:
-       {page, hosts, ticketStatus, whenDates, whenTime, whenLines, editURL,
-       editLabel, isDraft}. Price and sign-ups come off the page's own front
+       {page, hosts, ticketStatus, whenDates, whenIndex, whenTime, whenLines,
+       editURL, editLabel, isDraft}. Price and sign-ups come off the page's own front
        matter, written by scripts/build-programme.mjs. */ -}}
 {{ $event := .page }}
 <tr{{ if .isDraft }} class="programme-audit__row--draft"{{ else if .isPast }} class="programme-audit__row--past"{{ end }}>
@@ -10,7 +10,10 @@
     {{- else if not .whenDates -}}
       <span class="programme-audit__tooltip" data-tooltip="No date set for this event">🔥</span>
     {{- else -}}
-      {{ index .whenDates 0 }}
+      {{/* whenIndex picks the session this row stands on — the next one still
+           to come, or the last one for a series that's finished. See
+           admin/programme-audit.html. */}}
+      {{ index .whenDates .whenIndex }}
       {{- with .whenTime }}<span class="programme-audit__time">{{ . }}</span>{{ end -}}
       {{- if gt (len .whenDates) 1 -}}
         {{/* Recurring — the rest are in the tooltip, see admin/programme-audit.html */}}

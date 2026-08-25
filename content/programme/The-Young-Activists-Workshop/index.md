@@ -1,5 +1,6 @@
 ---
 title: "The Young Activists Workshop"
+event_type: "Workshop"
 hosts:
   - "Emily Writes"
   - "Ash Holwell"

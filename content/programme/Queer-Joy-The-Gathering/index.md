@@ -24,8 +24,4 @@ Come and be in community in a chill, safe space. We'll have music, tarot, nail a
 
 Bring koha to support the kaupapa if you can, but nobody will be turned away. 
 
-This is a drop-in afternoon at Critical Signals, but it is registered for safety. You must register. 
-
-
-
-Type: community-building
+This is a drop-in afternoon at Critical Signals, but it is registered for safety. You must register.

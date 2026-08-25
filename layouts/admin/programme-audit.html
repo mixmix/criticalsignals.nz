@@ -66,11 +66,15 @@
       {{ $ticketStatus = "ok" }}
     {{ end }}
 
-    {{/* When it runs. A recurring event (front matter `dates:`) shows its first
+    {{/* When it runs. A recurring event (front matter `dates:`) shows one
          session and an ellipsis, with every date in the hover tooltip — the
-         column has room for one line, and the audit mostly wants to know
-         "when does this start". Sorting is off the first date for the same
-         reason, and can't read .Params.date since `dates:` events don't set it. */}}
+         column has room for one line. The one it shows, and the one it sorts
+         on, is the *next* session still to come (the first date not before
+         today), so a series part-way through sits among the coming-up rows at
+         its next session rather than back at the date it started. Once every
+         session is behind us the last one takes over, which is the date such
+         an event is remembered by. Can't read .Params.date for any of this,
+         since `dates:` events don't set it. */}}
     {{ $dates := partial "programme/dates.html" $event }}
     {{ $time := partial "programme/time.html" $event }}
     {{/* Dates and time are kept apart for the cell, where the time gets its own
@@ -79,18 +83,26 @@
          programme runs in one season, so it would just be noise. */}}
     {{ $whenDates := slice }}
     {{ $whenLines := slice }}
-    {{ range $dates }}
-      {{ $day := .Format "2 Jan" }}
+    {{/* programme/dates.html hands them back oldest first, so the first date
+         that isn't before today is the next one still to come. */}}
+    {{ $nextIndex := -1 }}
+    {{ range $i, $d := $dates }}
+      {{ $day := $d.Format "2 Jan" }}
       {{ $whenDates = $whenDates | append $day }}
       {{ $whenLines = $whenLines | append (cond (eq $time "") $day (printf "%s · %s" $day $time)) }}
+      {{ if and (lt $nextIndex 0) (ge ($d.Format "2006-01-02") $today) }}{{ $nextIndex = $i }}{{ end }}
     {{ end }}
-    {{ $firstDay := "" }}
-    {{ if $dates }}{{ $firstDay = (index $dates 0).Format "2006-01-02" }}{{ end }}
-    {{ $sortKey := printf "%s %s" $firstDay ($event.Params.start_time | default "") }}
-    {{/* dateTBC / no-date events have no $firstDay to compare, so they can't be
+    {{ $whenIndex := 0 }}
+    {{ $keyDay := "" }}
+    {{ if $dates }}
+      {{ $whenIndex = cond (ge $nextIndex 0) $nextIndex (sub (len $dates) 1) }}
+      {{ $keyDay = (index $dates $whenIndex).Format "2006-01-02" }}
+    {{ end }}
+    {{ $sortKey := printf "%s %s" $keyDay ($event.Params.start_time | default "") }}
+    {{/* dateTBC / no-date events have no dates to compare, so they can't be
          classed as past — they fall in with the future rows, at the top where
          the empty sortKey already sorts them. */}}
-    {{ $isPast := and (ne $firstDay "") (lt $firstDay $today) }}
+    {{ $isPast := and (gt (len $dates) 0) (lt $nextIndex 0) }}
 
     {{/* Events regenerated from Ticket Tailor (see scripts/build-programme.mjs)
          always carry a ticket_tailor_id — hand-authored ("custom") events never
@@ -99,10 +111,10 @@
     {{ $ticketTailorID := $event.Params.ticket_tailor_id | default "" }}
     {{ if ne $ticketTailorID "" }}
       {{ $editURL := printf "https://app.tickettailor.com/event/%s" $ticketTailorID }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenIndex" $whenIndex "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
     {{ else }}
       {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $event.File.Path }}
-      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
+      {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenIndex" $whenIndex "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "GitHub" "isDraft" $event.Draft) }}
     {{ end }}
   {{ end }}
 
