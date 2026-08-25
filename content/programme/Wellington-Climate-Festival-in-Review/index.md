@@ -1,11 +1,11 @@
 ---
 title: "Wellington Climate Festival in Review"
-draft: true
 hosts:
   - "Kate Kirkwood"
 date: "2026-09-02"
 start_time: "18:00"
 end_time: "19:30"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2347964"
 price: "$6 or koha"
 currency: "NZD"
 attendees: 0
