@@ -2,7 +2,7 @@
 title: "Deliberative Democracy Workshop"
 event_type: "Workshop"
 hosts:
-  - "Dr"
+  - "Dr. Anne Bardsley"
 date: "2026-09-03"
 start_time: "17:30"
 end_time: "19:30"
@@ -15,5 +15,3 @@ featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_565,q_100
 ticket_tailor_id: "ev_8953391"
 ---
 An interactive introduction to deliberative democracy, a consensus based system for making healthier collective decisions. We will explore what processes work for what types of questions and explore some online tools, using current Pōneke examples.
-
- Anne Bardsley

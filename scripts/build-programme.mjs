@@ -46,6 +46,32 @@ const MARKER = '.generated-by-tickettailor'
 // icon in assets/images/event-types/ — change all three together.
 const EVENT_TYPES = ['Social', 'Workshop', 'Talk', 'Screening', 'Community Building']
 
+// Honorifics people write in front of their name, with or without the
+// abbreviating full stop. Used twice over: to keep "Dr." from being read as
+// the end of the "Hosted by" sentence (HOST_NAMES), and to strip the title
+// when matching a host to their profile (nameKey), since the two sources
+// don't agree on whether to include one. Mirrored in
+// layouts/partials/people/name-key.html — change both together.
+const HONORIFICS = 'dr|prof|professor|mr|mrs|ms|mx|rev|fr|sir|dame|hon'
+
+// The same, plus the abbreviations that only ever turn up mid-name and so
+// need no stripping — a generational suffix ("Bob Jr.") or a saint's street.
+const NAME_ABBREVIATIONS = `${HONORIFICS}|sr|snr|jr|jnr|st`
+
+// The names run: everything after "Hosted by" up to the sentence end (a
+// period) or line break, keeping the full stops that belong to an
+// abbreviated title or an initial ("J. Smith") rather than to the sentence.
+const HOST_NAMES = `(?:[^.\\n]|\\.(?<=\\b(?:${NAME_ABBREVIATIONS}|[a-z])\\.))+`
+
+// Every kind of space, folded to a plain one before a name is read. Ticket
+// Tailor descriptions are HTML, and the "Dr. Anne Bardsley" a rich text editor
+// produces holds a non-breaking space that survives the markdown conversion —
+// so the honorific never sits behind an ordinary " ". JS `\s` matches a
+// non-breaking space; Hugo's regexp engine (RE2) does not, which is how the
+// two sides of the fence came to disagree. Mirrored in
+// layouts/partials/people/name-key.html — change both together.
+const SPACES = /[\s\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+/g
+
 const API_BASE = 'https://api.tickettailor.com/v1'
 
 const API_KEY = process.env.TICKET_TAILOR_API_KEY
@@ -460,8 +486,10 @@ function capitalise (word) {
 }
 
 /**
- * Comparison key for a person's name: lowercased, whitespace collapsed, and a
- * leading honorific ("Dr", "Dr.", "Prof", …) removed.
+ * Comparison key for a person's name: lowercased, every kind of space folded
+ * to a plain one, and a leading honorific ("Dr", "Dr.", "Prof", …) removed,
+ * so "Dr. Ana Lopez", "Dr Ana Lopez" and "Ana Lopez" all match the one
+ * profile.
  *
  * Ticket Tailor descriptions and content/people/ profiles are written by
  * different hands and don't agree on honorifics — the same person can be
@@ -474,8 +502,9 @@ function capitalise (word) {
 function nameKey (name) {
   return String(name ?? '')
     .toLowerCase()
-    .replace(/^\s*(?:dr|prof|professor|mr|mrs|ms|mx|sir|dame)\.?\s+/, '')
-    .replace(/\s+/g, ' ')
+    .replace(SPACES, ' ')
+    .replace(new RegExp(`^ *(?:${HONORIFICS})\\.? +`), '')
+    .replace(/ +/g, ' ')
     .trim()
 }
 
@@ -541,13 +570,12 @@ async function pruneRemovedEvents (keptSlugs) {
  * commas, "&" or "and".
  */
 function extractHosts (markdown) {
-  // Capture the names run: everything after "Hosted by" up to the sentence
-  // end (a period) or line break.
-  const namesMatch = markdown.match(/Hosted by:?[ \t]*\**[ \t]*([^.\n]+)/i)
+  const namesMatch = markdown.match(new RegExp(`Hosted by:?[ \\t]*\\**[ \\t]*(${HOST_NAMES})`, 'i'))
   if (!namesMatch) return { hosts: [], body: markdown }
 
   const hosts = namesMatch[1]
     .replace(/[*_]+/g, '')            // drop markdown emphasis
+    .replace(SPACES, ' ')             // the editor's non-breaking spaces included
     .split(/\s*(?:,|&|\band\b)\s*/i)  // split on comma / "&" / "and"
     .map((name) => name.trim())
     .filter(Boolean)
@@ -555,7 +583,7 @@ function extractHosts (markdown) {
   // Strip the "Hosted by …" phrase (plus a trailing period), without crossing
   // line breaks so surrounding paragraphs stay intact.
   const body = markdown
-    .replace(/[ \t]*\**[ \t]*Hosted by:?[ \t]*\**[ \t]*[^.\n]+\.?/i, '')
+    .replace(new RegExp(`[ \\t]*\\**[ \\t]*Hosted by:?[ \\t]*\\**[ \\t]*${HOST_NAMES}\\.?`, 'i'), '')
     .replace(/[ \t]+$/gm, '')
 
   return { hosts, body }

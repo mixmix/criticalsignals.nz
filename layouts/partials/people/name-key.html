@@ -5,15 +5,24 @@
        person can be "Dr. Jessica Hutchings" on one side and "Jessica
        Hutchings" on the other. Matching on the raw title silently drops
        those links, so every name → profile lookup goes through this key
-       instead: lowercased, whitespace collapsed, and a leading honorific
-       ("Dr", "Dr.", "Prof", "Ms", …) removed.
+       instead: lowercased, every kind of space folded to a plain one and
+       collapsed, and a leading honorific ("Dr", "Dr.", "Prof", "Ms", …)
+       removed — so "Dr. Ana Lopez", "Dr Ana Lopez" and "Ana Lopez" all
+       resolve to the one profile.
+
+       The space folding is not cosmetic: Ticket Tailor's rich text editor
+       writes "Dr.&nbsp;Ana Lopez", and Go's regexp `\s` — unlike
+       JavaScript's — does not match a non-breaking space, so without \p{Zs}
+       the honorific would sit behind a space this key can't see and the name
+       would never match.
 
        Only the key is normalised — pages still display their own title, so
        whoever wrote "Dr" keeps their "Dr".
 
        Takes a name string, returns the key. Mirrored in
-       scripts/build-programme.mjs (nameKey) — change both together. */ -}}
+       scripts/build-programme.mjs (nameKey, HONORIFICS and SPACES) — change
+       them together. */ -}}
 {{- $name := lower (printf "%v" (. | default "")) -}}
-{{- $name = replaceRE `^\s*(?:dr|prof|professor|mr|mrs|ms|mx|sir|dame)\.?\s+` "" $name -}}
-{{- $name = replaceRE `\s+` " " $name -}}
+{{- $name = replaceRE `[\s\p{Zs}\x{feff}]+` " " $name -}}
+{{- $name = replaceRE `^ *(?:dr|prof|professor|mr|mrs|ms|mx|rev|fr|sir|dame|hon)\.? +` "" $name -}}
 {{- return (trim $name " ") -}}
