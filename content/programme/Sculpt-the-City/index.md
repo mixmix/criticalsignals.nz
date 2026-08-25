@@ -18,3 +18,7 @@ ticket_tailor_id: "ev_8743640"
 
  In this hands-on workshop, participants will use air-dry modelling clay to create three-dimensional interpretations of parts of Wellington city. Through shaping the clay, participants will explore places of vulnerability, strength, connection, and adaptation. You’ll gain new insights into scale, design, and the ways we interpret our shared environment. 
 No artistic experience is needed. The workshop offers a creative and collaborative way to think about how people experience risk and what a more resilient city might look like.
+
+
+
+Type: Workshop

@@ -19,3 +19,7 @@ The Pōneke Climate festival was a three-week community-led programme of events
 Kate Kirkwood joins us at 113 to share what was learned from the festival and why arts, culture, and mātauranga Māori are such important ingredients for community climate action. What impact did it have on Wellington, and what are people most concerned with?
 
 Who is showing up to make change, and how can Wellington build on that energy?
+
+
+
+Type: Talk
