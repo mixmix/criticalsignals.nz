@@ -95,6 +95,8 @@ or send us an email: [contact@criticalsignals.nz](mailto:contact@criticalsignals
 Our events take place in person in Wellington, and we warmly welcome international contributors. If you are based in Europe or further afield, we can support remote and online participation: talks, workshops, and conversations delivered across time zones, as well as artworks and experiences presented on your behalf. Please tell us in your proposal how you would like to take part, and we will work with you to make it possible.
 
 
+<img class="divider" src="/images/design/divider1.webp" alt="">
+
 <style>
   h2.cs-heading {
       font-size: 1.5rem;
