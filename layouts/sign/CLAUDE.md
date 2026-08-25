@@ -443,8 +443,17 @@ every non-past occurrence; the client-side `pick()` chooses, re-running every
 20 seconds. That is also what keeps the board correct across midnight and
 across the end of one event into the next.
 
-Excluded automatically: `draft: true` events, and `dateTBC:` events (which
-`programme/dates.html` gives no dates, so they never produce an occurrence).
+Excluded automatically: `dateTBC:` events, which `programme/dates.html` gives
+no dates, so they never produce an occurrence at all.
+
+`draft: true` events are excluded too, but by an **explicit `not .page.Draft`
+check** in the header, not by `buildDrafts = false`. Don't remove it on the
+grounds that the config already covers it: this board is served to the panel by
+`hugo server` over the LAN, and `hugo server -D` — the flag you reach for to see
+the drafts section on `/_admin/programme/` — would otherwise put unpublished
+events on the window, in the rotation, counted in `SEASON_TOTAL`, with QR codes
+pointing at pages the public site does not have. `layouts/_default/calendar.html`
+checks it for the same reason.
 
 ## `rev.json`
 

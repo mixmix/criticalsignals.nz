@@ -62,11 +62,18 @@
 {{- $cutoff := ((partial "now-nzt.html" .).AddDate 0 0 -2).Format "2006-01-02" -}}
 
 {{- /* `showOnSign: false` in an event's front matter keeps it off the board
-       without hiding it from the rest of the site. Absent means shown. */ -}}
+       without hiding it from the rest of the site. Absent means shown.
+
+       Drafts are excluded explicitly, not left to `buildDrafts = false`. The
+       board is served to the panel by `hugo server` over the LAN (see the
+       Serving notes in this folder's CLAUDE.md), and a `-D` on that command
+       would otherwise put unpublished events on the window — in the rotation,
+       counted in SEASON_TOTAL, carrying QR codes to pages the public site
+       doesn't have. Same reason calendar.html checks it. */ -}}
 {{- $occurrences := partial "programme/occurrences.html" (where site.RegularPages "Section" "programme") -}}
 {{- $onSign := slice -}}
 {{- range $occurrences -}}
-  {{- if ne .page.Params.showOnSign false -}}{{- $onSign = $onSign | append . -}}{{- end -}}
+  {{- if and (not .page.Draft) (ne .page.Params.showOnSign false) -}}{{- $onSign = $onSign | append . -}}{{- end -}}
 {{- end -}}
 
 {{- /* How many times each thing runs this season, keyed on its title.
