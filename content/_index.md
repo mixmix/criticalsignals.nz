@@ -10,11 +10,11 @@ showHeadingAnchors: false
 upcomingEventsCount: 5
 ---
 
-<p class="intro">Critical Signals is a collective endeavour for creative resilience: a gathering place for people who believe communities shape their own futures.</p>
+<p class="intro">Critical Signals is a gathering place for people who believe communities shape their own futures.</p>
 
-Critical Signals is a three month gathering, practicing community resilience in person based in Wellington, Aotearoa New Zealand.
+Critical Signals hosts talks, workshops, and gatherings, where our local community can navigate disruptions in our society, culture, and climate.
 
-We collaborate with artists, academics, activists, scientists, technologists, makers and the public to explore crises, commons and community, stimulating critical discourse and action through trusted networks.
+We connect artists, academics, activists and makers with the public to explore challenges and solutions, sparking critical discourse and action.
 
 {{< signup >}}
 
