@@ -13,7 +13,7 @@
 #       title: "What the project does"     # {{ .Name | safeHTML }} in the nav
 #
 # Pages contributing to the top bar: what-the-project-does (10), who-is-involved
-# (20), call-for-contributions (30). The bar itself is rendered in
+# (20), how-to-contribute (30). The bar itself is rendered in
 # layouts/partials/design/nav.html by ranging over `.Site.Menus.main`. Home is
 # reached via the spore mark, not a menu entry.
 #

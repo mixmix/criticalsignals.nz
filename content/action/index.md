@@ -12,7 +12,7 @@ showHeadingAnchors: false
 
 <div class="cta-row">
   <a class="cta cta--solid" href="/programme/">View Programme</a>
-  <a class="cta cta--outline" href="/call-for-contributions/">Have a proposal? Click here</a>
+  <a class="cta cta--outline" href="/how-to-contribute/">Have a proposal? Click here</a>
 </div>
 <div class="cta-row">
   <a class="cta cta--outline" href="#signup">Sign up for our newsletter</a>
