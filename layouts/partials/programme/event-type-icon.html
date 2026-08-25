@@ -1,0 +1,20 @@
+{{- /* The event-type glyph shown to the left of an event's name in the
+       programme list (and the homepage's Upcoming Events). Expects the event
+       Page as context.
+
+       The SVGs live in assets/images/event-types/<slug>.svg — one per type
+       named after partials/programme/type.html's slug — and are inlined
+       rather than <img>'d so they draw in currentColor and cost no request.
+
+       An unknown type renders an empty slot of the same width instead of a
+       glyph: a "?" beside an event name would read as being about the event.
+       The gap keeps every title in the list starting at the same x. Unset
+       types are chased up on /_admin/programme/, not here. */ -}}
+{{- $type := partial "programme/type.html" . -}}
+{{- if $type.known -}}
+  {{- with resources.Get (printf "images/event-types/%s.svg" $type.slug) -}}
+    <span class="type-icon" role="img" aria-label="{{ $type.label }}">{{ .Content | safeHTML }}</span>
+  {{- end -}}
+{{- else -}}
+  <span class="type-icon type-icon--none" aria-hidden="true"></span>
+{{- end -}}

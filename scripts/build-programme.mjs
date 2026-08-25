@@ -38,6 +38,14 @@ const COLLABORATORS_DIR = join(REPO_ROOT, 'content', 'people')
 // (i.e. hand-authored pages) are never modified or deleted by this script.
 const MARKER = '.generated-by-tickettailor'
 
+// The kinds of event we recognise, as they're written into front matter. A
+// description's "Type:" line is matched against these case- and
+// punctuation-insensitively (see extractType); anything else is carried
+// through verbatim for the audit to flag. Mirrored in
+// layouts/partials/programme/type.html, which slugifies these to pick the
+// icon in assets/images/event-types/ — change all three together.
+const EVENT_TYPES = ['Social', 'Workshop', 'Talk', 'Screening', 'Community Building']
+
 const API_BASE = 'https://api.tickettailor.com/v1'
 
 const API_KEY = process.env.TICKET_TAILOR_API_KEY
@@ -268,9 +276,15 @@ async function writeEvent (event, slug, collaborators) {
   // Turn the HTML description into clean markdown, then pull the hosts line out
   // of it so it renders via the programme-hosts partial rather than inline.
   const markdown = event.description ? turndown.turndown(event.description) : ''
-  const { hosts, body } = extractHosts(markdown)
+  const { hosts, body: withoutHosts } = extractHosts(markdown)
+  const { type, body } = extractType(withoutHosts)
 
   const frontMatter = { title: event.name }
+  // What kind of event this is, from a "Type: <type>" line in the description.
+  // Left off entirely when there was no such line — an absent key already
+  // means "untyped" everywhere that reads it, so writing it out as a literal
+  // "unknown" only added a line of noise to every page still to be typed.
+  if (type) frontMatter.event_type = type
   if (isDraft) frontMatter.draft = true
   if (hosts.length) frontMatter.hosts = hosts
   // A series (recurring event) gets a `dates:` list instead of a single
@@ -545,6 +559,77 @@ function extractHosts (markdown) {
     .replace(/[ \t]+$/gm, '')
 
   return { hosts, body }
+}
+
+/**
+ * Pull the event's kind out of a "Type: Workshop" line in the description,
+ * matched against EVENT_TYPES. Returns the canonical spelling plus the body
+ * with that line removed — the type renders as an icon in the programme list
+ * (partials/programme/event-type-icon.html), not as prose.
+ *
+ * Anchored to its own line, and the colon is required, so a sentence that
+ * happens to say "the type: of person who…" isn't mistaken for the setting.
+ * Markdown emphasis around either half ("**Type:** Workshop") is tolerated,
+ * since that's how it comes out of the Ticket Tailor editor when an organiser
+ * bolds the label.
+ *
+ * Returns null when the description has no usable "Type:" line, and the
+ * caller then leaves `event_type` off the page altogether.
+ *
+ * An unrecognised value is returned as written rather than nulled out: a
+ * typo'd "Wrokshop" and a missing line need different fixes, and
+ * /_admin/programme/ says which it's looking at.
+ */
+function extractType (markdown) {
+  // Emphasis can close on either side of the colon depending on exactly what
+  // the organiser bolded — "**Type:** X" and "**Type**: X" both turn up.
+  const match = markdown.match(/^[ \t]*[*_]*[ \t]*Type[ \t]*[*_]*[ \t]*:[ \t]*[*_]*[ \t]*([^\n]*?)[ \t]*[*_]*[ \t]*$/im)
+  if (!match) return { type: null, body: markdown }
+
+  // Emphasis markers become a space rather than nothing: an author writing
+  // "community_building_event" is using them as separators, not as emphasis,
+  // and deleting them outright would weld the words together past recognition.
+  const raw = match[1]
+    .replace(/[*_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[.,;:]+$/, '')
+    .trim()
+  if (!raw) return { type: null, body: stripLine(markdown, match[0]) }
+
+  const canonical = EVENT_TYPES.find((t) => typeKey(t) === typeKey(raw))
+
+  return { type: canonical ?? raw, body: stripLine(markdown, match[0]) }
+}
+
+/**
+ * Comparison key for a type name: lowercased, depunctuated, spaces collapsed,
+ * and a trailing "event"/"events" dropped.
+ *
+ * Nobody writes these the same way twice — "Community Building",
+ * "community-building-event" and "Community Building Events" are all the one
+ * type, and it's not worth a 🔥 on the audit to tell someone so. Punctuation
+ * flattening covers the dashes; the trailing word covers the rest.
+ *
+ * A bare "Event" keys to "" and so matches nothing, which is right: it says
+ * no more than leaving the line off would.
+ */
+function typeKey (value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+events?$/, '')
+    .trim()
+}
+
+/**
+ * Drop a whole line from the markdown, collapsing the blank lines it leaves
+ * behind so removing it doesn't open a gap in the middle of the body.
+ */
+function stripLine (markdown, line) {
+  return markdown
+    .replace(line, '')
+    .replace(/\n{3,}/g, '\n\n')
 }
 
 /**

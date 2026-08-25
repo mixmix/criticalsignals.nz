@@ -1,5 +1,6 @@
 ---
 title: "Wellington Climate Festival in Review"
+event_type: "Talk"
 hosts:
   - "Kate Kirkwood"
 date: "2026-09-02"

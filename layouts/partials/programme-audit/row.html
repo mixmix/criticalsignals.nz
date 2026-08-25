@@ -20,7 +20,21 @@
       {{- partial "programme-audit/error-flame.html" (dict "page" $event "keys" (slice "start_time" "end_time")) -}}
     {{- end -}}
   </td>
-  <td><a class="programme-audit__link" href="{{ $event.RelPermalink }}">{{ $event.Title | emojify }}</a></td>
+  <td class="programme-audit__event">
+    {{- $type := partial "programme/type.html" $event -}}
+    {{- if $type.known -}}
+      <span class="programme-audit__tooltip" data-tooltip="Type: {{ $type.label }}">{{ partial "programme/event-type-icon.html" $event }}</span>
+    {{- else -}}
+      {{/* No usable `Type:` line in the Ticket Tailor description — see
+           extractType in scripts/build-programme.mjs. Name the value that was
+           there, if any: "Type: Wrokshop" and no Type line at all need
+           different fixes. */}}
+      {{- $types := "Social, Workshop, Talk, Screening or Community Building" -}}
+      {{- $why := cond (eq $type.raw "") (printf "Type is unset — add a \"Type: …\" line to the event description (%s)." $types) (printf "Type is unset — %q isn't a type we know. Use one of: %s." $type.raw $types) -}}
+      <span class="programme-audit__tooltip" data-tooltip="{{ $why }}">🔥</span>
+    {{- end -}}
+    <a class="programme-audit__link" href="{{ $event.RelPermalink }}">{{ $event.Title | emojify }}</a>
+  </td>
   <td>
     {{ if .hosts }}
       <ul class="programme-audit__hosts">

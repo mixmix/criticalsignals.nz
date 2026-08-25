@@ -1,6 +1,7 @@
 {{- /* Single programme-list event link. Expects the event Page as context. */ -}}
 <a class="prog-item" href="{{ .RelPermalink }}">
   <span class="prog-item__title">
+    {{ partial "programme/event-type-icon.html" . }}
     {{ .Title | emojify }}
     <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
   </span>

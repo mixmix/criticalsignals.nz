@@ -1,5 +1,6 @@
 ---
 title: "Queer Joy: The Gathering"
+event_type: "Community Building"
 hosts:
   - "Emily Writes"
 date: "2026-09-11"

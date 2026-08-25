@@ -16,6 +16,7 @@ dates:
   - 2026-08-27
   - 2026-08-28
 calendar_symbol: "☕"
+event_type: "Social"
 start_time: "10:00"
 end_time: "14:00"
 # Drop-in open hours rather than a programmed event, and it runs most days, so

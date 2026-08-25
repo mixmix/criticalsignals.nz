@@ -1,0 +1,36 @@
+{{- /* What kind of event this is, resolved from front matter `event_type`.
+
+       Written by scripts/build-programme.mjs, which reads a "Type: <type>"
+       line out of the Ticket Tailor description (see extractType there) and
+       leaves the key off when there isn't one. Hand-authored pages set it
+       themselves. An absent key is the normal way an event is untyped, so it
+       has to read the same as a junk value: both come back as "unknown". NOTE the key is `event_type`, not `type`: `type` is
+       reserved by Hugo for the page's content type, and setting it would
+       send these pages looking for a layouts/Workshop/ template.
+
+       Returns a dict:
+         slug   one of the five known types, slugified, or "unknown"
+         raw    whatever front matter actually said (may be "", may be junk)
+         known  whether raw matched one of the five
+         label  display name for a known type, else ""
+
+       The five types are mirrored in scripts/build-programme.mjs
+       (EVENT_TYPES) — change both together. */ -}}
+{{- $known := slice "social" "workshop" "talk" "screening" "community-building" -}}
+{{- $raw := strings.TrimSpace (.Params.event_type | default "") -}}
+{{- /* Slugified the same way typeKey() in scripts/build-programme.mjs keys a
+       "Type:" line: case and every run of punctuation flattened, then a
+       trailing "event"/"events" dropped. So "Community Building",
+       "community building event" and "Community-Building-Events" all land on
+       the one type, whether they arrived via the Ticket Tailor sync or were
+       hand-written here — the two have to agree, or a page the script would
+       have accepted picks up a 🔥 on the audit for no reason.
+
+       Done by hand rather than with urlize, which keeps underscores. */ -}}
+{{- $slug := $raw | lower | replaceRE "[^a-z0-9]+" "-" | replaceRE "^-+|-+$" "" | replaceRE "-events?$" "" -}}
+{{- $isKnown := in $known $slug -}}
+{{- return (dict
+      "slug" (cond $isKnown $slug "unknown")
+      "raw" $raw
+      "known" $isKnown
+      "label" (cond $isKnown (title (replace $slug "-" " ")) "")) -}}

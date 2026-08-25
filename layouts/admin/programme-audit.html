@@ -257,6 +257,21 @@
       text-decoration: underline;
       text-underline-offset: 2px;
     }
+    /* Event name, prefixed by its type glyph (or a 🔥 when the type is unset).
+       The glyph sits in its own fixed-width slot so the names line up down the
+       column whichever of the two is showing. */
+    .programme-audit__event > span:first-child {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.4em;
+      margin-right: 0.4rem;
+      vertical-align: -0.15em;
+    }
+    .programme-audit__event .type-icon {
+      width: 1.15em;
+      height: 1.15em;
+    }
     .programme-audit__btn {
       display: inline-flex;
       align-items: center;
