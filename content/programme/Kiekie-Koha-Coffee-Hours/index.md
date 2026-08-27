@@ -14,7 +14,6 @@ dates:
   - 2026-08-25
   - 2026-08-26
   - 2026-08-27
-  - 2026-08-28
 calendar_symbol: "☕"
 event_type: "Social"
 start_time: "10:00"
