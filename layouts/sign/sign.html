@@ -36,6 +36,33 @@
 {{- $qrOpts := dict "level" "medium" "scale" 4 -}}
 {{- $siteQR := printf "data:image/png;base64,%s" (((images.QR (printf "%s/%s" $signBase $signUTM) $qrOpts).Filter images.Invert).Content | base64Encode) -}}
 
+{{- /* Koha QR — the Volley donation code, dropped in as a file rather than
+       generated, because it is Volley's own code with their mark in the middle
+       and not something images.QR can produce. Inlined like everything else on
+       this board; the panel cannot fetch.
+
+       Left the right way up, unlike the site code above: this one carries a
+       brand colour and a logo, and inverting it would turn both into their
+       negatives. It gets a white plate in the CSS instead, which is also what
+       gives it the quiet zone the source file is a couple of modules short of.
+
+       450px is what the dedicated koha panel renders it at in portrait — the
+       biggest of the three places it appears, and the panel is 1:1, so the
+       code goes up pixel for pixel with no resampling between the build and
+       the wall. It is also exactly half the source, which is why the file is
+       25KB of base64 rather than 110KB: an off-ratio resize antialiases every
+       module edge in the image and there goes PNG's run-length compression.
+       If you change the size on the panel, change it to another exact divisor
+       of the source and check what it costs.
+
+       Guarded with `with`: if the file is missing, KOHA_QR is empty, and the
+       script drops both the koha panel and the in-event call to action rather
+       than showing a hole. */ -}}
+{{- $kohaQR := "" -}}
+{{- with resources.Get "images/volley_qr_code.png" -}}
+  {{- $kohaQR = printf "data:image/png;base64,%s" ((.Resize "450x png box").Content | base64Encode) -}}
+{{- end -}}
+
 {{- /* Host photos. Same resolution rule as the rest of the site — hosts are
        written as names, `people/by-name.html` maps a name to that person's
        profile page (honorific-insensitive), and `feature-image.html` finds
@@ -505,6 +532,109 @@ body.portrait #seasonnote {
   border-radius: 50%;
 }
 
+/* ==================================================================
+   KOHA
+
+   Two presentations of one block, switched by a class on <body>. See the
+   markup in #main for which is which.
+
+   The code is left dark-on-light on a white plate, the opposite of the
+   site QR above it, for two reasons: it carries Volley's own mark in a
+   brand colour, which inverts into something else entirely, and a white
+   plate is the most reliable thing to point a phone at from a footpath at
+   night. The plate's padding is also the quiet zone — the source file has
+   about two modules of margin where the spec wants four.
+   ================================================================== */
+#koha {
+  display: none;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+}
+body.koha-event #koha,
+body.koha-slide #koha {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+}
+
+#kohaplate {
+  -webkit-flex: 0 0 auto; flex: 0 0 auto;
+  /* Pure white rather than --paper: this is a scanning target, not type. */
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 12px;
+  /* content-box so the width below is the code itself and the padding is
+     quiet zone on top of it, rather than eating into it. */
+  -webkit-box-sizing: content-box; box-sizing: content-box;
+}
+#kohaplate img { display: block; width: 100%; height: 100%; }
+
+/* The address under the code on the dedicated panel. Nothing in the event
+   call to action, where the footer is still carrying it. */
+#kohanote { display: none; }
+
+/* ---------- .koha-event: the call to action under the hosts ----------
+   Mint and light, the same treatment as the web address in the footer,
+   because it is the same kind of thing: the one line on the board you are
+   being asked to act on. Not competing with the title. */
+body.koha-event #koha {
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row; flex-direction: row;
+  margin-top: 36px;
+}
+body.koha-event #kohaline {
+  font-size: 40px; line-height: 1.15; font-weight: 400;
+  color: #94EEE5; color: var(--signal);
+  max-width: 700px;
+  margin-right: 34px;
+}
+body.koha-event #kohaplate { width: 200px; height: 200px; }
+/* (c): the site code goes dark for the duration. Two codes on one board is a
+   question — which one am I being pointed at? — and the answer while an event
+   is on is the one beside the line asking for it. The address stays; it is
+   type, not a target. */
+body.koha-event #qr { display: none; }
+
+/* The arrow is part of the line, so it wraps with it rather than stranding
+   itself, and it only means anything when there is a code to its right. */
+/* Tied to the last word with a non-breaking space in the copy, so it can
+   never be left hanging alone on a line of its own pointing at nothing. */
+#kohaline .arrow { font-weight: 700; }
+body.koha-slide #kohaline .arrow { display: none; }
+
+/* ---------- .koha-slide: the whole panel ----------
+   Everything else stands down. The footer goes with it: a panel that asks
+   for one thing should not also be carrying an event's start time, and the
+   site QR sitting under a donation code would make the board ambiguous
+   about which one is being pointed at. */
+body.koha-slide #status,
+body.koha-slide #title,
+body.koha-slide #titlesub,
+body.koha-slide #speakers,
+body.koha-slide #foot { display: none; }
+
+/* Landscape: line and code side by side, address on its own row underneath.
+   Stacking them the way portrait does left two thirds of a 1920px canvas
+   empty and the code stranded in the corner of it. The wrap does the work —
+   the note claims a full row, so it drops below the pair above it. */
+body.koha-slide #koha {
+  -webkit-flex-wrap: wrap; flex-wrap: wrap;
+}
+body.koha-slide #kohaline {
+  /* Grows into whatever the code leaves, rather than being given a width. */
+  -webkit-flex: 1 1 760px; flex: 1 1 760px;
+  font-size: 76px; line-height: 1.08; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.005em;
+  color: #FFFFFF; color: var(--paper);
+  margin-right: 80px;
+}
+body.koha-slide #kohaplate { width: 400px; height: 400px; }
+body.koha-slide #kohanote {
+  display: block;
+  -webkit-flex: 0 0 100%; flex: 0 0 100%;
+  width: 100%;
+  margin-top: 46px;
+  font-size: 32px; letter-spacing: 0.04em;
+  color: #94EEE5; color: var(--signal);
+}
+
 /* bottom bar */
 #foot {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
@@ -636,6 +766,41 @@ body.portrait #seasonnote { font-size: 20px; letter-spacing: 0.26em; }
 body.portrait #speakers .face { width: 4.24em; height: 4.24em; margin-right: 0.6em; }
 body.portrait #speakers .host { margin: 0.22em 0.89em 0.22em 0; }
 
+/* Koha, portrait. The panel is portrait, so these are the numbers that
+   actually go on the wall — the landscape ones above are the preview. The
+   code is 300px in the call to action and 450px on its own panel: about
+   22cm and 34cm across on a 65" screen, which is a comfortable scan from
+   the far side of the footpath. The 450 is also the size the image is
+   emitted at, so the panel draws that one pixel for pixel. */
+body.portrait.koha-event #koha { margin-top: 48px; }
+body.portrait.koha-event #kohaline {
+  font-size: 50px; max-width: 520px; margin-right: 40px;
+}
+body.portrait.koha-event #kohaplate { width: 300px; height: 300px; }
+
+/* Portrait has no width to put the code beside the line, so the block goes
+   back to a column: line, code, address. */
+body.portrait.koha-slide #koha {
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start; align-items: flex-start;
+}
+body.portrait.koha-slide #kohaline {
+  -webkit-flex: 0 0 auto; flex: 0 0 auto;
+  /* 72 rather than the title's 96: at anything larger the line runs to four
+     lines and wins an argument with the code, which is the thing on this
+     panel anyone is actually meant to do something about. */
+  font-size: 72px; width: 100%; max-width: 100%;
+  margin-right: 0; margin-bottom: 58px;
+}
+body.portrait.koha-slide #kohaplate { width: 450px; height: 450px; }
+body.portrait.koha-slide #kohanote {
+  -webkit-flex: 0 0 auto; flex: 0 0 auto;
+  width: auto;
+  margin-top: 40px; font-size: 38px;
+}
+
 body.portrait .label  { font-size: 20px; margin-bottom: 10px; }
 body.portrait .value  { font-size: 44px; }
 body.portrait #when   { font-size: 53px; }
@@ -737,6 +902,27 @@ html.handheld #spore { opacity: 0.26; }
       <h1 id="title">&nbsp;</h1>
       <h2 id="titlesub"></h2>
       <div id="speakers"></div>
+
+      <!-- Koha. One block, two jobs, both driven off a class on <body>:
+
+           .koha-event  a call to action under the hosts while an event is on
+                        or about to be, sitting beside the donation code and
+                        pointing at it. The site QR in the footer goes dark
+                        for the duration — two codes on one board is a
+                        question, not an invitation.
+           .koha-slide  the whole panel. Everything else in #main and the
+                        entire footer are hidden, and this is the board.
+
+           Hidden otherwise. Inside #main on purpose: #main centres in
+           whatever slack the slide leaves, so the block sits in the empty
+           band rather than jammed against the footer, and fitSpeakers()
+           already counts everything in here when it decides how big the
+           host photos may be. -->
+      <div id="koha">
+        <div id="kohaline">&nbsp;</div>
+        <div id="kohaplate"><img id="kohaimg" alt=""></div>
+        <div id="kohanote">{{ $displayURL }}</div>
+      </div>
     </div>
 
     <div id="foot">
@@ -787,6 +973,10 @@ var EVENTS = {{ jsonify (dict "indent" "  ") $events | safeJS }};
 
 var SITE_QR = {{ jsonify $siteQR | safeJS }};
 
+/* The Volley donation code. Empty string if the source file is missing, which
+   is what the script tests before offering koha anywhere. */
+var KOHA_QR = {{ jsonify $kohaQR | safeJS }};
+
 /* Inlined images, held once each and referenced by index from EVENTS — see
    the header of this file. `qr` is an index into QRS; each entry of `faces`
    is an index into FACES, or -1 for a host with no photo. */
@@ -808,6 +998,22 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   var root = document.documentElement;
   var HANDHELD = root.className.indexOf('handheld') >= 0;
 
+  /* <body> carries three independent facts — orientation, and which of the
+     two koha presentations is up — and three writers who each know about one
+     of them. They go through here so none of them clobbers the others'.
+     Written as one string rather than through classList, which Chromium 47
+     does not have on every element it matters for. */
+  var bodyPortrait  = false;
+  var bodyKohaSlide = false;
+  var bodyKohaEvent = false;
+
+  function syncBody() {
+    var cls = bodyPortrait ? 'portrait' : '';
+    if (bodyKohaSlide) { cls += (cls ? ' ' : '') + 'koha-slide'; }
+    else if (bodyKohaEvent) { cls += (cls ? ' ' : '') + 'koha-event'; }
+    if (document.body.className !== cls) { document.body.className = cls; }
+  }
+
   function fit() {
     var portrait = (ORIENT === 'portrait') ||
                    (ORIENT === 'auto' && window.innerHeight > window.innerWidth);
@@ -815,7 +1021,8 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     var H = portrait ? 1920 : 1080;
     var vw = window.innerWidth, vh = window.innerHeight;
 
-    document.body.className = portrait ? 'portrait' : '';
+    bodyPortrait = portrait;
+    syncBody();
 
     var s, top;
     if (HANDHELD) {
@@ -1107,17 +1314,22 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
 
      FEATURE_MODE decides what the board does with a featured event:
 
+       'pin'         the board shows only the featured event and stops
+                     rotating. Current setting — inside the window the board
+                     has one job, which is the thing happening in the room
+                     behind it, and that is also when it asks for koha.
        'interleave'  the featured event takes every second panel, so the
                      board reads: featured, coming up 2 of N, featured,
-                     coming up 3 of N, and so on. Current setting.
-       'pin'         the board shows only the featured event and stops
-                     rotating. The original behaviour, still working.
+                     coming up 3 of N, and so on. Still working; note that
+                     the koha call to action follows the pin, so under
+                     interleave it would blink in and out with the feature.
        'off'         featured events get no special treatment.
 
      With no featured event the board simply pages through everything still
-     to come, each slide holding for CYCLE_HOLD_MS with a crossfade between.
+     to come, each slide holding for CYCLE_HOLD_MS with a crossfade between,
+     and every few slides the koha panel takes a turn — see kohaGap().
      ================================================================== */
-  var FEATURE_MODE      = 'interleave';
+  var FEATURE_MODE      = 'pin';
   var FEATURE_BEFORE_MS = 3600000;  /* 1h before it starts */
   var CYCLE_HOLD_MS     = 6000;   /* whole slide, both fades included */
   var FADE_MS           = 400;    /* must match the #inner CSS transition */
@@ -1125,9 +1337,41 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   var SPORE_IDLE_MS     = 20000;  /* move the mark anyway if the slide doesn't */
   var TITLE_LONG_CHARS  = 40;     /* past this, splitLongTitle() may break the title */
 
+  /* ---------- koha ----------
+     Two places the board asks for a koha, both fed by the same inlined code:
+
+       during the feature window   a line and the code under the hosts, on
+                                   the pinned event panel. The site QR in the
+                                   footer goes dark while it is up.
+       the rest of the time        a panel of its own, every KOHA_GAP_MIN to
+                                   KOHA_GAP_MAX event slides.
+
+     The gap is redrawn after every appearance rather than fixed, so the
+     panel doesn't land on the same event every time round and read as
+     belonging to it. Someone standing at the window for a few minutes should
+     not be able to predict it.
+
+     The copy is HTML and lives here, in one place. `.arrow` is shown only in
+     the in-event call to action, where there is a code to its right for it to
+     point at. */
+  var KOHA_EVENT_TEXT = 'Koha here to support this event&nbsp;<span class="arrow">&rarr;</span>';
+  var KOHA_SLIDE_TEXT = 'Koha here to support the critical signals kaupapa';
+  var KOHA_GAP_MIN    = 3;
+  var KOHA_GAP_MAX    = 5;
+
+  function kohaGap() {
+    return KOHA_GAP_MIN + Math.floor(Math.random() * (KOHA_GAP_MAX - KOHA_GAP_MIN + 1));
+  }
+
+  /* Set by the `c` key and by SIGN.event(), to preview the in-event board
+     from a desktop without waiting for an event to come within the hour.
+     Never set on the panel, which has no keyboard and no console. */
+  var forceFeature = false;
+
   function featuredEvent(nowMs) {
     var i, e, best = null;
     if (FEATURE_MODE === 'off') { return null; }
+    if (forceFeature) { return pick(new Date(nowMs)); }
     for (i = 0; i < EVENTS.length; i++) {
       e = EVENTS[i];
       if (nowMs >= e._s.getTime() - FEATURE_BEFORE_MS && nowMs <= e._e.getTime()) {
@@ -1431,29 +1675,75 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     }
   }
 
+  /* The koha panel. The board keeps its masthead — brand rule and season
+     meter — so it still reads as the same board rather than as an
+     advertisement that has taken the screen over; everything below that is
+     hidden by the .koha-slide rules and #koha is what is left.
+
+     The meter goes on pointing at the event the panel interrupted, which is
+     what `at` carries. Passing null instead would drop the pointer for six
+     seconds and read as the meter faulting. */
+  function renderKoha(view, now) {
+    renderSeason(view.at || null, now.getTime());
+    shown = null;
+  }
+
+  /* The one way anything gets drawn. Both callers below fade first and then
+     render, and both kinds of panel go through here so the body class, the
+     copy and the code are set in one place rather than three. */
+  function renderView(view, now) {
+    var slide = !!view.koha;
+    var cta   = !slide && !!view.kohaEvent;
+
+    if (slide !== bodyKohaSlide || cta !== bodyKohaEvent) {
+      bodyKohaSlide = slide;
+      bodyKohaEvent = cta;
+      syncBody();
+    }
+    if (slide || cta) {
+      put('kohaline', slide ? KOHA_SLIDE_TEXT : KOHA_EVENT_TEXT);
+      putSrc('kohaimg', KOHA_QR);
+    }
+
+    if (slide) { renderKoha(view, now); }
+    else { renderEvent(view.ev, now, view.pos, view.total); }
+  }
+
   /* What should be on screen right now: {ev, pos, total, list}.
      `pos` 0 means the slide renders its own natural pill (On now /
      Starting soon); anything higher renders "Coming up · pos+1 of total". */
   var cycleIdx    = 0;
   var featureTurn = true;   /* interleave: is this panel the featured one */
+  var kohaIn      = kohaGap();  /* event slides still to run before the koha panel */
+  var kohaNow     = false;      /* this panel is the koha panel */
+
+  /* The slides the rotation pages through: the whole rest of the season, no
+     cap, but one slide per recurring event. At six seconds a slide that comes
+     round in about a minute, and the meter under the brand rule shows where
+     in the season you have walked in.
+
+     The featured event is dropped — while it is still in the future it would
+     otherwise appear both as the feature and as its own entry in the list,
+     two panels apart. advance() needs the same list currentView() works from,
+     which is why this is a function rather than two copies of it. */
+  function rotationList(nowMs) {
+    var list = collapse(upcoming(nowMs));
+    var feat = featuredEvent(nowMs);
+    if (feat) { list = without(list, feat); }
+    return list;
+  }
 
   function currentView(now) {
     var nowMs = now.getTime();
     var feat  = featuredEvent(nowMs);
 
     if (feat && FEATURE_MODE === 'pin') {
-      return { ev: pick(now), pos: 0, total: 1, list: null };
+      /* koha: the window this pin covers is exactly the window in which
+         there are people to ask — arriving, or already in the room. */
+      return { ev: pick(now), pos: 0, total: 1, list: null, kohaEvent: !!KOHA_QR };
     }
 
-    /* The whole rest of the season rotates — no cap, but one slide per
-       recurring event. At six seconds a slide that comes round in about a
-       minute, and the meter under the brand rule shows where in the season
-       you have walked in. */
-    var list = collapse(upcoming(nowMs));
-    /* Drop the featured event from the rotation — while it is still in the
-       future it would otherwise appear both as the feature and as its own
-       entry in the list, two panels apart. */
-    if (feat) { list = without(list, feat); }
+    var list = rotationList(nowMs);
 
     if (feat) {
       if (!list.length) { return { ev: feat, pos: 0, total: 1, list: null }; }
@@ -1468,6 +1758,17 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     featureTurn = true;   /* so the next feature window opens on the feature */
     if (!list.length) { return { ev: null, pos: 0, total: 0, list: null }; }
     if (cycleIdx >= list.length) { cycleIdx = 0; }
+
+    /* The koha panel takes this turn. It carries the event it is standing in
+       front of as `at` so the season meter keeps pointing where it was
+       pointing — the panel is an interruption, not a move through the season.
+       `list` and `total` are the rotation's, so the slide holds for the usual
+       six seconds and the timer bar keeps counting. */
+    if (kohaNow) {
+      return { ev: null, at: list[cycleIdx], koha: true,
+               pos: 0, total: list.length, list: list };
+    }
+
     return { ev: list[cycleIdx], pos: cycleIdx, total: list.length, list: list };
   }
 
@@ -1479,6 +1780,29 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       if (featureTurn) { featureTurn = false; }
       else { featureTurn = true; cycleIdx = cycleIdx + 1; }
       return;
+    }
+
+    /* Leaving the koha panel: the rotation picks up from the event it was
+       standing in front of, and a fresh gap is drawn for the next one. */
+    if (kohaNow) {
+      kohaNow = false;
+      kohaIn  = kohaGap();
+      cycleIdx = cycleIdx + 1;
+      return;
+    }
+
+    /* Leaving an event slide. When the count runs out the koha panel takes
+       the next turn and cycleIdx stays put, so the panel is inserted between
+       two events rather than in place of one — nothing in the season loses
+       its slot to it.
+
+       It needs somewhere to go back to: with one event left in the rotation
+       the board would have nothing to alternate with, `total` would be 1,
+       and step() would stop rotating with the koha panel on screen. */
+    kohaIn = kohaIn - 1;
+    if (kohaIn <= 0) {
+      if (KOHA_QR && rotationList(nowMs).length > 1) { kohaNow = true; return; }
+      kohaIn = kohaGap();
     }
     cycleIdx = cycleIdx + 1;
   }
@@ -1548,7 +1872,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        gesture rather than two things twitching in sequence. */
     driftSpore();
     setTimeout(function () {
-      renderEvent(view.ev, new Date(), view.pos, view.total);
+      renderView(view, new Date());
       document.getElementById('inner').className = '';
       fading = false;
       slideAt = new Date().getTime();
@@ -1587,7 +1911,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       booted = true;
       slideAt = nowMs;
       rotating = !!(view.list && view.total > 1);
-      renderEvent(view.ev, now, view.pos, view.total);
+      renderView(view, now);
       driftSpore();
       updateTimerBar(nowMs, true);
       return;
@@ -1608,15 +1932,29 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       slideAt = nowMs;
       cycleIdx = 0;
       featureTurn = true;
+      /* Nothing is rotating, so a koha panel armed before the window opened
+         has nowhere to go. It would otherwise be the first thing shown the
+         moment the event ends. `kohaIn` is left alone — it is always at
+         least 1 — so the count simply resumes. */
+      kohaNow = false;
     }
 
-    if (view.ev !== shown) { fadeTo(skipRepeat(nowMs, view)); return; }
+    /* A change of panel *kind* fades too, not only a change of event. The
+       feature window can open on the very event already on screen, and the
+       koha call to action appearing under it without a fade reads as a
+       glitch rather than as the board changing its mind. */
+    var wantSlide = !!view.koha;
+    var wantCta   = !wantSlide && !!view.kohaEvent;
+    if (view.ev !== shown || wantSlide !== bodyKohaSlide || wantCta !== bodyKohaEvent) {
+      fadeTo(skipRepeat(nowMs, view));
+      return;
+    }
 
     /* Keep the mark moving even when the copy is pinned — during a live
        event the rotation is the only thing that would otherwise change. */
     if (nowMs - driftAt >= SPORE_IDLE_MS) { driftSpore(); }
 
-    renderEvent(view.ev, now, view.pos, view.total);
+    renderView(view, now);
   }
 
   /* On-demand advance, for the right-arrow key (and SIGN.next() below) —
@@ -1635,10 +1973,22 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     }
   }
 
-  /* Deliberately not wired to click/tap: this is a desktop-preview and
-     presenter control, not something the panel's own touch (it has none)
-     or a phone visitor should trigger. preventDefault on both keys — space
-     would otherwise scroll the (non-scrolling, but still) page. */
+  /* Deliberately not wired to click/tap: these are desktop-preview and
+     presenter controls, not something the panel's own touch (it has none) or
+     a phone visitor should trigger. preventDefault on space, which would
+     otherwise scroll the (non-scrolling, but still) page.
+
+     space  pause
+     right  next slide
+     c      the current-event board — pinned event, koha call to action, site
+            QR dark — without waiting for an event to come within the hour.
+            Press it again to hand the board back to the rotation. `c` for
+            current; it is a toggle, so it also puts the board back.
+
+     `key` is tested first and `keyCode` second because Chromium 47 has
+     `key` but spells some of them the old way; a plain letter is the same in
+     both, and the keyCode is the fallback for a panel-era browser that
+     reports nothing useful in `key`. */
   document.addEventListener('keydown', function (e) {
     var key = e.key;
     if (key === ' ' || e.keyCode === 32) {
@@ -1647,6 +1997,10 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     } else if (key === 'ArrowRight' || e.keyCode === 39) {
       forceNext();
       e.preventDefault();
+    } else if (key === 'c' || key === 'C' || e.keyCode === 67) {
+      /* step() picks the change up on its next tick, a quarter of a second
+         away, and crossfades into it like any other change of panel. */
+      forceFeature = !forceFeature;
     }
   });
 
@@ -1658,6 +2012,23 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      the board thinks is going on. */
   window.SIGN = {
     next: forceNext,
+    /* Put the koha panel up now, for a look at it without waiting for the
+       rotation to come round to it. The gap is redrawn when it leaves, same
+       as any other appearance. */
+    koha: function () {
+      if (fading || !KOHA_QR) { return false; }
+      var now = new Date();
+      kohaNow = true;
+      fadeTo(currentView(now));
+      return true;
+    },
+    /* Toggle the in-event board — pinned event, koha call to action, site QR
+       dark — regardless of the clock. Call it again to hand the board back to
+       the rotation. Same thing the `c` key does. */
+    event: function () {
+      forceFeature = !forceFeature;
+      return forceFeature;
+    },
     state: function () {
       var nowMs = new Date().getTime();
       var f = featuredEvent(nowMs);
@@ -1670,7 +2041,9 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
         left: remaining(nowMs).length,
         seasonTotal: SEASON_TOTAL,
         index: cycleIdx,
-        paused: paused
+        paused: paused,
+        koha: KOHA_QR ? (kohaNow ? 'on screen' : kohaIn + ' slides away') : 'no code',
+        forcedFeature: forceFeature
       };
     }
   };

@@ -118,19 +118,27 @@ or already in the room. The moment it finishes the board drops straight back
 to plain rotation. `FEATURE_MODE` decides what the board does about a featured
 event:
 
-- `'interleave'` (current) — the featured event takes every second panel:
-  featured, coming up 2 of N, featured, coming up 3 of N, and so on. The
-  feature counts as panel 1, so the rotation is numbered from 2 and `total`
-  includes it. The featured event is removed from the rotation list by
-  `without()`, otherwise a not-yet-started feature would appear twice, two
-  panels apart.
-- `'pin'` — the board shows only the featured event and stops rotating. The
-  original behaviour, kept working.
+- `'pin'` (current) — the board shows only the featured event and stops
+  rotating. Inside the window the board has one job, which is the thing
+  happening in the room behind it, and that is also the window in which it
+  asks for koha — see "Koha" below. The two go together: the call to action
+  follows the pin, so under any other mode it would blink in and out with the
+  feature.
+- `'interleave'` — the featured event takes every second panel: featured,
+  coming up 2 of N, featured, coming up 3 of N, and so on. The feature counts
+  as panel 1, so the rotation is numbered from 2 and `total` includes it. The
+  featured event is removed from the rotation list by `without()`, otherwise a
+  not-yet-started feature would appear twice, two panels apart. Kept working.
 - `'off'` — no special treatment.
 
 With no featured event the board pages through everything still to come. There
 is no cap on that, but there is one slide per event, not one per date — see
-"Recurring events" below.
+"Recurring events" below — and every few slides the koha panel takes a turn.
+
+`rotationList()` is the one place that answer is computed: everything still to
+come, collapsed to one slide per series, minus the feature. Both
+`currentView()` and `advance()` read it, so they cannot disagree about what
+the rotation contains.
 
 There is an earlier rule you may find traces of, in which a feature lingered
 for three hours after it started. That was wrong — it kept a finished event on
@@ -172,15 +180,25 @@ not to `FADE_MS` — change one, change the other.
 In a desktop console, `SIGN.next()` advances the rotation by hand and
 `SIGN.state()` reports the current mode (including `paused`).
 
-A keyboard listener gives the same two controls to whoever is standing at a
-laptop previewing the board: **space** toggles `paused`, which is checked
-first thing in `step()` — while paused, nothing updates, not the clock, not
-the timer bar, not the rotation. **Right arrow** calls `forceNext()`, the
-same advance-and-fade `step()` runs when the hold timer expires, just fired
-on demand; it works even while paused, so a presenter can single-step
-through slides by hand without ending the pause. Neither key is wired to
-click/tap — this is a desktop control, not something the panel (no touch)
-or a phone visitor should be able to trigger.
+A keyboard listener gives the same controls to whoever is standing at a
+laptop previewing the board:
+
+- **space** toggles `paused`, which is checked first thing in `step()` —
+  while paused, nothing updates, not the clock, not the timer bar, not the
+  rotation.
+- **right arrow** calls `forceNext()`, the same advance-and-fade `step()`
+  runs when the hold timer expires, just fired on demand; it works even while
+  paused, so a presenter can single-step through slides by hand without
+  ending the pause.
+- **c** — *current* — toggles `forceFeature`, which puts up the in-event
+  board (pinned event, koha call to action, site QR dark) without waiting for
+  an event to come within the hour. Press it again to hand the board back to
+  the rotation. `step()` picks the change up on its next tick and crossfades
+  into it like any other change of panel — so it does nothing while paused,
+  which is what space is for. Same toggle as `SIGN.event()`.
+
+None of them is wired to click/tap — these are desktop controls, not
+something the panel (no touch) or a phone visitor should be able to trigger.
 
 ## Landscape is not a scaled portrait
 
@@ -330,6 +348,72 @@ this panel is not free.
 readable from the footpath, which is worse than an overfull board. Nothing on
 the current programme comes close: eight hosts land around 0.7 in landscape.
 
+## Koha
+
+The board asks for a koha in two places, both pointing at the same inlined
+Volley code (`assets/images/volley_qr_code.png`).
+
+**During the feature window** — an hour before an event starts until it ends —
+the board pins to that event and a mint line and the code appear under the
+hosts: *"Koha here to support this event →"*. The site QR in the footer goes
+dark for the duration. Two codes on one board is a question rather than an
+invitation, and inside the window the answer is the one being asked for. The
+address stays; it is type, not a target.
+
+**The rest of the time** the koha panel takes a turn of its own every three to
+five event slides: *"Koha here to support the critical signals kaupapa"*, the
+code large, and nothing else but the masthead. The gap is **redrawn from
+`Math.random()` after every appearance** rather than fixed — on a fixed count
+the panel lands on the same events every time round and starts to read as
+belonging to one of them. Someone standing at the window for a few minutes
+should not be able to predict it.
+
+Both are one block of markup, `#koha` inside `#main`, switched between by a
+class on `<body>`: `.koha-event` and `.koha-slide`. Inside `#main` on purpose —
+`#main` centres in whatever slack the slide leaves, so the block sits in the
+empty band rather than jammed against the footer, and `fitSpeakers()` already
+counts everything in `#main` when it decides how big the host photos may be, so
+a four-host event in the window shrinks its photos to make room by itself.
+
+**`<body>` has three writers now** — orientation from `fit()`, and the two koha
+states from `renderView()`. They go through `syncBody()`; do not write
+`document.body.className` directly or you will clobber somebody else's fact.
+
+The copy is two constants, `KOHA_EVENT_TEXT` and `KOHA_SLIDE_TEXT`, at the top
+of the display-loop section. They are HTML: `.arrow` is the `→`, tied to the
+last word with a non-breaking space so it can never be stranded alone on a
+line pointing at nothing, and hidden on the dedicated panel where there is
+nothing to its right.
+
+### The code is not inverted
+
+The site QR is inverted at build time (`images.Invert`) and needs no plate.
+This one is left the right way up on a white plate: it carries Volley's own
+mark in a brand colour, which inverts into something else entirely, and a
+white plate is the most reliable thing to point a phone at from a footpath at
+night. The plate's padding is also the quiet zone — the source file has about
+two modules of margin where the spec wants four.
+
+**`.Resize "450x png box"`, and the size matters twice.** 450 is what the
+dedicated panel renders at in portrait, so the panel draws it pixel for pixel;
+it is also exactly half the source, and that is why it costs 25KB of base64
+instead of 110KB. An off-ratio resize antialiases every module edge in the
+image and there goes PNG's run-length compression. If you change the size on
+the panel, change it to another exact divisor of the source and check what it
+costs.
+
+### Previewing it
+
+`SIGN.koha()` puts the dedicated panel up now instead of waiting for the
+rotation to reach it. `SIGN.event()` toggles the in-event board — pinned,
+call to action, site QR dark — regardless of the clock; call it again to hand
+the board back. `SIGN.state()` reports how many slides away the koha panel is.
+
+### If the file is missing
+
+`KOHA_QR` is an empty string and the script drops both presentations rather
+than showing a hole: no call to action, and `advance()` never arms the panel.
+
 ## One copy of each image
 
 Everything is inlined, so a duplicate is paid for in full every time it
@@ -401,6 +485,11 @@ committed image, and nothing to run by hand.
 The `.Content | base64Encode` step is load-bearing: publishing the QR as a
 file would put a `<img src="/...">` on the page, which the panel cannot fetch.
 Keep it inlined. Each code adds roughly 2KB to the page.
+
+The koha code is the one exception to "no committed image" — it is Volley's
+own code with their mark in the middle, so it cannot be generated, and it
+lives at `assets/images/volley_qr_code.png`. See "Koha" above; it is inlined
+the same way and is subject to all the same rules.
 
 **The domain is hardcoded as `$signBase`, not taken from `Permalink`.** This
 matters: `Permalink` follows `baseURL`, and the board is served to the panel
