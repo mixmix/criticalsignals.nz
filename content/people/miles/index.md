@@ -12,4 +12,4 @@ Māori/English - and other indigenous languages under the <a href="https://papar
 license. He is also starting up [ChurPrimo](http://churprimo.org/) which is
 trying to solve real-time agentic AI governance. He has been interested in
 mutual aid, local economic resilience and collaborative finance for a minute.
-His dream is to dis-intermediate the entire banking and finance sector with a small (but friendly) shell script.
+His dream is to dis-intermediate the entire banking / finance sector and replace them with a small (but super friendly) shell script.
