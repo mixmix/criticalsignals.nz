@@ -3,7 +3,7 @@ title: "A Reality of Everything Pōneke: Election Special"
 hosts:
   - "Catherine Knight"
 date: "2026-09-16"
-start_time: "17:45"
+start_time: "17:30"
 end_time: "19:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2375777"
 price: "$10 or koha"
