@@ -1,5 +1,6 @@
 ---
 title: "Neurobiotics, Health and Plant life in Art Practice"
+event_type: "Talk"
 hosts:
   - "Dr Gabby O’Connor"
   - "Alizée Armet"
@@ -21,8 +22,6 @@ French Artist Alizée Armet and NZ-Aus Installation Artist Gabby O'Connor discus
 **Alizée Armet** seeks to shift our perception of the world by questioning the **anthropocentric frameworks** that shape our relationships with living beings, machines, and environments. She is positioned at the intersection of **art, biology, and computational technologies**, artist-researcher. Her works are conceived less as autonomous objects than as **sensitive ecosystems**: dispositifs in which humans, non-humans, biological materials, and technical infrastructures **coexist, interact, and transform one another**.
 
 Taking the form of **installations, interactive environments, or experimental systems**, her works incorporate **plants, bacteria, sensors, artificial intelligence, 3D printing, and digital devices**. These hybrid assemblages make it possible to explore **forms of distributed intelligence, interspecies communication, and augmented materiality**.
-
-
 
 {{< tt-image src="https://uploads.tickettailorassets.com/c_limit,w_630/v1/production/userfiles/event_description_image_327194_1785732597_8e4d7.jpg?_a=BAAHWXDQ" width="167" height="112" >}}
 

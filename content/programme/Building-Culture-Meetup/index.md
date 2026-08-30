@@ -1,5 +1,6 @@
 ---
 title: "Building Culture (Meetup)"
+event_type: "Community Building"
 hosts:
   - "Sophie Jerram"
   - "Jason Muir"
