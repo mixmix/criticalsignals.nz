@@ -640,6 +640,11 @@ body:not(:has(.cs-hero)) .prose :where(a){text-decoration:underline;text-underli
   --critical-green:#111111;      /* lines, text, solid fills */
   --critical-cream:#ffffff;      /* surface / text on dark */
   --critical-highlight:#d6f7f1;  /* light teal cell fill */
+  /* Weekend cells: the same aqua as --critical-highlight, a step deeper. The
+     hue is the highlight tone the background photos are duotoned into
+     (sampled across assets/images/backgrounds: ~#8acac7), so a weekend reads
+     as more of the week's own colour rather than a second colour. */
+  --critical-highlight-2:#b9dfdd;  /* Sat + Sun */
   --page-gutter:var(--pad);
 }
 
