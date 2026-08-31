@@ -169,6 +169,11 @@ class Calendar {
       dayEl.classList.add('past');
     }
 
+    // Monday-first grid, so Sat/Sun are the last two columns.
+    if (date.getDay() === 0 || date.getDay() === 6) {
+      dayEl.classList.add('weekend');
+    }
+
     const dayEvents = this.getEventsForDate(date);
 
     // Top row: any `calendar_symbol` events sit here, on the same line as the
