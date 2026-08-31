@@ -14,6 +14,7 @@ attendees: 15
 capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_222,q_100,w_700,x_0,y_125/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/hxcu9kjaeyy0c9v9fmw7.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8773705"
+ticket_tailor_series_id: "es_2332941"
 ---
 Arsenal – Insitute for Film and Video Art will be screening "Narrative" at Critical Signals. Screening will be followed by Q+A and discussion with the Director, Anocha Suwichakornpong.
 

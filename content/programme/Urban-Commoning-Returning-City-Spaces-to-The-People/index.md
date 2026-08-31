@@ -12,6 +12,7 @@ attendees: 23
 capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_635,q_100,w_1999,x_0,y_113/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/nvadxokamsfaz3pvqujs.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8813080"
+ticket_tailor_series_id: "es_2343945"
 ---
 Giuseppe Micciarelli will be zooming in from Italy to share his experience of creating urban commons in abandoned, neglected, or underused areas and buildings reclaimed through collective management. He will present some examples of groups and cities, beginning with Naples, where commoners transformed the squatting of disused public premises into the basis for developing a new legal framework (the collective urban and civic use).
 

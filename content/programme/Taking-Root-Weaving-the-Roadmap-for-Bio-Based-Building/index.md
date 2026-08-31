@@ -13,6 +13,7 @@ attendees: 0
 capacity: 20
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_318,q_100,w_1000,x_0,y_122/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/s7gyvlgsnmncaydqd4ug.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8957722"
+ticket_tailor_series_id: "es_2377731"
 ---
 Drawing on six years of research and community input, this workshop brings industry and community together to physically weave a strategy - mapping opportunities, stakeholders and timelines - before closing the week with a shared potluck - participants bring a dish to share, turning the end of the strategy session into an informal, energising space to keep talking and connecting once the formal mapping is done.
 

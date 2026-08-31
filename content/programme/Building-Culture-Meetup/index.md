@@ -1,5 +1,6 @@
 ---
 title: "Building Culture (Meetup)"
+event_type: "Community Building"
 hosts:
   - "Sophie Jerram"
   - "Jason Muir"
@@ -14,5 +15,6 @@ currency: "NZD"
 attendees: 7
 capacity: 50
 ticket_tailor_id: "ev_8743536"
+ticket_tailor_series_id: "es_2321619"
 ---
 A casual meetup, to develop a coalition of Space Activators in the city, who understand that city reactivation starts with creative people meeting in shared spaces. All are welcome!
