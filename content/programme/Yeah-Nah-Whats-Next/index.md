@@ -5,7 +5,7 @@ hosts:
   - "Emily Writes"
 date: "2026-09-08"
 start_time: "18:30"
-end_time: "19:00"
+end_time: "19:30"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2354852"
 price: "Koha"
 currency: "NZD"
