@@ -14,6 +14,7 @@ attendees: 31
 capacity: 85
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_444,q_100,w_1400,x_0,y_1/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/whjerqvc4n3nkijcpvg3.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8773712"
+ticket_tailor_series_id: "es_2332933"
 ---
 French Artist Alizée Armet and NZ-Aus Installation Artist Gabby O'Connor discuss their work, and the melding of science and art. 
 

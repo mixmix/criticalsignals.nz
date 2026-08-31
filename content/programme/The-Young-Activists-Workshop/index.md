@@ -16,6 +16,7 @@ attendees: 22
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_476,q_100,w_1500,x_0,y_454/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/nlfohjhq8jsm37uaouos.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8854686"
+ticket_tailor_series_id: "es_2354705"
 ---
 Being a teenager in Aotearoa right now is hard. You can't vote, you're watching the government try to dismantle Te Tiriti, you're being hurt by the government's racist, transphobic and misogynist rhetoric you're seeing everywhere, you are worried about your future, your parents might have lost work - you're worried about finding work. So what is there to do? 
 

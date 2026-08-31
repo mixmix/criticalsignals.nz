@@ -110,7 +110,19 @@
          file. Edit those in Ticket Tailor itself; everything else on GitHub. */}}
     {{ $ticketTailorID := $event.Params.ticket_tailor_id | default "" }}
     {{ if ne $ticketTailorID "" }}
+      {{/* Ticket Tailor's admin UI addresses an event by its *series* id, not
+           the per-occurrence `ev_` one, and lands on the event's overview —
+           /event/<id>/edit opens the form itself, which is what someone
+           clicking ✏️ is after. `ticket_tailor_series_id` is written by
+           scripts/build-programme.mjs and is always present on a synced page
+           (every Ticket Tailor event belongs to a series, a one-off included);
+           a page synced before that field existed falls back to the overview,
+           which still gets you there in one more click. */}}
+      {{ $seriesID := $event.Params.ticket_tailor_series_id | default "" }}
       {{ $editURL := printf "https://app.tickettailor.com/event/%s" $ticketTailorID }}
+      {{ if ne $seriesID "" }}
+        {{ $editURL = printf "https://app.tickettailor.com/event/%s/edit" $seriesID }}
+      {{ end }}
       {{ $rows = $rows | append (dict "page" $event "hosts" $hostInfos "ticketStatus" $ticketStatus "whenDates" $whenDates "whenIndex" $whenIndex "whenTime" $time "whenLines" $whenLines "sortKey" $sortKey "isPast" $isPast "editURL" $editURL "editLabel" "Ticket Tailor" "isDraft" $event.Draft) }}
     {{ else }}
       {{ $editURL := printf "https://github.com/mixmix/criticalsignals.nz/edit/main/content/%s" $event.File.Path }}

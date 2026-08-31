@@ -13,6 +13,7 @@ attendees: 5
 capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1777,x_0,y_218/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/tnvfc3yv0kkmtacxkfkw.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8743685"
+ticket_tailor_series_id: "es_2321796"
 ---
 **How do we redesign the economic system around the wellbeing of our people and te taiao?**
 

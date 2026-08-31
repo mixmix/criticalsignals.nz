@@ -361,6 +361,14 @@ async function writeEvent (event, slug, collaborators) {
   // Kept for traceability + safe pruning on re-runs.
   frontMatter.ticket_tailor_id = event.id
 
+  // The event *series* the occurrence belongs to. Ticket Tailor models every
+  // event as a series — a one-off is simply a series of one — so this is
+  // always set, series or not. It's the id its admin UI addresses an event by:
+  // /_admin/programme/'s edit button links to
+  // app.tickettailor.com/event/<series id>/edit, which the per-occurrence
+  // `ev_` id can't build. See layouts/admin/programme-audit.html.
+  if (event.event_series_id) frontMatter.ticket_tailor_series_id = event.event_series_id
+
   const dir = join(PROGRAMME_DIR, slug)
 
   // `showOnSign` is set by hand — Ticket Tailor knows nothing about the venue

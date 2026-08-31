@@ -12,6 +12,7 @@ attendees: 4
 capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_173,q_100,w_548,x_0,y_114/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/wch7e33hue8bqglmjlbw.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8897560"
+ticket_tailor_series_id: "es_2366198"
 ---
 How can we improve Internet resilience to support community in Aotearoa?
 
