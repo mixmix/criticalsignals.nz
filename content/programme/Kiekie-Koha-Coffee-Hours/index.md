@@ -14,10 +14,39 @@ dates:
   - 2026-08-25
   - 2026-08-26
   - 2026-08-27
-calendar_symbol: "☕"
-event_type: "Social"
+  - 2026-09-01
+  - 2026-09-02
+  - 2026-09-03
+  - 2026-09-04
+  - 2026-09-09
+  - 2026-09-10
+  - 2026-09-11
+  - 2026-09-15
+  - 2026-09-16
+  - 2026-09-17
+  - 2026-09-18
+  - 2026-09-23
+  - 2026-09-24
+  - 2026-09-25
+  - 2026-09-29
+  - 2026-09-30
+  - 2026-10-01
+  - 2026-10-02
+  - 2026-10-07
+  - 2026-10-08
+  - 2026-10-09
+  - 2026-10-13
+  - 2026-10-14
+  - 2026-10-15
+  - 2026-10-16
+  - 2026-10-28
+  - 2026-10-29
+  - 2026-10-30
+  - 2026-10-31
 start_time: "10:00"
 end_time: "14:00"
+calendar_symbol: "☕"
+event_type: "Social"
 # Drop-in open hours rather than a programmed event, and it runs most days, so
 # it was kept off the sign for a while. Trying it on — set back to false if it
 # crowds the rotation out again.
