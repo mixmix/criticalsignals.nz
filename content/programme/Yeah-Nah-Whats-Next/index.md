@@ -13,6 +13,7 @@ attendees: 0
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_635,q_100,w_2000,x_0,y_1/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/d6kcnkh1zirln0x7wu9t.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_8854878"
+draft: true
 ---
 Yeah Nah Bills popped up in response to ten stink bills our current government has been pushing through and is a simple tool that took off throughout the community.
 
