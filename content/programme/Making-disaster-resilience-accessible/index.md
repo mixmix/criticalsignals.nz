@@ -2,7 +2,7 @@
 title: "Making disaster resilience accessible"
 hosts:
   - "Katie Querin"
-date: "2026-09-15"
+date: "2026-10-20"
 start_time: "18:00"
 end_time: "19:30"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2321781"
