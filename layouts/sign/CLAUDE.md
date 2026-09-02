@@ -112,28 +112,38 @@ touches the homepage and programme list), made together with introducing
 
 ## Rotation
 
-An event is **featured** from `FEATURE_BEFORE_MS` before it starts until it
-ends — doors open to lights up, the window in which people are either arriving
-or already in the room. The moment it finishes the board drops straight back
-to plain rotation. `FEATURE_MODE` decides what the board does about a featured
-event:
+An event is **featured** from `FEATURE_BEFORE_MS` (30 minutes) before it
+starts until it ends — doors open to lights up, the window in which people are
+either arriving or already in the room. The moment it finishes the board drops
+straight back to plain rotation. `FEATURE_MODE` decides what the board does
+about a featured event, and it has **exactly two settings**:
 
 - `'pin'` (current) — the board shows only the featured event and stops
   rotating. Inside the window the board has one job, which is the thing
   happening in the room behind it, and that is also the window in which it
   asks for koha — see "Koha" below. The two go together: the call to action
-  follows the pin, so under any other mode it would blink in and out with the
+  follows the pin, so under `'interleave'` it would blink in and out with the
   feature.
 - `'interleave'` — the featured event takes every second panel: featured,
   coming up 2 of N, featured, coming up 3 of N, and so on. The feature counts
   as panel 1, so the rotation is numbered from 2 and `total` includes it. The
   featured event is removed from the rotation list by `without()`, otherwise a
   not-yet-started feature would appear twice, two panels apart. Kept working.
-- `'off'` — no special treatment.
+
+There is no third setting and there should not be. `upcoming()` only returns
+events that have not started, so an event in progress reaches the board **only**
+as the feature — anything that switched featuring off would drop the running
+event off the board entirely, and the "On now" pill would never render at all.
+There was an `'off'` for a while; it is gone. `SIGN.state()` also used to
+report a mode of `'cycle'` when nothing was featured, which is a *status*, not
+a setting, and was most of why this looked like it had four options. It now
+reports `mode` (the setting) and `showing` (`'feature'` or `'rotation'`)
+separately.
 
 With no featured event the board pages through everything still to come. There
 is no cap on that, but there is one slide per event, not one per date — see
-"Recurring events" below — and every few slides the koha panel takes a turn.
+"Recurring events" below — and every three slides the koha panel takes a
+turn.
 
 `rotationList()` is the one place that answer is computed: everything still to
 come, collapsed to one slide per series, minus the feature. Both
@@ -149,11 +159,8 @@ reintroduce it.
 only steps `cycleIdx` when leaving a rotation panel, so every upcoming event
 gets its own slot instead of every second one being skipped.
 
-Note that `upcoming()` only returns events that have not started. An event in
-progress therefore reaches the board *only* as the feature — under
-`FEATURE_MODE = 'off'` it would not appear at all and the "Happening now" pill
-would never render. `currentView()` puts its result through `collapse()`; the
-rest of the code works on the uncollapsed list.
+`currentView()` puts its result through `collapse()`; the rest of the code
+works on the uncollapsed list.
 
 All the knobs are constants at the top of the display-loop section of
 `sign.html`. `CYCLE_HOLD_MS` is the *whole* slide including both fades, so if
@@ -190,15 +197,51 @@ laptop previewing the board:
   runs when the hold timer expires, just fired on demand; it works even while
   paused, so a presenter can single-step through slides by hand without
   ending the pause.
-- **c** — *current* — toggles `forceFeature`, which puts up the in-event
-  board (pinned event, koha call to action, site QR dark) without waiting for
-  an event to come within the hour. Press it again to hand the board back to
-  the rotation. `step()` picks the change up on its next tick and crossfades
-  into it like any other change of panel — so it does nothing while paused,
-  which is what space is for. Same toggle as `SIGN.event()`.
+- **c** — *current* — shows the in-event board (pinned event, koha call to
+  action, site QR dark) **for the event currently on screen**, without waiting
+  for it to come round in real life. Press it again to come back to real time.
+  `step()` picks the change up on its next tick and crossfades into it like
+  any other change of panel — so it does nothing while paused, which is what
+  space is for. Same toggle as `SIGN.event()`. See "The `c` preview moves the
+  clock" below for how it works and why.
 
 None of them is wired to click/tap — these are desktop controls, not
 something the panel (no touch) or a phone visitor should be able to trigger.
+
+### The `c` preview moves the clock
+
+It does **not** fake the feature. `togglePreview()` sets `previewSkew` so the
+board's idea of now lands `PREVIEW_INTO_MS` (10 minutes) into the event on
+screen, and everything then follows by the ordinary rules rather than one flag
+having to lie to each of them in turn: `featuredEvent()` finds the event
+because the window genuinely contains the clock, `currentView()` pins it, the
+pill says "On now", the countdown counts down to its real finish, and the
+events before it drop out of `upcoming()` so the season meter advances exactly
+as it will have on the day.
+
+That is the whole point. There was a `forceFeature` flag here first, which
+made `featuredEvent()` return an event the clock disagreed with — the board
+pinned, but the pill still said "Coming up" and the countdown still said
+"Starts in 3 days", so the preview showed you something the wall will never
+show. It is gone.
+
+**Everything in the display loop reads `clock()` or `clockMs()`**, never
+`new Date()`, which is what lets one number move all of them at once. The
+single deliberate exception is the `rev.json` cache-buster, which wants the
+real clock because it is talking to a real server. `previewSkew` is zero
+unless a keypress or the console sets it, and the panel has neither a keyboard
+nor a console, so on the wall these are `new Date()` with an addition of zero
+on the end.
+
+Two things the toggle has to do besides moving the number: reset `driftAt` and
+`slideAt`, which both hold timestamps taken from the clock that just moved.
+Left alone, the spore would sit still for however many days the skew was worth
+and the slide timer would read as either expired or rewound.
+
+`lastEvent` is the event the preview uses. It is not `shown`, because
+`renderKoha()` sets `shown` to null — so pressing `c` while the koha panel is
+up would do nothing. `lastEvent` remembers the event either side of it
+instead.
 
 ## Landscape is not a scaled portrait
 
@@ -315,19 +358,28 @@ hole on the wall. `$faceSpec` should track what the circle actually renders at
 in portrait — the panel is 1:1, so anything larger is bytes for nothing and
 anything smaller is a soft photo on a 65" screen.
 
-### The hosts block shrinks to fit
+### `#main` shrinks to fit
 
-A slide with eight hosts is four times the block a slide with two is, and the
-board has no scrollbar and nowhere to put the overflow — past a certain number
-of names the row grew straight down through the footer. `fitSpeakers()`
-measures and steps it down.
+A slide with eight hosts is four times the block a slide with two is, and
+inside the feature window the koha call to action arrives as a whole extra
+block on top of that. The board has no scrollbar and nowhere to put the
+overflow — past a certain amount of content the block grows straight down
+through the footer. `fitMain()` measures and steps it down.
 
-**There is one knob: `#speakers`' `font-size`.** The photos, the gaps between
-hosts and the names are all sized in `em` off it, so shrinking the type takes
-the photos with it and a face never drifts out of scale with the name beside
-it. The em figures are the old pixel ones divided by the base size, so an
-unshrunk row measures exactly as it did before — if you change a base
-font-size, the `em` ratios have to be redivided against it.
+**Two knobs, both font-sizes: `#speakers`' and `#koha`'s.** Everything inside
+each block — photos, gaps, names, the code's plate and the line beside it — is
+sized in `em` off its own, so shrinking the type takes the rest with it and a
+face never drifts out of scale with the name beside it, nor the code out of
+scale with the line pointing at it. They step together, and each stops at its
+own floor. The em figures are the pixel ones divided by the base size, so an
+unshrunk block measures exactly as it did before — **if you change a base
+font-size, the `em` ratios have to be redivided against it.**
+
+- `SPEAKERS_MIN_SCALE` (0.5) — below that the names stop being readable from
+  the footpath, which is worse than an overfull board.
+- `KOHA_MIN_SCALE` (0.7) — the tighter of the two, because below it the code
+  stops being worth pointing a phone at. On the panel that floor is a 210px
+  code; landscape is a desktop preview and can go smaller.
 
 The budget is what `#inner` has left once every one of its children *except*
 `#main` has taken its share. Measured off the siblings rather than off `#main`
@@ -336,42 +388,84 @@ so asking it how much room there is always gets back "exactly enough".
 
 `#main > *` is pinned to `flex: 0 0 auto` for the same reason. A flex item
 that has been quietly squashed by the flex algorithm measures as fitting, and
-the hosts would then never step down; they keep their content height and
-overflow instead, which is what the measurement is there to notice.
+the block would then never step down; it keeps its content height and
+overflows instead, which is what the measurement is there to notice.
 
-It runs off a *change*, not off the clock. `renderEvent()` runs every second;
-`put()` returns whether it actually wrote, and only a write to `#title`,
-`#titlesub` or `#speakers` triggers a re-measure. A layout pass a second on
-this panel is not free.
+It runs off a *change*, not off the clock — `renderEvent()` runs every second
+and a layout pass a second on this panel is not free. **There are two kinds of
+change and both have to trigger it:**
 
-`SPEAKERS_MIN_SCALE` (0.5) is the floor — below that the names stop being
-readable from the footpath, which is worse than an overfull board. Nothing on
-the current programme comes close: eight hosts land around 0.7 in landscape.
+- a write to `#title`, `#titlesub` or `#speakers`. `put()` returns whether it
+  actually wrote, and `renderEvent()` re-measures when any of the three did.
+- a change of *panel kind* in `renderView()` — the koha block joining or
+  leaving `#main`, and the masthead standing down. Missing this one is what
+  put the footer 100px off the bottom of the panel: pressing `c` on a slide
+  pins the same event with the same title and the same hosts, so nothing in
+  the first list changed, and the board went on believing it had room it had
+  just given away.
+
+### Landscape overflows on long titles, and always has
+
+Seven of the twenty slides currently overflow the landscape canvas by 10–54px
+with a long title and several hosts, `#speakers` already at its floor. This is
+**pre-existing and unrelated to koha** — the same seven, to the pixel, on the
+commit before any of it. Portrait, which is the panel, is clean on all twenty
+in both the rotation and the feature window. Measure against a baseline build
+before assuming a landscape overflow is something you just did.
 
 ## Koha
 
 The board asks for a koha in two places, both pointing at the same inlined
 Volley code (`assets/images/volley_qr_code.png`).
 
-**During the feature window** — an hour before an event starts until it ends —
-the board pins to that event and a mint line and the code appear under the
-hosts: *"Koha here to support this event →"*. The site QR in the footer goes
-dark for the duration. Two codes on one board is a question rather than an
-invitation, and inside the window the answer is the one being asked for. The
-address stays; it is type, not a target.
+**During the feature window** — half an hour before an event starts until it
+ends (`FEATURE_BEFORE_MS`) — the board **stops rotating and stays on that one
+event**, and a mint line and the code appear under the hosts: `KOHA_EVENT_TEXT`.
+The site QR in the footer goes dark for the duration.
 
-**The rest of the time** the koha panel takes a turn of its own every three to
-five event slides: *"Koha here to support the critical signals kaupapa"*, the
-code large, and nothing else but the masthead. The gap is **redrawn from
-`Math.random()` after every appearance** rather than fixed — on a fixed count
-the panel lands on the same events every time round and starts to read as
-belonging to one of them. Someone standing at the window for a few minutes
-should not be able to predict it.
+The masthead stands down with it: `body.current` hides the "/ Programme"
+qualifier and the "2026 SEASON" label. Both were introducing the season around
+a board that is now about one thing, and on a full slide the label left the
+"On now" pill wedged against it with nothing in between. The dots stay — they
+say something at a glance and they say it without a caption — and `#season`
+takes over the gap down to the pill that the label used to provide.
+
+**`body.current` is the mode; `body.koha-event` is only whether there is a
+code to ask with.** They are two facts and two classes on purpose: a missing
+image should drop the call to action, not also undo the layout the mode is
+there for.
+
+In portrait the code is pushed hard right (`space-between` on `#koha`), so its
+edge lands on the same line as the countdown under it, the footer rule, and
+the season dots — 1000px on the 1080 canvas, the right margin everything else
+on the panel already uses, rather than a third edge floating mid-board.
+`#koha` stretches to `#main`'s full width because `#main` is a column flex
+container, and `#main` is as wide as `#inner`, which is what makes those edges
+the same one. **Landscape deliberately does not do this**: the canvas is twice
+as wide there and the arrow would end up pointing across most of a screen of
+nothing. Two codes on one board is
+a question rather than an invitation, and inside the window the answer is the
+one being asked for. The address stays; it is type, not a target.
+
+**The rest of the time** the board rotates, and the koha panel takes a turn of
+its own every `KOHA_EVERY` (3) event slides: three events, the code, three
+more. `KOHA_SLIDE_TEXT`, the code large, and nothing else but the masthead.
+
+The gap is **fixed, not random**. It was drawn from a 3-to-5 range to begin
+with, on the theory that a predictable slot reads as belonging to whichever
+event it keeps landing next to. A steady beat turned out to be easier to
+describe to someone standing at the window and easier to check on the wall,
+and that won the argument. If you want it less often, change the number — do
+not put the range back without knowing why the beat was wanted.
+
+The count is also reset to a full `KOHA_EVERY` when a feature window closes,
+so the rotation resumes with three events in front of the panel rather than
+with whatever was left on the clock when the window opened.
 
 Both are one block of markup, `#koha` inside `#main`, switched between by a
 class on `<body>`: `.koha-event` and `.koha-slide`. Inside `#main` on purpose —
 `#main` centres in whatever slack the slide leaves, so the block sits in the
-empty band rather than jammed against the footer, and `fitSpeakers()` already
+empty band rather than jammed against the footer, and `fitMain()` already
 counts everything in `#main` when it decides how big the host photos may be, so
 a four-host event in the window shrinks its photos to make room by itself.
 
@@ -405,9 +499,12 @@ costs.
 ### Previewing it
 
 `SIGN.koha()` puts the dedicated panel up now instead of waiting for the
-rotation to reach it. `SIGN.event()` toggles the in-event board — pinned,
-call to action, site QR dark — regardless of the clock; call it again to hand
-the board back. `SIGN.state()` reports how many slides away the koha panel is.
+rotation to reach it. `SIGN.event()` toggles the in-event board — pinned, call
+to action, site QR dark — for whatever event is on screen, by moving the clock
+to a few minutes into it; call it again to come back to real time. Same thing
+the `c` key does, and the same caveats: see "The `c` preview moves the clock"
+under Rotation. `SIGN.state()` reports how many slides away the koha panel is,
+and `preview` — false on the real clock, otherwise where `c` has moved it to.
 
 ### If the file is missing
 

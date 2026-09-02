@@ -350,7 +350,7 @@ body.portrait #spore {
   -webkit-flex-direction: column; flex-direction: column;
   -webkit-justify-content: center; justify-content: center;
 }
-/* fitSpeakers() decides how big the hosts may be by measuring these, so none
+/* fitMain() decides how big the hosts may be by measuring these, so none
    of them may be quietly squashed by the flex algorithm first: a shrunk item
    measures as fitting, and the hosts would then never step down. They keep
    their content height and overflow instead, which is what the measurement
@@ -437,6 +437,25 @@ body.portrait #seasonnote {
 }
 #seasonnote b { color: #94EEE5; color: var(--signal); font-weight: 700; }
 
+/* ---------- the masthead stands down for the current event ----------
+   Inside the feature window the board is about one thing, and the masthead
+   was still introducing the season around it: "/ Programme" qualifying a
+   board that is plainly showing a programme, and "2026 SEASON" labelling a
+   row of dots directly above an "On now" pill it had nothing to do with. On
+   a full slide — three hosts, a three-line title, the koha code — that left
+   the pill wedged against the label with nothing between them.
+
+   Both go. The dots stay: they are the part that says something at a glance,
+   and they say it without a caption. What the label was really providing in
+   portrait was the gap down to the pill, so #season takes that over.
+
+   The `.current` class, not `.koha-event`: this is the mode, not the code.
+   A missing koha image should drop the call to action, not undo the layout. */
+body.current #brand em { display: none; }
+body.current #seasonnote,
+body.portrait.current #seasonnote { display: none; }
+body.portrait.current #season { margin-bottom: 30px; }
+
 /* status pill */
 #status {
   display: inline-block; margin: 0; -webkit-align-self: flex-start; align-self: flex-start;
@@ -512,7 +531,7 @@ body.portrait #seasonnote {
 /* Sized to the space rather than to the type: #main centres in whatever slack
    the slide leaves, so a four-host row simply grows down into the empty band
    beside the QR plate instead of being squeezed. */
-/* Everything here is in `em` off #speakers' own font-size, so fitSpeakers()
+/* Everything here is in `em` off #speakers' own font-size, so fitMain()
    has a single knob: step the font-size down and the photos, the gaps and
    the names all shrink together instead of the names shrinking away from
    photos that stay put. The em figures are the old pixel ones divided by
@@ -574,18 +593,29 @@ body.koha-slide #koha {
    Mint and light, the same treatment as the web address in the footer,
    because it is the same kind of thing: the one line on the board you are
    being asked to act on. Not competing with the title. */
+/* Everything is in `em` off #koha's own font-size, the same arrangement
+   #speakers uses and for the same reason: fitMain() shrinks the block by
+   stepping that one value, and the code, the line and the gap between them
+   go down together rather than the line shrinking away from a plate that
+   stays put.
+
+   Landscape is smaller than portrait by more than the usual ratio. The panel
+   is portrait; a 1920x1080 window has the same content in half the height,
+   and this block is the last thing on the board that should be winning that
+   argument with the title. */
 body.koha-event #koha {
   -webkit-box-orient: horizontal;
   -webkit-flex-direction: row; flex-direction: row;
-  margin-top: 36px;
+  font-size: 30px;
+  margin-top: 0.8em;
 }
 body.koha-event #kohaline {
-  font-size: 40px; line-height: 1.15; font-weight: 400;
+  font-size: 1em; line-height: 1.15; font-weight: 400;
   color: #94EEE5; color: var(--signal);
-  max-width: 700px;
-  margin-right: 34px;
+  max-width: 20em;
+  margin-right: 0.9em;
 }
-body.koha-event #kohaplate { width: 200px; height: 200px; }
+body.koha-event #kohaplate { width: 4.4em; height: 4.4em; }
 /* (c): the site code goes dark for the duration. Two codes on one board is a
    question — which one am I being pointed at? — and the answer while an event
    is on is the one beside the line asking for it. The address stays; it is
@@ -772,11 +802,29 @@ body.portrait #speakers .host { margin: 0.22em 0.89em 0.22em 0; }
    22cm and 34cm across on a 65" screen, which is a comfortable scan from
    the far side of the footpath. The 450 is also the size the image is
    emitted at, so the panel draws that one pixel for pixel. */
-body.portrait.koha-event #koha { margin-top: 48px; }
-body.portrait.koha-event #kohaline {
-  font-size: 50px; max-width: 520px; margin-right: 40px;
+/* Portrait keeps the sizes it had — 50px line, 300px code, about 22cm across
+   on the wall — expressed against its own font-size so fitMain() can take
+   them down together when a slide needs the room. */
+/* The code goes hard right, so its edge lands on the same line as the
+   countdown under it and the footer rule below that — the same right margin
+   everything else on the panel is already using, rather than a third edge
+   floating in the middle of the board. `#koha` stretches to #main's full
+   width (it is a column flex container, so items stretch across), and #main
+   is as wide as #inner, which is what makes the two edges the same one.
+
+   Landscape does not do this: the canvas is twice as wide there, and pushing
+   the code to the far right would leave the arrow pointing across most of a
+   screen of nothing. Same reasoning as everywhere else in this file — the
+   two orientations carry the same content in very different shapes.
+
+   `margin-right` on the line survives as a floor on the gap, for a line long
+   enough that space-between has nothing left to distribute. */
+body.portrait.koha-event #koha {
+  font-size: 50px; margin-top: 0.96em;
+  -webkit-justify-content: space-between; justify-content: space-between;
 }
-body.portrait.koha-event #kohaplate { width: 300px; height: 300px; }
+body.portrait.koha-event #kohaline { max-width: 10.4em; margin-right: 0.8em; }
+body.portrait.koha-event #kohaplate { width: 6em; height: 6em; }
 
 /* Portrait has no width to put the code beside the line, so the block goes
    back to a column: line, code, address. */
@@ -915,7 +963,7 @@ html.handheld #spore { opacity: 0.26; }
 
            Hidden otherwise. Inside #main on purpose: #main centres in
            whatever slack the slide leaves, so the block sits in the empty
-           band rather than jammed against the footer, and fitSpeakers()
+           band rather than jammed against the footer, and fitMain()
            already counts everything in here when it decides how big the
            host photos may be. -->
       <div id="koha">
@@ -995,6 +1043,19 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   /* Orientation: 'auto' follows the panel, or force 'portrait'/'landscape'. */
   var ORIENT = 'auto';
 
+  /* ---------- the board's idea of "now" ----------
+     Every "what time is it" in the display loop goes through clock() or
+     clockMs(), so the `c` preview can move all of them at once by moving one
+     number. `previewSkew` is zero unless a keypress or the console sets it,
+     and the panel has neither a keyboard nor a console — on the wall these
+     are `new Date()` with an addition of zero on the end of them.
+
+     The one deliberate exception is the rev.json cache-buster, which wants
+     the real clock because it is talking to a real server. */
+  var previewSkew = 0;
+  function clockMs() { return new Date().getTime() + previewSkew; }
+  function clock()   { return new Date(clockMs()); }
+
   var root = document.documentElement;
   var HANDHELD = root.className.indexOf('handheld') >= 0;
 
@@ -1006,9 +1067,11 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   var bodyPortrait  = false;
   var bodyKohaSlide = false;
   var bodyKohaEvent = false;
+  var bodyCurrent   = false;
 
   function syncBody() {
     var cls = bodyPortrait ? 'portrait' : '';
+    if (bodyCurrent) { cls += (cls ? ' ' : '') + 'current'; }
     if (bodyKohaSlide) { cls += (cls ? ' ' : '') + 'koha-slide'; }
     else if (bodyKohaEvent) { cls += (cls ? ' ' : '') + 'koha-event'; }
     if (document.body.className !== cls) { document.body.className = cls; }
@@ -1062,19 +1125,24 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     stage.style.top  = Math.round(top) + 'px';
   }
   /* ------------------------------------------------------------------
-     Hosts shrink to fit.
+     #main shrinks to fit.
 
-     A slide with six hosts is three times the block a slide with two is,
-     and the board has no scrollbar and nowhere to put the overflow: past a
-     certain number of names the row grew straight down through the footer.
-     There is nothing in this engine to say "fit this in that space" —
-     no clamp(), no container queries, nothing that sizes type to its box —
-     so it is measured here.
+     A slide with six hosts is three times the block a slide with two is, and
+     the koha call to action arrives inside #main as a whole extra block on
+     top of that. The board has no scrollbar and nowhere to put the overflow:
+     past a certain amount of content the block grows straight down through
+     the footer. There is nothing in this engine to say "fit this in that
+     space" — no clamp(), no container queries, nothing that sizes type to
+     its box — so it is measured here.
 
-     One knob: #speakers' font-size. The photos, the gaps between hosts and
-     the names are all sized in `em` off it, so stepping it down takes the
-     whole block with it and a face never drifts out of scale with the name
-     beside it.
+     Two knobs, both font-sizes: #speakers' and #koha's. Everything inside
+     each of them — photos, gaps, names, the code's plate — is sized in `em`
+     off its own, so stepping one down takes that whole block with it and a
+     face never drifts out of scale with the name beside it, nor the code out
+     of scale with the line pointing at it. They step together, and each
+     stops at its own floor: the names have to stay readable from the
+     footpath, and the code has to stay worth pointing a phone at, which is
+     the tighter of the two.
 
      The budget is what #inner has left once everything that is not #main has
      taken its share. Measured off those siblings rather than off #main
@@ -1083,11 +1151,9 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      enough".
      ------------------------------------------------------------------ */
 
-  /* Below this the names stop being readable from the footpath, which is
-     worse than an overfull board. Nothing on the current programme comes
-     close to needing it. */
   var SPEAKERS_MIN_SCALE = 0.5;
-  var SPEAKERS_STEP      = 0.05;
+  var KOHA_MIN_SCALE     = 0.7;   /* a code below this stops being a target */
+  var FIT_STEP           = 0.05;
 
   function outerH(el) {
     var cs = window.getComputedStyle(el, null);
@@ -1096,17 +1162,20 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
            (parseFloat(cs.marginBottom) || 0);
   }
 
-  function fitSpeakers() {
+  function fitMain() {
     var sp    = document.getElementById('speakers');
+    var ko    = document.getElementById('koha');
     var main  = document.getElementById('main');
     var inner = document.getElementById('inner');
-    if (!sp || !main || !inner) { return; }
+    if (!sp || !ko || !main || !inner) { return; }
 
-    /* Back to the stylesheet size first: the previous slide may have left it
-       shrunk, and this one is measured on its own terms. */
+    /* Back to the stylesheet sizes first: the previous slide may have left
+       them shrunk, and this one is measured on its own terms. */
     sp.style.fontSize = '';
-    var base = parseFloat(window.getComputedStyle(sp, null).fontSize);
-    if (!base) { return; }
+    ko.style.fontSize = '';
+    var spBase = parseFloat(window.getComputedStyle(sp, null).fontSize);
+    var koBase = parseFloat(window.getComputedStyle(ko, null).fontSize);
+    if (!spBase) { return; }
 
     var kids = inner.children, i;
     var budget = inner.clientHeight;
@@ -1115,17 +1184,34 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     }
     if (budget <= 0) { return; }
 
-    var parts = main.children, scale = 1, used, pass;
-    for (pass = 0; pass < 16; pass++) {
+    /* #koha is display:none on an ordinary slide, and shrinking nothing
+       would just burn passes. */
+    var koLive = ko.offsetHeight > 0;
+
+    var parts = main.children, spScale = 1, koScale = 1, used, pass, moved;
+    for (pass = 0; pass < 24; pass++) {
       used = 0;
       for (i = 0; i < parts.length; i++) { used += outerH(parts[i]); }
-      if (used <= budget || scale <= SPEAKERS_MIN_SCALE) { break; }
-      scale = Math.max(SPEAKERS_MIN_SCALE, scale - SPEAKERS_STEP);
-      sp.style.fontSize = (base * scale) + 'px';
+      if (used <= budget) { break; }
+
+      moved = false;
+      if (spScale > SPEAKERS_MIN_SCALE) {
+        spScale = Math.max(SPEAKERS_MIN_SCALE, spScale - FIT_STEP);
+        sp.style.fontSize = (spBase * spScale) + 'px';
+        moved = true;
+      }
+      if (koLive && koBase && koScale > KOHA_MIN_SCALE) {
+        koScale = Math.max(KOHA_MIN_SCALE, koScale - FIT_STEP);
+        ko.style.fontSize = (koBase * koScale) + 'px';
+        moved = true;
+      }
+      /* Both at their floor. The slide is simply taller than the canvas and
+         no amount of stepping will change that; stop rather than spin. */
+      if (!moved) { break; }
     }
   }
 
-  window.onresize = function () { fit(); fitSpeakers(); };
+  window.onresize = function () { fit(); fitMain(); };
   fit();
 
   var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1158,7 +1244,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   }
   /* Now, shifted so the getUTC* accessors read as Wellington wall clock. */
   function nowNZ() {
-    var d = new Date();
+    var d = clock();
     return new Date(d.getTime() + nzOffset(d) * 60000);
   }
 
@@ -1279,7 +1365,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      cache and only strings that actually changed touch the document. */
   var domCache = {};
   /* Returns true when it actually wrote, so a caller can hang work off the
-     change rather than repeating it every second — see fitSpeakers(). */
+     change rather than repeating it every second — see fitMain(). */
   function put(id, html) {
     if (domCache[id] !== html) {
       domCache[id] = html;
@@ -1312,7 +1398,11 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      arriving or already in the room. The moment it finishes the board goes
      back to plain rotation; nothing lingers.
 
-     FEATURE_MODE decides what the board does with a featured event:
+     FEATURE_MODE decides what the board does with a featured event. Two
+     settings, and there is no third — an event in progress reaches the board
+     only as the feature, so anything that switched featuring off would drop
+     the running event off the board entirely and the "On now" pill would
+     never render at all:
 
        'pin'         the board shows only the featured event and stops
                      rotating. Current setting — inside the window the board
@@ -1323,14 +1413,13 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
                      coming up 3 of N, and so on. Still working; note that
                      the koha call to action follows the pin, so under
                      interleave it would blink in and out with the feature.
-       'off'         featured events get no special treatment.
 
      With no featured event the board simply pages through everything still
      to come, each slide holding for CYCLE_HOLD_MS with a crossfade between,
-     and every few slides the koha panel takes a turn — see kohaGap().
+     and every KOHA_EVERY slides the koha panel takes a turn.
      ================================================================== */
   var FEATURE_MODE      = 'pin';
-  var FEATURE_BEFORE_MS = 3600000;  /* 1h before it starts */
+  var FEATURE_BEFORE_MS = 1800000;  /* 30 min before it starts */
   var CYCLE_HOLD_MS     = 6000;   /* whole slide, both fades included */
   var FADE_MS           = 400;    /* must match the #inner CSS transition */
   var FADE_SLOP_MS      = 60;     /* let the fade finish before swapping copy */
@@ -1343,35 +1432,24 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        during the feature window   a line and the code under the hosts, on
                                    the pinned event panel. The site QR in the
                                    footer goes dark while it is up.
-       the rest of the time        a panel of its own, every KOHA_GAP_MIN to
-                                   KOHA_GAP_MAX event slides.
+       the rest of the time        a panel of its own, every KOHA_EVERY event
+                                   slides: three events, the code, three more.
 
-     The gap is redrawn after every appearance rather than fixed, so the
-     panel doesn't land on the same event every time round and read as
-     belonging to it. Someone standing at the window for a few minutes should
-     not be able to predict it.
+     Fixed rather than random. It was drawn from a range to begin with, on the
+     theory that a predictable slot reads as belonging to whichever event it
+     keeps landing next to — but a steady beat is easier to describe to
+     someone standing at the window, and easier to check on the wall, and that
+     won the argument. Change the number, not the shape.
 
      The copy is HTML and lives here, in one place. `.arrow` is shown only in
      the in-event call to action, where there is a code to its right for it to
      point at. */
-  var KOHA_EVENT_TEXT = 'Koha here to support this event&nbsp;<span class="arrow">&rarr;</span>';
-  var KOHA_SLIDE_TEXT = 'Koha here to support the critical signals kaupapa';
-  var KOHA_GAP_MIN    = 3;
-  var KOHA_GAP_MAX    = 5;
-
-  function kohaGap() {
-    return KOHA_GAP_MIN + Math.floor(Math.random() * (KOHA_GAP_MAX - KOHA_GAP_MIN + 1));
-  }
-
-  /* Set by the `c` key and by SIGN.event(), to preview the in-event board
-     from a desktop without waiting for an event to come within the hour.
-     Never set on the panel, which has no keyboard and no console. */
-  var forceFeature = false;
+  var KOHA_EVENT_TEXT = 'Give a koha <br/>to support this kaupapa&nbsp;<span class="arrow">&rarr;</span>';
+  var KOHA_SLIDE_TEXT = 'Give a koha to support critical signals&nbsp;<span class="arrow">&rarr;</span>';
+  var KOHA_EVERY      = 3;    /* number of event slides between one koha CTA slide and the next */
 
   function featuredEvent(nowMs) {
     var i, e, best = null;
-    if (FEATURE_MODE === 'off') { return null; }
-    if (forceFeature) { return pick(new Date(nowMs)); }
     for (i = 0; i < EVENTS.length; i++) {
       e = EVENTS[i];
       if (nowMs >= e._s.getTime() - FEATURE_BEFORE_MS && nowMs <= e._e.getTime()) {
@@ -1501,6 +1579,11 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   }
 
   var shown = null;
+  /* The last actual event drawn, which renderKoha() deliberately does not
+     clear — `shown` goes to null while the koha panel is up, and the `c`
+     preview needs to know what the board was talking about either side of
+     it. */
+  var lastEvent = null;
 
   /* One pip per event in the season: the ones already run dimmed, the ones
      still to come mint, and a pointer over whichever is on screen. The count
@@ -1602,12 +1685,13 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       /* nowNZ(), not new Date(): hhmm reads getUTC* accessors, so a raw
          Date would print UTC on a clock meant to read Wellington time. */
       put('clock', hhmm(nowNZ()));
-      fitSpeakers();
+      fitMain();
       return;
     }
     shown = ev;
+    lastEvent = ev;
 
-    /* The three writes below are everything fitSpeakers() measures, so
+    /* The three writes below are everything fitMain() measures, so
        whether any of them landed is exactly the condition for re-measuring.
        renderEvent() runs every second; the layout pass must not. */
     var titleParts = splitLongTitle(ev.title);
@@ -1626,7 +1710,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       chips.push('<span class="host">' + face + esc(ev.speakers[i]) + '</span>');
     }
     if (put('speakers', chips.join(''))) { mainChanged = true; }
-    if (mainChanged) { fitSpeakers(); }
+    if (mainChanged) { fitMain(); }
     putSrc('qrimg', QRS[ev.qr] || SITE_QR);
 
     /* Computed every pass, not just when the event changes, so a board
@@ -1694,10 +1778,15 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   function renderView(view, now) {
     var slide = !!view.koha;
     var cta   = !slide && !!view.kohaEvent;
+    var cur   = !slide && !!view.current;
+    var switched = (slide !== bodyKohaSlide ||
+                    cta   !== bodyKohaEvent ||
+                    cur   !== bodyCurrent);
 
-    if (slide !== bodyKohaSlide || cta !== bodyKohaEvent) {
+    if (switched) {
       bodyKohaSlide = slide;
       bodyKohaEvent = cta;
+      bodyCurrent   = cur;
       syncBody();
     }
     if (slide || cta) {
@@ -1707,6 +1796,15 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
 
     if (slide) { renderKoha(view, now); }
     else { renderEvent(view.ev, now, view.pos, view.total); }
+
+    /* renderEvent() re-measures when the title or the hosts change, which is
+       not what just happened: the same event can walk into the feature window
+       with its copy untouched, and what changed is that #koha joined #main and
+       the masthead stood down. Both move the numbers fitMain() works from, so
+       it has to run on the switch as well or the board goes on believing it
+       had room it has since given away. This is what put the footer 100px off
+       the bottom of the panel. */
+    if (switched) { fitMain(); }
   }
 
   /* What should be on screen right now: {ev, pos, total, list}.
@@ -1714,7 +1812,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      Starting soon); anything higher renders "Coming up · pos+1 of total". */
   var cycleIdx    = 0;
   var featureTurn = true;   /* interleave: is this panel the featured one */
-  var kohaIn      = kohaGap();  /* event slides still to run before the koha panel */
+  var kohaIn      = KOHA_EVERY;  /* event slides still to run before the koha panel */
   var kohaNow     = false;      /* this panel is the koha panel */
 
   /* The slides the rotation pages through: the whole rest of the season, no
@@ -1740,7 +1838,13 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     if (feat && FEATURE_MODE === 'pin') {
       /* koha: the window this pin covers is exactly the window in which
          there are people to ask — arriving, or already in the room. */
-      return { ev: pick(now), pos: 0, total: 1, list: null, kohaEvent: !!KOHA_QR };
+      /* Two separate facts. `current` is the mode — the board is pinned to
+         the thing happening in the room — and the masthead stands down for
+         it. `kohaEvent` is only whether there is a code to ask with, so a
+         missing image drops the call to action without also undoing the
+         layout the mode is there for. */
+      return { ev: pick(now), pos: 0, total: 1, list: null,
+               current: true, kohaEvent: !!KOHA_QR };
     }
 
     var list = rotationList(nowMs);
@@ -1783,10 +1887,10 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     }
 
     /* Leaving the koha panel: the rotation picks up from the event it was
-       standing in front of, and a fresh gap is drawn for the next one. */
+       standing in front of, and the count starts again. */
     if (kohaNow) {
       kohaNow = false;
-      kohaIn  = kohaGap();
+      kohaIn  = KOHA_EVERY;
       cycleIdx = cycleIdx + 1;
       return;
     }
@@ -1802,7 +1906,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     kohaIn = kohaIn - 1;
     if (kohaIn <= 0) {
       if (KOHA_QR && rotationList(nowMs).length > 1) { kohaNow = true; return; }
-      kohaIn = kohaGap();
+      kohaIn = KOHA_EVERY;
     }
     cycleIdx = cycleIdx + 1;
   }
@@ -1825,10 +1929,52 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     var el = document.getElementById('spore');
     el.style.webkitTransform = t;
     el.style.transform = t;
-    driftAt = new Date().getTime();
+    driftAt = clockMs();
   }
 
   var fading = false, booted = false, slideAt = 0, rotating = false, paused = false;
+
+  /* ---------- `c`: preview the in-event board ----------
+     On whatever slide is up. It does not fake the feature — it moves the
+     board's idea of now to a few minutes into the event on screen, and then
+     everything follows by the ordinary rules instead of one flag having to
+     lie to each of them in turn: featuredEvent() finds it because the window
+     genuinely contains the clock, currentView() pins it, the pill says On
+     now, the countdown counts down to its finish, and the events before it
+     drop out of the season exactly as they will have on the day. Which is
+     the whole point — a preview that took a shortcut anywhere would be
+     showing you something the wall will never show.
+
+     `shown` is null while the koha panel is up, so the event either side of
+     it is remembered separately and that is what gets previewed; pressing
+     `c` on the koha panel does the useful thing rather than nothing.
+
+     Press again to come back to real time. */
+  var PREVIEW_INTO_MS = 600000;   /* land ten minutes into the event */
+
+  function togglePreview() {
+    var on = !previewSkew;
+    if (on) {
+      var ev = lastEvent;
+      if (!ev) { return false; }
+      var st = ev._s.getTime(), en = ev._e.getTime();
+      var at = st + PREVIEW_INTO_MS;
+      /* Nothing on the programme is under an hour, but an event shorter than
+         the offset would put the clock past its own end and preview a board
+         that had already moved on. */
+      if (at >= en) { at = st + Math.floor((en - st) / 2); }
+      previewSkew = at - new Date().getTime();
+    } else {
+      previewSkew = 0;
+    }
+    /* Both of these hold a timestamp taken from the clock that just moved.
+       Left alone, the spore would sit still for however many days the skew
+       was worth, and the slide timer would read as either expired or
+       rewound. */
+    driftAt = clockMs();
+    slideAt = clockMs();
+    return on;
+  }
 
   /* Runs every tick regardless of `fading`, so the bar keeps ticking down
      smoothly right through the crossfade instead of freezing for the last
@@ -1872,10 +2018,10 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        gesture rather than two things twitching in sequence. */
     driftSpore();
     setTimeout(function () {
-      renderView(view, new Date());
+      renderView(view, clock());
       document.getElementById('inner').className = '';
       fading = false;
-      slideAt = new Date().getTime();
+      slideAt = clockMs();
       updateTimerBar(slideAt, true);
     }, FADE_MS + FADE_SLOP_MS);
   }
@@ -1900,7 +2046,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
 
   function step() {
     if (paused) { return; }
-    var now   = new Date();
+    var now   = clock();
     var nowMs = now.getTime();
     updateTimerBar(nowMs);
 
@@ -1933,10 +2079,13 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
       cycleIdx = 0;
       featureTurn = true;
       /* Nothing is rotating, so a koha panel armed before the window opened
-         has nowhere to go. It would otherwise be the first thing shown the
-         moment the event ends. `kohaIn` is left alone — it is always at
-         least 1 — so the count simply resumes. */
+         has nowhere to go — it would otherwise be the first thing shown the
+         moment the event ends. Disarm it and put the count back to a full
+         KOHA_EVERY, so the rotation resumes with three events in front of it
+         rather than with whatever was left on the clock when the window
+         opened. */
       kohaNow = false;
+      kohaIn  = KOHA_EVERY;
     }
 
     /* A change of panel *kind* fades too, not only a change of event. The
@@ -1945,7 +2094,9 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        glitch rather than as the board changing its mind. */
     var wantSlide = !!view.koha;
     var wantCta   = !wantSlide && !!view.kohaEvent;
-    if (view.ev !== shown || wantSlide !== bodyKohaSlide || wantCta !== bodyKohaEvent) {
+    var wantCur   = !wantSlide && !!view.current;
+    if (view.ev !== shown || wantSlide !== bodyKohaSlide ||
+        wantCta !== bodyKohaEvent || wantCur !== bodyCurrent) {
       fadeTo(skipRepeat(nowMs, view));
       return;
     }
@@ -1965,7 +2116,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      pressed again. A no-op mid-fade or with nothing to advance to. */
   function forceNext() {
     if (fading) { return; }
-    var now = new Date(), nowMs = now.getTime();
+    var now = clock(), nowMs = now.getTime();
     var view = currentView(now);
     if (view.list && view.total > 1) {
       advance(nowMs);
@@ -1981,9 +2132,9 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
      space  pause
      right  next slide
      c      the current-event board — pinned event, koha call to action, site
-            QR dark — without waiting for an event to come within the hour.
-            Press it again to hand the board back to the rotation. `c` for
-            current; it is a toggle, so it also puts the board back.
+            QR dark — for the event *currently on screen*, by moving the
+            clock to a few minutes into it. `c` for current; it is a toggle,
+            so it also puts the board back.
 
      `key` is tested first and `keyCode` second because Chromium 47 has
      `key` but spells some of them the old way; a plain letter is the same in
@@ -2000,7 +2151,7 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     } else if (key === 'c' || key === 'C' || e.keyCode === 67) {
       /* step() picks the change up on its next tick, a quarter of a second
          away, and crossfades into it like any other change of panel. */
-      forceFeature = !forceFeature;
+      togglePreview();
     }
   });
 
@@ -2017,23 +2168,22 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        as any other appearance. */
     koha: function () {
       if (fading || !KOHA_QR) { return false; }
-      var now = new Date();
+      var now = clock();
       kohaNow = true;
       fadeTo(currentView(now));
       return true;
     },
     /* Toggle the in-event board — pinned event, koha call to action, site QR
-       dark — regardless of the clock. Call it again to hand the board back to
-       the rotation. Same thing the `c` key does. */
-    event: function () {
-      forceFeature = !forceFeature;
-      return forceFeature;
-    },
+       dark — for whatever event is on screen right now, by moving the clock
+       to a few minutes into it. Call it again to come back to real time.
+       Same thing the `c` key does. */
+    event: togglePreview,
     state: function () {
-      var nowMs = new Date().getTime();
+      var nowMs = clockMs();
       var f = featuredEvent(nowMs);
       return {
-        mode: f ? FEATURE_MODE : 'cycle',
+        mode: FEATURE_MODE,
+        showing: f ? 'feature' : 'rotation',
         featured: f ? f.title : null,
         featureTurn: f ? featureTurn : null,
         slides: collapse(upcoming(nowMs)).length,
@@ -2043,7 +2193,9 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
         index: cycleIdx,
         paused: paused,
         koha: KOHA_QR ? (kohaNow ? 'on screen' : kohaIn + ' slides away') : 'no code',
-        forcedFeature: forceFeature
+        /* False means the clock is the real one. Otherwise, where `c` has
+           moved it to. */
+        preview: previewSkew ? clock().toString() : false
       };
     }
   };
