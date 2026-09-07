@@ -1,5 +1,6 @@
 ---
 title: "Energy Blindness"
+event_type: "Talk"
 hosts:
   - "Sally Hett"
   - "Gareth Hughes"

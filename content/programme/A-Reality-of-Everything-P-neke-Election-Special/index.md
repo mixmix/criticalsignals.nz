@@ -1,5 +1,6 @@
 ---
 title: "A Reality of Everything Pōneke: Election Special"
+event_type: "Workshop"
 hosts:
   - "Catherine Knight"
 date: "2026-09-16"

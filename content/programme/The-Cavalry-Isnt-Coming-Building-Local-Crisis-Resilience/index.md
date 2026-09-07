@@ -1,5 +1,6 @@
 ---
 title: "The Cavalry Isn't Coming: Building Local Crisis Resilience"
+event_type: "Talk"
 hosts:
   - "Mark Amery"
   - "Justin Corbett"

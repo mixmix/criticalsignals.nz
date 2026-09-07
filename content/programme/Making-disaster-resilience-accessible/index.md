@@ -1,5 +1,6 @@
 ---
 title: "Making disaster resilience accessible"
+event_type: "Workshop"
 hosts:
   - "Katie Querin"
 date: "2026-10-20"

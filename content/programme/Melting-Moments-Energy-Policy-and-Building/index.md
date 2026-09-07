@@ -1,5 +1,6 @@
 ---
 title: "Melting Moments: Energy, Policy and Building"
+event_type: "Talk"
 hosts:
   - "Mike Anthony"
   - "Guy Shaw"

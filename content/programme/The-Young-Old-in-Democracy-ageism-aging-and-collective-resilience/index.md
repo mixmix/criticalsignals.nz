@@ -1,5 +1,6 @@
 ---
 title: "The ‘Young Old’ in Democracy: ageism, aging and collective resilience"
+event_type: "Talk"
 hosts:
   - "Melissa Laing"
 date: "2026-10-01"

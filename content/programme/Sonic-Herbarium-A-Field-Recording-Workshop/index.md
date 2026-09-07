@@ -1,5 +1,6 @@
 ---
 title: "Sonic Herbarium: A Field Recording Workshop"
+event_type: "Workshop"
 draft: true
 date: "2026-10-10"
 start_time: "18:00"
