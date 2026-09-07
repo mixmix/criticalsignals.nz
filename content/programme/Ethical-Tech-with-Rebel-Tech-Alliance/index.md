@@ -1,5 +1,6 @@
 ---
 title: "Ethical Tech with Rebel Tech Alliance"
+event_type: "Talk"
 hosts:
   - "Patrick Leavy"
 date: "2026-08-20"

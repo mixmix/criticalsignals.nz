@@ -1,5 +1,6 @@
 ---
 title: "Shaping Futures With Your Hands: Get Playful With Bio-Based Building"
+event_type: "Workshop"
 hosts:
   - "William Mason"
   - "Adam Bruce"

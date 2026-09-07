@@ -1,5 +1,6 @@
 ---
 title: "Living Well Within Limits"
+event_type: "Talk"
 hosts:
   - "Julia Steinberger"
 date: "2026-09-09"

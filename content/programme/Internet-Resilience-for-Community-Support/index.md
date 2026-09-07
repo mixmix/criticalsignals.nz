@@ -1,5 +1,6 @@
 ---
 title: "Internet Resilience for Community Support"
+event_type: "Talk"
 hosts:
   - "Ellen Strickland"
 date: "2026-09-10"

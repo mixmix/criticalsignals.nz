@@ -1,5 +1,6 @@
 ---
 title: "Detangling Yourself from Big Tech"
+event_type: "Workshop"
 hosts:
   - "Bianca Grizhar"
 date: "2026-08-11"

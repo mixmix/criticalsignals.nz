@@ -1,5 +1,6 @@
 ---
 title: "Volunteer Orientation"
+event_type: "Workshop"
 hosts:
   - "Clay Joy Smith"
 date: "2026-08-17"
