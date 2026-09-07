@@ -1,5 +1,6 @@
 ---
 title: "Build Sprint: Pōneke Climate Hub x Critical Signals x two/fiftyseven"
+event_type: "Workshop"
 hosts:
   - "Ash Holwell"
   - "Ira Bailey"
@@ -29,8 +30,6 @@ We choose what to build in the first session, then use the next four to make it,
 Not required to attend all sessions though being available for most would be beneficial.
 
 In collaboration with two/fiftyseven and the Pōneke Climate Hub.
-
-
 
 Time:
 Wednesdays 5:30-8:30pm 
