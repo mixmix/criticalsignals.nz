@@ -16,13 +16,8 @@ featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_508,q_100
 ticket_tailor_id: "ev_8984945"
 ticket_tailor_series_id: "es_2384597"
 ---
-<b>[Rough snaps from the discussion are here -&gt;](https://photos.app.goo.gl/o8YWxdbKBFpJ15tLA) </b>
-<br /><i>Work in progress. A summary/review will be posted here when its ready.</i>
-<br />
-
 Critical Signals, as a team, have been discussing what our position is on the use and creation of AI. There are a few layers to this — economic, political, democratic, ethical.... it's not a conversation you can get to the bottom of in five minutes as part of normal weekly planning. This workshop is a response to that. We want to make a space to go deeper, name the various threads of this discourse, and respectfully share where we're currently situated relative to those.
 
 This session is open to the public but tightly held and framed around the idea of how Critical Signals (the organisation) can provide a progressive and informed perspective on AI.
 
 We plan to have a few audience participation exercises to get people moving and thinking at the start, middle and end.
-
