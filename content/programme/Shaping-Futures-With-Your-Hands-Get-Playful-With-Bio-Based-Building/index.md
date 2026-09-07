@@ -3,7 +3,7 @@ title: "Shaping Futures With Your Hands: Get Playful With Bio-Based Building"
 event_type: "Workshop"
 hosts:
   - "William Mason"
-  - "Adam Bruce"
+  - "Tom Beauchamp"
   - "Maria Walker"
 date: "2026-09-12"
 start_time: "10:00"
