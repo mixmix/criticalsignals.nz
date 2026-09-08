@@ -786,6 +786,13 @@ body:has(.cs-hero) .prog-group__date{
   font-size: 0.8rem;
   align-self: start;
 }
+/* No sign-up count to sit under it: the price takes both rows of the
+   button's slot so it centres against the button instead of hugging
+   the row above the missing count. */
+.event__tickets:not(:has(.event__attending)) .event__price {
+  grid-row: 1 / 3;
+  align-self: center;
+}
 .event__tickets a,.event__tickets .event__no-signup{
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   padding:12px 48px 12px 56px;min-height:54px;
