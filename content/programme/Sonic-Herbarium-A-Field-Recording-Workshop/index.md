@@ -5,8 +5,10 @@ draft: true
 date: "2026-10-10"
 start_time: "18:00"
 end_time: "22:30"
-currency: "USD"
+price: "$10 or koha"
+currency: "NZD"
 attendees: 0
+capacity: 14
 featureimage: "https://uploads.tickettailorassets.com/c_fill,g_center,h_373,q_85,w_1172/v1/production/userfiles/global/abstract-1.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_9028134"
 ticket_tailor_series_id: "es_2396669"

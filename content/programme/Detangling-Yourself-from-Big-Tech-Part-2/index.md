@@ -1,11 +1,11 @@
 ---
 title: "Detangling Yourself from Big Tech (Part 2!)"
-draft: true
 hosts:
   - "Bianca Grizhar"
 date: "2026-09-15"
 start_time: "18:00"
 end_time: "19:30"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2396682"
 price: "$8 or koha"
 currency: "NZD"
 attendees: 0
@@ -18,4 +18,4 @@ ticket_tailor_series_id: "es_2396682"
 
 Back by popular demand, we are hosting a repeat of the Detangling Yourself from Big Tech workshop! 
 
-In this workshop with Bianca Grizhar, you will be exploring some simple steps you can take to detangle yourself from Big Tech, without needing to be a technical pro. This workshop is for wāhine and non-binary whānau. There is a whole world out there beyond the common platforms, and in this workshop you can try out which might work for you. No judgement or requirement to delete apps that keep you locked in, just a chance to learn how to give them less of your data and eventually move to better alternatives.
+In this workshop with Bianca Grizhar, you will be exploring some simple steps you can take to detangle yourself from Big Tech, without needing to be a technical pro. There is a whole world out there beyond the common platforms, in this workshop you'll get to know alternatives to the apps you want to ditch from your daily life. No judgement or requirement to delete apps that keep you locked in, just a chance to learn how to give them less of your data and eventually move to better alternatives.
