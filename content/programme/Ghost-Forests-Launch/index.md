@@ -18,8 +18,8 @@ evening of celebration includes a short presentation discussing the motivations
 behind the Ghost Forests exhibition and the context it engages with, as well as
 teasers from the presenters of the upcoming lunchtime talks series.  
 
-**The Aotearoa Festival of Architecture** is an annual festival by Te Kahui
-Whaihanga / The New Zealand Institute of Architects, which celebrates
+**The Aotearoa Festival of Architecture** is an annual festival by [Te Kahui
+Whaihanga / The New Zealand Institute of Architects](https://www.nzia.co.nz/), which celebrates
 Wellington’s creative energy, and the impact architecture, design and community
 has in our city. Our aim is to encourage collaborative conversation and connect
 everyone who loves architecture.
@@ -33,14 +33,15 @@ proposes the idea of architecture as ecological heritage. Historic timber
 buildings are often discussed through the lenses of architecture, craftsmanship
 and preservation. Less frequently acknowledged are the forests that made them
 possible. Ghost Forests asks visitors to consider buildings as repositories of
-environmental memory. 
+environmental memory.
+The exhibition is open for 2 weeks - [see details here](/programme/andy-spain-ghost-forests-exhibition/).
 
 <br />
 
 _A huge thank you to Critical Signals for hosting this exhibition and the discourse it aims to provoke. With thanks also to Parrotdog Brewery for sponsoring the evenings refreshments._
 
 <div style='display:grid; grid-template-columns:auto 1fr; grid-gap:1rem; align-items:center; max-width:600px; margin-left:-10px;'>
-  <img src='./nzia.avif' />
+  <img src='nzia.avif' />
   <div>
     New Zealand Institute of Architects - Wellington Branch
   </div>
