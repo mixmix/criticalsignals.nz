@@ -1,0 +1,15 @@
+---
+title: "OpenSpace Conversations"
+draft: true
+date: "2026-09-19"
+start_time: "14:00"
+end_time: "18:00"
+price: "Koha"
+currency: "NZD"
+attendees: 0
+capacity: 30
+featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_476,q_100,w_1500,x_0,y_272/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/mw4s8l6z1cjmexdfvh7w.jpg?_a=BAAHWXDQ"
+ticket_tailor_id: "ev_9085059"
+ticket_tailor_series_id: "es_2416088"
+---
+Are you looking for a way to connect with other people in the community around ideas and actions that could lead to a brighter future for Pōneke? Using Open Space Technology, Clay will run an unconference-type event where you bring the themes and find others to hold conversations with.
