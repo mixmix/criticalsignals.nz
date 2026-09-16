@@ -1,5 +1,6 @@
 ---
 title: "OpenSpace Conversations"
+event_type: "Workshop"
 date: "2026-09-19"
 start_time: "14:00"
 end_time: "18:00"
@@ -13,3 +14,5 @@ ticket_tailor_id: "ev_9085059"
 ticket_tailor_series_id: "es_2416088"
 ---
 Are you looking for a way to connect with other people in the community around ideas and actions that could lead to a brighter future for Pōneke? Using Open Space Technology, Clay will run an unconference-type event where you bring the themes and find others to hold conversations with.
+
+Hosts: Clay Joy Smith
