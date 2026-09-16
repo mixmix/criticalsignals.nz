@@ -11,5 +11,4 @@ Profile: [Tennent Brown](https://tennentbrown.co.nz/news/ewan-brown-presidents-a
 [2024 Gold Medal citation, Te Kāhui Whaihanga NZIA](https://www.nzia.co.nz/awards/gold-medal/2024-gold-medal-hugh-tennent-and-ewan-brown/)
 
 *Photo: Catherine Cattanach, via [Te Kāhui Whaihanga NZIA](https://www.nzia.co.nz/awards/gold-medal/2024-gold-medal-hugh-tennent-and-ewan-brown/)
-— cropped from a portrait of both Gold Medal recipients; left/right identified per
-[ArchitectureNow](https://architecturenow.co.nz/articles/joining-forces-for-good/).*
+— cropped from a portrait of both 2024 Gold Medal recipients.*
