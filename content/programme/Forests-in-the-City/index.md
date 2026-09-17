@@ -3,6 +3,8 @@ title: 'Forests in the City'
 date: 2026-09-24
 start_time: '13:00'
 end_time: '13:40'
+hosts:
+  - 'Tina Williams'
 event_type: 'Talk'
 sign_up_link: https://events.humanitix.com/forests-in-the-city/tickets
 price: "Free"
@@ -15,6 +17,7 @@ Bringing together landscape architects to discuss the opportunities and the
 challenges for rewilding urban environments. As part of this session we also ask
 you to think about possible infill opportunities you may have come across in
 your daily travels.
+
 
 <img class="divider" src="/images/design/divider1.webp" alt="">
 
@@ -32,8 +35,8 @@ The exhibition is open for 2 weeks - [see details here](/programme/andy-spain-gh
 
 <br />
 
-Part of the **Aotearoa Festival of Architecture**, an annual festival by [Te
-Kāhui Whaihanga / The New Zealand Institute of Architects](https://www.nzia.co.nz/).
+Part of the [**Aotearoa Festival of Architecture**](https://www.nzia.co.nz/aotearoa-festival-of-architecture/aotearoa-festival-of-architecture-wellington-events/), an annual festival
+by Te Kāhui Whaihanga / The New Zealand Institute of Architects.
 
 <div style='display:grid; grid-template-columns:auto 1fr; grid-gap:1rem; align-items:center; max-width:600px; margin-left:-10px;'>
   <img src='nzia.avif' />

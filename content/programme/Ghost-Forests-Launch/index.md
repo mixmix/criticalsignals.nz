@@ -18,8 +18,8 @@ evening of celebration includes a short presentation discussing the motivations
 behind the Ghost Forests exhibition and the context it engages with, as well as
 teasers from the presenters of the upcoming lunchtime talks series.  
 
-**The Aotearoa Festival of Architecture** is an annual festival by [Te Kahui
-Whaihanga / The New Zealand Institute of Architects](https://www.nzia.co.nz/), which celebrates
+[**The Aotearoa Festival of Architecture**](https://www.nzia.co.nz/aotearoa-festival-of-architecture/aotearoa-festival-of-architecture-wellington-events/) is an annual festival by Te
+Kahui Whaihanga / The New Zealand Institute of Architects, which celebrates
 Wellington’s creative energy, and the impact architecture, design and community
 has in our city. Our aim is to encourage collaborative conversation and connect
 everyone who loves architecture.

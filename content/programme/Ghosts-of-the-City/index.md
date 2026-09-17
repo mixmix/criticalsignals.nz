@@ -39,8 +39,8 @@ The exhibition is open for 2 weeks - [see details here](/programme/andy-spain-gh
 
 <br />
 
-Part of the **Aotearoa Festival of Architecture**, an annual festival by [Te
-Kāhui Whaihanga / The New Zealand Institute of Architects](https://www.nzia.co.nz/).
+Part of the [**Aotearoa Festival of Architecture**](https://www.nzia.co.nz/aotearoa-festival-of-architecture/aotearoa-festival-of-architecture-wellington-events/), an annual festival
+by Te Kāhui Whaihanga / The New Zealand Institute of Architects.
 
 <div style='display:grid; grid-template-columns:auto 1fr; grid-gap:1rem; align-items:center; max-width:600px; margin-left:-10px;'>
   <img src='nzia.avif' />
