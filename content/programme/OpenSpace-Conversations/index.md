@@ -1,6 +1,8 @@
 ---
 title: "OpenSpace Conversations"
 event_type: "Workshop"
+hosts:
+  - "Clay Joy Smith"
 date: "2026-09-26"
 start_time: "14:00"
 end_time: "18:00"
@@ -20,5 +22,3 @@ At OpenSpace Discussion night, you’ll share what you’ve had on your mind & h
 Come along to make friends, comrades, and hope. Weaving community & kōrero is how we build the movement that will bring a brighter future for Pōneke.
 
 Note: To function well, this event needs a minimum participation of 9 people. Expect confirmation about whether or not it will go ahead on Friday 25 September.
-
-Hosts: Clay Joy Smith
