@@ -1,0 +1,40 @@
+{{- /* Build a responsive srcset for a local image Resource, resized to a
+       ladder of widths and re-encoded as webp — same idea as the ladder in
+       layouts/_default/_markup/render-image.html, just wider (480/800/1200
+       rather than 330/660/1040) since this renders full-bleed under the hero
+       photo rather than into the 513px prose column that ladder was tuned
+       for.
+
+       Call with the Resource (never an SVG — callers skip those, nothing to
+       resize). Hugo's Resize never upscales, so a rung wider than the source
+       is silently capped to the source's own width; duplicate widths that
+       produces are collapsed so the srcset never repeats a descriptor.
+
+       Returns a dict: src (the largest rung, for browsers with no srcset
+       support), srcset, width and height (of that largest rung — for the
+       <img> width/height attributes that prevent layout shift). */ -}}
+
+{{- $img := . -}}
+{{- $seenWidths := slice -}}
+{{- $renditions := slice -}}
+
+{{- range $w := slice 480 800 1200 -}}
+  {{- $r := $img.Resize (printf "%dx webp" $w) -}}
+  {{- if not (in $seenWidths $r.Width) -}}
+    {{- $seenWidths = $seenWidths | append $r.Width -}}
+    {{- $renditions = $renditions | append $r -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $largest := index $renditions (sub (len $renditions) 1) -}}
+{{- $srcset := slice -}}
+{{- range $renditions -}}
+  {{- $srcset = $srcset | append (printf "%s %dw" .RelPermalink .Width) -}}
+{{- end -}}
+
+{{- return (dict
+  "src" $largest.RelPermalink
+  "width" $largest.Width
+  "height" $largest.Height
+  "srcset" (delimit $srcset ", ")
+) -}}

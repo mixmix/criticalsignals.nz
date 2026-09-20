@@ -10,31 +10,53 @@
       <div class="col">
         <article class="event">
           {{/* Header image — the event's `featureimage` (Ticket Tailor's header
-               upload, or a file dropped in the page bundle). Same rule as a
-               person's photo, see partials/feature-image.html. */}}
+               upload, or a file dropped in the page bundle).
+               When it's a remote URL, the browser is sent straight at that
+               live link rather than a copy Hugo baked in at build time — an
+               organiser's replacement photo, or a link Ticket Tailor has
+               since rotated, shows up without a rebuild either way. If that
+               URL 404s in the visitor's browser, `onerror` swaps to
+               featured.webp, the local mirror build-programme.mjs downloaded
+               into the bundle. Otherwise this is the same rule as a person's
+               photo — see partials/feature-image.html. */}}
           {{ $page := . }}
-          {{ with partial "feature-image.html" . }}
-            {{ $r := . }}
-            {{ if not (strings.HasSuffix .RelPermalink ".svg") }}
-              {{/* Ticket Tailor serves these ~1172px wide, about the width of
-                   the text column at 2x — cap rather than upscale. */}}
-              {{ $r = .Resize (printf "%dx webp" (cond (gt .Width 1200) 1200 .Width)) }}
-            {{ end }}
-            {{/* feature-image.html already falls back to the bundled
-                 featured.webp (see build-programme.mjs) when the remote URL
-                 won't fetch at build time — but Ticket Tailor's link can also
-                 die *after* the site is built, since it rotates asset links.
-                 Point onerror at that same local copy so a visitor hitting a
-                 dead remote link still sees a photo, without needing a
-                 rebuild. Only relevant when `$r` above resolved to the remote
-                 one in the first place. */}}
+          {{ $local := $page.Resources.GetMatch "featured.*" }}
+          {{ $remote := "" }}
+          {{ with $page.Params.featureimage }}
+            {{ if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") }}{{ $remote = . }}{{ end }}
+          {{ end }}
+
+          {{/* The hero photo fills `.col`'s content box: below 880px that's
+               the full viewport minus the hero's own side padding (`.col`
+               cancels it and re-applies its own — see the 880px breakpoint in
+               custom.css); above it, the boxed column (--boxw, capped 988px)
+               minus its own inner padding (--tpad). Mirrors those two CSS
+               custom properties so the ladder below is asked for real sizes,
+               not guessed ones — see the SIZES note in
+               layouts/_default/_markup/render-image.html for why this
+               matters. */}}
+          {{ $sizes := "(max-width: 880px) calc(100vw - 2 * clamp(26px, 2.6vw, 50px)), calc(min(988px, 54vw - clamp(26px, 2.6vw, 50px)) - 2 * clamp(24px, 3.3vw, 64px))" }}
+
+          {{ if $remote }}
+            {{/* The local mirror only matters here as the onerror target, so
+                 it's the one that gets resized to a srcset ladder — the
+                 remote src is Ticket Tailor's own CDN transform and already
+                 sized close to the display width. */}}
             {{ $fallback := "" }}
-            {{ if strings.HasPrefix ($page.Params.featureimage | default "") "http" }}
-              {{ with $page.Resources.GetMatch "featured.*" }}{{ $fallback = .RelPermalink }}{{ end }}
+            {{ if $local }}{{ $fallback = partial "programme/responsive-image.html" $local }}{{ end }}
+            <img class="event__photo" src="{{ $remote }}" alt="" sizes="{{ $sizes }}" decoding="async"
+              {{ with $fallback }}width="{{ .width }}" height="{{ .height }}"{{ end }}
+              {{ with $fallback }}onerror="this.onerror=null;this.srcset='{{ .srcset }}';this.src='{{ .src }}'"{{ end }}>
+          {{ else }}
+            {{ with partial "feature-image.html" . }}
+              {{ if strings.HasSuffix .RelPermalink ".svg" }}
+                <img class="event__photo" src="{{ .RelPermalink }}" alt="">
+              {{ else }}
+                {{ $set := partial "programme/responsive-image.html" . }}
+                <img class="event__photo" src="{{ $set.src }}" srcset="{{ $set.srcset }}" sizes="{{ $sizes }}"
+                  width="{{ $set.width }}" height="{{ $set.height }}" decoding="async">
+              {{ end }}
             {{ end }}
-            <img class="event__photo" src="{{ $r.RelPermalink }}" alt=""
-              width="{{ $r.Width }}" height="{{ $r.Height }}" decoding="async"
-              {{ with $fallback }}onerror="this.onerror=null;this.src='{{ . }}'"{{ end }}>
           {{ end }}
 
           <h1 class="prog-h1">{{ .Title | emojify }}</h1>

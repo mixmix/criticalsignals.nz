@@ -769,13 +769,12 @@ async function readShowOnSign (dir) {
 
 /**
  * Mirror an event's Ticket Tailor header image into the page bundle as
- * `featured.webp`, so the page has a local copy to fall back to if that
- * remote link ever goes dead in a visitor's browser (Ticket Tailor rotates
- * its asset links) — see layouts/partials/feature-image.html and the
- * `onerror` fallback on the `<img>` in layouts/programme/single.html that
- * actually does the runtime fallback. The front matter `featureimage:` keeps
- * pointing at the remote URL, since that's the one an organiser might
- * refresh independently of this script.
+ * `featured.webp`. The page's `<img>` (layouts/programme/single.html) points
+ * straight at the remote URL — front matter `featureimage:` keeps that,
+ * since it's the one an organiser might refresh independently of this
+ * script — and falls back to this local copy via `onerror` if that link is
+ * ever dead by the time a visitor loads the page (Ticket Tailor rotates its
+ * asset links).
  *
  * Skipped entirely once `featured.webp` exists — an organiser swapping the
  * photo on Ticket Tailor won't be picked up automatically; delete the file to
