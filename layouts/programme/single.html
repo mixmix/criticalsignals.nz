@@ -12,6 +12,7 @@
           {{/* Header image — the event's `featureimage` (Ticket Tailor's header
                upload, or a file dropped in the page bundle). Same rule as a
                person's photo, see partials/feature-image.html. */}}
+          {{ $page := . }}
           {{ with partial "feature-image.html" . }}
             {{ $r := . }}
             {{ if not (strings.HasSuffix .RelPermalink ".svg") }}
@@ -19,8 +20,21 @@
                    the text column at 2x — cap rather than upscale. */}}
               {{ $r = .Resize (printf "%dx webp" (cond (gt .Width 1200) 1200 .Width)) }}
             {{ end }}
+            {{/* feature-image.html already falls back to the bundled
+                 featured.webp (see build-programme.mjs) when the remote URL
+                 won't fetch at build time — but Ticket Tailor's link can also
+                 die *after* the site is built, since it rotates asset links.
+                 Point onerror at that same local copy so a visitor hitting a
+                 dead remote link still sees a photo, without needing a
+                 rebuild. Only relevant when `$r` above resolved to the remote
+                 one in the first place. */}}
+            {{ $fallback := "" }}
+            {{ if strings.HasPrefix ($page.Params.featureimage | default "") "http" }}
+              {{ with $page.Resources.GetMatch "featured.*" }}{{ $fallback = .RelPermalink }}{{ end }}
+            {{ end }}
             <img class="event__photo" src="{{ $r.RelPermalink }}" alt=""
-              width="{{ $r.Width }}" height="{{ $r.Height }}" decoding="async">
+              width="{{ $r.Width }}" height="{{ $r.Height }}" decoding="async"
+              {{ with $fallback }}onerror="this.onerror=null;this.src='{{ . }}'"{{ end }}>
           {{ end }}
 
           <h1 class="prog-h1">{{ .Title | emojify }}</h1>

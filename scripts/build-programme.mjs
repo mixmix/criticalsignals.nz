@@ -27,6 +27,7 @@ import { readFile, writeFile, mkdir, readdir, rm, access } from 'node:fs/promise
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import TurndownService from 'turndown'
+import sharp from 'sharp'
 import { generateSlugs } from './build-slugs.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -37,6 +38,14 @@ const COLLABORATORS_DIR = join(REPO_ROOT, 'content', 'people')
 // Marker written into every generated event directory. Directories without it
 // (i.e. hand-authored pages) are never modified or deleted by this script.
 const MARKER = '.generated-by-tickettailor'
+
+// The local mirror of an event's Ticket Tailor header image, kept in the page
+// bundle so the site has something to show if that remote link ever goes dead
+// in a visitor's browser — see downloadFeatureImage. Left alone once it
+// exists (no separate marker file recording where it came from): if an
+// organiser swaps the photo on Ticket Tailor, delete this file to force a
+// re-download on the next build.
+const FEATURED_IMAGE_FILE = 'featured.webp'
 
 // The kinds of event we recognise, as they're written into front matter. A
 // description's "Type:" line is matched against these case- and
@@ -389,6 +398,7 @@ async function writeEvent (event, slug, collaborators) {
     await mkdir(dir, { recursive: true })
     await writeFile(join(dir, 'index.md'), file, 'utf8')
     await writeFile(join(dir, MARKER), `${event.id}\n`, 'utf8')
+    await downloadFeatureImage(dir, event.images?.header ?? null)
   }
 
   // Completeness report: what a finished event page needs. Hosts are tracked
@@ -755,6 +765,48 @@ async function readShowOnSign (dir) {
 
   const match = /^showOnSign:\s*(true|false)\s*$/m.exec(fm[1])
   return match ? match[1] === 'true' : null
+}
+
+/**
+ * Mirror an event's Ticket Tailor header image into the page bundle as
+ * `featured.webp`, so the page has a local copy to fall back to if that
+ * remote link ever goes dead in a visitor's browser (Ticket Tailor rotates
+ * its asset links) — see layouts/partials/feature-image.html and the
+ * `onerror` fallback on the `<img>` in layouts/programme/single.html that
+ * actually does the runtime fallback. The front matter `featureimage:` keeps
+ * pointing at the remote URL, since that's the one an organiser might
+ * refresh independently of this script.
+ *
+ * Skipped entirely once `featured.webp` exists — an organiser swapping the
+ * photo on Ticket Tailor won't be picked up automatically; delete the file to
+ * force a re-download. That trade-off is what lets this run every hour
+ * without re-fetching and re-encoding every event's photo each time.
+ */
+async function downloadFeatureImage (dir, imageUrl) {
+  const dest = join(dir, FEATURED_IMAGE_FILE)
+
+  if (!imageUrl) {
+    await rm(dest, { force: true })
+    return
+  }
+
+  if (await exists(dest)) return
+
+  let res
+  try {
+    res = await fetch(imageUrl)
+  } catch (err) {
+    console.warn(`  could not download feature image for ${dir}: ${err.message}`)
+    return
+  }
+  if (!res.ok) {
+    console.warn(`  could not download feature image for ${dir}: ${res.status} ${imageUrl}`)
+    return
+  }
+
+  const bytes = Buffer.from(await res.arrayBuffer())
+  const webp = await sharp(bytes).webp().toBuffer()
+  await writeFile(dest, webp)
 }
 
 async function exists (path) {
