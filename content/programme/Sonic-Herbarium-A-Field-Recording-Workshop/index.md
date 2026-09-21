@@ -1,6 +1,8 @@
 ---
 title: "Sonic Herbarium: A Field Recording Workshop"
 event_type: "Workshop"
+hosts:
+  - "Emma Bernard"
 date: "2026-10-10"
 start_time: "10:00"
 end_time: "12:30"
@@ -9,7 +11,7 @@ price: "$10 or koha"
 currency: "NZD"
 attendees: 1
 capacity: 14
-featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_424,q_100,w_1333,x_0,y_288/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/dv1bfy8ottktukejlvxb.jpg?_a=BAAHWXDQ"
+featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_423,q_100,w_1333,x_0,y_288/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/dv1bfy8ottktukejlvxb.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_9028134"
 ticket_tailor_series_id: "es_2396669"
 ---
@@ -24,5 +26,3 @@ We will meet at 113 Taranaki, before walking over to Central Park together.
 **This workshop is for femme and gender diverse people. RSVP is essential as there are very limited spaces.**
 
 [https://sonicherbarium.bandcamp.com/album/sh01-mangawhero-forest](https://sonicherbarium.bandcamp.com/album/sh01-mangawhero-forest)
-
-Host: Emma Bernard
