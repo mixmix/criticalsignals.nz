@@ -16,7 +16,7 @@ featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100
 ticket_tailor_id: "ev_8897571"
 ticket_tailor_series_id: "es_2366214"
 aliases:
-  - "\"\\\"/programme/the-cavalry-isnt-coming-building-local-crisis-resilience/\\\"\""
+  - "\"\\\"\\\\\\\"/programme/the-cavalry-isnt-coming-building-local-crisis-resilience/\\\\\\\"\\\"\""
 ---
 Communities don’t need to be rescued, they need support to build local solutions to their own crises.
 
