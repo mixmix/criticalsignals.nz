@@ -387,6 +387,11 @@ async function writeEvent (event, slug, collaborators) {
   const showOnSign = await readShowOnSign(dir)
   if (showOnSign !== null) frontMatter.showOnSign = showOnSign
 
+  // Redirects (e.g. from a renamed slug) are added by hand — carry them
+  // across a re-sync the same way as showOnSign above.
+  const aliases = await readAliases(dir)
+  if (aliases !== null) frontMatter.aliases = aliases
+
   const file = `${toYamlFrontMatter(frontMatter)}\n${body.trim()}\n`
 
   // A directory that already exists without our marker is a hand-authored
@@ -765,6 +770,30 @@ async function readShowOnSign (dir) {
 
   const match = /^showOnSign:\s*(true|false)\s*$/m.exec(fm[1])
   return match ? match[1] === 'true' : null
+}
+
+/**
+ * Read a generated event's existing `aliases` list (Hugo redirects, e.g. for
+ * a renamed slug), so re-running the sync doesn't wipe a hand-added redirect.
+ *
+ * Returns the list of alias paths, or null when the page doesn't exist yet
+ * or has no `aliases:` key.
+ */
+async function readAliases (dir) {
+  let text
+  try {
+    text = await readFile(join(dir, 'index.md'), 'utf8')
+  } catch {
+    return null
+  }
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)
+  if (!fm) return null
+
+  const match = /^aliases:\r?\n((?:\s+-\s+.*\r?\n?)+)/m.exec(fm[1])
+  if (!match) return null
+
+  const aliases = [...match[1].matchAll(/^\s+-\s+(.*)$/gm)].map((m) => m[1].trim())
+  return aliases.length ? aliases : null
 }
 
 /**
