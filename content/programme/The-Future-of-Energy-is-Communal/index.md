@@ -1,5 +1,8 @@
 ---
 title: "The Future of Energy is Communal"
+event_type: "Talk"
+hosts:
+  - "Jeremy Cox"
 date: "2026-10-01"
 start_time: "18:00"
 end_time: "19:30"
