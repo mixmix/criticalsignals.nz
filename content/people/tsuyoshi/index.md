@@ -1,7 +1,7 @@
 ---
 title: "Tsuyoshi Hatori"
 date: 2025-07-24
-draft: false
+draft: true
 # description: "a description"
 # tags: ["space organiser"]
 ---

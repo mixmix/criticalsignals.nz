@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Freda Wells"
 date: 2025-08-22
 ---

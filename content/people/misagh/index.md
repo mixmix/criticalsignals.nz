@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Misagh Azimi"
 date: 2025-07-31
 ---

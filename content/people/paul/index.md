@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Paul Seiler"
 date: 2025-06-01
 ---

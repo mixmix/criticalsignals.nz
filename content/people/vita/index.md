@@ -1,4 +1,5 @@
 ---
+draft: true
 title: 'Vita Jerram'
 date: 2025-09-01
 ---

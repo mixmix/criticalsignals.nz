@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Mike Joy"
 date: 2026-08-08
 ---
