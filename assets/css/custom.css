@@ -283,6 +283,16 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 @media (min-width:640px){.cs-body #search-wrapper{padding:1.5rem;}}
 @media (min-width:768px){.cs-body #search-wrapper{padding:10vh;}}
 @media (min-width:1024px){.cs-body #search-wrapper{padding:12vh;}}
+/* Mobile: the overlay fills the whole screen — edge to edge, no rounded
+   modal floating in a gutter. Same "mobile" cutoff as the nav's burger swap
+   (design/nav.html via custom.css's own max-width:880px block). A touch
+   more padding on the results section's trailing edge than its leading one,
+   so cards don't sit flush against the edge you scroll along. */
+@media (max-width:880px){
+  .cs-body #search-wrapper{padding:0;}
+  .cs-body #search-modal{max-width:none;height:100%;border:0;border-radius:0;}
+  .cs-body #search-modal section{padding-inline:0.5rem 1rem;}
+}
 
 .cs-body #search-modal{
   display:flex;flex-direction:column;
@@ -335,7 +345,8 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
   outline:2px dotted transparent;
 }
 .cs-body #search-results a:hover,
-.cs-body #search-results a:focus{background-color:rgba(var(--color-primary-100),1);}
+.cs-body #search-results a:focus,
+.cs-body #search-results a.cs-search-selected{background-color:rgba(var(--color-primary-100),1);}
 .cs-body #search-results .grow{flex-grow:1;}
 .cs-body #search-results .-mb-1{margin-bottom:-0.25rem;}
 .cs-body #search-results .text-lg{font-size:1.125rem;line-height:calc(1.75 / 1.125);}
@@ -374,12 +385,9 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 
 .menu-home-li{position:relative;flex:0 0 auto;display:flex;align-items:center;}
 
-/* search trigger — one button, restyled per breakpoint rather than swapped
-   like .menu-burger/.menu-link: magnifying glass on desktop (it sits among
-   self-explanatory text links, so an icon alone reads fine); on mobile the
-   text links are gone (burger), so the bare icon loses that context and the
-   word "Search" takes over instead. Click opens #search-wrapper — search.js
-   binds that listener itself, off this button's id="search-button". */
+/* search trigger — the magnifying glass icon, same on every breakpoint.
+   Click opens #search-wrapper — search.js binds that listener itself, off
+   this button's id="search-button". */
 .menu-search-li{list-style:none;display:flex;align-items:center;margin-right:clamp(18px,3vw,28px);}
 .menu-search{display:flex;align-items:center;gap:8px;color:var(--ink);}
 .menu-search:hover{opacity:.65;}
@@ -641,10 +649,7 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
   .menubar .menu-link{display:none;}
   .menu-burger{display:flex;}
   .menu-home-li{gap:0;}
-  /* icon alone loses its meaning once the text links are gone — say "Search" instead */
   .menu-search-li{margin-right:clamp(14px,3vw,22px);}
-  .menu-search__icon{display:none;}
-  .menu-search__label{display:block;}
   /* nudge the whole nav bar's contents 6px toward the right edge on mobile */
   .menubar{padding-right:calc(var(--pad) - 6px);}
   /* Once scrolled, lift the white nav strip above the wordmark (z54) and text

@@ -1,0 +1,46 @@
+{{- /* Override of themes/blowfish/layouts/_default/index.json: adds
+       `tags`, `eventCount` and `image` to "people" entries, so search.js can
+       render a distinct card for people results (see assets/js/search.js)
+       instead of the generic title/section/date/summary card. */ -}}
+{{- $index := slice -}}
+{{ $pages := .Site.Pages }}
+{{ range .Site.Home.Translations }}
+{{ $pages = $pages | lang.Merge .Site.Pages }}
+{{ end }}
+{{- $programmesByName := partialCached "people/programmes-by-name.html" . -}}
+{{- range $pages -}}
+  {{- if ne .Type "admin" -}}
+  {{- $section := .Site.GetPage "section" .Section -}}
+  {{- $entry := dict
+    "title" (.Title | emojify | safeJS)
+    "section" ($section.Title | emojify | safeJS)
+    "summary" (.Summary | safeJS)
+    "content" (.Plain | safeJS)
+    "permalink" .RelPermalink
+    "externalUrl" .Params.externalUrl
+    "type" .Type
+  -}}
+  {{- if .Date -}}
+    {{- $entry = merge $entry (dict "date" (.Date | time.Format (.Site.Language.Params.dateFormat | default ":date_long"))) -}}
+  {{- end -}}
+  {{- if eq .Type "people" -}}
+    {{- $events := index $programmesByName (partial "people/name-key.html" .Title) | default slice -}}
+    {{- $image := "" -}}
+    {{- $images := .Resources.ByType "image" -}}
+    {{- $featured := $images.GetMatch "*feature*" -}}
+    {{- if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end -}}
+    {{- with $featured -}}
+      {{- with .Fill "96x96 Center webp q80" -}}
+        {{- $image = .RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $entry = merge $entry (dict
+      "tags" (.Params.tags | default slice)
+      "eventCount" (len $events)
+      "image" $image
+    ) -}}
+  {{- end -}}
+  {{- $index = $index | append $entry -}}
+  {{- end -}}
+{{- end -}}
+{{- $index | jsonify -}}
