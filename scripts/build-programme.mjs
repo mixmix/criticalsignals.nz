@@ -792,8 +792,20 @@ async function readAliases (dir) {
   const match = /^aliases:\r?\n((?:\s+-\s+.*\r?\n?)+)/m.exec(fm[1])
   if (!match) return null
 
-  const aliases = [...match[1].matchAll(/^\s+-\s+(.*)$/gm)].map((m) => m[1].trim())
+  const aliases = [...match[1].matchAll(/^\s+-\s+(.*)$/gm)].map((m) => unquoteYamlScalar(m[1].trim()))
   return aliases.length ? aliases : null
+}
+
+/**
+ * Undo `yamlScalar`'s quoting/escaping so a value read back out of front
+ * matter round-trips instead of getting re-escaped (and re-quoted) on every
+ * subsequent sync — see readAliases above.
+ */
+function unquoteYamlScalar (raw) {
+  if (raw.length >= 2 && raw.startsWith('"') && raw.endsWith('"')) {
+    return raw.slice(1, -1).replace(/\\(.)/g, '$1')
+  }
+  return raw
 }
 
 /**
