@@ -1372,12 +1372,17 @@ body:has(.cs-hero) .prog-group__date{
 #eventModal .event-passed-text{color:var(--ink);}
 #eventModal .host-link{color:var(--ink);}
 #eventModal .event-description{line-height:1.6;}
-#eventModal .host-link{background:var(--critical-highlight);text-decoration:none;}
-#eventModal .host-link:hover{filter:brightness(.96);}
+#eventModal .host-link{background:transparent;padding:0;text-decoration:underline;text-underline-offset:3px;}
+#eventModal .host-link:hover{opacity:.7;}
 #eventModal .host-initials{background:#3f807a;color:var(--white);}
 #eventModal .event-actions{border-top:1px solid rgba(17,17,17,.15);}
-#eventModal .btn-details{background:var(--critical-highlight);color:var(--ink);text-transform:uppercase;letter-spacing:.03em;}
-#eventModal .btn-details:hover{filter:brightness(.96);}
+/* Same look as the site's outline buttons (.cta--outline): black box, fills on hover */
+#eventModal .btn-details{
+  background:transparent;color:var(--ink);border:2px solid var(--ink);
+  padding:8px 14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+}
+#eventModal .btn-details:hover{background:var(--ink);color:var(--white);opacity:1;}
+#eventModal .host-image{filter:grayscale(1);}
 #eventModal .btn-register{background:transparent;color:var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.03em;box-shadow:none;transform:none;}
 #eventModal .btn-register:hover{text-decoration:underline;text-underline-offset:3px;transform:none;box-shadow:none;}
 

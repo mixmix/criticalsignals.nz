@@ -254,15 +254,18 @@ class Calendar {
     const doSqueeze = window.innerWidth < 640 
 
     const trimLength = doSqueeze ? 22 : 50
+    // Cards show only the main title: drop any subtitle after a colon, an
+    // en/em dash, or a spaced hyphen (hyphenated words like "Bio-Based" stay)
+    const mainTitle = event.title.split(/\s*[:–—]\s*|\s+-\s+/)[0].trim() || event.title
     let title = []
     let lengthSoFar = 0
-    const words = event.title.split(' ')
+    const words = mainTitle.split(' ')
     while (lengthSoFar < trimLength && words.length) {
       const word = words.shift()
       title.push(word)
       lengthSoFar += word.length
     }
-    if (lengthSoFar + title.length - 1 != event.title.length) title.push('...')
+    if (lengthSoFar + title.length - 1 != mainTitle.length) title.push('...')
     
     eventEl.textContent = title.join(' ');
     eventEl.addEventListener('click', () => this.showEventDetails(event));
