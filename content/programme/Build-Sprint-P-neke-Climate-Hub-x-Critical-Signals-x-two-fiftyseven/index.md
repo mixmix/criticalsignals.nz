@@ -13,14 +13,14 @@ dates:
 start_time: "17:30"
 end_time: "20:30"
 errors:
-  - end_time: "Occurrences end at different times of day (20:30, 20:00) — end_time has been set to that of the next upcoming occurrence (20:30, 2026-09-23). Check Ticket Tailor."
+  - end_time: "Occurrences end at different times of day (20:30, 20:00) — end_time has been set to that of the next upcoming occurrence (20:30, 2026-10-07). Check Ticket Tailor."
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2353100"
 price: "Koha"
 currency: "NZD"
 attendees: 21
 capacity: 30
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_635,q_100,w_2000,x_0,y_1/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/xr28yuumhaoydsazikkr.jpg?_a=BAAHWXDQ"
-ticket_tailor_id: "ev_8854795"
+ticket_tailor_id: "ev_8854796"
 ticket_tailor_series_id: "es_2353100"
 ---
 Join us as we gather for five three-hour sessions over ten weeks, to make one small, powerful asset for the Pōneke climate community — a tool or resource that continues to serve the community into the future.
