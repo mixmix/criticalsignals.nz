@@ -11,6 +11,22 @@
         <a href="{{ .URL | relLangURL }}"{{ if $page.IsMenuCurrent "main" . }} class="is-active" aria-current="page"{{ end }}>{{ .Name | safeHTML }}</a>
       </li>
     {{- end }}
+    {{- if .Site.Params.enableSearch | default false }}
+      <li class="menu-search-li">
+        {{- /* id="search-button" is the hook search.js's own listener binds to
+               (themes/blowfish/assets/js/search.js) — no extra JS needed here.
+               One element, restyled per breakpoint in custom.css: a magnifying
+               glass on desktop, the word "Search" once the burger swap kicks
+               in and there's no room to explain an icon by itself. */ -}}
+        <button class="menu-search" type="button" id="search-button" aria-label="{{ i18n "search.open_button_title" }}" title="{{ i18n "search.open_button_title" }}">
+          <svg class="menu-search__icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="13.5" y1="13.5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="menu-search__label">{{ i18n "search.input_placeholder" }}</span>
+        </button>
+      </li>
+    {{- end }}
     <li class="menu-home-li">
       <button class="menu-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="cs-menu-overlay">
         <svg viewBox="0 0 30 20" width="30" height="20" fill="none" aria-hidden="true">

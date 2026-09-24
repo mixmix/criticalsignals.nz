@@ -250,6 +250,105 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .caps{text-transform:uppercase;}
 
 /* ============================================================================
+   SEARCH OVERLAY (#search-wrapper / #search-modal / #search-results), from
+   Blowfish's partials/search.html + assets/js/search.js. Only reachable when
+   enableSearch is on (config/_default/params.toml), via the header's search
+   button (design/nav.html) or the "/" shortcut search.js binds globally.
+
+   That markup is Tailwind utility classes, and lean pages carry neither
+   Tailwind's utilities nor the `@theme` tokens they resolve to (--spacing,
+   --text-lg, --radius-md, …) — only the hand-written --color-* variables in
+   schemes/crit-sigs.css survive, since that file is concatenated into both
+   CSS bundles (see head.html). Without this block #search-wrapper renders
+   with none of its layout — `position:static`, permanently visible — instead
+   of a fixed, centred, initially-hidden panel.
+
+   Values are read off the compiled theme stylesheet (main.theme.bundle, which
+   the 17 theme-laid-out pages still use) so both bundles render this overlay
+   identically. Colours reference the shared --color-* vars; sizes that
+   Tailwind would derive from --spacing etc. are the resolved rem values
+   instead, since lean pages have no --spacing to derive them from. No dark:
+   variants, matching the rest of this file — there is no dark mode. */
+.cs-body #search-wrapper{
+  visibility:hidden;
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  height:100vh;width:100vw;
+  cursor:default;
+  background-color:rgba(var(--color-neutral-500),0.5);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  padding:1rem;
+  z-index:500;
+}
+@media (min-width:640px){.cs-body #search-wrapper{padding:1.5rem;}}
+@media (min-width:768px){.cs-body #search-wrapper{padding:10vh;}}
+@media (min-width:1024px){.cs-body #search-wrapper{padding:12vh;}}
+
+.cs-body #search-modal{
+  display:flex;flex-direction:column;
+  width:100%;max-width:48rem;
+  min-height:0;margin-inline:auto;
+  border:1px solid rgba(var(--color-neutral-200),1);
+  border-radius:0.375rem;
+  box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1),0 4px 6px -4px rgb(0 0 0 / 0.1);
+  background-color:rgba(var(--color-neutral),1);
+}
+.cs-body #search-modal>header{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  flex:none;padding-inline:0.5rem;
+}
+.cs-body #search-modal form{display:flex;align-items:center;flex:auto;min-width:0;}
+/* the icon wrapper div around the magnifying-glass icon, form's only div child */
+.cs-body #search-modal form>div{
+  display:flex;align-items:center;justify-content:center;
+  width:2rem;height:2rem;color:rgba(var(--color-neutral-400),1);
+}
+.cs-body #search-wrapper .icon{position:relative;display:block;}
+.cs-body #search-wrapper .icon svg{height:1em;width:1em;}
+.cs-body #search-query{
+  display:flex;flex:auto;height:3rem;margin-inline:0.25rem;
+  background-color:transparent;appearance:none;
+  border:0;font:inherit;color:inherit;
+}
+.cs-body #search-query::-webkit-search-cancel-button,
+.cs-body #search-query::-webkit-search-decoration,
+.cs-body #search-query::-webkit-search-results-button,
+.cs-body #search-query::-webkit-search-results-decoration{display:none;}
+.cs-body #search-query:focus{outline:2px dotted transparent;}
+.cs-body #close-search-button{
+  display:flex;align-items:center;justify-content:center;
+  width:2rem;height:2rem;color:rgba(var(--color-neutral-700),1);
+}
+.cs-body #close-search-button:hover{color:rgba(var(--color-primary-600),1);}
+.cs-body #search-modal section{flex:auto;padding-inline:0.5rem;overflow:auto;}
+
+/* #search-results is filled at runtime by search.js's executeQuery(), with
+   Tailwind utility classes baked into the strings it assembles — so these are
+   named against that function (themes/blowfish/assets/js/search.js), not
+   against search.html. */
+.cs-body #search-results li{margin-bottom:0.5rem;}
+.cs-body #search-results a{
+  display:flex;align-items:center;
+  padding:0.5rem 0.75rem;border-radius:0.375rem;
+  background-color:rgba(var(--color-neutral-100),1);
+  outline:2px dotted transparent;
+}
+.cs-body #search-results a:hover,
+.cs-body #search-results a:focus{background-color:rgba(var(--color-primary-100),1);}
+.cs-body #search-results .grow{flex-grow:1;}
+.cs-body #search-results .-mb-1{margin-bottom:-0.25rem;}
+.cs-body #search-results .text-lg{font-size:1.125rem;line-height:calc(1.75 / 1.125);}
+.cs-body #search-results .font-bold{font-weight:700;}
+.cs-body #search-results .text-sm{font-size:0.875rem;line-height:calc(1.25 / 0.875);}
+.cs-body #search-results .text-neutral-500{color:rgba(var(--color-neutral-500),1);}
+.cs-body #search-results .px-2{padding-inline:0.5rem;}
+.cs-body #search-results .text-primary-500{color:rgba(var(--color-primary-500),1);}
+.cs-body #search-results .italic{font-style:italic;}
+.cs-body #search-results .ml-2{margin-left:0.5rem;}
+.cs-body #search-results .mr-2{margin-right:0.5rem;}
+
+/* ============================================================================
    STICKY MENU BAR
    z-stack at the menu line, low to high:
    photos / spores / footer-wordmark (<50) < white strip (50) < header wordmark
@@ -274,6 +373,21 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .menubar .menu-link a:hover,.menubar .menu-link a.is-active{text-decoration:underline;text-underline-offset:4px;}
 
 .menu-home-li{position:relative;flex:0 0 auto;display:flex;align-items:center;}
+
+/* search trigger — one button, restyled per breakpoint rather than swapped
+   like .menu-burger/.menu-link: magnifying glass on desktop (it sits among
+   self-explanatory text links, so an icon alone reads fine); on mobile the
+   text links are gone (burger), so the bare icon loses that context and the
+   word "Search" takes over instead. Click opens #search-wrapper — search.js
+   binds that listener itself, off this button's id="search-button". */
+.menu-search-li{list-style:none;display:flex;align-items:center;margin-right:clamp(18px,3vw,28px);}
+.menu-search{display:flex;align-items:center;gap:8px;color:var(--ink);}
+.menu-search:hover{opacity:.65;}
+.menu-search__icon{display:block;width:20px;height:20px;}
+.menu-search__label{
+  display:none;text-transform:uppercase;font-weight:400;
+  font-size:1.02rem;line-height:1.12;
+}
 
 /* burger — hidden on desktop, shown on mobile (see responsive block) */
 .menu-burger{
@@ -527,6 +641,10 @@ main:has(.imgband) + footer .footerbox{margin-top:calc(-1 * clamp(150px,16vw,320
   .menubar .menu-link{display:none;}
   .menu-burger{display:flex;}
   .menu-home-li{gap:0;}
+  /* icon alone loses its meaning once the text links are gone — say "Search" instead */
+  .menu-search-li{margin-right:clamp(14px,3vw,22px);}
+  .menu-search__icon{display:none;}
+  .menu-search__label{display:block;}
   /* nudge the whole nav bar's contents 6px toward the right edge on mobile */
   .menubar{padding-right:calc(var(--pad) - 6px);}
   /* Once scrolled, lift the white nav strip above the wordmark (z54) and text

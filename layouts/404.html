@@ -1,0 +1,104 @@
+{{- /* 404 — overrides themes/blowfish/layouts/404.html so a broken link opens
+       the site search, pre-filled and run with a guess at what the visitor
+       wanted (the words in the dead URL's last path segment), instead of
+       just saying "not found". Requires enableSearch (config/_default/params.toml)
+       for both the search overlay markup (baseof.html) and its JS bundle
+       (head.html) to be present on the page at all.
+
+       A full-slug guess is often too specific for Fuse's threshold:0 to
+       match anything — runQueryWithFallback below retries with the phrase
+       shrunk a word at a time until something hits. */ -}}
+{{ define "main" }}
+  <h1 class="mb-3 text-4xl font-extrabold">{{ i18n "error.404_title" | emojify }}</h1>
+  <p class="mt-8 mb-12 text-neutral-400 dark:text-neutral-500">
+    {{ i18n "error.404_error" | emojify }}
+  </p>
+  <div class="prose dark:prose-invert">
+    <p>{{ i18n "error.404_description" | emojify }}</p>
+    {{ if .Site.Params.enableSearch | default false }}
+      <p>
+        <a href="#" id="error-404-search-link">Search the site</a> for what you were looking for.
+      </p>
+    {{ end }}
+  </div>
+
+  {{ if .Site.Params.enableSearch | default false }}
+    <script>
+      (function () {
+        // `displaySearch`, `executeQuery` and `indexed` come from the theme's
+        // search.js — a plain deferred script, so by DOMContentLoaded they're
+        // already declared as globals.
+        function openSearchWithGuess () {
+          var slug = decodeURIComponent(
+            window.location.pathname.replace(/\/+$/, "").split("/").pop() || ""
+          )
+          var term = slug.replace(/[-_]+/g, " ").trim()
+
+          if (typeof displaySearch !== "function") return
+          displaySearch()
+          if (!term) return
+
+          var field = document.getElementById("search-query")
+          if (field) field.value = term
+
+          // buildIndex() (called by displaySearch) fetches index.json
+          // asynchronously, so the query can only run once `indexed` flips —
+          // there's no completion callback to hook, hence the poll.
+          var tries = 0
+          var wait = setInterval(function () {
+            tries += 1
+            if (typeof indexed !== "undefined" && indexed) {
+              clearInterval(wait)
+              runQueryWithFallback(term, field)
+            } else if (tries > 100) {
+              clearInterval(wait)
+            }
+          }, 50)
+        }
+
+        // search.js's Fuse is built with threshold:0 (near-exact match only —
+        // see assets/js/search.js), so a whole dead-URL slug ("the-cavalry-
+        // isnt-coming-building-local-crisis") reliably finds nothing: it's
+        // rarely a substring of anything real, even when a few of its words
+        // are (here, "local crisis" — the renamed page's new title). On an
+        // empty result, retry with the phrase shrunk one word at a time, from
+        // the front and then the back, stopping at the first query that
+        // finds something.
+        function runQueryWithFallback (term, field) {
+          executeQuery(term)
+          if (hasResults) return
+
+          var words = term.split(/\s+/).filter(Boolean)
+          var attempt
+
+          for (var i = 1; i < words.length; i++) {
+            attempt = words.slice(i).join(" ")
+            executeQuery(attempt)
+            if (hasResults) {
+              if (field) field.value = attempt
+              return
+            }
+          }
+          for (var j = words.length - 1; j > 0; j--) {
+            attempt = words.slice(0, j).join(" ")
+            executeQuery(attempt)
+            if (hasResults) {
+              if (field) field.value = attempt
+              return
+            }
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", openSearchWithGuess)
+
+        var link = document.getElementById("error-404-search-link")
+        if (link) {
+          link.addEventListener("click", function (event) {
+            event.preventDefault()
+            openSearchWithGuess()
+          })
+        }
+      })()
+    </script>
+  {{ end }}
+{{ end }}
