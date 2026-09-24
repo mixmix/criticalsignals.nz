@@ -1,12 +1,12 @@
 ---
 title: "The Future of Energy is Communal"
 event_type: "Talk"
+draft: true
 hosts:
   - "Jeremy Cox"
 date: "2026-10-01"
 start_time: "18:00"
 end_time: "19:30"
-sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2422992"
 price: "Koha"
 currency: "NZD"
 attendees: 0
@@ -17,8 +17,8 @@ ticket_tailor_series_id: "es_2422992"
 ---
 Imagine a group of solar panels at the end of your street, maintained by neighbourhood volunteers, supplying energy to you and your neighbours. Now imagine the neighbour who insulated the roof, swapped the gas heater, learned to read the bill, and can show you how.
 
-That picture is where Europe's energy communities are heading, and in places like Flanders, Catalonia and Upper Austria they are a long way along the road. Jeremy Cox joins us at 113 to envision a new way to collectively manage energy, one that prioritises transparency, trust, and resilience. When energy companies hike their prices, you can still turn your washing machine on peacefully. 
+That picture is where Europe's energy communities are heading, and in places like Flanders, Valencia, Porto and Upper Austria they are a long way along the road. Jeremy Cox joins us at 113 to envision a new way to collectively manage energy, one that prioritises transparency, trust, and resilience. When energy companies hike their prices, you can still turn your washing machine on peacefully. 
 
-Jeremy has returned from fieldwork in Europe on energy communities, from cooperatives like Ecopower and Som Energia to neighbourhood energy communities, one-stop shops and energy houses in Spain, Portugal, Belgium and Austria.
+Jeremy has returned from fieldwork in Europe on energy communities, from cooperatives like Ecopower, Energent, Coopernico and Som Energia to neighbourhood energy communities, one-stop shops and energy houses in Spain, Ireland, France, England, Portugal, Belgium and Austria.
 
 He will share key insights from the field, combined with theory that helps make meaning of them, and make the case for them as local institutions that generate the knowledge, trust and shared norms that markets and governments alone cannot.
