@@ -5,6 +5,13 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
+    # "Today" (Upcoming Events, programme past/upcoming split) is fixed at
+    # build time, so rebuild just after Wellington midnight even when nothing
+    # was pushed — otherwise yesterday's events linger until the next commit.
+    # Cron is UTC: 11:05 is 00:05 NZDT, 12:05 is 00:05 NZST.
+    schedule:
+        - cron: "5 11,12 * * *"
+    workflow_dispatch: {}
 
 jobs:
     build:

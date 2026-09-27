@@ -6,7 +6,7 @@
 {{ define "main" }}
   {{ $programmes := where .Site.RegularPages "Type" "programme" }}
 
-  {{ $today := now.Format "2006-01-02" }}
+  {{ $today := (partial "now-nzt.html" .).Format "2006-01-02" }}
   {{ $rows := slice }}
   {{ range $programmes }}
     {{ $event := . }}
