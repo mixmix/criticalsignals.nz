@@ -1,6 +1,6 @@
 ---
 title: 'Ghosts of the City: A Walking Tour'
-date: 2026-09-27
+date: 2026-10-03
 start_time: '13:00'
 end_time: '14:30'
 hosts:
