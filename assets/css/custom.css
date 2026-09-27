@@ -514,6 +514,9 @@ body:has(.cs-hero) :where(strong,b,h2,h3,h4,.bold){font-weight:700;}
 .upcoming .prog-group .prog-group__date {margin-bottom: 0;}
 .upcoming .prog-group .prog-item {margin: 0 0 clamp(6px,.8vw,11px)}
 .upcoming .prog-group .prog-item .prog-item__subtitle {display:none;}
+/* spares/past events toggled by the script in home/upcoming-events.html —
+   `hidden` alone loses to the display rules above */
+.upcoming [hidden]{display:none !important;}
 .col .note{margin-top:16px;}
 
 /* middle image (home / who): pulled up so the column ends OVER its top */

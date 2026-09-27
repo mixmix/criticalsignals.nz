@@ -7,27 +7,54 @@
 
        A recurring event (front matter `dates:`) appears once here, dated by
        its next session — unlike the programme list, which shows it on every
-       day it runs. */ -}}
+       day it runs.
+
+       "Today" is fixed at build time, so if the nightly rebuild (deploy.yml)
+       doesn't happen, events that have since passed would linger. To cover
+       that, $spare more occurrences are rendered after the first N, `hidden`,
+       every session of a recurring event included, and the script below
+       re-picks the next N against the viewer's clock in Wellington time:
+       dropping past days, skipping repeat sessions, unhiding spares to fill
+       in. Without JS the markup shows exactly what the build chose. */ -}}
 {{- $n := .Params.upcomingEventsCount | default 4 -}}
+{{- $spare := 30 -}}
 {{- $events := where .Site.RegularPages "Section" "programme" -}}
 {{- $today := (partial "now-nzt.html" .).Format "2006-01-02" -}}
 {{- $upcoming := slice -}}
-{{- $seen := slice -}}
 {{- range partial "programme/occurrences.html" $events -}}
-  {{- if and (not .page.Draft) (ge .day $today) (not (in $seen .page.RelPermalink)) -}}
-    {{- $seen = $seen | append .page.RelPermalink -}}
+  {{- if and (not .page.Draft) (ge .day $today) -}}
     {{- $upcoming = $upcoming | append . -}}
   {{- end -}}
 {{- end -}}
 {{- with $upcoming -}}
-  {{- $groups := partial "programme/group-occurrences.html" (first $n .) -}}
-  <div class="upcoming">
+  {{- $groups := partial "programme/group-occurrences.html" (first (add $n $spare) .) -}}
+  {{- /* Decide, in render order, which items the build itself shows: the
+         first session of each of the first N events. */ -}}
+  {{- $seen := slice -}}
+  {{- $shown := dict -}}
+  {{- range $gi, $g := $groups -}}
+    {{- range $pi, $p := $g.pages -}}
+      {{- if and (lt (len $seen) $n) (not (in $seen $p.RelPermalink)) -}}
+        {{- $seen = $seen | append $p.RelPermalink -}}
+        {{- $shown = merge $shown (dict (printf "%d-%d" $gi $pi) true) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  <div class="upcoming" data-upcoming="{{ $n }}">
     <h2 class="caps">Upcoming Events</h2>
     <div class="prog-list">
-      {{- range $g := $groups }}
-        <div class="prog-group">
-          <h3 class="prog-group__date">{{ $g.label }}</h2>
-          {{- range $p := $g.pages }}{{ partial "programme/item.html" $p }}{{ end }}
+      {{- range $gi, $g := $groups }}
+        {{- $any := false -}}
+        {{- range $pi, $p := $g.pages }}{{ if index $shown (printf "%d-%d" $gi $pi) }}{{ $any = true }}{{ end }}{{ end }}
+        <div class="prog-group" data-day="{{ $g.day }}"{{ if not $any }} hidden{{ end }}>
+          <h3 class="prog-group__date">{{ $g.label }}</h3>
+          {{- range $pi, $p := $g.pages -}}
+            {{- $item := partial "programme/item.html" $p -}}
+            {{- if not (index $shown (printf "%d-%d" $gi $pi)) -}}
+              {{- $item = replace $item `<a class="prog-item"` `<a hidden class="prog-item"` 1 -}}
+            {{- end -}}
+            {{ $item | safeHTML }}
+          {{- end }}
         </div>
       {{- end }}
     </div>
@@ -35,4 +62,26 @@
       <a class="cta cta--outline" href="/programme/">See the full programme</a>
     </div>
   </div>
+  <script>
+  (function () {
+    var root = document.querySelector('.upcoming[data-upcoming]');
+    if (!root || !window.Intl) return;
+    var today;
+    // en-CA formats as YYYY-MM-DD, comparable against data-day as a string.
+    try { today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Pacific/Auckland' }).format(new Date()); }
+    catch (e) { return; }
+    var left = +root.getAttribute('data-upcoming'), seen = {};
+    [].forEach.call(root.querySelectorAll('.prog-group'), function (g) {
+      var past = g.getAttribute('data-day') < today, any = false;
+      [].forEach.call(g.querySelectorAll('.prog-item'), function (a) {
+        var href = a.getAttribute('href');
+        var show = !past && left > 0 && !seen[href];
+        if (show) { seen[href] = true; left--; any = true; }
+        a.hidden = !show;
+      });
+      g.hidden = !any;
+    });
+    if (!root.querySelector('.prog-group:not([hidden])')) root.hidden = true;
+  })();
+  </script>
 {{- end -}}
