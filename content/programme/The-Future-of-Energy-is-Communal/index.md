@@ -1,12 +1,12 @@
 ---
 title: "The Future of Energy is Communal"
 event_type: "Talk"
-draft: true
 hosts:
   - "Jeremy Cox"
-date: "2026-10-01"
-start_time: "18:00"
-end_time: "19:30"
+date: "2026-10-27"
+start_time: "12:30"
+end_time: "13:30"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2422992"
 price: "Koha"
 currency: "NZD"
 attendees: 0
