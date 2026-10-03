@@ -1,0 +1,1 @@
+window.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("top-scroller"),t=document.getElementById("site-footer");e&&t&&e.getBoundingClientRect().top>t.getBoundingClientRect().top&&(e.hidden=!0)})
