@@ -15,6 +15,8 @@ featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_423,q_100
 ticket_tailor_id: "ev_9028134"
 ticket_tailor_series_id: "es_2396669"
 ---
+**Note: This event is now at capacity! To join the waitlist, reach out to contact@criticalsignals.nz**
+
 _How does listening help us deepen our sense of place?_ How can we best represent a place through recordings? And how can we _utilise field recording as a form of care and conservation?_ 
 
 Join Sound Designer, Field Recordist and Musician Emma Bernard for this Field Recording Workshop, where she will help introduce the basics of field recording, exploring how it can be used to document, archive and preserve locations, while deepening our understanding of the various environments we inhabit. 
