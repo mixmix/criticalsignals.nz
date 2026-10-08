@@ -1,6 +1,10 @@
 ---
 title: "Critical Signals Zine Crafternoon"
+event_type: "Workshop"
 draft: true
+hosts:
+  - "Florence Hillyer-Brandt"
+  - "Kathleen Winters"
 date: "2026-10-17"
 start_time: "14:00"
 end_time: "17:00"
