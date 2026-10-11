@@ -1,5 +1,5 @@
 ---
-title: "Florence HB"
+title: "Florence Hillyer-Brandt"
 date: 2026-07-30
 # description: "a description"
 tags: ["core-team"]
