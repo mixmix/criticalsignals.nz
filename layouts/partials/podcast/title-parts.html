@@ -1,0 +1,18 @@
+{{- /* Splits an episode title written "<Name> - <featuring people>" at its
+       first spaced dash (-, – or —) into { name, featuring }. A title with no
+       such dash comes back whole as `name`, with `featuring` empty.
+
+       `name` is prefixed with the zero-padded episode number ("01. Growing")
+       when the page has `episode:` set. The feed builds its own title (full
+       title, "01 " prefix) in layouts/podcast/list.podcast.xml.
+       Expects the episode Page. */ -}}
+{{- $name := .Title -}}
+{{- $featuring := "" -}}
+{{- with findRESubmatch `^(.+?)\s+[-–—]\s+(.+)$` .Title 1 -}}
+  {{- $name = index . 0 1 -}}
+  {{- $featuring = index . 0 2 -}}
+{{- end -}}
+{{- with $.Params.episode -}}
+  {{- $name = printf "%02d. %s" (int .) $name -}}
+{{- end -}}
+{{- return dict "name" $name "featuring" $featuring -}}

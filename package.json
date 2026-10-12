@@ -6,7 +6,9 @@
   "description": "Build scripts for the Critical Signals Hugo site",
   "scripts": {
     "build:programme": "node scripts/build-programme.mjs",
-    "build:slugs": "node scripts/build-slugs.mjs"
+    "build:slugs": "node scripts/build-slugs.mjs",
+    "podcast:meta": "node scripts/podcast-meta.mjs",
+    "podcast:covers": "node scripts/podcast-covers.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

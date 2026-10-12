@@ -1,0 +1,34 @@
+{{- /* Podcast — single episode. Same shell as a programme event: title,
+       date, player, then the show notes. */ -}}
+{{ define "main" }}
+  <section class="hero hero--inner cs-hero">
+    {{ partial "design/hero-bg.html" . }}
+    {{ partial "design/wordmark.html" . }}
+    <div class="grid">
+      <div class="col">
+        <article class="event">
+          {{/* Episode cover art: cover.svg (scripts/podcast-covers.mjs) when there
+               is one — sharp at any size and lighter than the 3000px JPG —
+               else a cover.jpg/png. Capped in width by .podcast-cover. */}}
+          {{ $cover := .Resources.GetMatch "cover.svg" | default (.Resources.GetMatch "cover.{jpg,jpeg,png}") }}
+          {{ with $cover }}
+            <img class="podcast-cover" src="{{ .RelPermalink }}" width="1" height="1" alt="">
+          {{ end }}
+          {{ $t := partial "podcast/title-parts.html" . }}
+          <h1 class="prog-h1">{{ $t.name | emojify }}</h1>
+          {{ with $t.featuring }}<p class="event__subtitle podcast-featuring">{{ . | emojify }}</p>{{ end }}
+          <p class="event__cat">{{ .Date | time.Format ":date_long" }}</p>
+
+          {{ partial "podcast/player.html" . }}
+
+          <div class="event__body podcast-notes">
+            {{ .Content }}
+          </div>
+
+          <img class="divider event__divider" src="/images/design/divider1.webp" alt="">
+        </article>
+      </div>
+      {{ partial "design/rail.html" . }}
+    </div>
+  </section>
+{{ end }}

@@ -1481,3 +1481,50 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
    (module.toml has extended = false, and there is no PostCSS/ToCSS step).
    ---------------------------------------------------------------------------- */
 .min-h-screen{min-height:100vh;}
+
+/* ----------------------------------------------------------------------------
+   PODCAST — layouts/podcast/, partials/podcast/player.html
+   ---------------------------------------------------------------------------- */
+.podcast-player{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 clamp(20px,2.2vw,32px);}
+.podcast-player audio{flex:1 1 280px;max-width:100%;}
+.podcast-player__download{font-weight:700;text-transform:uppercase;font-size:.8rem;}
+.podcast-head{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  margin:0 0 .5rem;
+}
+.podcast-head .prog-h1{margin:0;}
+/* The section's own body text (content/podcast/_index.md), between the heading
+   and the episode list. .prog-intro alone leaves it at small print. */
+.podcast-intro p{font-size:1.15rem;line-height:1.55;max-width:65ch;margin:0 0 1em;}
+.podcast-intro:not(:empty){margin-bottom:clamp(28px,3vw,48px);}
+.podcast-intro > :last-child{margin-bottom:0;}
+/* Show notes and the podcast intro are prose, so bring back the list markers
+   the .cs-body reset (top of this file) strips from every ul/ol. */
+:is(.podcast-notes,.podcast-intro) ul{list-style:disc;padding-left:1.4em;margin:0 0 1em;}
+:is(.podcast-notes,.podcast-intro) ol{list-style:decimal;padding-left:1.6em;margin:0 0 1em;}
+:is(.podcast-notes,.podcast-intro) li{margin:0 0 .3em;}
+/* "<Name> - <featuring …>" titles (partials/podcast/title-parts.html): the
+   name stays the big list title, the guests sit underneath as a subtitle. */
+.podcast-cover{display:block;width:100%;max-width:340px;height:auto;margin:0 0 clamp(20px,2.2vw,32px);}
+.podcast-item__featuring{display:block;margin-top:4px;font-size:1rem;font-weight:400;opacity:.75;}
+.podcast-item{margin-bottom:clamp(18px,2vw,28px);}
+.podcast-item .prog-item__title{font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.15;}
+/* Hover underlines the name only. On .prog-item__title (a flex box) the
+   underline also runs under the arrow, which is a flex item of it. */
+.podcast-item:hover .prog-item__title{text-decoration:none;}
+.podcast-item:hover .podcast-item__name{text-decoration:underline;text-underline-offset:3px;}
+.podcast-subscribe{margin:0;flex:0 0 auto;}
+@media (max-width:880px){
+  .podcast-head{flex-direction:column;align-items:flex-start;gap:0;}
+  .podcast-subscribe{margin:clamp(28px,6vw,44px) 0 0;}
+}
+/* Same shape as the event page's Tickets button (.event__tickets a). */
+.podcast-subscribe__btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6em;
+  padding:12px 40px;min-height:54px;
+  background:var(--ink);color:var(--white);border:2px solid var(--ink);
+  font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;
+}
+.podcast-subscribe__btn:hover{filter:brightness(0.9);text-decoration:none;}
+.podcast-subscribe__icon{flex:0 0 auto;width:1em;height:1em;}
+.podcast-subscribe__icon svg{display:block;width:100%;height:100%;}

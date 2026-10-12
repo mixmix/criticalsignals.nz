@@ -1,0 +1,43 @@
+{{- /* Podcast — episode list, episode 1 first, in the same marketing shell as
+       the programme list. The feed itself is layouts/podcast/list.podcast.xml. */ -}}
+{{ define "main" }}
+  <section class="hero hero--inner cs-hero prog-hero">
+    {{ partial "design/hero-bg.html" . }}
+    {{ partial "design/wordmark.html" . }}
+
+    <div class="cal-box">
+      {{/* Heading + Subscribe: side by side (button top-right) on desktop,
+           stacked with the button below the heading on mobile. */}}
+      <div class="podcast-head">
+        <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+        {{ with .OutputFormats.Get "podcast" }}
+          <p class="podcast-subscribe">
+            <a class="podcast-subscribe__btn" href="{{ .Permalink }}" title="Podcast RSS feed">
+              Subscribe
+              {{- with resources.Get "images/rss.svg" }}<span class="podcast-subscribe__icon" aria-hidden="true">{{ .Content | safeHTML }}</span>{{ end }}
+            </a>
+          </p>
+        {{ end }}
+      </div>
+
+      <div class="prog-intro podcast-intro">{{ .Content }}</div>
+
+      {{/* Oldest first, by `episode:` number (episodes without one go by date). */}}
+      {{ range (.Pages.ByDate).ByParam "episode" }}
+        {{ $t := partial "podcast/title-parts.html" . }}
+        <a class="prog-item podcast-item" href="{{ .RelPermalink }}">
+          <span class="prog-item__title">
+            <span class="podcast-item__name">{{ $t.name | emojify }}</span>
+            <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
+          </span>
+          {{ with $t.featuring }}<span class="podcast-item__featuring">{{ . | emojify }}</span>{{ end }}
+          <span class="prog-item__cat">{{ .Date | time.Format ":date_long" }}</span>
+        </a>
+      {{ else }}
+        <p><em>{{ i18n "list.no_articles" | emojify }}</em></p>
+      {{ end }}
+    </div>
+
+    {{ partial "design/rail.html" . }}
+  </section>
+{{ end }}
