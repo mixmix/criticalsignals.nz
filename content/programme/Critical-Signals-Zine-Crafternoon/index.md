@@ -18,6 +18,6 @@ ticket_tailor_series_id: "es_2462116"
 ---
 Critical Signals is teaming up with Zinefest Wellington to encourage the creation of MORE ZINES!
 
-Come along to process something you've learned at Critical Signals, express something you've been thinking about, or prep some zines for Zinefest in October. Never made a zine before? This is the perfect place to start!
+Come along to process something you've learned at Critical Signals, express something you've been thinking about, or prep some zines for Zinefest in a few weeks (31st October + 1st November). Never made a zine before? This is the perfect place to start!
 
 We'll have heaps of old magazines, 3D puffy stickers, craft supplies, coffee, a polaroid camera, zine experts, and more!
