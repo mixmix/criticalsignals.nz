@@ -1513,10 +1513,12 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
    underline also runs under the arrow, which is a flex item of it. */
 .podcast-item:hover .prog-item__title{text-decoration:none;}
 .podcast-item:hover .podcast-item__name{text-decoration:underline;text-underline-offset:3px;}
-.podcast-subscribe{margin:0;flex:0 0 auto;}
+.podcast-subscribe{margin:0;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;}
+/* Fallback for visitors with no podcast app registered for podcast://. */
+.podcast-subscribe__feed{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
 @media (max-width:880px){
   .podcast-head{flex-direction:column;align-items:flex-start;gap:0;}
-  .podcast-subscribe{margin:clamp(28px,6vw,44px) 0 0;}
+  .podcast-subscribe{margin:clamp(28px,6vw,44px) 0 0;align-items:flex-start;}
 }
 /* Same shape as the event page's Tickets button (.event__tickets a). */
 .podcast-subscribe__btn{

@@ -10,12 +10,17 @@
            stacked with the button below the heading on mobile. */}}
       <div class="podcast-head">
         <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+        {{/* The button uses the podcast:// scheme so the visitor's podcast
+             app (Apple Podcasts, Podcast Addict, Overcast …) opens straight to
+             a subscribe prompt. Browsers with no app registered for it do
+             nothing, so the plain RSS URL sits underneath to copy instead. */}}
         {{ with .OutputFormats.Get "podcast" }}
           <p class="podcast-subscribe">
-            <a class="podcast-subscribe__btn" href="{{ .Permalink }}" title="Podcast RSS feed">
+            <a class="podcast-subscribe__btn" href="{{ replaceRE `^https?://` "podcast://" .Permalink | safeURL }}" title="Subscribe in your podcast app">
               Subscribe
               {{- with resources.Get "images/rss.svg" }}<span class="podcast-subscribe__icon" aria-hidden="true">{{ .Content | safeHTML }}</span>{{ end }}
             </a>
+            <a class="podcast-subscribe__feed" href="{{ .Permalink }}" title="Podcast RSS feed">RSS feed</a>
           </p>
         {{ end }}
       </div>
