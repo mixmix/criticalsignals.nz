@@ -92,6 +92,15 @@ enableEmoji = true
     isPlainText = true
     notAlternative = true
 
+# The podcast feed, published as /podcast/feed.xml rather than Hugo's default
+# index.xml. Enabled only on content/podcast/_index.md via its `outputs:`, and
+# rendered by layouts/podcast/list.podcast.xml. That URL is what Apple and
+# Spotify are given, so never rename it once the feed is submitted.
+  [outputFormats.PODCAST]
+    mediaType = "application/rss+xml"
+    baseName = "feed"
+    rel = "alternate"
+
 [related]
   threshold = 0
   toLower = false

@@ -1,0 +1,25 @@
+{{- /* Podcast — single episode. Same shell as a programme event: title,
+       date, player, then the show notes. */ -}}
+{{ define "main" }}
+  <section class="hero hero--inner cs-hero">
+    {{ partial "design/hero-bg.html" . }}
+    {{ partial "design/wordmark.html" . }}
+    <div class="grid">
+      <div class="col">
+        <article class="event">
+          <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+          <p class="event__cat">{{ .Date | time.Format ":date_long" }}</p>
+
+          {{ partial "podcast/player.html" . }}
+
+          <div class="event__body">
+            {{ .Content }}
+          </div>
+
+          <img class="divider event__divider" src="/images/design/divider1.webp" alt="">
+        </article>
+      </div>
+      {{ partial "design/rail.html" . }}
+    </div>
+  </section>
+{{ end }}

@@ -1481,3 +1481,35 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
    (module.toml has extended = false, and there is no PostCSS/ToCSS step).
    ---------------------------------------------------------------------------- */
 .min-h-screen{min-height:100vh;}
+
+/* ----------------------------------------------------------------------------
+   PODCAST — layouts/podcast/, partials/podcast/player.html
+   ---------------------------------------------------------------------------- */
+.podcast-player{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 clamp(20px,2.2vw,32px);}
+.podcast-player audio{flex:1 1 280px;max-width:100%;}
+.podcast-player__download{font-weight:700;text-transform:uppercase;font-size:.8rem;}
+.podcast-head{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  margin:0 0 .5rem;
+}
+.podcast-head .prog-h1{margin:0;}
+/* The section's own body text (content/podcast/_index.md), between the heading
+   and the episode list. .prog-intro alone leaves it at small print. */
+.podcast-intro p{font-size:1.15rem;line-height:1.55;max-width:65ch;margin:0 0 1em;}
+.podcast-intro:not(:empty){margin-bottom:clamp(28px,3vw,48px);}
+.podcast-intro > :last-child{margin-bottom:0;}
+.podcast-subscribe{margin:0;flex:0 0 auto;}
+@media (max-width:880px){
+  .podcast-head{flex-direction:column;align-items:flex-start;gap:0;}
+  .podcast-subscribe{margin:clamp(28px,6vw,44px) 0 0;}
+}
+/* Same shape as the event page's Tickets button (.event__tickets a). */
+.podcast-subscribe__btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6em;
+  padding:12px 40px;min-height:54px;
+  background:var(--ink);color:var(--white);border:2px solid var(--ink);
+  font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.04em;
+}
+.podcast-subscribe__btn:hover{filter:brightness(0.9);text-decoration:none;}
+.podcast-subscribe__icon{flex:0 0 auto;width:1em;height:1em;}
+.podcast-subscribe__icon svg{display:block;width:100%;height:100%;}

@@ -1,0 +1,77 @@
+{{- /* Podcast feed at /podcast/feed.xml — RSS 2.0 plus the iTunes tags Apple
+       Podcasts and Spotify require. Show-level settings live in the `podcast:`
+       block of content/podcast/_index.md; each episode supplies `audio`,
+       `audio_bytes`, `duration` and `guid`. Episodes without `audio` are left
+       out, since an item with no enclosure is not an episode.
+
+       Output format PODCAST — see [outputFormats.PODCAST] in hugo.toml. */ -}}
+{{- $p := .Params.podcast | default dict -}}
+{{- $episodes := where .RegularPages "Params.audio" "!=" nil -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:podcast="https://podcastindex.org/namespace/1.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>{{ .Site.Title }} {{ .Title }}</title>
+    <link>{{ .Permalink }}</link>
+    {{- with .OutputFormats.Get "podcast" }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end }}
+    <description>{{ .Description }}</description>
+    <language>{{ $p.language | default site.LanguageCode }}</language>
+    <copyright>© {{ now.Format "2006" }} {{ $p.author | default .Site.Title }}</copyright>
+    <generator>Hugo -- gohugo.io</generator>
+    {{- with $episodes }}
+    <lastBuildDate>{{ (index (sort . "Date" "desc") 0).Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    {{- end }}
+    <itunes:author>{{ $p.author | default .Site.Title }}</itunes:author>
+    <itunes:summary>{{ .Description }}</itunes:summary>
+    <itunes:type>{{ $p.type | default "episodic" }}</itunes:type>
+    <itunes:explicit>{{ if $p.explicit }}true{{ else }}false{{ end }}</itunes:explicit>
+    {{- with $p.category }}
+    <itunes:category text="{{ . }}" />
+    {{- end }}
+    {{- with $p.owner_email }}
+    <itunes:owner>
+      <itunes:name>{{ $p.owner_name | default site.Title }}</itunes:name>
+      <itunes:email>{{ . }}</itunes:email>
+    </itunes:owner>
+    {{- end }}
+    {{- with .Resources.GetMatch "cover.*" }}
+    <itunes:image href="{{ .Permalink }}" />
+    <image>
+      <url>{{ .Permalink }}</url>
+      <title>{{ $.Site.Title }} {{ $.Title }}</title>
+      <link>{{ $.Permalink }}</link>
+    </image>
+    {{- end }}
+    {{- range sort $episodes "Date" "desc" }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      {{- with .Params.guid }}
+      <guid isPermaLink="false">{{ . }}</guid>
+      {{- else }}
+      <guid isPermaLink="true">{{ .Permalink }}</guid>
+      {{- end }}
+      <enclosure url="{{ .Params.audio }}" length="{{ .Params.audio_bytes | default 0 }}" type="{{ .Params.audio_type | default "audio/mpeg" }}" />
+      {{- with .Params.duration }}
+      <itunes:duration>{{ . }}</itunes:duration>
+      {{- end }}
+      {{- with .Params.episode }}
+      <itunes:episode>{{ . }}</itunes:episode>
+      {{- end }}
+      {{- with .Params.season }}
+      <itunes:season>{{ . }}</itunes:season>
+      {{- end }}
+      <itunes:episodeType>{{ .Params.episode_type | default "full" }}</itunes:episodeType>
+      <itunes:explicit>{{ if .Params.explicit }}true{{ else }}false{{ end }}</itunes:explicit>
+      <description>{{ .Content | plainify | htmlUnescape | chomp }}</description>
+      <content:encoded>{{ printf "<![CDATA[%s]]>" .Content | safeHTML }}</content:encoded>
+    </item>
+    {{- end }}
+  </channel>
+</rss>

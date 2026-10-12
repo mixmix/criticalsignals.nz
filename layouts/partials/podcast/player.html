@@ -1,0 +1,8 @@
+{{- /* Audio player for one podcast episode. Expects the episode Page.
+       preload="none" so a page view doesn't start pulling a 50 MB file. */ -}}
+{{ with .Params.audio }}
+  <div class="podcast-player">
+    <audio controls preload="none" src="{{ . }}"></audio>
+    <a class="podcast-player__download" href="{{ . }}" download>Download</a>
+  </div>
+{{ end }}
