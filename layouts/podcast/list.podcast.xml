@@ -33,6 +33,10 @@
     {{- with $p.category }}
     <itunes:category text="{{ . }}" />
     {{- end }}
+    {{- with $p.guid }}
+    <podcast:guid>{{ . }}</podcast:guid>
+    {{- end }}
+    <podcast:locked{{ with $p.owner_email }} owner="{{ . }}"{{ end }}>{{ if $p.locked }}yes{{ else }}no{{ end }}</podcast:locked>
     {{- with $p.owner_email }}
     <itunes:owner>
       <itunes:name>{{ $p.owner_name | default site.Title }}</itunes:name>

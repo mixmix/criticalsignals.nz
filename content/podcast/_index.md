@@ -15,13 +15,20 @@ podcast:
   # Apple and Spotify email this address to verify ownership. Required before
   # submitting the feed anywhere.
   owner_name: "Critical Signals"
-  owner_email: "condact@criticalsignals.nz"
+  owner_email: "contact@criticalsignals.nz"
   # https://podcasters.apple.com/support/1691-apple-podcasts-categories
   category: "Society & Culture"
   explicit: false
   language: "en-nz"
   # serial: apps list episode 1 first and start new listeners from the top.
   type: "serial"
+  # Podcast Index namespace (https://podcastindex.org/namespace/1.0).
+  # guid: the show's permanent ID — UUIDv5 of "criticalsignals.nz/podcast/feed.xml"
+  # per the spec. Never change it, even if the feed moves.
+  guid: "ebee2695-99ae-55b4-a373-35b7f4ee1803"
+  # locked: stops other podcast hosts importing the feed without the owner's
+  # say-so (checked against owner_email).
+  locked: true
 
 cascade:
   csDesign: true
