@@ -3,8 +3,8 @@
        such dash comes back whole as `name`, with `featuring` empty.
 
        `name` is prefixed with the zero-padded episode number ("01. Growing")
-       when the page has `episode:` set. The feed still uses the full title,
-       unnumbered — apps number episodes from <itunes:episode> themselves.
+       when the page has `episode:` set. The feed builds its own title (full
+       title, "01 " prefix) in layouts/podcast/list.podcast.xml.
        Expects the episode Page. */ -}}
 {{- $name := .Title -}}
 {{- $featuring := "" -}}

@@ -47,9 +47,14 @@
       <link>{{ $.Permalink }}</link>
     </image>
     {{- end }}
-    {{- range sort $episodes "Date" "desc" }}
+    {{- /* Episode 01 first, matching /podcast/. Apps order by <pubDate> and
+           <itunes:type> regardless, so this is for people reading the XML. */}}
+    {{- range ($episodes.ByDate).ByParam "episode" }}
     <item>
-      <title>{{ .Title }}</title>
+      {{- /* "01 Growing - featuring …": zero-padded episode number first, so
+             the title sorts and reads in order even in apps that ignore
+             <itunes:episode>. */}}
+      <title>{{ with .Params.episode }}{{ printf "%02d " (int .) }}{{ end }}{{ .Title }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       {{- with .Params.guid }}
@@ -66,6 +71,11 @@
       {{- end }}
       {{- with .Params.season }}
       <itunes:season>{{ . }}</itunes:season>
+      {{- end }}
+      {{- /* Episode art: the episode folder's cover.jpg (or .png). Apps don't
+             take SVG, so never cover.svg — see scripts/podcast-covers.mjs. */}}
+      {{- with .Resources.GetMatch "cover.{jpg,jpeg,png}" }}
+      <itunes:image href="{{ .Permalink }}" />
       {{- end }}
       <itunes:episodeType>{{ .Params.episode_type | default "full" }}</itunes:episodeType>
       <itunes:explicit>{{ if .Params.explicit }}true{{ else }}false{{ end }}</itunes:explicit>

@@ -7,6 +7,13 @@
     <div class="grid">
       <div class="col">
         <article class="event">
+          {{/* Episode cover art: cover.svg (scripts/podcast-covers.mjs) when there
+               is one — sharp at any size and lighter than the 3000px JPG —
+               else a cover.jpg/png. Capped in width by .podcast-cover. */}}
+          {{ $cover := .Resources.GetMatch "cover.svg" | default (.Resources.GetMatch "cover.{jpg,jpeg,png}") }}
+          {{ with $cover }}
+            <img class="podcast-cover" src="{{ .RelPermalink }}" width="1" height="1" alt="">
+          {{ end }}
           {{ $t := partial "podcast/title-parts.html" . }}
           <h1 class="prog-h1">{{ $t.name | emojify }}</h1>
           {{ with $t.featuring }}<p class="event__subtitle podcast-featuring">{{ . | emojify }}</p>{{ end }}
