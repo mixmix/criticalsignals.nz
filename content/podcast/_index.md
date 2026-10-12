@@ -1,5 +1,5 @@
 ---
-title: Podcast
+title: Wildest Streams
 description: "Conversations from Critical Signals — practical and visionary responses to an era of collapses, recorded in Pōneke, Wellington."
 # `draft: true` here hides /podcast/ and /podcast/feed.xml, but NOT the
 # episode pages: Hugo doesn't cascade drafts, so each episode needs its own.
@@ -26,4 +26,4 @@ cascade:
   csDesign: true
 ---
 
-Things and stuff
+Kia ora koutou, nau mai haere mai ki te Wildest Streams. Welcome to the podcast that elaborates on dialogues held within and around a community initiative known as Critical Signals. For three months in 2025, Critical Signals temporarily held residence at 115 Taranaki street in Te Whanganui a Tara, during which we held a range of discussions, seminars, workshops, and gatherings dealing with our anthropological world; climate response, community resilience, data sovereignty, food systems, and the creative potential of community response. In this podcast, we reflect on and share some of those dialogues, with me, your host, Clay. Thanks for being here. 

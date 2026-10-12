@@ -1,4 +1,4 @@
-{{- /* Podcast — episode list, newest first, in the same marketing shell as
+{{- /* Podcast — episode list, episode 1 first, in the same marketing shell as
        the programme list. The feed itself is layouts/podcast/list.podcast.xml. */ -}}
 {{ define "main" }}
   <section class="hero hero--inner cs-hero prog-hero">
@@ -22,12 +22,15 @@
 
       <div class="prog-intro podcast-intro">{{ .Content }}</div>
 
-      {{ range .Pages.ByDate.Reverse }}
-        <a class="prog-item" href="{{ .RelPermalink }}">
+      {{/* Oldest first, by `episode:` number (episodes without one go by date). */}}
+      {{ range (.Pages.ByDate).ByParam "episode" }}
+        {{ $t := partial "podcast/title-parts.html" . }}
+        <a class="prog-item podcast-item" href="{{ .RelPermalink }}">
           <span class="prog-item__title">
-            {{ .Title | emojify }}
+            <span class="podcast-item__name">{{ $t.name | emojify }}</span>
             <span class="prog-item__arrow" aria-hidden="true">&rarr;</span>
           </span>
+          {{ with $t.featuring }}<span class="podcast-item__featuring">{{ . | emojify }}</span>{{ end }}
           <span class="prog-item__cat">{{ .Date | time.Format ":date_long" }}</span>
         </a>
       {{ else }}

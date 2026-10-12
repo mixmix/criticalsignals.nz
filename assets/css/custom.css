@@ -1498,6 +1498,20 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
 .podcast-intro p{font-size:1.15rem;line-height:1.55;max-width:65ch;margin:0 0 1em;}
 .podcast-intro:not(:empty){margin-bottom:clamp(28px,3vw,48px);}
 .podcast-intro > :last-child{margin-bottom:0;}
+/* Show notes and the podcast intro are prose, so bring back the list markers
+   the .cs-body reset (top of this file) strips from every ul/ol. */
+:is(.podcast-notes,.podcast-intro) ul{list-style:disc;padding-left:1.4em;margin:0 0 1em;}
+:is(.podcast-notes,.podcast-intro) ol{list-style:decimal;padding-left:1.6em;margin:0 0 1em;}
+:is(.podcast-notes,.podcast-intro) li{margin:0 0 .3em;}
+/* "<Name> - <featuring …>" titles (partials/podcast/title-parts.html): the
+   name stays the big list title, the guests sit underneath as a subtitle. */
+.podcast-item__featuring{display:block;margin-top:4px;font-size:1rem;font-weight:400;opacity:.75;}
+.podcast-item{margin-bottom:clamp(18px,2vw,28px);}
+.podcast-item .prog-item__title{font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.15;}
+/* Hover underlines the name only. On .prog-item__title (a flex box) the
+   underline also runs under the arrow, which is a flex item of it. */
+.podcast-item:hover .prog-item__title{text-decoration:none;}
+.podcast-item:hover .podcast-item__name{text-decoration:underline;text-underline-offset:3px;}
 .podcast-subscribe{margin:0;flex:0 0 auto;}
 @media (max-width:880px){
   .podcast-head{flex-direction:column;align-items:flex-start;gap:0;}

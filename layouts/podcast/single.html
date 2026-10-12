@@ -7,12 +7,14 @@
     <div class="grid">
       <div class="col">
         <article class="event">
-          <h1 class="prog-h1">{{ .Title | emojify }}</h1>
+          {{ $t := partial "podcast/title-parts.html" . }}
+          <h1 class="prog-h1">{{ $t.name | emojify }}</h1>
+          {{ with $t.featuring }}<p class="event__subtitle podcast-featuring">{{ . | emojify }}</p>{{ end }}
           <p class="event__cat">{{ .Date | time.Format ":date_long" }}</p>
 
           {{ partial "podcast/player.html" . }}
 
-          <div class="event__body">
+          <div class="event__body podcast-notes">
             {{ .Content }}
           </div>
 
