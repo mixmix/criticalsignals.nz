@@ -1,7 +1,7 @@
 ---
 title: "AI & Authoritarianism Panel"
 draft: true
-date: "2026-10-21"
+date: "2026-10-29"
 start_time: "18:00"
 end_time: "22:30"
 currency: "USD"
