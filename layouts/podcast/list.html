@@ -12,16 +12,33 @@
         <h1 class="prog-h1">{{ .Title | emojify }}</h1>
         {{/* The button uses the podcast:// scheme so the visitor's podcast
              app (Apple Podcasts, Podcast Addict, Overcast …) opens straight to
-             a subscribe prompt. Browsers with no app registered for it do
-             nothing, so the plain RSS URL sits underneath to copy instead. */}}
+             a subscribe prompt. The Mac Podcasts app opens but asks for the
+             feed URL rather than reading it from the link, and browsers with
+             no app registered do nothing — so the RSS link underneath copies
+             the feed URL to paste in (it still opens the feed without JS). */}}
         {{ with .OutputFormats.Get "podcast" }}
           <p class="podcast-subscribe">
             <a class="podcast-subscribe__btn" href="{{ replaceRE `^https?://` "podcast://" .Permalink | safeURL }}" title="Subscribe in your podcast app">
               Subscribe
               {{- with resources.Get "images/rss.svg" }}<span class="podcast-subscribe__icon" aria-hidden="true">{{ .Content | safeHTML }}</span>{{ end }}
             </a>
-            <a class="podcast-subscribe__feed" href="{{ .Permalink }}" title="Podcast RSS feed">RSS feed</a>
+            <a class="podcast-subscribe__feed" href="{{ .Permalink }}" title="Copy the podcast RSS feed URL" aria-label="Copy RSS feed link">
+              <svg class="podcast-subscribe__copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+              <span>RSS</span>
+            </a>
           </p>
+          <script>
+            document.querySelector('.podcast-subscribe__feed').addEventListener('click', function (e) {
+              if (!navigator.clipboard) return;
+              e.preventDefault();
+              var link = this;
+              var label = link.querySelector('span');
+              navigator.clipboard.writeText(link.href).then(function () {
+                label.textContent = 'Copied!';
+                setTimeout(function () { label.textContent = 'RSS'; }, 2000);
+              }, function () { location.href = link.href; });
+            });
+          </script>
         {{ end }}
       </div>
 

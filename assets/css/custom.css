@@ -1514,8 +1514,10 @@ body:has(.cs-hero) #site-footer{padding-left:calc(var(--pad) + var(--tpad));padd
 .podcast-item:hover .prog-item__title{text-decoration:none;}
 .podcast-item:hover .podcast-item__name{text-decoration:underline;text-underline-offset:3px;}
 .podcast-subscribe{margin:0;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;}
-/* Fallback for visitors with no podcast app registered for podcast://. */
-.podcast-subscribe__feed{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+/* Copies the feed URL — for the Mac Podcasts app, which asks for it, and
+   visitors with no podcast app registered for podcast://. */
+.podcast-subscribe__feed{display:inline-flex;align-items:center;gap:.4em;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.podcast-subscribe__copy{width:1.1em;height:1.1em;flex:0 0 auto;}
 @media (max-width:880px){
   .podcast-head{flex-direction:column;align-items:flex-start;gap:0;}
   .podcast-subscribe{margin:clamp(28px,6vw,44px) 0 0;align-items:flex-start;}
