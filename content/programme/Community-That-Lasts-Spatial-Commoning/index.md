@@ -1,12 +1,12 @@
 ---
 title: "Community That Lasts: Spatial Commoning"
 event_type: "Talk"
-draft: true
 hosts:
   - "Sophie Jerram"
 date: "2026-10-27"
 start_time: "18:00"
 end_time: "20:00"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2468851"
 price: "$5 or koha"
 currency: "NZD"
 attendees: 0
