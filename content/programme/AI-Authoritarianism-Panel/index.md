@@ -1,7 +1,6 @@
 ---
 title: "AI & Authoritarianism Panel"
 event_type: "Panel"
-draft: true
 hosts:
   - "Mike Joy"
   - "Aditi Tiwari"
@@ -10,6 +9,7 @@ hosts:
 date: "2026-10-29"
 start_time: "18:00"
 end_time: "22:30"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2462201"
 price: "Koha"
 currency: "NZD"
 attendees: 0
