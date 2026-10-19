@@ -1,10 +1,10 @@
 ---
 title: "Wałęsa: Man of Hope"
 event_type: "Screening"
-draft: true
 date: "2026-10-28"
 start_time: "18:00"
 end_time: "20:00"
+sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2478265"
 price: "Koha"
 currency: "NZD"
 attendees: 0
@@ -27,6 +27,6 @@ The Polish Embassy is pleased to support this screening and to share a story tha
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-Screening starts at 6.00pm, doors open with nibbles and drinks 5.00pm.
+Screening starts at 6.00pm, doors open with nibbles and drinks 5.00pm. Movie rating pending.
 
 **A representative of the Polish Embassy will briefly** i**ntroduce the film and reflect on its historical significance and enduring relevance.**
