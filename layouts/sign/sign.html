@@ -1448,15 +1448,23 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
   var KOHA_SLIDE_TEXT = 'Give a koha to support critical signals&nbsp;<span class="arrow">&rarr;</span>';
   var KOHA_EVERY      = 3;    /* number of event slides between one koha CTA slide and the next */
 
-  function featuredEvent(nowMs) {
-    var i, e, best = null;
+  /* Every event inside its feature window, soonest first. Usually one, but
+     two rooms (113 and 115) can run at once — never more than two — and
+     the pin then alternates between them rather than hiding one. */
+  function featuredEvents(nowMs) {
+    var i, e, list = [];
     for (i = 0; i < EVENTS.length; i++) {
       e = EVENTS[i];
       if (nowMs >= e._s.getTime() - FEATURE_BEFORE_MS && nowMs <= e._e.getTime()) {
-        if (!best || e._s < best._s) { best = e; }
+        list.push(e);
       }
     }
-    return best;
+    list.sort(function (a, b) { return a._s - b._s; });
+    return collapse(list);
+  }
+
+  function featuredEvent(nowMs) {
+    return featuredEvents(nowMs)[0] || null;
   }
 
   function upcoming(nowMs) {
@@ -1836,6 +1844,14 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     var feat  = featuredEvent(nowMs);
 
     if (feat && FEATURE_MODE === 'pin') {
+      /* Two events on at once: alternate between them, both pinned, each
+         with its own pill (On now / Starting soon) and countdown. */
+      var feats = featuredEvents(nowMs);
+      if (feats.length > 1) {
+        if (cycleIdx >= feats.length) { cycleIdx = 0; }
+        return { ev: feats[cycleIdx], pos: 0, total: feats.length, list: feats,
+                 current: true, kohaEvent: !!KOHA_QR };
+      }
       /* koha: the window this pin covers is exactly the window in which
          there are people to ask — arriving, or already in the room. */
       /* Two separate facts. `current` is the mode — the board is pinned to
@@ -1883,6 +1899,13 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
     if (FEATURE_MODE === 'interleave' && featuredEvent(nowMs)) {
       if (featureTurn) { featureTurn = false; }
       else { featureTurn = true; cycleIdx = cycleIdx + 1; }
+      return;
+    }
+
+    /* Concurrent pinned events just take turns; no koha panel between them,
+       the call to action is already on both. */
+    if (FEATURE_MODE === 'pin' && featuredEvents(nowMs).length > 1) {
+      cycleIdx = cycleIdx + 1;
       return;
     }
 
