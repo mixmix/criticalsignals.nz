@@ -314,10 +314,13 @@ The row of dots under the brand rule is one dot per event in the whole season:
 the ones already run faded back, the ones still to come lit, and the one on
 screen picked out larger. Under it sits the season label, and nothing else.
 
-The strip is a fixed 630px (35 dots) and wraps. On a single line, the
-105-event 2026 season overflowed both canvases and the clipped part was
-exactly the dots still to come. Keep the width a whole number of 18px dot
-pitches so full rows end flush. Wrapping needs `-webkit-flex-wrap`; the old
+The strip wraps at the full width of `#inner`, so a full row ends on the same
+edge as the rules and the QR. On a single line, the 105-event 2026 season
+overflowed both canvases and the clipped part was exactly the dots still to
+come. `renderSeason()` measures the strip and stretches the gaps so a full
+row lands exactly on that edge (51 per row in portrait, 93 in landscape);
+the last dot in each row has no right margin, or it would wrap a dot early.
+Wrapping needs `-webkit-flex-wrap`; the old
 `-webkit-box` fallback can't wrap, which is fine because Chromium 47 uses the
 `-webkit-flex` path.
 

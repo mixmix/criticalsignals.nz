@@ -388,12 +388,16 @@ body.portrait #spore {
    instead of stretching to fill — a short row genuinely means a short
    season.
 
-   The strip is a fixed width and wraps, 35 dots to a row. On one line, a
-   105-event season ran off the right edge of the canvas: the past filled
-   everything that was visible and the dots still to come — the part worth
-   reading — were all off screen. Wrapped, the season reads as a block, and
-   where you are in it is still a glance. The width is a whole number of dot
-   pitches (18px each: 7 + 11) so every full row ends flush. */
+   The strip wraps at the full width of #inner — the same edges as the rules
+   and the QR. On one line, a 105-event season ran off the right edge of the
+   canvas: the past filled everything that was visible and the dots still to
+   come — the part worth reading — were all off screen. Wrapped, the season
+   reads as a block, and where you are in it is still a glance.
+
+   A whole number of 18px pitches never lands exactly on that edge, so
+   renderSeason() measures the strip and stretches the gaps (inline
+   margin-right) until a full row ends flush on it. The 11px here is the
+   floor, and the fallback if measuring fails. */
 /* The bottom margin is doing the work the hidden label used to do in
    landscape: keeping the dots off the pill. Portrait overrides it. */
 #season { margin-top: 30px; margin-bottom: 14px; }
@@ -402,7 +406,6 @@ body.portrait #spore {
   display: -webkit-box; display: -webkit-flex; display: flex;
   -webkit-flex-wrap: wrap; flex-wrap: wrap;
   -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-  width: 630px;
   /* Cancels the last row's bottom margin. No `gap` on this engine. */
   margin-bottom: -11px;
 }
@@ -1625,6 +1628,19 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
        that had nothing to do with them, which read as a fault. */
     var series = (ev && ev.repeats) ? ev.series : null;
 
+    /* Dots per row and the gap that makes a full row exactly as wide as the
+       strip: n dots of 7px and n-1 gaps, no trailing margin on the last one
+       (it would count against the row and wrap it a dot early). Floored to
+       the hundredth so rounding can't push a full row over the edge. */
+    var width = document.getElementById('pips').offsetWidth;
+    var perRow = Math.floor((width + 11) / 18);
+    var gap = 11, end;
+    if (perRow > 1) {
+      gap = Math.floor((width - 7 * perRow) / (perRow - 1) * 100) / 100;
+    } else {
+      perRow = 0;
+    }
+
     for (i = 0; i < total; i++) {
       cls = 'pip';
       if (i >= done) {
@@ -1634,7 +1650,11 @@ var SEASON_LABEL = {{ jsonify $seasonLabel | safeJS }};
         if (series && e && e.series === series) { cls += ' repeat'; }
       }
       if (i === here) { cls += ' here'; }
-      html += '<div class="' + cls + '"></div>';
+      /* The pointer is 6px wider than a dot and hangs 3px either side, so
+         its own margin-right is 3px less to keep the next dot in place. */
+      end = perRow && (i % perRow === perRow - 1);
+      html += '<div class="' + cls + '" style="margin-right:' +
+              ((end ? 0 : gap) - (i === here ? 3 : 0)) + 'px"></div>';
     }
     put('pips', html);
     /* Label only. The dots already say how much of the year is left, and a
