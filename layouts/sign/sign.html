@@ -386,20 +386,30 @@ body.portrait #spore {
 
    Dots are a fixed size and sit left, so the strip grows with the season
    instead of stretching to fill — a short row genuinely means a short
-   season. */
+   season.
+
+   The strip is a fixed width and wraps, 35 dots to a row. On one line, a
+   105-event season ran off the right edge of the canvas: the past filled
+   everything that was visible and the dots still to come — the part worth
+   reading — were all off screen. Wrapped, the season reads as a block, and
+   where you are in it is still a glance. The width is a whole number of dot
+   pitches (18px each: 7 + 11) so every full row ends flush. */
 /* The bottom margin is doing the work the hidden label used to do in
    landscape: keeping the dots off the pill. Portrait overrides it. */
 #season { margin-top: 30px; margin-bottom: 14px; }
 
 #pips {
   display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-flex-wrap: wrap; flex-wrap: wrap;
   -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-  height: 14px;
+  width: 630px;
+  /* Cancels the last row's bottom margin. No `gap` on this engine. */
+  margin-bottom: -11px;
 }
 .pip {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
   width: 7px; height: 7px;
-  margin-right: 11px;
+  margin-right: 11px; margin-bottom: 11px;
   border-radius: 50%;
   background: #5E7C78; background: var(--muted);
   opacity: 0.45;
@@ -418,7 +428,7 @@ body.portrait #spore {
    pointer; anything more competes with the pill. */
 .pip.here {
   width: 13px; height: 13px;
-  margin-left: -3px; margin-right: 8px;
+  margin: -3px 8px 8px -3px;
   opacity: 1;
 }
 
