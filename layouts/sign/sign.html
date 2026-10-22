@@ -388,8 +388,8 @@ body.portrait #spore {
    instead of stretching to fill — a short row genuinely means a short
    season.
 
-   The strip wraps at the full width of #inner — the same edges as the rules
-   and the QR. On one line, a 105-event season ran off the right edge of the
+   The strip runs the full width of the canvas, edge to edge like #timerbar,
+   and wraps there. On one line, a 105-event season ran off the right edge of the
    canvas: the past filled everything that was visible and the dots still to
    come — the part worth reading — were all off screen. Wrapped, the season
    reads as a block, and where you are in it is still a glance.
@@ -408,7 +408,11 @@ body.portrait #spore {
   -webkit-box-align: center; -webkit-align-items: center; align-items: center;
   /* Cancels the last row's bottom margin. No `gap` on this engine. */
   margin-bottom: -11px;
+  /* Bleeds out past #inner to the canvas edges, the same span as #timerbar.
+     These are #inner's left/right insets, landscape then portrait. */
+  margin-left: -120px; margin-right: -120px;
 }
+body.portrait #pips { margin-left: -80px; margin-right: -80px; }
 .pip {
   -webkit-flex: 0 0 auto; flex: 0 0 auto;
   width: 7px; height: 7px;
