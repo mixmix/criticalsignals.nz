@@ -27,6 +27,6 @@ The Polish Embassy is pleased to support this screening and to share a story tha
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-Screening starts at 6.00pm, doors open with nibbles and drinks 5.00pm. Movie rating pending.
+Screening starts at 6.00pm, doors open with nibbles and drinks 5.00pm. Movie rating M for violence & offensive language.
 
 **A representative of the Polish Embassy will briefly** i**ntroduce the film and reflect on its historical significance and enduring relevance.**
