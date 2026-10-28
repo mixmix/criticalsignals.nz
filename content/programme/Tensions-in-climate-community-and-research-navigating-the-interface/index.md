@@ -3,6 +3,7 @@ title: "Tensions in climate, community, and research: navigating the interface"
 event_type: "Talk"
 hosts:
   - "Dr. Francesca Marzatico"
+  - "Dr. Jessica Hutchings"
 date: "2026-10-30"
 start_time: "17:30"
 end_time: "19:30"
@@ -15,4 +16,4 @@ featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_487,q_100
 ticket_tailor_id: "ev_9344574"
 ticket_tailor_series_id: "es_2490908"
 ---
-How can we research different systems of knowledge, as Western based researchers? How do we quantify cultural knowledge loss that has been taken due to environmental changes?  How do we assess culture beyond livelihood?
+How can we research different systems of knowledge, as Western based researchers? How do we quantify cultural knowledge loss that has been taken due to environmental changes?  How do we assess culture beyond livelihood? Dr Jessica Hutchings will respond to Francesca as someone who has worked within Universities and independently with communities.
