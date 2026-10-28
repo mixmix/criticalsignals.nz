@@ -19,3 +19,5 @@ representation and the concentration of power in technological systems. She is
 particularly interested in how AI governance can uphold Indigenous rights,
 strengthen democratic accountability and ensure communities retain meaningful
 control over their data and digital futures.
+
+_Photo: [Porirua News](https://www.poriruanews.co.nz/2025/08/30/aditi-tiwari-candidate-for-the-pauatahanui-general-ward/)_
