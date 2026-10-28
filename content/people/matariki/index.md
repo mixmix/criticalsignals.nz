@@ -10,3 +10,5 @@ interface between te ao Māori and western legal traditions. Her focus has been
 on the Matike Mai Aotearoa movement for constitutional transformation, and she
 is the co-lead of RIVER Aotearoa, a Pūkenga at Ahunga Tikanga ki Te Wānanga o
 Raukawa, and a community Tiriti educator.
+
+_Photo: [Nuku Women](https://www.nukuwomen.co.nz/blog/post/137112/091-erin-matariki-carr-kaitiaki/)_
