@@ -1,7 +1,7 @@
 ---
 title: "Andy Spain - Ghost Forests Exhibition"
 hosts:
-  - "Florence HB"
+  - "Florence Hillyer-Brandt"
 dates:
   - 2026-09-08
   - 2026-09-09
