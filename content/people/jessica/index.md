@@ -1,7 +1,6 @@
 ---
 title: "Dr. Jessica Hutchings"
 date: 2025-06-10
-draft: true
 # description: "a description"
 # tags: ["space organiser"]
 ---
