@@ -6,7 +6,7 @@ end_time: "21:00"
 sign_up_link: "https://www.tickettailor.com/events/criticalsignals/2507756"
 price: "Koha"
 currency: "NZD"
-attendees: 5
+attendees: 6
 capacity: 50
 featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_634,q_100,w_2000,x_0,y_16/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/llwttqbzrkcl5lh5zfhu.jpg?_a=BAAHWXDQ"
 ticket_tailor_id: "ev_9402820"
