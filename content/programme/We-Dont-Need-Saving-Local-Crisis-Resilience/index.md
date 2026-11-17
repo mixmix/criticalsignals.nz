@@ -12,7 +12,7 @@ price: "$5 or koha"
 currency: "NZD"
 attendees: 13
 capacity: 50
-featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1778,x_0,y_406/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/syxjpllijxrl6dfonyke.jpg?_a=BAAHWXDQ"
+featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1778,x_0,y_406/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/syxjpllijxrl6dfonyke.jpg?_a=BAAAEvDQ"
 ticket_tailor_id: "ev_8897571"
 ticket_tailor_series_id: "es_2366214"
 aliases:

@@ -13,7 +13,7 @@ price: "Koha"
 currency: "NZD"
 attendees: 25
 capacity: 50
-featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1777,x_0,y_218/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/s7frubjxwixgai55xeld.jpg?_a=BAAHWXDQ"
+featureimage: "https://uploads.tickettailorassets.com/c_crop,dpr_1.0,h_564,q_100,w_1777,x_0,y_218/c_scale,g_center,h_373,q_85,w_1172/v1/production/userfiles/s7frubjxwixgai55xeld.jpg?_a=BAAAEvDQ"
 ticket_tailor_id: "ev_8854817"
 ticket_tailor_series_id: "es_2354810"
 ---
